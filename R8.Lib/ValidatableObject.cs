@@ -1,4 +1,7 @@
-﻿using System;
+﻿using R8.Lib.Enums;
+using R8.Lib.MethodReturn;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -13,39 +16,31 @@ namespace R8.Lib
     {
         public bool ValidateProperty<TProperty>(Expression<Func<TModel, TProperty>> property, out ValidatableResult results)
         {
-            var prop = property.GetProperty();
-            var key = prop.Name;
-
             var model = this as TModel;
             var value = property.Compile().Invoke(model);
-
-            var context = new ValidationContext(this);
-            var tempValidation = new List<ValidationResult>();
-            context.MemberName = key;
-            Validator.TryValidateProperty(value, context, tempValidation);
-            var errors = tempValidation.Select(x => x.ErrorMessage).ToList();
-
-            if (tempValidation.Count > 0)
-            {
-                results = new ValidatableResult(key, errors);
-                return false;
-            }
-
-            results = null;
-            return true;
+            var checkValidation = ValidateProperty(property, value, out results);
+            return checkValidation;
         }
     }
 
-    public abstract class ValidatableObject
+    public abstract class ValidatableObject : IValidatableObject
     {
         public static bool Validate<TModel>(TModel model)
         {
             return TryValidate(model, out _);
         }
 
-        public static bool ValidateProperty<TModel, TObject>(Expression<Func<TModel, TObject>> property, TObject arg, out ValidatableResult results)
+        public Response<TSource> ToResponse<TSource>() where TSource : class
         {
-            if (arg == null)
+            var valid = this.Validate();
+            var flags = valid ? Flags.Success : Flags.ModelIsNotValid;
+            var result = new Response<TSource>(flags, this.ValidationErrors);
+            return result;
+        }
+
+        public static bool ValidateProperty<TModel, TObject>(Expression<Func<TModel, TObject>> property, TObject value, out ValidatableResult results)
+        {
+            if (value == null)
             {
                 results = null;
                 return false;
@@ -59,8 +54,8 @@ namespace R8.Lib
             var tempValidation = new List<ValidationResult>();
 
             context.MemberName = key;
-            Validator.TryValidateProperty(arg, context, tempValidation);
-            var errors = tempValidation.Select(x => x.ErrorMessage).ToList();
+            Validator.TryValidateProperty(value, context, tempValidation);
+            var errors = tempValidation.ConvertAll(x => x.ErrorMessage);
 
             if (tempValidation.Count > 0)
             {
@@ -72,23 +67,21 @@ namespace R8.Lib
             return true;
         }
 
-        public static bool TryValidate<TModel>(TModel model, out ValidatableResultCollection validationErrors)
+        public static ValidatableResultCollection CheckValidation<TModel>(ValidationContext context, TModel model)
         {
-            validationErrors = new ValidatableResultCollection();
-
+            var validationErrors = new ValidatableResultCollection();
             if (model == null)
-                return validationErrors.Count == 0;
+                return validationErrors;
 
             var type = model.GetType();
             var props = type
-              .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-              .Where(x => x.GetSetMethod() != null)
-              .Where(x => x.MemberType == MemberTypes.Property)
-              .ToList();
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(x => x.GetSetMethod() != null)
+                .Where(x => x.MemberType == MemberTypes.Property)
+                .ToList();
             if (props.Count == 0)
-                return false;
+                return validationErrors;
 
-            var context = new ValidationContext(model);
             foreach (var prop in props)
             {
                 var tempValidation = new List<ValidationResult>();
@@ -102,7 +95,7 @@ namespace R8.Lib
                 context.MemberName = key;
                 Validator.TryValidateProperty(value, context, tempValidation);
 
-                if (tempValidation?.Any() == true)
+                if (tempValidation.Count > 0)
                 {
                     var val = ToValidationResults(tempValidation, key);
                     if (val != null)
@@ -112,14 +105,24 @@ namespace R8.Lib
                 context.MemberName = null;
             }
 
+            return validationErrors;
+        }
+
+        public static bool TryValidate<TModel>(TModel model, out ValidatableResultCollection validationErrors)
+        {
+            validationErrors = new ValidatableResultCollection();
+            var context = new ValidationContext(model);
+            validationErrors = CheckValidation(context, model);
             return validationErrors.Count == 0;
         }
 
-        public static ValidatableResult ToValidationResults(IReadOnlyCollection<ValidationResult> results,
+        public static ValidatableResult ToValidationResults(IEnumerable<ValidationResult> results,
           string key)
         {
-            var errors = results.Where(x => x != null && !string.IsNullOrEmpty(x.ErrorMessage)).Select(x => x.ErrorMessage)
-              .ToList();
+            var errors = results
+                .Where(x => x != null && !string.IsNullOrEmpty(x.ErrorMessage))
+                .Select(x => x.ErrorMessage)
+                .ToList();
             var final = new ValidatableResult(key, errors);
             return final;
         }
@@ -132,6 +135,23 @@ namespace R8.Lib
             var check = TryValidate(this, out var validationResults);
             ValidationErrors = validationResults;
             return check;
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var resultCollection = CheckValidation(validationContext, this);
+            var validationResults = new List<ValidationResult>();
+            if (resultCollection?.Any() == true)
+            {
+                validationResults.AddRange(from validatableResult in resultCollection
+                                           from validatableResultError in validatableResult.Errors
+                                           select new ValidationResult(validatableResultError, new List<string>
+                    {
+                        validatableResult.Name
+                    }));
+            }
+
+            return validationResults;
         }
     }
 }

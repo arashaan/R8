@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>R8.Lib.AspNetCore.EntityFrameworkCore</PackageId>
+    <Version>1.1.1</Version>
+    <Authors>Arash Shabbeh</Authors>
+    <Company>arashaan</Company>
+    <PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
+    <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EasyCaching.InMemory" Version="0.9.0" />
+    <PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.0.0" />
+    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="3.1.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.2" />
+    <PackageReference Include="R8.Lib.Encryption" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>
