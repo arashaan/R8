@@ -61,13 +61,6 @@ namespace R8.Lib
         {
         }
 
-        //public HtmlString GetHtmlString(CultureInfo culture = null)
-        //{
-        //    var text = GetLocale(culture ?? CultureInfo.CurrentCulture, false);
-        //    var html = new HtmlString(HttpUtility.HtmlDecode(text));
-        //    return html;
-        //}
-
         public static GlobalizationCollectionJson Deserialize(string json)
         {
             if (string.IsNullOrEmpty(json))
@@ -155,7 +148,7 @@ namespace R8.Lib
             set => Set(culture, value);
         }
 
-        private string GetLocale(string culture, bool useFallback = true)
+        public string GetLocale(string culture, bool useFallback = true)
         {
             var locale = CultureInfo.GetCultureInfo(culture);
             return this.GetLocale(locale, useFallback);
@@ -226,7 +219,7 @@ namespace R8.Lib
             return (string)propertyInfo.GetValue(this);
         }
 
-        private string GetLocale(CultureInfo culture, bool useFallback = true, bool returnNullIfEmpty = true)
+        public string GetLocale(CultureInfo culture, bool useFallback = true, bool returnNullIfEmpty = true)
         {
             var desiredCulture = this.FirstOrDefault(x => x.Equals(culture));
             var result = Get(desiredCulture);
