@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace R8.Lib.FileHandlers
 {
@@ -24,32 +20,5 @@ namespace R8.Lib.FileHandlers
         Svg = 4,
 
         Unknown = 100
-    }
-
-    public static class FileTypesExtensions
-    {
-        private static TAttribute GetAttribute<TAttribute>(this Enum enumMember)
-            where TAttribute : Attribute
-        {
-            if (enumMember == null) throw new ArgumentNullException(nameof(enumMember));
-            var enumType = enumMember.GetType();
-            var enumName = Enum.GetName(enumType, enumMember);
-            if (enumName == null)
-                return null;
-
-            var memberInfos = enumType.GetMember(enumName);
-            var memberInfo = memberInfos.Single();
-            return memberInfo.GetCustomAttribute<TAttribute>();
-        }
-
-        public static string GetDisplayName(this Enum value)
-        {
-            return value.GetAttribute<DisplayAttribute>()?.GetName() ?? Enum.GetName(value.GetType(), value);
-        }
-
-        public static IEnumerable<string> GetFileExtensions(this FileTypes fileType)
-        {
-            return fileType.GetDisplayName().Split("|").ToList();
-        }
     }
 }
