@@ -1,31 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace R8.Lib.AspNetCore.TagHelpers
 {
-    [HtmlTargetElement("a", Attributes = "asp-controller")]
-    [HtmlTargetElement("a", Attributes = "asp-action")]
-    [HtmlTargetElement("a", Attributes = "asp-page")]
-    [HtmlTargetElement("a", Attributes = "asp-for")]
-    public class MissingAnchorDisabledTagHelper : TagHelper
-    {
-        [HtmlAttributeName("asp-disabled")]
-        public bool Disabled { get; set; }
-
-        public override void Process(TagHelperContext context, TagHelperOutput output)
-        {
-            base.Process(context, output);
-            if (Disabled)
-            {
-                output.Attributes.Add("disabled", "");
-            }
-        }
-    }
-
     [HtmlTargetElement("span")]
     [HtmlTargetElement("button")]
     [HtmlTargetElement("option")]

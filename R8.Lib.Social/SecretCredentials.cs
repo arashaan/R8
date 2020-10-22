@@ -137,11 +137,11 @@ namespace R8.Lib.Social
                     var uniqueIds = await inbox.SearchAsync(SearchQuery.All, cancellationToken).ConfigureAwait(false);
                     if (uniqueIds?.Any() == true)
                     {
-                        var summaries = await inbox.FetchAsync(uniqueIds, MessageSummaryItems.All, cancellationToken);
+                        var summaries = await inbox.FetchAsync(uniqueIds, MessageSummaryItems.All, cancellationToken).ConfigureAwait(false);
                         result.AddRange(summaries);
                     }
 
-                    await inbox.CloseAsync(cancellationToken: cancellationToken);
+                    await inbox.CloseAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
@@ -150,7 +150,7 @@ namespace R8.Lib.Social
             }
             finally
             {
-                await client.DisconnectAsync(true, cancellationToken);
+                await client.DisconnectAsync(true, cancellationToken).ConfigureAwait(false);
                 client.Dispose();
             }
 
@@ -206,7 +206,7 @@ namespace R8.Lib.Social
                 if (!authenticated)
                     return false;
 
-                await client.SendAsync(mailMessage, cancellationToken);
+                await client.SendAsync(mailMessage, cancellationToken).ConfigureAwait(false);
                 return true;
             }
             catch (Exception ex)
@@ -216,7 +216,7 @@ namespace R8.Lib.Social
             }
             finally
             {
-                await client.DisconnectAsync(true, cancellationToken);
+                await client.DisconnectAsync(true, cancellationToken).ConfigureAwait(false);
                 client.Dispose();
             }
         }

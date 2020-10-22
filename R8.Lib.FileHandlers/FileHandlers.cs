@@ -28,7 +28,7 @@ namespace R8.Lib.FileHandlers
 {
     public static class FileHandlers
     {
-        public static int MaxImageSize = 1500;
+        public const int MaxImageSize = 1500;
 
         public static bool Delete(string fileName, string rootPath,
             string uploadFolder = "uploads")
