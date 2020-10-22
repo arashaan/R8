@@ -1,8 +1,8 @@
-﻿using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+
+using System.Globalization;
+using System.Linq;
 
 namespace R8.Lib.AspNetCore.Routing
 {
@@ -23,16 +23,6 @@ namespace R8.Lib.AspNetCore.Routing
                 return ValueProviderResult.None;
 
             return result;
-        }
-    }
-
-    public class EmptyQueryStringValueProviderFactory : IValueProviderFactory
-    {
-        public Task CreateValueProviderAsync(ValueProviderFactoryContext context)
-        {
-            var queries = context.ActionContext.HttpContext.Request.Query;
-            context.ValueProviders.Insert(0, new EmptyQueryStringValueProvider(queries));
-            return Task.CompletedTask;
         }
     }
 }

@@ -10,47 +10,6 @@ using System.Net;
 
 namespace R8.Lib.AspNetCore.Routing
 {
-    public class ParsedUrl
-    {
-        public ParsedUrl(string absolutePath)
-        {
-            AbsolutePath = absolutePath;
-        }
-
-        public ParsedUrl(string absolutePath, QueryBuilder queryBuilder)
-        {
-            AbsolutePath = absolutePath;
-            QueryBuilder = queryBuilder;
-        }
-
-        public void Deconstruct(out string absolutePath, out QueryBuilder queryBuilder)
-        {
-            absolutePath = AbsolutePath;
-            queryBuilder = QueryBuilder;
-        }
-
-        public override string ToString()
-        {
-            return $"{AbsolutePath}{(QueryBuilder != null ? QueryBuilder.ToQueryString().ToString() : "")}";
-        }
-
-        public string AbsolutePath { get; set; }
-        public QueryBuilder QueryBuilder { get; set; }
-    }
-
-    public class PageHandlerConfiguration
-    {
-        public string PagesFolder { get; set; } = "Pages";
-        public string IndexPage { get; set; } = "Index";
-
-        public object RouteDictionary { get; set; }
-
-        public bool StartWithPages { get; set; } = false;
-        public bool UseBackslash { get; set; } = false;
-
-        public bool EndWithIndex { get; set; } = true;
-    }
-
     public static class PageHandlers
     {
         internal static IEnumerable<string> Namespaces(this Type pageType)
