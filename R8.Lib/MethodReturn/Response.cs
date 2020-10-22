@@ -66,6 +66,24 @@ namespace R8.Lib.MethodReturn
                 : new Response<TSource>(Flags.Failed);
         }
 
+        public static implicit operator ResponseGroup(Response<TSource> response)
+        {
+            var group = new ResponseGroup();
+            group.AddChild(response);
+            return group;
+        }
+
+        public static implicit operator Flags(Response<TSource> response)
+        {
+            return response.Status;
+        }
+
+        public static explicit operator Response<TSource>(Flags status)
+        {
+            var response = new Response<TSource>(status);
+            return response;
+        }
+
         [JsonProperty("r")]
         public TSource Result { get; set; }
 
@@ -122,6 +140,28 @@ namespace R8.Lib.MethodReturn
 
         [JsonIgnore]
         public Flags Status { get; set; } = Flags.Failed;
+
+        public static implicit operator bool(Response response)
+        {
+            return response.Success;
+        }
+
+        public static implicit operator Response(bool boolean)
+        {
+            return boolean
+                ? new Response(Flags.Success)
+                : new Response(Flags.Failed);
+        }
+
+        public static implicit operator Flags(Response response)
+        {
+            return response.Status;
+        }
+
+        public static explicit operator Response(Flags status)
+        {
+            return new Response(status);
+        }
 
         public override string ToString()
         {

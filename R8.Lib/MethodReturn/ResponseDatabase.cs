@@ -30,6 +30,12 @@ namespace R8.Lib.MethodReturn
         public ValidatableResultCollection Errors { get; set; }
         public ILocalizer Localizer { get; set; }
 
+        public static explicit operator ResponseDatabase(Flags status)
+        {
+            var response = new ResponseDatabase(status);
+            return response;
+        }
+
         public static bool CheckSuccess(Flags status, DatabaseSaveState? saveState)
         {
             if (status == Flags.Success && saveState == null)
