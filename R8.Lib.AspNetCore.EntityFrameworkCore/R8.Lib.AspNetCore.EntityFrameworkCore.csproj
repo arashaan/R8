@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore.EntityFrameworkCore</PackageId>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
@@ -29,7 +29,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.3" />
+    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.4" />
     <PackageReference Include="R8.Lib.Encryption" Version="1.0.1" />
   </ItemGroup>
 

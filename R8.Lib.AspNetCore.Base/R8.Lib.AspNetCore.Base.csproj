@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore.Base</PackageId>
-    <Version>1.1.3</Version>
+    <Version>1.1.4</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Core package for R8.Lib.AspNetCore</PackageDescription>
