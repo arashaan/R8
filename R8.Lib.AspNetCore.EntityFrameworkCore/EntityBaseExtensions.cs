@@ -1,12 +1,15 @@
-﻿using System;
-using System.Globalization;
-using System.Net;
-using Humanizer;
+﻿using Humanizer;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 using Newtonsoft.Json;
+
+using System;
+using System.Globalization;
+using System.Net;
 
 namespace R8.Lib.AspNetCore.EntityFrameworkCore
 {

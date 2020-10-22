@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib</PackageId>
-    <Version>1.2.2</Version>
+    <Version>1.2.3</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Core package for all R8.* packages</PackageDescription>
