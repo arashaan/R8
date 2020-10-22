@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
-    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.5" />
+    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.6" />
   </ItemGroup>
 
 </Project>
