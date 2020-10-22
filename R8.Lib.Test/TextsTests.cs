@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+
 using Xunit;
 
 namespace R8.Lib.Test
@@ -288,19 +289,6 @@ namespace R8.Lib.Test
 
             // Assert
             Assert.Equal("Central - Pay Meter", act);
-        }
-
-        [Fact]
-        public void CallToNormalized_ContainsDash()
-        {
-            // Arrange
-            const string text = "Built-inElectricCooker";
-
-            // Act
-            var act = text.ToNormalized(false);
-
-            // Assert
-            Assert.Equal("Built-in Electric Cooker", act);
         }
 
         [Fact]
