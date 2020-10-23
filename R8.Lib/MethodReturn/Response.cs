@@ -66,10 +66,9 @@ namespace R8.Lib.MethodReturn
                 : new Response<TSource>(Flags.Failed);
         }
 
-        public static implicit operator ResponseGroup(Response<TSource> response)
+        public static implicit operator ResponseCollection(Response<TSource> response)
         {
-            var group = new ResponseGroup();
-            group.AddChild(response);
+            var group = new ResponseCollection { response };
             return group;
         }
 
