@@ -107,10 +107,10 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
             errors = new ValidatableResultCollection();
             switch (response)
             {
-                case ResponseGroup responseGroup when responseGroup.Results == null || !responseGroup.Results.Any():
+                case ResponseCollection responseGroup when responseGroup.Results == null || !responseGroup.Results.Any():
                     return !errors.Any();
 
-                case ResponseGroup responseGroup:
+                case ResponseCollection responseGroup:
                     {
                         var results = from childResponse in responseGroup.Results
                                       let childEntity = GetIResponseUnderlyingEntity(childResponse)
@@ -152,7 +152,7 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
             return !errors.Any();
         }
 
-        public static object? GetIResponseUnderlyingEntity(IResponseDatabase childResponse)
+        public static object? GetIResponseUnderlyingEntity(IResponse childResponse)
         {
             if (childResponse.GetType() == typeof(Response<>))
             {
