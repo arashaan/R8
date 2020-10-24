@@ -37,7 +37,9 @@ namespace R8.Lib.FileHandlers
             {
                 var inHostPath = Path.Combine(uploadFolder, fileName);
                 var fullPath = Path.Combine(rootPath, inHostPath);
-                if (!File.Exists(fullPath)) return false;
+                if (!File.Exists(fullPath))
+                    return false;
+
                 File.Delete(fullPath);
                 return true;
             }
@@ -47,13 +49,23 @@ namespace R8.Lib.FileHandlers
             }
         }
 
-        public static async Task<bool> CompareAsync(this Stream source, Stream toBeCompared)
+        /// <summary>
+        /// Represents comparison between two <see cref="Stream"/>
+        /// </summary>
+        /// <returns>Returns <see cref="Boolean"/> that shows streams are equal on no</returns>
+        public static async Task<bool> CompareAsync(this Stream stream1, Stream stream2)
         {
             var comparer = new StreamCompare();
-            var areEqual = await comparer.AreEqualAsync(source, toBeCompared).ConfigureAwait(false);
+            var areEqual = await comparer
+                .AreEqualAsync(stream1, stream2)
+                .ConfigureAwait(false);
+
             return areEqual;
         }
 
+        /// <summary>
+        /// An internal API to get aspect ratio
+        /// </summary>
         private static int FindAspectRatioCore(int width, int height)
         {
             if (width < height)
@@ -73,6 +85,12 @@ namespace R8.Lib.FileHandlers
             }
         }
 
+        /// <summary>
+        /// Represents Aspect Ratio for desired screen size
+        /// </summary>
+        /// <param name="width">Screen's width</param>
+        /// <param name="height">Screen's height</param>
+        /// <returns>Returns instance of <see cref="AspectRatio"/> to treat like 1:1</returns>
         public static AspectRatio FindAspectRatio(int width, int height)
         {
             var ar = FindAspectRatioCore(width, height);
@@ -99,6 +117,13 @@ namespace R8.Lib.FileHandlers
             outputImage.Dispose();
         }
 
+        /// <summary>
+        /// Loads watermark <see cref="Stream"/> into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="stream">Watermark loaded image as <see cref="Stream"/></param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/> as asynchronous operation</returns>
         public static async Task<Image> LoadWatermarkAsync(Stream stream, int sourceImageWidth, int sourceImageHeight)
         {
             using var watermark = await Image.LoadAsync(stream);
@@ -106,6 +131,14 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Loads watermark <see cref="Stream"/> into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="stream">Watermark loaded image as <see cref="Stream"/></param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <param name="imageDecoder"><see cref="IImageDecoder"/> to be used for processing</param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/> as asynchronous operation</returns>
         public static async Task<Image> LoadWatermarkAsync(Stream stream, int sourceImageWidth, int sourceImageHeight, IImageDecoder imageDecoder)
         {
             using var watermark = await Image.LoadAsync(stream, imageDecoder);
@@ -113,6 +146,13 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Loads watermark <see cref="Stream"/> into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="stream">Watermark loaded image as <see cref="Stream"/></param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/></returns>
         public static Image LoadWatermark(Stream stream, int sourceImageWidth, int sourceImageHeight)
         {
             using var watermark = Image.Load(stream);
@@ -120,6 +160,14 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Loads <see cref="Stream"/> watermark into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="stream">Watermark loaded image as <see cref="Stream"/></param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <param name="imageDecoder"><see cref="IImageDecoder"/> to be used for processing</param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/></returns>
         public static Image LoadWatermark(Stream stream, int sourceImageWidth, int sourceImageHeight, IImageDecoder imageDecoder)
         {
             using var watermark = Image.Load(stream, imageDecoder);
@@ -127,6 +175,12 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Resizes watermark <see cref="Image"/> to source image scale
+        /// </summary>
+        /// <param name="watermark">Watermark <see cref="Stream"/> as <see cref="Image"/></param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
         private static void ProcessWatermark(this Image watermark, int sourceImageWidth, int sourceImageHeight)
         {
             watermark.Mutate(o => o.Resize(new ResizeOptions
@@ -139,6 +193,13 @@ namespace R8.Lib.FileHandlers
             }));
         }
 
+        /// <summary>
+        /// Loads watermark by file path into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="url">Watermark file url</param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/></returns>
         public static Image LoadWatermark(string url, int sourceImageWidth, int sourceImageHeight)
         {
             using var watermark = Image.Load(url);
@@ -146,6 +207,14 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Loads watermark by file path into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="url">Watermark file url</param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <param name="imageDecoder"><see cref="IImageDecoder"/> to be used for processing</param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/></returns>
         public static Image LoadWatermark(string url, int sourceImageWidth, int sourceImageHeight, IImageDecoder imageDecoder)
         {
             using var watermark = Image.Load(url, imageDecoder);
@@ -153,6 +222,14 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Loads watermark by file path into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="url">Watermark file url</param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/> as asynchronous operation</returns>
         public static async Task<Image> LoadWatermarkAsync(string url, int sourceImageWidth, int sourceImageHeight, CancellationToken cancellationToken = default)
         {
             using var watermark = await Image.LoadAsync(url, cancellationToken).ConfigureAwait(false);
@@ -160,6 +237,14 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Loads watermark by file path into instance of <see cref="Image"/>
+        /// </summary>
+        /// <param name="url">Watermark file url</param>
+        /// <param name="sourceImageWidth">Source Image's width</param>
+        /// <param name="sourceImageHeight">Source Image's height</param>
+        /// <param name="imageDecoder"><see cref="IImageDecoder"/> to be used for processing</param>
+        /// <returns>Returns processed and resized watermark <see cref="Image"/> as asynchronous operation</returns>
         public static async Task<Image> LoadWatermarkAsync(string url, int sourceImageWidth, int sourceImageHeight, IImageDecoder imageDecoder)
         {
             using var watermark = await Image.LoadAsync(url, imageDecoder).ConfigureAwait(false);
@@ -167,6 +252,12 @@ namespace R8.Lib.FileHandlers
             return watermark;
         }
 
+        /// <summary>
+        /// Represents an instance of <see cref="Image"/> with stuck watermark on it
+        /// </summary>
+        /// <param name="source">Source <see cref="Image"/></param>
+        /// <param name="watermark">Watermark <see cref="Image"/></param>
+        /// <returns>Returns an Image with source and watermark on it</returns>
         public static Image Watermarkize(this Image source, Image watermark)
         {
             using var outputImage = new Image<Rgba32>(source.Width, source.Height);
