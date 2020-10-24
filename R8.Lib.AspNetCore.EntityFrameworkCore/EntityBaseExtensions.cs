@@ -7,14 +7,30 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using Newtonsoft.Json;
 
+using R8.Lib.MethodReturn;
+
 using System;
 using System.Globalization;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace R8.Lib.AspNetCore.EntityFrameworkCore
 {
     public static class EntityBaseExtensions
     {
+        public static void SaveDatabase<TModel, TDbContext>(this TModel model, TDbContext dbContext)
+            where TModel : IResponseDatabase where TDbContext : DbContextBase
+        {
+            model.Save = dbContext.SaveChanges();
+        }
+
+        public static async Task SaveDatabaseAsync<TModel, TDbContext>(this TModel model, TDbContext dbContext, CancellationToken cancellationToken = default)
+            where TModel : IResponseDatabase where TDbContext : DbContextBase
+        {
+            model.Save = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+
         public static string GetTableName(this EntityEntry entry)
         {
             var entityType = entry.Context.Model.FindEntityType(entry.Entity.GetType());
