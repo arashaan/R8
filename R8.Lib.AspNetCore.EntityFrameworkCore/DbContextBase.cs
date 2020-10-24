@@ -207,9 +207,8 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
 
         public new async Task<DatabaseSaveState> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var entityEntries = base.ChangeTracker.Entries().ToList();
-            var changesCount = entityEntries.Where(x => x.State != EntityState.Detached && x.State != EntityState.Unchanged).ToList();
-            if (changesCount.Count == 0)
+            var hasSavability = CheckSavability(out var changesCount);
+            if (!hasSavability)
                 return DatabaseSaveState.NoNeedToSave;
 
             base.ChangeTracker.DetectChanges();
@@ -220,7 +219,51 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
                 var changesInDatabase = await base.SaveChangesAsync(cancellationToken);
                 if (changesInDatabase > 0)
                 {
-                    result = changesInDatabase == changesCount.Count
+                    result = changesInDatabase == changesCount
+                        ? DatabaseSaveState.Saved
+                        : DatabaseSaveState.SavedWithErrors;
+                }
+                else
+                {
+                    result = DatabaseSaveState.NotSaved;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                result = DatabaseSaveState.SaveFailure;
+            }
+            finally
+            {
+                base.ChangeTracker.AutoDetectChangesEnabled = true;
+            }
+
+            return result;
+        }
+
+        private bool CheckSavability(out int changes)
+        {
+            var entityEntries = base.ChangeTracker.Entries().ToList();
+            var changesCount = entityEntries.Where(x => x.State != EntityState.Detached && x.State != EntityState.Unchanged).ToList();
+            changes = changesCount.Count;
+            return changesCount.Count != 0;
+        }
+
+        public new DatabaseSaveState SaveChanges()
+        {
+            var hasSavability = CheckSavability(out var changesCount);
+            if (!hasSavability)
+                return DatabaseSaveState.NoNeedToSave;
+
+            base.ChangeTracker.DetectChanges();
+            DatabaseSaveState result;
+            try
+            {
+                base.ChangeTracker.AutoDetectChangesEnabled = false;
+                var changesInDatabase = base.SaveChanges();
+                if (changesInDatabase > 0)
+                {
+                    result = changesInDatabase == changesCount
                         ? DatabaseSaveState.Saved
                         : DatabaseSaveState.SavedWithErrors;
                 }
