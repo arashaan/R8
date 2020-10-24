@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using R8.Lib.Enums;
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +12,7 @@ namespace R8.Lib.MethodReturn
     /// <summary>
     /// Represents a collection of responses with sub-results
     /// </summary>
-    public class ResponseCollection : IList<IResponse>, IResponseBase
+    public class ResponseCollection : IList<IResponseDatabase>, IResponseBase
     {
         /// <summary>
         /// Represents a collection of responses with sub-results
@@ -20,6 +20,7 @@ namespace R8.Lib.MethodReturn
         public ResponseCollection()
         {
         }
+
         /// <summary>
         /// Represents a collection of responses with sub-results
         /// </summary>
@@ -32,8 +33,8 @@ namespace R8.Lib.MethodReturn
         /// <summary>
         /// Represents a collection of responses with sub-results
         /// </summary>
-        /// <param name="response">Add single instance of <see cref="IResponse"/></param>
-        public ResponseCollection(IResponse response)
+        /// <param name="response">Add single instance of <see cref="IResponseDatabase"/></param>
+        public ResponseCollection(IResponseDatabase response)
         {
             this.Add(response);
         }
@@ -41,24 +42,26 @@ namespace R8.Lib.MethodReturn
         /// <summary>
         /// Represents a collection of responses with sub-results
         /// </summary>
-        /// <param name="collection">Add collection of <see cref="IResponse"/> to instance</param>
-        public ResponseCollection(IEnumerable<IResponse> collection)
+        /// <param name="collection">Add collection of <see cref="IResponseDatabase"/> to instance</param>
+        public ResponseCollection(IEnumerable<IResponseDatabase> collection)
         {
-            if (collection == null) 
+            if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
-            
+
             this.AddRange(collection);
         }
+
         /// <summary>
-        /// List of results with type of <see cref="IResponse"/>
+        /// List of results with type of <see cref="IResponseDatabase"/>
         /// </summary>
         [JsonIgnore]
-        public List<IResponse> Results { get; set; }
+        public List<IResponseDatabase> Results { get; set; }
+
         public DatabaseSaveState? Save { get; set; }
 
-        public void Add(IResponse model)
+        public void Add(IResponseDatabase model)
         {
-            Results ??= new List<IResponse>();
+            Results ??= new List<IResponseDatabase>();
             Results.Add(model);
         }
 
@@ -67,17 +70,17 @@ namespace R8.Lib.MethodReturn
             Results.Clear();
         }
 
-        public bool Contains(IResponse item)
+        public bool Contains(IResponseDatabase item)
         {
             return Results.Contains(item);
         }
 
-        public void CopyTo(IResponse[] array, int arrayIndex)
+        public void CopyTo(IResponseDatabase[] array, int arrayIndex)
         {
             Results.CopyTo(array, arrayIndex);
         }
 
-        public bool Remove(IResponse item)
+        public bool Remove(IResponseDatabase item)
         {
             return Results.Remove(item);
         }
@@ -85,12 +88,12 @@ namespace R8.Lib.MethodReturn
         public int Count => Results.Count;
         public bool IsReadOnly => false;
 
-        public void AddRange(IEnumerable<IResponse> collection)
+        public void AddRange(IEnumerable<IResponseDatabase> collection)
         {
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            Results ??= new List<IResponse>();
+            Results ??= new List<IResponseDatabase>();
             foreach (var response in collection)
             {
                 Results.Add(response);
@@ -107,14 +110,13 @@ namespace R8.Lib.MethodReturn
             get
             {
                 var baseCondition = Results != null && Results.Any() && Results.All(x => x.Success);
-                if (Save != null) 
+                if (Save != null)
                     return baseCondition;
 
                 var dbCondition = Save == DatabaseSaveState.Saved ||
                                   Save == DatabaseSaveState.NotSaved ||
                                   Save == DatabaseSaveState.SavedWithErrors;
                 return baseCondition && dbCondition;
-
             }
         }
 
@@ -131,7 +133,7 @@ namespace R8.Lib.MethodReturn
         public ValidatableResultCollection Errors =>
             (ValidatableResultCollection)Results?.SelectMany(x => x.Errors).ToList();
 
-        public IEnumerator<IResponse> GetEnumerator()
+        public IEnumerator<IResponseDatabase> GetEnumerator()
         {
             return Results.GetEnumerator();
         }
@@ -141,12 +143,12 @@ namespace R8.Lib.MethodReturn
             return GetEnumerator();
         }
 
-        public int IndexOf(IResponse item)
+        public int IndexOf(IResponseDatabase item)
         {
             return Results.IndexOf(item);
         }
 
-        public void Insert(int index, IResponse item)
+        public void Insert(int index, IResponseDatabase item)
         {
             Results.Insert(index, item);
         }
@@ -156,7 +158,7 @@ namespace R8.Lib.MethodReturn
             Results.RemoveAt(index);
         }
 
-        public IResponse this[int index]
+        public IResponseDatabase this[int index]
         {
             get => Results[index];
             set => Results[index] = value;
