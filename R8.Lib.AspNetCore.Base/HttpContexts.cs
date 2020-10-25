@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Routing;
 
+using NodaTime;
+
 using R8.Lib.Enums;
 
 using System;
@@ -35,7 +37,7 @@ namespace R8.Lib.AspNetCore.Base
             {
                 try
                 {
-                    var anonyTimeZone = DateTimeZone.FindById(anonyTimeZoneId);
+                    var anonyTimeZone = DateTimeZoneProviders.Tzdb[anonyTimeZoneId];
                     hasSession = anonyTimeZone.Id == finalTimeZone.Id;
                 }
                 catch
@@ -109,7 +111,7 @@ namespace R8.Lib.AspNetCore.Base
 
             var timeZone = claims.FirstOrDefault(x => x.Type == "TimeZone");
             if (timeZone != null)
-                currentUser.TimeZone = DateTimeZone.FindById(timeZone.Value);
+                currentUser.TimeZone = DateTimeZoneProviders.Tzdb[timeZone.Value];
 
             var id = claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
             if (id != null)
@@ -140,16 +142,16 @@ namespace R8.Lib.AspNetCore.Base
                 {
                     try
                     {
-                        finalZone = DateTimeZone.FindById(session);
+                        finalZone = DateTimeZoneProviders.Tzdb[session];
                     }
                     catch
                     {
-                        finalZone = DateTimeZone.FindById(fallBackId);
+                        finalZone = DateTimeZoneProviders.Tzdb[fallBackId];
                     }
                 }
                 else
                 {
-                    finalZone = DateTimeZone.FindById(fallBackId);
+                    finalZone = DateTimeZoneProviders.Tzdb[fallBackId];
                 }
             }
 
