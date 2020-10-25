@@ -12,7 +12,7 @@ namespace R8.Lib.MethodReturn
     /// <summary>
     /// Represents a collection of responses with sub-results
     /// </summary>
-    public class ResponseCollection : IList<IResponseDatabase>, IResponseBase
+    public class ResponseCollection : IDictionary<int, IResponseDatabase>, IResponseBase
     {
         /// <summary>
         /// Represents a collection of responses with sub-results
@@ -55,14 +55,33 @@ namespace R8.Lib.MethodReturn
         /// List of results with type of <see cref="IResponseDatabase"/>
         /// </summary>
         [JsonIgnore]
-        public List<IResponseDatabase> Results { get; set; }
+        public Dictionary<int, IResponseDatabase> Results { get; set; }
 
+        /// <summary>
+        /// Gets or sets Save State into DbContext
+        /// </summary>
         public DatabaseSaveState? Save { get; set; }
 
+        /// <summary>
+        /// An instance of <see cref="IResponseDatabase"/> as Head of the Collection that it is first iterate of <see cref="Results"/>
+        /// </summary>
+        public IResponseDatabase? Head => Results[0];
+
+        /// <summary>
+        /// Add an item to the <see cref="ICollection{T}"/>
+        /// </summary>
+        /// <param name="model">The object to add to <see cref="ICollection{T}"/></param>
         public void Add(IResponseDatabase model)
         {
-            Results ??= new List<IResponseDatabase>();
-            Results.Add(model);
+            Results ??= new Dictionary<int, IResponseDatabase>();
+            Results.Add(Results.Count, model);
+        }
+
+        public void Add(KeyValuePair<int, IResponseDatabase> item)
+        {
+            Results ??= new Dictionary<int, IResponseDatabase>();
+            var (key, value) = item;
+            Results.Add(key, value);
         }
 
         public void Clear()
@@ -70,19 +89,19 @@ namespace R8.Lib.MethodReturn
             Results.Clear();
         }
 
-        public bool Contains(IResponseDatabase item)
+        public bool Contains(KeyValuePair<int, IResponseDatabase> item)
         {
             return Results.Contains(item);
         }
 
-        public void CopyTo(IResponseDatabase[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<int, IResponseDatabase>[] array, int arrayIndex)
         {
-            Results.CopyTo(array, arrayIndex);
+            return;
         }
 
-        public bool Remove(IResponseDatabase item)
+        public bool Remove(KeyValuePair<int, IResponseDatabase> item)
         {
-            return Results.Remove(item);
+            return Results.Remove(item.Key);
         }
 
         public int Count => Results.Count;
@@ -93,11 +112,9 @@ namespace R8.Lib.MethodReturn
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            Results ??= new List<IResponseDatabase>();
+            Results ??= new Dictionary<int, IResponseDatabase>();
             foreach (var response in collection)
-            {
-                Results.Add(response);
-            }
+                Results.Add(Results.Count, response);
         }
 
         public void Add<T>(Flags status) where T : class
@@ -109,7 +126,7 @@ namespace R8.Lib.MethodReturn
         {
             get
             {
-                var baseCondition = Results != null && Results.Any() && Results.All(x => x.Success);
+                var baseCondition = Results != null && Results.Any() && Results.All(x => x.Value.Success);
                 if (Save != null)
                     return baseCondition;
 
@@ -131,37 +148,45 @@ namespace R8.Lib.MethodReturn
         }
 
         public ValidatableResultCollection Errors =>
-            (ValidatableResultCollection)Results?.SelectMany(x => x.Errors).ToList();
+            (ValidatableResultCollection)Results?.SelectMany(x => x.Value.Errors).ToList();
 
-        public IEnumerator<IResponseDatabase> GetEnumerator()
+        public void Add(int key, IResponseDatabase value)
         {
-            return Results.GetEnumerator();
+            Results.Add(key, value);
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public bool ContainsKey(int key)
         {
-            return GetEnumerator();
+            return Results.ContainsKey(key);
         }
 
-        public int IndexOf(IResponseDatabase item)
+        public bool Remove(int key)
         {
-            return Results.IndexOf(item);
+            return Results.Remove(key);
         }
 
-        public void Insert(int index, IResponseDatabase item)
+        public bool TryGetValue(int key, out IResponseDatabase value)
         {
-            Results.Insert(index, item);
-        }
-
-        public void RemoveAt(int index)
-        {
-            Results.RemoveAt(index);
+            return Results.TryGetValue(key, out value);
         }
 
         public IResponseDatabase this[int index]
         {
             get => Results[index];
             set => Results[index] = value;
+        }
+
+        public ICollection<int> Keys => Results.Select(x => x.Key).ToList();
+        public ICollection<IResponseDatabase> Values => Results.Select(x => x.Value).ToList();
+
+        IEnumerator<KeyValuePair<int, IResponseDatabase>> IEnumerable<KeyValuePair<int, IResponseDatabase>>.GetEnumerator()
+        {
+            return Results.GetEnumerator();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return Results.GetEnumerator();
         }
     }
 }

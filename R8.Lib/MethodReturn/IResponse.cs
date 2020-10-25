@@ -7,5 +7,9 @@ namespace R8.Lib.MethodReturn
         Flags Status { get; }
         string Message { get; }
         ILocalizer Localizer { get; }
+
+        void SetLocalizer(ILocalizer localizer);
+
+        void SetStatus(Flags status);
     }
 }

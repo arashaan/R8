@@ -91,7 +91,24 @@ namespace R8.Lib.MethodReturn
         public Flags Status { get; set; }
         public string Message => this.GetMessage();
         public ValidatableResultCollection Errors { get; set; }
-        public ILocalizer Localizer { get; }
+
+        public ILocalizer Localizer { get; set; }
+
+        public void SetLocalizer(ILocalizer localizer)
+        {
+            this.Localizer = localizer;
+        }
+
+        public void AddErrors(ValidatableResultCollection errors)
+        {
+            Errors ??= new ValidatableResultCollection();
+            Errors.AddRange(errors);
+        }
+
+        public void SetStatus(Flags status)
+        {
+            this.Status = status;
+        }
 
         public override string ToString()
         {
@@ -107,11 +124,6 @@ namespace R8.Lib.MethodReturn
 
     public class Response : IResponse
     {
-        [JsonIgnore]
-        public ValidatableResultCollection Errors { get; set; }
-
-        public ILocalizer Localizer { get; }
-
         public Response(ValidatableResultCollection errors)
         {
             Errors = errors;
@@ -134,11 +146,27 @@ namespace R8.Lib.MethodReturn
             Errors = errors;
         }
 
-        [JsonProperty("m")]
+        public Flags Status { get; set; }
         public string Message => this.GetMessage();
+        public ValidatableResultCollection Errors { get; set; }
 
-        [JsonIgnore]
-        public Flags Status { get; set; } = Flags.Failed;
+        public ILocalizer Localizer { get; set; }
+
+        public void SetLocalizer(ILocalizer localizer)
+        {
+            this.Localizer = localizer;
+        }
+
+        public void AddErrors(ValidatableResultCollection errors)
+        {
+            Errors ??= new ValidatableResultCollection();
+            Errors.AddRange(errors);
+        }
+
+        public void SetStatus(Flags status)
+        {
+            this.Status = status;
+        }
 
         public static implicit operator bool(Response response)
         {
