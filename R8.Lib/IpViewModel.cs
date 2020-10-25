@@ -42,11 +42,11 @@ namespace R8.Lib
 
             using var clientHandler = new HttpClientHandler();
             var client = new HttpClient(clientHandler);
-            var responseMessage = await client.GetAsync(Flag);
+            var responseMessage = await client.GetAsync(Flag).ConfigureAwait(false);
             if (!responseMessage.IsSuccessStatusCode)
                 return null;
 
-            var rawBytes = await responseMessage.Content.ReadAsByteArrayAsync();
+            var rawBytes = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             await using var ms = new MemoryStream(rawBytes) { Position = 0 };
             ms.Seek(0, SeekOrigin.Begin);
 

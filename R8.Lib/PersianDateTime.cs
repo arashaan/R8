@@ -16,27 +16,22 @@ namespace R8.Lib
         public bool ShowTime { get; set; } = false;
         public bool ShowTimeSecond { get; set; } = false;
 
-        public int TotalSeconds => ToSeconds(Year, Month, DayOfMonth, Hour, Minute, Second);
+        // public int TotalSeconds => ToSeconds(DayOfMonth, Hour, Minute, Second);
 
         public DayOfWeek DayOfWeek { get; }
 
-        public string DayOfWeekPersian
-        {
-            get
+        public string DayOfWeekPersian =>
+            DayOfWeek switch
             {
-                return DayOfWeek switch
-                {
-                    DayOfWeek.Friday => "جمعه",
-                    DayOfWeek.Monday => "دوشنبه",
-                    DayOfWeek.Sunday => "یکشنبه",
-                    DayOfWeek.Thursday => "پنجشنبه",
-                    DayOfWeek.Tuesday => "سه شنبه",
-                    DayOfWeek.Wednesday => "چهارشنبه",
-                    DayOfWeek.Saturday => "شنبه",
-                    _ => "شنبه"
-                };
-            }
-        }
+                DayOfWeek.Friday => "جمعه",
+                DayOfWeek.Monday => "دوشنبه",
+                DayOfWeek.Sunday => "یکشنبه",
+                DayOfWeek.Thursday => "پنجشنبه",
+                DayOfWeek.Tuesday => "سه شنبه",
+                DayOfWeek.Wednesday => "چهارشنبه",
+                DayOfWeek.Saturday => "شنبه",
+                _ => "شنبه"
+            };
 
         public PersianDateTime(DateTime dateTime)
         {
@@ -53,114 +48,99 @@ namespace R8.Lib
             Second = dateTime.Second;
         }
 
-        private int CountDayOfMonth(int month)
+        private static int CountDayOfMonth(int month)
         {
-            try
+            int dayOfMonth;
+            if (month >= 1 && month <= 6)
             {
-                var dayOfMonth = month > 0 && month < 7
-                    ? 31
-                    : month > 6 && month < 12
-                        ? 30
-                        : 29;
+                dayOfMonth = 31;
+            }
+            else if (month >= 7 && month <= 11)
+            {
+                dayOfMonth = 30;
+            }
+            else if (month == 12)
+            {
+                dayOfMonth = 29;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(month)} should be in range between 1 and 12");
+            }
 
-                return dayOfMonth;
-            }
-            catch
-            {
-                throw new ArgumentOutOfRangeException($"{nameof(Month)} is out of range. must be between 1 and 12");
-            }
+            return dayOfMonth;
         }
 
-        public int ToSeconds(int year, int month, int day, int hour, int minute, int second)
+        public DateTime ToDateTime()
         {
-            var b1 = second;
-            const int min2Sec = 60;
-            const int hr2Sec = min2Sec * 60;
-            const int dy2Sec = hr2Sec * 24;
-            var mnt2Sec = dy2Sec * CountDayOfMonth(month);
-            var yr2Sec = mnt2Sec * 12;
-
-            var b2 = b1 + (minute * min2Sec);
-            var b3 = b2 + (hour * hr2Sec);
-            var b4 = b3 + (day * dy2Sec);
-            var b5 = b4 + (month * mnt2Sec);
-            var b6 = b5 + (year * yr2Sec);
-
-            return b6;
+            return new DateTime(Year, Month, DayOfMonth, Hour, Minute, Second, new PersianCalendar());
         }
 
-        public string ToRelativeString()
+        public string Humanize()
         {
-            var now = new PersianDateTime(DateTime.Now);
+            var now = DateTime.UtcNow;
+            var dt = ToDateTime().ToUniversalTime();
 
-            var oneMinute = ToSeconds(0, 0, 0, 0, 1, 0);
-            var tenMinutes = ToSeconds(0, 0, 0, 0, 10, 0);
-            var halfHour = ToSeconds(0, 0, 0, 0, 30, 0);
-            var quartHour = ToSeconds(0, 0, 0, 0, 45, 0);
-            var oneHour = ToSeconds(0, 0, 0, 1, 0, 0);
-            var oneDay = ToSeconds(0, 0, 1, 0, 0, 0);
-            var oneWeek = ToSeconds(0, 0, 7, 0, 0, 0);
-            var oneMonth = ToSeconds(0, 1, 0, 0, 0, 0);
-            var oneYear = ToSeconds(1, 0, 0, 0, 0, 0);
+            var nowSeconds = now.ToUnixTime();
+            var dtSeconds = dt.ToUnixTime();
 
-            var division = now.TotalSeconds - TotalSeconds;
+            var division = nowSeconds - dtSeconds;
             if (division < 0)
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException($"Desired date should be lower than today");
 
             var timeSpan = TimeSpan.FromSeconds(division);
-            if (division < oneMinute) // زیر یک دقیقه
+            if (timeSpan.TotalSeconds < TimeSpan.FromMinutes(1).TotalSeconds) // زیر یک دقیقه
                 return $"{division} ثانیه پیش";
 
-            if (division >= oneMinute && division < tenMinutes) // بین 1 تا 10 دقیقه
+            if (timeSpan.TotalSeconds >= TimeSpan.FromMinutes(1).TotalSeconds &&
+                timeSpan.TotalSeconds < TimeSpan.FromMinutes(10).TotalSeconds) // بین 1 تا 10 دقیقه
                 return $"{(int)timeSpan.TotalMinutes} دقیقه پیش";
 
-            if (division >= tenMinutes && division < halfHour)
+            if (timeSpan.TotalSeconds >= TimeSpan.FromMinutes(10).TotalSeconds && timeSpan.TotalSeconds < TimeSpan.FromMinutes(30).TotalSeconds)
                 return $"{((int)timeSpan.TotalMinutes % 5 == 0 ? (int)timeSpan.TotalMinutes : Math.Round(timeSpan.TotalMinutes / 5, 0) * 5)} دقیقه پیش";
 
-            if (division >= halfHour && division < quartHour)
+            if (timeSpan.TotalSeconds >= TimeSpan.FromMinutes(30).TotalSeconds && timeSpan.TotalSeconds < TimeSpan.FromMinutes(45).TotalSeconds)
                 return $"نیم ساعت پیش";
 
-            if (division >= quartHour && division < oneHour) // ده دقیقه به بالا
+            if (timeSpan.TotalSeconds >= TimeSpan.FromMinutes(45).TotalSeconds && timeSpan.TotalSeconds < TimeSpan.FromHours(1).TotalSeconds) // ده دقیقه به بالا
                 return $"کمتر از یک ساعت پیش";
 
-            if (division >= oneHour && division < oneDay)
+            if (timeSpan.TotalSeconds >= TimeSpan.FromHours(1).TotalSeconds && timeSpan.TotalSeconds < TimeSpan.FromDays(1).TotalSeconds)
                 return $"{(int)timeSpan.TotalHours} ساعت پیش";
 
-            if (division >= oneDay && division < oneWeek)
+            if (timeSpan.TotalSeconds >= TimeSpan.FromDays(1).TotalSeconds && timeSpan.TotalSeconds < TimeSpan.FromDays(7).TotalSeconds)
                 return $"{(int)timeSpan.TotalDays} روز پیش";
 
-            if (division >= oneWeek && division < oneMonth)
+            if (timeSpan.TotalSeconds >= TimeSpan.FromDays(7).TotalSeconds && timeSpan.TotalSeconds < TimeSpan.FromDays(30).TotalSeconds)
                 return $"{(int)timeSpan.TotalDays / 7} هفته پیش";
 
-            if (division >= oneMonth && division < oneYear)
+            if (timeSpan.TotalSeconds >= TimeSpan.FromDays(30).TotalSeconds && timeSpan.TotalSeconds < TimeSpan.FromDays(30 * 12).TotalSeconds)
                 return $"{(int)timeSpan.TotalDays / 30} ماه پیش";
 
-            return ToString();
+            return $"{(int)timeSpan.TotalDays / (12 * 30)} سال پیش";
         }
 
         public override string ToString()
         {
-            return ToString(true);
-        }
-
-        public string ToString(bool full, string dateSeparator = "/", string timeSeparator = ":")
-        {
             var date = new StringBuilder();
-            date.Append(full ? Year.ToString("####") : Year.ToString())
+            const string dateSeparator = "/";
+            const string timeSeparator = ":";
+
+            date.Append(Year.ToString("0000"))
                 .Append(dateSeparator)
-                .Append(full ? Month.ToString("##") : Month.ToString())
+                .Append(Month.ToString("00"))
                 .Append(dateSeparator)
-                .Append(full ? DayOfMonth.ToString("##") : DayOfMonth.ToString());
+                .Append(DayOfMonth.ToString("00"));
 
             var time = new StringBuilder();
-            time.Append(full ? Hour.ToString("##") : Hour.ToString())
+            time.Append(Hour.ToString("00"))
                 .Append(timeSeparator)
-                .Append(full ? Minute.ToString("##") : Minute.ToString());
+                .Append(Minute.ToString("00"));
 
             if (ShowTimeSecond)
             {
                 time.Append(timeSeparator)
-                    .Append(full ? Second.ToString("##") : Second.ToString());
+                    .Append(Second.ToString("00"));
             }
 
             return ShowTime ? $"{date} {time}" : $"{date}";

@@ -9,27 +9,6 @@ using System.Reflection;
 
 namespace R8.Lib
 {
-    public class GlobalizationCulture : CultureInfo
-    {
-        public int Order { get; set; }
-
-        public GlobalizationCulture(int culture) : base(culture)
-        {
-        }
-
-        public GlobalizationCulture(int culture, bool useUserOverride) : base(culture, useUserOverride)
-        {
-        }
-
-        public GlobalizationCulture(string name) : base(name)
-        {
-        }
-
-        public GlobalizationCulture(string name, bool useUserOverride) : base(name, useUserOverride)
-        {
-        }
-    }
-
     public class GlobalizationCollectionJson
     {
         [JsonProperty("fa")]
@@ -204,7 +183,7 @@ namespace R8.Lib
         private PropertyInfo FirstOrDefault(Func<CultureInfo, bool> predicate)
         {
             var cultures = GetCultures();
-            var culture = cultures.FirstOrDefault(x => predicate.Invoke(FindCultureFromProperty(x)));
+            var culture = cultures.Find(x => predicate.Invoke(FindCultureFromProperty(x)));
             return culture;
         }
 
@@ -216,7 +195,11 @@ namespace R8.Lib
 
         public string Get(PropertyInfo propertyInfo)
         {
-            return (string)propertyInfo.GetValue(this);
+            if (propertyInfo == null)
+                return null;
+
+            var obj = propertyInfo.GetValue(this);
+            return obj?.ToString();
         }
 
         public string GetLocale(CultureInfo culture, bool useFallback = true, bool returnNullIfEmpty = true)
@@ -230,12 +213,9 @@ namespace R8.Lib
                 return !returnNullIfEmpty ? "N/A" : null;
 
             var thisCulture = Get(culture.EnglishName);
-            var list = this.GetCultures();
-            if (thisCulture != null)
-            {
-                var exceptList = new List<PropertyInfo> { thisCulture };
-                list = list.Except(exceptList).ToList();
-            }
+            var list = this.GetCultures()
+                .Except(thisCulture)
+                .ToList();
 
             list = list
                 .Where(x => !string.IsNullOrEmpty(x.GetValue(this)?.ToString()))
@@ -247,6 +227,41 @@ namespace R8.Lib
                 ? list[0]
                 : list.SelectRandom();
             return Get(fallback);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (!(obj is GlobalizationCollectionJson container))
+                throw new Exception($"{nameof(obj)} must be in type of {nameof(GlobalizationCollectionJson)}");
+
+            var source = GetCultures().ToDictionary(x => x.Name, x => x.GetValue(this)?.ToString());
+            var destination = container.GetCultures().ToDictionary(x => x.Name, x => x.GetValue(container)?.ToString());
+            foreach (var (key, value) in destination)
+            {
+                var sourceValue = source.First(x => x.Key.Equals(key)).Value;
+                if (!string.IsNullOrEmpty(sourceValue))
+                {
+                    if (string.IsNullOrEmpty(value))
+                        return false;
+
+                    if (!sourceValue.Equals(value, StringComparison.InvariantCulture))
+                        return false;
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(value))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var source = GetCultures().Select(x => x.GetValue(this)?.ToString()).ToList();
+            var hash = source.Aggregate(0, (current, src) => current ^ src.GetHashCode());
+            return hash;
         }
     }
 }

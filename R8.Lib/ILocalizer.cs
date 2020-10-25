@@ -35,15 +35,14 @@ namespace R8.Lib
         /// </summary>
         List<CultureInfo> SupportedCultures { get; }
 
-        string this[string text, bool titleize = false] { get; }
+        string this[string text] { get; }
 
         /// <summary>
         /// Gets value from internal dictionary
         /// </summary>
         /// <param name="key">A key to find in internal dictionary</param>
-        /// <param name="ignoreNormalize">Ignores normalize text like ThisIsFake to This Is Fake</param>
         /// <returns></returns>
-        string this[Expression<Func<string>> key, bool ignoreNormalize = false] { get; }
+        string this[Expression<Func<string>> key] { get; }
     }
 
     /// <summary>
@@ -66,13 +65,10 @@ namespace R8.Lib
         public Localizer(LocalizerConfiguration configuration)
         {
             _configuration = configuration;
+            _dictionary = new Dictionary<string, Dictionary<string, string>>();
         }
 
-        private const string CacheKey = "JsonLocalizer";
-
-        private static string GetCultureKey(CultureInfo culture) => $"{CacheKey}_{culture.GetTwoLetterCulture()}";
-
-        private Dictionary<string, string> _dictionary;
+        private readonly Dictionary<string, Dictionary<string, string>> _dictionary;
 
         /// <summary>
         /// Refreshes internal dictionary
@@ -83,26 +79,43 @@ namespace R8.Lib
             if (SupportedCultures == null || !SupportedCultures.Any())
                 throw new NullReferenceException($"'{nameof(SupportedCultures)}' expected to be filled");
 
-            foreach (var path in from culture in SupportedCultures
-                                 let language = culture.GetTwoLetterCulture()
-                                 let currentCacheKey = GetCultureKey(culture)
-                                 select $"{_configuration.FileName}.{language}.json"
-                into fileName
-                                 select !string.IsNullOrEmpty(_configuration.Folder)
-                                     ? Path.Combine(Directory.GetCurrentDirectory(), _configuration.Folder, fileName)
-                                     : Path.Combine(Directory.GetCurrentDirectory(), fileName))
-            {
-                var jsonString = await File.ReadAllTextAsync(path, Encoding.UTF8).ConfigureAwait(false);
-                if (string.IsNullOrEmpty(jsonString))
-                    return;
+            var folder = _configuration.Folder ??
+                         throw new ArgumentNullException($"Missing {nameof(_configuration.Folder)}");
 
-                var json = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
-                if (json == null)
-                    return;
+            var fileName = _configuration.FileName ??
+                           throw new ArgumentNullException($"Missing {nameof(_configuration.FileName)}");
 
-                foreach (var (key, value) in json)
-                    _dictionary.Add(key, HttpUtility.HtmlEncode(value));
-            }
+            _dictionary.Clear();
+            foreach (var supportedCulture in SupportedCultures)
+                await HandleLanguageAsync(supportedCulture).ConfigureAwait(false);
+        }
+
+        public async Task HandleLanguageAsync(CultureInfo culture)
+        {
+            var language = culture.GetTwoLetterCulture();
+
+            var jsonFile = $"{_configuration.FileName}.{language}.json";
+            var jsonPath = Path.Combine(_configuration.Folder, jsonFile);
+
+            using var sr = new StreamReader(jsonPath, Encoding.UTF8);
+            var jsonString = await sr.ReadToEndAsync().ConfigureAwait(false);
+            var dic = HandleDictionary(jsonString);
+            _dictionary.Add(language, dic);
+
+            sr.Dispose();
+        }
+
+        public static Dictionary<string, string> HandleDictionary(string jsonString)
+        {
+            if (string.IsNullOrEmpty(jsonString))
+                throw new Exception($"JSON file is not in an expected format");
+
+            var json = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
+            var dic = new Dictionary<string, string>();
+            foreach (var (key, value) in json)
+                dic.Add(key, HttpUtility.HtmlEncode(value));
+
+            return dic;
         }
 
         public static string GetKey(Expression<Func<string>> key)
@@ -123,32 +136,39 @@ namespace R8.Lib
         /// Gets value from internal dictionary
         /// </summary>
         /// <param name="text">A key to find in internal dictionary</param>
-        /// <param name="titleize">Ignores normalize text like ThisIsFake to This Is Fake</param>
-        public string this[string text, bool titleize = false]
+        /// <param name="culture">Culture-specific translation</param>
+        public string this[string text, CultureInfo culture]
         {
             get
             {
-                // if (text == null)
-                // throw new ArgumentNullException(nameof(text));
-
                 if (string.IsNullOrEmpty(text))
-                    return string.Empty;
+                    return null;
 
-                var tempKey = text.Replace(" ", "");
-                var hasLocalization = TryGetValue(tempKey, out var localized);
-                if (!hasLocalization)
-                    return text;
-
-                return localized;
+                var hasLocalization = TryGetValue(culture, text, out var localized);
+                return hasLocalization
+                    ? localized
+                    : text;
             }
         }
 
         /// <summary>
         /// Gets value from internal dictionary
         /// </summary>
+        /// <param name="text">A key to find in internal dictionary</param>
+        public string this[string text] => this[text, CultureInfo.CurrentCulture];
+
+        /// <summary>
+        /// Gets value from internal dictionary
+        /// </summary>
         /// <param name="key">A key to find in internal dictionary</param>
-        /// <param name="ignoreNormalize">Ignores normalize text like ThisIsFake to This Is Fake</param>
-        public string this[Expression<Func<string>> key, bool ignoreNormalize = false]
+        public string this[Expression<Func<string>> key] => this[key, CultureInfo.CurrentCulture];
+
+        /// <summary>
+        /// Gets value from internal dictionary
+        /// </summary>
+        /// <param name="key">A key to find in internal dictionary</param>
+        /// <param name="culture">Culture-specific translation</param>
+        public string this[Expression<Func<string>> key, CultureInfo culture]
         {
             get
             {
@@ -156,62 +176,39 @@ namespace R8.Lib
                     throw new ArgumentNullException(nameof(key));
 
                 var myKey = GetKey(key);
-                var localized = this[myKey, !ignoreNormalize];
-                return localized;
+                return this[myKey, culture];
             }
+        }
+
+        public bool TryGetValue(CultureInfo culture, string key, out string localized)
+        {
+            var mean = string.Empty;
+            var currentCulture = culture.GetTwoLetterCulture();
+            var (dictionaryCulture, dictionary) = _dictionary.FirstOrDefault(x => x.Key == currentCulture);
+            if (dictionary == null)
+            {
+                localized = key;
+                return false;
+            }
+
+            if (dictionary.TryGetValue(key, out var value))
+            {
+                localized = HttpUtility.HtmlDecode(value);
+                return true;
+            }
+
+            localized = key;
+            return false;
         }
 
         public bool TryGetValue(string key, out string localized)
         {
-            var currentCulture = CultureInfo.CurrentCulture;
-
-            var mean = string.Empty;
-            var currentCacheKey = GetCultureKey(CultureInfo.CurrentCulture);
-            if (_dictionary.TryGetValue(currentCacheKey, out var value))
-            {
-                try
-                {
-                    mean = HttpUtility.HtmlDecode(value);
-                }
-                catch
-                {
-                }
-            }
-            //if (currentCulture.Equals(new CultureInfo("tr")) || currentCulture.Equals(new CultureInfo("fa")))
-            //{
-            //}
-            //else
-            //{
-            //    if (_configuration.StaticResourceType == null)
-            //        throw new NullReferenceException(nameof(_configuration.StaticResourceType) + " must be filled with any *.resx");
-
-            //    var resManager = new ResourceManager(_configuration.StaticResourceType);
-            //    try
-            //    {
-            //        var result = resManager.GetString(key);
-            //        if (result != null)
-            //        {
-            //            mean = result;
-            //        }
-            //    }
-            //    catch
-            //    {
-            //    }
-            //}
-
-            localized = !string.IsNullOrEmpty(mean)
-                    ? mean
-                    : key;
-
-            return !string.IsNullOrEmpty(mean);
+            return TryGetValue(CultureInfo.CurrentCulture, key, out localized);
         }
     }
 
     public class LocalizerConfiguration
     {
-        public Type StaticResourceType { get; set; }
-        public TimeSpan CacheControl { get; set; }
-
         /// <summary>
         /// Absolute path under project root
         /// </summary>
