@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore</PackageId>
-    <Version>1.1.7</Version>
+    <Version>1.1.9</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Add many useful features to AspNetCore 3.0</PackageDescription>
@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
-    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.11" />
+    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.13" />
   </ItemGroup>
 
 </Project>

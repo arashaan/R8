@@ -113,7 +113,7 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
                 case ResponseCollection responseGroup:
                     {
                         var results = from childResponse in responseGroup.Results
-                                      let childEntity = GetIResponseUnderlyingEntity(childResponse)
+                                      let childEntity = GetIResponseUnderlyingEntity(childResponse.Value)
                                       where childEntity != null
                                       select childEntity;
                         var resultEntities = results.ToList();
