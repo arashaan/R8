@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+using R8.Lib.Localization;
+
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace R8.Lib.AspNetCore.EntityFrameworkCore
 {
@@ -10,9 +13,9 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
     {
         public string NameJson { get; set; }
 
-        public GlobalizationCollectionJson Name
+        public LocalizerContainer Name
         {
-            get => GlobalizationCollectionJson.Deserialize(NameJson);
+            get => LocalizerContainer.Deserialize(NameJson);
             set => NameJson = value.Serialize();
         }
     }
@@ -25,8 +28,8 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
     {
         public EntityBaseGlobalized()
         {
-            NameJson = new GlobalizationCollectionJson().Serialize();
-            Name = new GlobalizationCollectionJson();
+            NameJson = new LocalizerContainer().Serialize();
+            Name = new LocalizerContainer();
         }
 
         public string CanonicalName { get; set; }
@@ -35,9 +38,9 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
         public string NameJson { get; set; }
 
         [NotMapped]
-        public GlobalizationCollectionJson Name
+        public LocalizerContainer Name
         {
-            get => GlobalizationCollectionJson.Deserialize(NameJson);
+            get => LocalizerContainer.Deserialize(NameJson);
             set => NameJson = value.Serialize();
         }
     }

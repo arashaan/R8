@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 
 using System;
 using System.Linq;
+using R8.Lib.Localization;
 
 namespace R8.Lib.AspNetCore.Localizer
 {
@@ -22,7 +23,7 @@ namespace R8.Lib.AspNetCore.Localizer
                 var configuration = new LocalizerConfiguration();
                 config(configuration);
 
-                var instance = new Lib.Localizer(configuration)
+                var instance = new Localization.Localizer(configuration)
                 {
                     SupportedCultures = requestLocalization.Value.SupportedCultures.ToList(),
                     DefaultCulture = requestLocalization.Value.DefaultRequestCulture.Culture

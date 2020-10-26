@@ -8,7 +8,7 @@ using R8.Lib.AspNetCore.Base;
 using System.Linq;
 using System.Net;
 using System.Text.Encodings.Web;
-
+using R8.Lib.Localization;
 using PageModel = R8.Lib.AspNetCore.Routing.PageModel;
 
 namespace R8.Lib.AspNetCore.TagHelpers

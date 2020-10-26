@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using Newtonsoft.Json;
 
+using R8.Lib.Localization;
 using R8.Lib.MethodReturn;
 
 using System;
@@ -80,16 +81,16 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
                     x => IPAddress.Parse(x));
         }
 
-        public static PropertyBuilder<GlobalizationCollectionJson> HasGlobalizationContainerConversion(this PropertyBuilder<GlobalizationCollectionJson> property)
+        public static PropertyBuilder<LocalizerContainer> HasLocalizerContainerConversion(this PropertyBuilder<LocalizerContainer> property)
         {
             property.HasConversion(
                 v => v.Serialize(),
-                v => GlobalizationCollectionJson.Deserialize(v))
+                v => LocalizerContainer.Deserialize(v))
                 .Metadata.SetValueComparer(
-                new ValueComparer<GlobalizationCollectionJson>(
+                new ValueComparer<LocalizerContainer>(
                     (l, r) => l.Serialize() == r.Serialize(),
                     v => v == null ? 0 : v.Serialize().GetHashCode(),
-                    v => GlobalizationCollectionJson.Deserialize(v.Serialize())));
+                    v => LocalizerContainer.Deserialize(v.Serialize())));
 
             return property;
         }

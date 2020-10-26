@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using R8.Lib.Localization;
 
 namespace R8.Lib.AspNetCore.Attributes
 {

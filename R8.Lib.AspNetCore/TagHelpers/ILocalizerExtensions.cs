@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 
-using R8.Lib.AspNetCore.Globalization;
+using R8.Lib.Localization;
 
 using System;
 using System.Linq;
@@ -25,12 +25,10 @@ namespace R8.Lib.AspNetCore.TagHelpers
                 throw new ArgumentNullException(nameof(args));
 
             var myKey = Localizer.GetKey(key);
-            var hasLocalized = localizer.TryGetValue(myKey, out var localized);
+            var localized = localizer[myKey].ToString();
             var newArgs = args.Select(x => x.ToString()).ToArray();
 
-            var final = hasLocalized
-                ? new HtmlString(string.Format(localized, newArgs))
-                : new HtmlString(myKey);
+            var final = new HtmlString(string.Format(localized, newArgs));
             return final;
         }
 
@@ -52,10 +50,7 @@ namespace R8.Lib.AspNetCore.TagHelpers
                 throw new ArgumentNullException(nameof(tags));
 
             var myKey = Localizer.GetKey(key);
-            var hasLocalization = localizer.TryGetValue(myKey, out var localized);
-            if (!hasLocalization)
-                return new HtmlString(myKey);
-
+            var localized = localizer[myKey].ToString();
             var html = localized.ReplaceHtml(tags);
             return html;
         }

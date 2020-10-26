@@ -4,6 +4,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using R8.Lib.Localization;
 
 namespace R8.Lib.AspNetCore.Base
 {

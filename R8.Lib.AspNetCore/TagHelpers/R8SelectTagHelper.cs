@@ -8,6 +8,7 @@ using R8.Lib.AspNetCore.Attributes;
 using System;
 using System.Linq;
 using System.Reflection;
+using R8.Lib.Localization;
 
 namespace R8.Lib.AspNetCore.TagHelpers
 {
