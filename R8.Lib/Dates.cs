@@ -1,7 +1,10 @@
 ﻿using NodaTime;
+using NodaTime.TimeZones;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 namespace R8.Lib
@@ -47,6 +50,21 @@ namespace R8.Lib
             var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind(utcDateTime, DateTimeKind.Utc));
             var result = instant.InZone(timeZone).ToDateTimeUnspecified();
             return result;
+        }
+
+        public static IEnumerable<DateTimeZoneMore> GetNodaTimeZones()
+        {
+            var source = TzdbDateTimeZoneSource.Default;
+            var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
+
+            var list = from timeZone in systemTimeZones
+                       let id = source.TzdbToWindowsIds.FirstOrDefault(x => x.Value.Equals(timeZone.Id)).Key
+                       where id != null
+                       let zone = DateTimeZoneProviders.Tzdb[id]
+                       let offset = zone.GetUtcOffset(SystemClock.Instance.GetCurrentInstant())
+                       orderby offset
+                       select new DateTimeZoneMore { NodaTimeZone = zone, Offset = offset, SystemTimeZone = timeZone };
+            return list;
         }
 
         public static DateTime PersianToGregorian(string persianDate)
