@@ -1,5 +1,6 @@
 ﻿using R8.Lib.Attributes;
 using R8.Lib.Enums;
+using R8.Lib.Localization;
 
 using System.Linq;
 using System.Reflection;
@@ -28,21 +29,18 @@ namespace R8.Lib.MethodReturn
             }
             else
             {
+                LocalizerContainer tempError;
                 var flagShow = typeof(Flags).GetMember(response.Status.ToString()).FirstOrDefault()
                     ?.GetCustomAttribute<FlagShowAttribute>();
                 if (flagShow == null)
                 {
-                    var hasValue = response.Localizer.TryGetValue("Error", out error);
-                    error = hasValue
-                        ? $"{error} {(int)response.Status}"
-                        : $"Error {(int)response.Status}";
+                    tempError = response.Localizer["Error"];
+                    error = $"{tempError} {(int)response.Status}";
                 }
                 else
                 {
-                    var hasValue = response.Localizer.TryGetValue(response.Status.ToString(), out error);
-                    error = hasValue
-                        ? response.Status.ToString().ToNormalized()
-                        : response.Status.ToString();
+                    tempError = response.Localizer[response.Status.ToString()];
+                    error = tempError.ToString();
                 }
             }
 

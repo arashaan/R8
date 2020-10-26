@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace R8.Lib
+namespace R8.Lib.Localization
 {
     /// <summary>
     /// Returns User-defined dictionary value based on Database
@@ -23,8 +23,6 @@ namespace R8.Lib
         /// <returns></returns>
         Task RefreshAsync();
 
-        bool TryGetValue(string key, out string localized);
-
         /// <summary>
         /// Gets default culture
         /// </summary>
@@ -35,14 +33,14 @@ namespace R8.Lib
         /// </summary>
         List<CultureInfo> SupportedCultures { get; }
 
-        string this[string text] { get; }
+        LocalizerContainer this[string text] { get; }
 
         /// <summary>
         /// Gets value from internal dictionary
         /// </summary>
         /// <param name="key">A key to find in internal dictionary</param>
         /// <returns></returns>
-        string this[Expression<Func<string>> key] { get; }
+        LocalizerContainer this[Expression<Func<string>> key] { get; }
     }
 
     /// <summary>
@@ -65,10 +63,10 @@ namespace R8.Lib
         public Localizer(LocalizerConfiguration configuration)
         {
             _configuration = configuration;
-            _dictionary = new Dictionary<string, Dictionary<string, string>>();
+            _dictionary = new Dictionary<string, LocalizerContainer>();
         }
 
-        private readonly Dictionary<string, Dictionary<string, string>> _dictionary;
+        private readonly Dictionary<string, LocalizerContainer> _dictionary;
 
         /// <summary>
         /// Refreshes internal dictionary
@@ -76,14 +74,17 @@ namespace R8.Lib
         /// <returns></returns>
         public async Task RefreshAsync()
         {
+            if (_configuration == null)
+                throw new NullReferenceException($"'{nameof(_configuration)}' expected to be filled");
+
             if (SupportedCultures == null || !SupportedCultures.Any())
                 throw new NullReferenceException($"'{nameof(SupportedCultures)}' expected to be filled");
 
-            var folder = _configuration.Folder ??
-                         throw new ArgumentNullException($"Missing {nameof(_configuration.Folder)}");
+            if (string.IsNullOrEmpty(_configuration.Folder))
+                throw new ArgumentNullException($"Missing {nameof(_configuration.Folder)}");
 
-            var fileName = _configuration.FileName ??
-                           throw new ArgumentNullException($"Missing {nameof(_configuration.FileName)}");
+            if (string.IsNullOrEmpty(_configuration.FileName))
+                throw new ArgumentNullException($"Missing {nameof(_configuration.FileName)}");
 
             _dictionary.Clear();
             foreach (var supportedCulture in SupportedCultures)
@@ -100,7 +101,21 @@ namespace R8.Lib
             using var sr = new StreamReader(jsonPath, Encoding.UTF8);
             var jsonString = await sr.ReadToEndAsync().ConfigureAwait(false);
             var dic = HandleDictionary(jsonString);
-            _dictionary.Add(language, dic);
+            if (dic?.Any() == true)
+            {
+                foreach (var (key, value) in dic)
+                {
+                    var (_, localizerContainer) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
+                    if (localizerContainer == null)
+                    {
+                        _dictionary.Add(key, new LocalizerContainer(culture, value));
+                    }
+                    else
+                    {
+                        localizerContainer.Set(culture, value);
+                    }
+                }
+            }
 
             sr.Dispose();
         }
@@ -135,40 +150,24 @@ namespace R8.Lib
         /// <summary>
         /// Gets value from internal dictionary
         /// </summary>
-        /// <param name="text">A key to find in internal dictionary</param>
-        /// <param name="culture">Culture-specific translation</param>
-        public string this[string text, CultureInfo culture]
+        /// <param name="key">A key to find in internal dictionary</param>
+        public LocalizerContainer this[string key]
         {
             get
             {
-                if (string.IsNullOrEmpty(text))
+                if (string.IsNullOrEmpty(key))
                     return null;
 
-                var hasLocalization = TryGetValue(culture, text, out var localized);
-                return hasLocalization
-                    ? localized
-                    : text;
+                var localized = TryGetValue(key);
+                return localized;
             }
         }
 
         /// <summary>
         /// Gets value from internal dictionary
         /// </summary>
-        /// <param name="text">A key to find in internal dictionary</param>
-        public string this[string text] => this[text, CultureInfo.CurrentCulture];
-
-        /// <summary>
-        /// Gets value from internal dictionary
-        /// </summary>
         /// <param name="key">A key to find in internal dictionary</param>
-        public string this[Expression<Func<string>> key] => this[key, CultureInfo.CurrentCulture];
-
-        /// <summary>
-        /// Gets value from internal dictionary
-        /// </summary>
-        /// <param name="key">A key to find in internal dictionary</param>
-        /// <param name="culture">Culture-specific translation</param>
-        public string this[Expression<Func<string>> key, CultureInfo culture]
+        public LocalizerContainer this[Expression<Func<string>> key]
         {
             get
             {
@@ -176,34 +175,19 @@ namespace R8.Lib
                     throw new ArgumentNullException(nameof(key));
 
                 var myKey = GetKey(key);
-                return this[myKey, culture];
+                return this[myKey];
             }
         }
 
-        public bool TryGetValue(CultureInfo culture, string key, out string localized)
+        public LocalizerContainer TryGetValue(CultureInfo culture, string key)
         {
-            var mean = string.Empty;
-            var currentCulture = culture.GetTwoLetterCulture();
-            var (dictionaryCulture, dictionary) = _dictionary.FirstOrDefault(x => x.Key == currentCulture);
-            if (dictionary == null)
-            {
-                localized = key;
-                return false;
-            }
-
-            if (dictionary.TryGetValue(key, out var value))
-            {
-                localized = HttpUtility.HtmlDecode(value);
-                return true;
-            }
-
-            localized = key;
-            return false;
+            var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
+            return container ?? new LocalizerContainer(culture, key);
         }
 
-        public bool TryGetValue(string key, out string localized)
+        public LocalizerContainer TryGetValue(string key)
         {
-            return TryGetValue(CultureInfo.CurrentCulture, key, out localized);
+            return TryGetValue(CultureInfo.CurrentCulture, key);
         }
     }
 

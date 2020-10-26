@@ -1,4 +1,5 @@
 ﻿using R8.Lib.Enums;
+using R8.Lib.Localization;
 
 namespace R8.Lib.MethodReturn
 {
