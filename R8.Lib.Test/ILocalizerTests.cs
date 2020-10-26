@@ -1,4 +1,6 @@
-﻿using System;
+﻿using R8.Lib.Localization;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -58,26 +60,6 @@ namespace R8.Lib.Test
             Assert.Empty(dic);
         }
 
-        //[Fact]
-        //public async System.Threading.Tasks.Task CallRefreshAsync()
-        //{
-        //    // Assets
-        //    var configuration = new LocalizerConfiguration
-        //    {
-        //        Folder = FolderPath,
-        //        FileName = JsonFileName
-        //    };
-
-        //    // Act
-        //    var localizer = new Localizer(configuration)
-        //    {
-        //        SupportedCultures = SupportedCultures
-        //    };
-        //    await localizer.RefreshAsync();
-
-        //    // Arrange
-        //    await Assert.
-        //}
         [Fact]
         public async Task CallHandleLanguage_FileNotFound()
         {
@@ -99,22 +81,6 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public async Task CallTryGetValue_IncorrectCulture()
-        {
-            // Assets
-            var key = "AppName";
-            var culture = CultureInfo.GetCultureInfo("es");
-
-            // Act
-            await _localizer.RefreshAsync();
-            var getter = _localizer.TryGetValue(culture, key, out var localized);
-
-            // Arrange
-            Assert.False(getter);
-            Assert.Equal(localized, key);
-        }
-
-        [Fact]
         public async Task CallTryGetValue_SpecificCulture()
         {
             // Assets
@@ -123,40 +89,39 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var getter = _localizer.TryGetValue(culture, key, out var localized);
+            var localized = _localizer.TryGetValue(culture, key);
 
             // Arrange
-            Assert.True(getter);
             Assert.NotNull(localized);
         }
 
-        [Fact]
-        public async Task CallTryGetValue()
-        {
-            // Assets
-            var key = "AppName";
+        // [Fact]
+        // public async Task CallTryGetValue()
+        // {
+        //     // Assets
+        //     var key = "AppName";
+        //
+        //     // Act
+        //     await _localizer.RefreshAsync();
+        //     var getter = _localizer.TryGetValue(key, out var localized);
+        //
+        //     // Arrange
+        //     Assert.True(getter);
+        //     Assert.NotNull(localized);
+        // }
 
-            // Act
-            await _localizer.RefreshAsync();
-            var getter = _localizer.TryGetValue(key, out var localized);
+        //[Fact]
+        //public void CallGetter_NullText()
+        //{
+        //    // Assets
+        //    var key = string.Empty;
 
-            // Arrange
-            Assert.True(getter);
-            Assert.NotNull(localized);
-        }
+        //    // Act
+        //    var translation = _localizer[key];
 
-        [Fact]
-        public void CallGetter_NullText()
-        {
-            // Assets
-            var key = string.Empty;
-
-            // Act
-            var translation = _localizer[key, DefaultCulture];
-
-            // Arrange
-            Assert.Null(translation);
-        }
+        //    // Arrange
+        //    Assert.Null(translation[DefaultCulture]);
+        //}
 
         [Fact]
         public async Task CallGetter_NullExpressionKey()
@@ -166,7 +131,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            Assert.Throws<ArgumentNullException>(() => _localizer[key, DefaultCulture]);
+            Assert.Throws<ArgumentNullException>(() => _localizer[key]);
         }
 
         [Fact]
@@ -177,7 +142,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key, DefaultCulture];
+            var translation = _localizer[key][DefaultCulture, false];
 
             // Arrange
             Assert.Equal("EKOHOS", translation);
@@ -191,24 +156,24 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key];
+            var translation = _localizer[key]["en", false];
 
             // Arrange
             Assert.Equal("ECOHOS Holding", translation);
         }
 
         [Fact]
-        public async Task CallGetter()
+        public async Task CallGetter4()
         {
             // Assets
-            var key = "AppName";
+            Expression<Func<string>> key = () => "AppName";
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key];
+            var translation = _localizer[(string)null];
 
             // Arrange
-            Assert.Equal("ECOHOS Holding", translation);
+            Assert.Null(translation);
         }
 
         [Fact]
@@ -219,7 +184,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key, DefaultCulture];
+            var translation = _localizer[key][DefaultCulture, false];
 
             // Arrange
             Assert.Equal("EKOHOS", translation);
@@ -233,7 +198,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key, DefaultCulture];
+            var translation = _localizer[key][DefaultCulture, false];
 
             // Arrange
             Assert.NotEqual(translation, key);
@@ -248,11 +213,23 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var getter = _localizer.TryGetValue(culture, key, out var localized);
+            var localized = _localizer.TryGetValue(culture, key);
 
             // Arrange
-            Assert.False(getter);
             Assert.Equal(key, localized);
+        }
+
+        [Fact]
+        public async System.Threading.Tasks.Task CallRefreshAsync_ConfigurationNull()
+        {
+            // Act
+            var localizer = new Localizer(null)
+            {
+                SupportedCultures = SupportedCultures
+            };
+
+            // Arrange
+            await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());
         }
 
         [Fact]
