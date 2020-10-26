@@ -250,13 +250,12 @@ namespace R8.Lib.Test
         {
             // Assets
             var container1 = new LocalizerContainer();
-            var shouldBeSerialized = (string)null;
 
             // Acts
             var serialized = container1.Serialize();
 
             // Arranges
-            Assert.Equal(shouldBeSerialized, serialized);
+            Assert.Null(serialized);
         }
 
         [Fact]
@@ -274,24 +273,6 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallDeserialize()
-        {
-            // Assets
-            var container1 = new LocalizerContainer
-            {
-                ["en"] = "Arash",
-                ["fa"] = "آرش"
-            };
-            var json = JsonConvert.SerializeObject(container1);
-
-            // Acts
-            var deSerialized = LocalizerContainer.Deserialize(json);
-
-            // Arranges
-            Assert.Equal(deSerialized, container1);
-        }
-
-        [Fact]
         public void CallDeserialize_DirectCast()
         {
             // Assets
@@ -300,7 +281,7 @@ namespace R8.Lib.Test
                 ["en"] = "Arash",
                 ["fa"] = "آرش"
             };
-            var json = JsonConvert.SerializeObject(container1);
+            var json = container1.Serialize();
 
             // Acts
             var deSerialized = (LocalizerContainer)json;
@@ -353,7 +334,7 @@ namespace R8.Lib.Test
             {
                 ["en"] = "Arash",
             };
-            var shouldBeSerialized = "\"{\\\"en\\\":\\\"Arash\\\"}\"";
+            var shouldBeSerialized = "{\"en\":\"Arash\"}";
 
             // Acts
             var serialized = container1.Serialize();
@@ -371,13 +352,32 @@ namespace R8.Lib.Test
                 ["en"] = "Arash",
                 ["fa"] = "آرش"
             };
-            var shouldBeSerialized = "\"{\\\"en\\\":\\\"Arash\\\",\\\"fa\\\":\\\"آرش\\\"}\"";
+            var shouldBeSerialized = "{\"en\":\"Arash\",\"fa\":\"آرش\"}";
 
             // Acts
             var serialized = container1.Serialize();
 
             // Arranges
             Assert.Equal(shouldBeSerialized, serialized);
+        }
+
+        [Fact]
+        public void CallDeserialize()
+        {
+            // Assets
+            var serialized = @"{""fa"":""خدمات خانوادگی"",""tr"":""Aile Hizmetleri"",""en"":""Family Services""}";
+            var shouldBe = new LocalizerContainer
+            {
+                ["en"] = "Family Services",
+                ["fa"] = "خدمات خانوادگی",
+                ["tr"] = "Aile Hizmetleri"
+            };
+
+            // Acts
+            var deserialized = LocalizerContainer.Deserialize(serialized);
+
+            // Arranges
+            Assert.Equal(shouldBe, deserialized);
         }
 
         [Fact]

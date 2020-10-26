@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using R8.Lib.Enums;
 
@@ -47,9 +48,12 @@ namespace R8.Lib.Localization
 
         public string Serialize()
         {
+            var settings = JsonSettingsExtensions.JsonNetSettings;
+            settings.NullValueHandling = NullValueHandling.Ignore;
+            settings.DefaultValueHandling = DefaultValueHandling.Ignore;
             return !HasValue()
                 ? null
-                : JsonConvert.SerializeObject(this);
+                : JsonConvert.SerializeObject(this, settings);
         }
 
         public static implicit operator string(LocalizerContainer obj)
@@ -62,43 +66,40 @@ namespace R8.Lib.Localization
             return Deserialize(str);
         }
 
-        internal class ContainerJsonConverter : JsonConverter<LocalizerContainer>
+        internal class ContainerJsonConverter : JsonConverter
         {
-            private static JsonSerializerSettings JsonSettings
+            public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
             {
-                get
-                {
-                    var settings = JsonSettingsExtensions.JsonNetSettings;
-                    settings.NullValueHandling = NullValueHandling.Ignore;
-                    settings.DefaultValueHandling = DefaultValueHandling.Ignore;
-                    return settings;
-                }
+                var jObject = new JObject();
+                var val = (LocalizerContainer)value;
+
+                if (val.Cultures?.Any() == true)
+                    foreach (var culture in val.Cultures)
+                        jObject.Add(culture.Culture.GetTwoLetterCulture(), culture.Value);
+
+                jObject.WriteTo(writer);
             }
 
-            public override void WriteJson(JsonWriter writer, LocalizerContainer value, JsonSerializer serializer)
+            public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
             {
-                var dictionary = new Dictionary<string, string>();
-                if (value.Cultures?.Any() == true)
-                    foreach (var localizerCulture in value.Cultures)
-                        dictionary.Add(localizerCulture.Culture.GetTwoLetterCulture(), localizerCulture.Value);
-
-                var json = JsonConvert.SerializeObject(dictionary, JsonSettings);
-                writer.WriteValue(json);
-            }
-
-            public override LocalizerContainer ReadJson(JsonReader reader, Type objectType, LocalizerContainer existingValue, bool hasExistingValue,
-                JsonSerializer serializer)
-            {
-                if (reader.Value == null)
+                if (reader.TokenType == JsonToken.Null)
                     return new LocalizerContainer();
 
-                var cultures = JsonConvert.DeserializeObject<Dictionary<string, string>>(reader.Value.ToString(), JsonSettings);
                 var obj = new LocalizerContainer();
-                if (cultures?.Any() == true)
-                    foreach (var (key, value) in cultures)
-                        obj.Set(key, value);
+                var jObject = JObject.Load(reader);
+                var dictionary = jObject.ToObject<Dictionary<string, string>>();
+                if (dictionary == null || !dictionary.Any())
+                    return new LocalizerContainer();
+
+                foreach (var (key, mean) in dictionary)
+                    obj.Set(key, mean);
 
                 return obj;
+            }
+
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(LocalizerContainer);
             }
         }
 
