@@ -33,7 +33,18 @@ namespace R8.Lib.Localization
         /// </summary>
         List<CultureInfo> SupportedCultures { get; }
 
-        LocalizerContainer this[string text] { get; }
+        /// <summary>
+        /// Gets value from internal dictionary
+        /// </summary>
+        /// <param name="key">A key to find in internal dictionary</param>
+        /// <param name="culture">Specific culture to search in</param>
+        string this[string key, CultureInfo culture] { get; }
+
+        /// <summary>
+        /// Gets value from internal dictionary
+        /// </summary>
+        /// <param name="key">A key to find in internal dictionary</param>
+        LocalizerContainer this[string key] { get; }
 
         /// <summary>
         /// Gets value from internal dictionary
@@ -105,14 +116,14 @@ namespace R8.Lib.Localization
             {
                 foreach (var (key, value) in dic)
                 {
-                    var (_, localizerContainer) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
-                    if (localizerContainer == null)
+                    var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
+                    if (container == null)
                     {
                         _dictionary.Add(key, new LocalizerContainer(culture, value));
                     }
                     else
                     {
-                        localizerContainer.Set(culture, value);
+                        container.Set(culture, value);
                     }
                 }
             }
@@ -151,6 +162,23 @@ namespace R8.Lib.Localization
         /// Gets value from internal dictionary
         /// </summary>
         /// <param name="key">A key to find in internal dictionary</param>
+        /// <param name="culture">Specific culture to search in</param>
+        public string this[string key, CultureInfo culture]
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(key))
+                    return null;
+
+                var localized = TryGetValue(culture, key).Get(culture, false, true);
+                return localized;
+            }
+        }
+
+        /// <summary>
+        /// Gets value from internal dictionary
+        /// </summary>
+        /// <param name="key">A key to find in internal dictionary</param>
         public LocalizerContainer this[string key]
         {
             get
@@ -158,7 +186,7 @@ namespace R8.Lib.Localization
                 if (string.IsNullOrEmpty(key))
                     return null;
 
-                var localized = TryGetValue(key);
+                var localized = TryGetValue(CultureInfo.CurrentCulture, key);
                 return localized;
             }
         }
@@ -182,12 +210,13 @@ namespace R8.Lib.Localization
         public LocalizerContainer TryGetValue(CultureInfo culture, string key)
         {
             var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
-            return container ?? new LocalizerContainer(culture, key);
-        }
+            if (container == null)
+                return new LocalizerContainer(culture, key);
 
-        public LocalizerContainer TryGetValue(string key)
-        {
-            return TryGetValue(CultureInfo.CurrentCulture, key);
+            foreach (var containerCulture in container.Cultures)
+                containerCulture.Value = HttpUtility.HtmlDecode(containerCulture.Value);
+
+            return container;
         }
     }
 

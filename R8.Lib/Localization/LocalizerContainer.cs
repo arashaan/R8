@@ -193,11 +193,18 @@ namespace R8.Lib.Localization
             return clone;
         }
 
+        /// <summary>
+        /// Returns a string that represents Final Meaning without Fallback
+        /// </summary>
+        /// <param name="returnNullIfEmpty">Determine return null of N/A</param>
         public string ToString(bool returnNullIfEmpty)
         {
             return Get(CultureInfo.CurrentCulture, false, returnNullIfEmpty);
         }
 
+        /// <summary>
+        /// Returns a string that represents Final Meaning with Fallback
+        /// </summary>
         public override string ToString()
         {
             return Get(CultureInfo.CurrentCulture, true, false);

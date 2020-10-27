@@ -7,7 +7,7 @@ namespace R8.Lib
 {
     public static class RandomSelector
     {
-        public static int GenerateSixDigitToken(int length = 6)
+        public static int GenerateDigitToken(int length = 6)
         {
             if (length < 4)
                 throw new Exception($"{length} must be equal-greater than 4");

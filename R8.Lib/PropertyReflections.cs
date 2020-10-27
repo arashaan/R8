@@ -1,4 +1,6 @@
-﻿using System;
+﻿using R8.Lib.Attributes;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using R8.Lib.Attributes;
 
 namespace R8.Lib
 {
@@ -76,17 +77,12 @@ namespace R8.Lib
 
         public static string GetMemberName<T>(this Expression<T> expression)
         {
-            switch (expression.Body)
+            return expression.Body switch
             {
-                case MemberExpression m:
-                    return m.Member.Name;
-
-                case UnaryExpression u when u.Operand is MemberExpression m:
-                    return m.Member.Name;
-
-                default:
-                    throw new NotImplementedException(expression.GetType().ToString());
-            }
+                MemberExpression m => m.Member.Name,
+                UnaryExpression u when u.Operand is MemberExpression m => m.Member.Name,
+                _ => throw new NotImplementedException(expression.GetType().ToString())
+            };
         }
 
         public static List<Type> GetBaseTypes(this Type type)
@@ -101,8 +97,7 @@ namespace R8.Lib
                     found = true;
 
                 type = type.BaseType;
-            } while (found == false);
-
+            } while (!found);
             return nestedTypes;
         }
 
@@ -284,32 +279,5 @@ namespace R8.Lib
             : expression is UnaryExpression unary && expression.NodeType == ExpressionType.Quote
               ? (LambdaExpression)unary.Operand
               : null;
-    }
-
-    public class ExpressionArgument
-    {
-        public ExpressionArgument(string name, LambdaExpression expression)
-        {
-            Name = name;
-            Expression = expression;
-        }
-
-        public ExpressionArgument()
-        {
-        }
-
-        public void Deconstruct(out string name, out LambdaExpression expression)
-        {
-            name = Name;
-            expression = Expression;
-        }
-
-        public string Name { get; set; }
-        public LambdaExpression Expression { get; set; }
-
-        public override string ToString()
-        {
-            return $".{Name}({Expression})";
-        }
     }
 }

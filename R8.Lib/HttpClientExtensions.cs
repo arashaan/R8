@@ -9,8 +9,8 @@ namespace R8.Lib
         public static async Task<string> GetAsync(this HttpClientHandler clientHandler, string url)
         {
             var client = new HttpClient(clientHandler);
-            var responseMessage = await client.GetAsync(url);
-            var response = await responseMessage.Content.ReadAsStringAsync();
+            var responseMessage = await client.GetAsync(url).ConfigureAwait(false);
+            var response = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             return response;
         }
 
@@ -22,7 +22,7 @@ namespace R8.Lib
         public static async Task<IpViewModel> GetIpAddressAsync(string ipAddress)
         {
             using var clientHandler = new HttpClientHandler();
-            var json = await clientHandler.GetAsync($"http://free.ipwhois.io/json/{ipAddress}");
+            var json = await clientHandler.GetAsync($"http://free.ipwhois.io/json/{ipAddress}").ConfigureAwait(false);
             var jsonObj = JsonConvert.DeserializeObject<IpViewModel>(json);
             clientHandler.Dispose();
             return jsonObj;

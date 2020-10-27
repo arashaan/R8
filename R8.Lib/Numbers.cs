@@ -71,13 +71,12 @@ namespace R8.Lib
         public static string FixUnicodeNumbers(this string num)
         {
             var result = "";
-            var length = num.Length;
-            if (length == 0)
+            if (string.IsNullOrEmpty(num))
                 return num;
 
-            for (var index = 0; index < length; ++index)
+            foreach (var digit in num)
             {
-                var character = num[index];
+                var character = digit;
                 if ('۰' <= character && character <= '۹')
                     character -= 'ۀ';
                 result += character;

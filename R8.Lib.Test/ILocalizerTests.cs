@@ -163,6 +163,34 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public async Task CallGetter_WithCulture()
+        {
+            // Assets
+            var key = "AppName";
+
+            // Act
+            await _localizer.RefreshAsync();
+            var translation = _localizer[key, DefaultCulture];
+
+            // Arrange
+            Assert.Equal("EKOHOS", translation);
+        }
+
+        [Fact]
+        public async Task CallGetter_WithCulture_NullKey()
+        {
+            // Assets
+            var key = (string)null;
+
+            // Act
+            await _localizer.RefreshAsync();
+            var translation = _localizer[key, DefaultCulture];
+
+            // Arrange
+            Assert.Null(translation);
+        }
+
+        [Fact]
         public async Task CallGetter4()
         {
             // Assets

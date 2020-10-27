@@ -295,109 +295,6 @@ namespace R8.Lib
         }
 
         /// <summary>
-        /// Convert persian non-unicode digits ( example 6 ) to english unicode digits
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        private static string ConvertDigitsToLatin(this string s)
-        {
-            var sb = new StringBuilder();
-            foreach (var t in s)
-            {
-                switch (t)
-                {
-                    //Persian digits
-                    case '\u06f0':
-                        sb.Append('0');
-                        break;
-
-                    case '\u06f1':
-                        sb.Append('1');
-                        break;
-
-                    case '\u06f2':
-                        sb.Append('2');
-                        break;
-
-                    case '\u06f3':
-                        sb.Append('3');
-                        break;
-
-                    case '\u06f4':
-                        sb.Append('4');
-                        break;
-
-                    case '\u06f5':
-                        sb.Append('5');
-                        break;
-
-                    case '\u06f6':
-                        sb.Append('6');
-                        break;
-
-                    case '\u06f7':
-                        sb.Append('7');
-                        break;
-
-                    case '\u06f8':
-                        sb.Append('8');
-                        break;
-
-                    case '\u06f9':
-                        sb.Append('9');
-                        break;
-
-                    //Arabic digits
-                    case '\u0660':
-                        sb.Append('0');
-                        break;
-
-                    case '\u0661':
-                        sb.Append('1');
-                        break;
-
-                    case '\u0662':
-                        sb.Append('2');
-                        break;
-
-                    case '\u0663':
-                        sb.Append('3');
-                        break;
-
-                    case '\u0664':
-                        sb.Append('4');
-                        break;
-
-                    case '\u0665':
-                        sb.Append('5');
-                        break;
-
-                    case '\u0666':
-                        sb.Append('6');
-                        break;
-
-                    case '\u0667':
-                        sb.Append('7');
-                        break;
-
-                    case '\u0668':
-                        sb.Append('8');
-                        break;
-
-                    case '\u0669':
-                        sb.Append('9');
-                        break;
-
-                    default:
-                        sb.Append(t);
-                        break;
-                }
-            }
-
-            return sb.ToString();
-        }
-
-        /// <summary>
         ///     Fixes common writing mistakes caused by using a bad keyboard layout,
         ///     such as replacing Arabic Ye with Persian one and so on ...
         /// </summary>
@@ -439,7 +336,7 @@ namespace R8.Lib
 
             return text
                 .ApplyModeratePersianRules()
-                .ConvertDigitsToLatin()
+                .FixUnicodeNumbers()
                 .Replace((char)1610, (char)1740)
                 .Replace((char)1603, (char)1705)
                 .Trim();

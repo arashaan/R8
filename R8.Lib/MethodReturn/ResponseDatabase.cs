@@ -1,51 +1,29 @@
-﻿using Newtonsoft.Json;
-
-using R8.Lib.Enums;
+﻿using R8.Lib.Enums;
 using R8.Lib.Localization;
 
 namespace R8.Lib.MethodReturn
 {
-    public class ResponseDatabase : IResponseDatabase
+    public class ResponseDatabase : Response, IResponseDatabase
     {
         public ResponseDatabase()
         {
         }
 
-        public ResponseDatabase(Flags status)
+        public ResponseDatabase(ILocalizer localizer) : base(localizer)
         {
-            Status = status;
         }
 
-        public ResponseDatabase(Flags status, ValidatableResultCollection errors) : this(status)
+        public ResponseDatabase(Flags status) : base(status)
         {
-            Errors = errors;
         }
 
-        [JsonIgnore]
+        public ResponseDatabase(Flags status, ValidatableResultCollection errors) : base(status, errors)
+        {
+        }
+
         public DatabaseSaveState? Save { get; set; }
 
-        public bool Success => CheckSuccess(Status, Save);
-
-        public Flags Status { get; set; }
-        public string Message => this.GetMessage();
-        public ValidatableResultCollection Errors { get; set; }
-        public ILocalizer Localizer { get; set; }
-
-        public void SetLocalizer(ILocalizer localizer)
-        {
-            this.Localizer = localizer;
-        }
-
-        public void SetStatus(Flags status)
-        {
-            this.Status = status;
-        }
-
-        public static explicit operator ResponseDatabase(Flags status)
-        {
-            var response = new ResponseDatabase(status);
-            return response;
-        }
+        public override bool Success => CheckSuccess(Status, Save);
 
         public static bool CheckSuccess(Flags status, DatabaseSaveState? saveState)
         {

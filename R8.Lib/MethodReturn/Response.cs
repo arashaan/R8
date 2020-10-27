@@ -1,44 +1,39 @@
-﻿using Newtonsoft.Json;
-
-using R8.Lib.Enums;
+﻿using R8.Lib.Enums;
+using R8.Lib.Localization;
 
 using System;
-using R8.Lib.Localization;
 
 namespace R8.Lib.MethodReturn
 {
-    public class Response<TSource> : IResponseDatabase where TSource : class
+    public class Response<TSource> : ResponseDatabase where TSource : class
     {
         public Response()
         {
         }
 
-        public Response(ILocalizer localizer)
+        public Response(ILocalizer localizer) : base(localizer)
         {
-            this.Localizer = localizer;
         }
 
-        public Response(Flags status) : this()
+        public Response(Flags status) : base(status)
         {
-            Status = status;
         }
 
-        public Response(TSource result) : this(Flags.Success)
+        public Response(TSource result) : base(Flags.Success)
         {
             Result = result;
         }
 
-        public Response(Flags status, TSource result) : this(status)
+        public Response(Flags status, TSource result) : base(status)
         {
             Result = result;
         }
 
-        public Response(Flags status, ValidatableResultCollection errors) : this(status)
+        public Response(Flags status, ValidatableResultCollection errors) : base(status, errors)
         {
-            Errors = errors;
         }
 
-        public Response(Flags status, TSource result, ValidatableResultCollection errors) : this(status, errors)
+        public Response(Flags status, TSource result, ValidatableResultCollection errors) : base(status, errors)
         {
             Result = result;
         }
@@ -55,22 +50,14 @@ namespace R8.Lib.MethodReturn
             return obj.ToResponse<TSource>();
         }
 
+        public static implicit operator ResponseCollection(Response<TSource> response)
+        {
+            return new ResponseCollection { response };
+        }
+
         public static implicit operator bool(Response<TSource> response)
         {
             return response.Success;
-        }
-
-        public static implicit operator Response<TSource>(bool boolean)
-        {
-            return boolean
-                ? new Response<TSource>(Flags.Success)
-                : new Response<TSource>(Flags.Failed);
-        }
-
-        public static implicit operator ResponseCollection(Response<TSource> response)
-        {
-            var group = new ResponseCollection { response };
-            return group;
         }
 
         public static implicit operator Flags(Response<TSource> response)
@@ -78,38 +65,9 @@ namespace R8.Lib.MethodReturn
             return response.Status;
         }
 
-        public static explicit operator Response<TSource>(Flags status)
-        {
-            var response = new Response<TSource>(status);
-            return response;
-        }
-
-        [JsonProperty("r")]
         public TSource Result { get; set; }
 
-        [JsonProperty("s")] public bool Success => ResponseDatabase.CheckSuccess(Status, Save);
-
-        public Flags Status { get; set; }
-        public string Message => this.GetMessage();
-        public ValidatableResultCollection Errors { get; set; }
-
-        public ILocalizer Localizer { get; set; }
-
-        public void SetLocalizer(ILocalizer localizer)
-        {
-            this.Localizer = localizer;
-        }
-
-        public void AddErrors(ValidatableResultCollection errors)
-        {
-            Errors ??= new ValidatableResultCollection();
-            Errors.AddRange(errors);
-        }
-
-        public void SetStatus(Flags status)
-        {
-            this.Status = status;
-        }
+        public override bool Success => CheckSuccess(Status, Save);
 
         public override string ToString()
         {
@@ -125,21 +83,23 @@ namespace R8.Lib.MethodReturn
 
     public class Response : IResponse
     {
-        public Response(ValidatableResultCollection errors)
-        {
-            Errors = errors;
-        }
-
-        [JsonProperty("s")]
-        public bool Success => Status == Flags.Success;
-
         public Response()
         {
+        }
+
+        public Response(ILocalizer localizer)
+        {
+            this.Localizer = localizer;
         }
 
         public Response(Flags status) : this()
         {
             Status = status;
+        }
+
+        public Response(ValidatableResultCollection errors)
+        {
+            Errors = errors;
         }
 
         public Response(Flags status, ValidatableResultCollection errors) : this(status)
@@ -150,6 +110,8 @@ namespace R8.Lib.MethodReturn
         public Flags Status { get; set; }
         public string Message => this.GetMessage();
         public ValidatableResultCollection Errors { get; set; }
+
+        public virtual bool Success => Status == Flags.Success;
 
         public ILocalizer Localizer { get; set; }
 
@@ -174,21 +136,9 @@ namespace R8.Lib.MethodReturn
             return response.Success;
         }
 
-        public static implicit operator Response(bool boolean)
-        {
-            return boolean
-                ? new Response(Flags.Success)
-                : new Response(Flags.Failed);
-        }
-
         public static implicit operator Flags(Response response)
         {
             return response.Status;
-        }
-
-        public static explicit operator Response(Flags status)
-        {
-            return new Response(status);
         }
 
         public override string ToString()

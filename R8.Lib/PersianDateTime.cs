@@ -12,11 +12,9 @@ namespace R8.Lib
         public int Month { get; }
         public int Second { get; }
         public int DayOfMonth { get; }
-        public int MonthDays { get; set; }
-        public bool ShowTime { get; set; } = false;
-        public bool ShowTimeSecond { get; set; } = false;
-
-        // public int TotalSeconds => ToSeconds(DayOfMonth, Hour, Minute, Second);
+        public int MonthDays { get; }
+        public bool ShowTime { get; set; }
+        public bool ShowTimeSecond { get; set; }
 
         public DayOfWeek DayOfWeek { get; }
 

@@ -12,7 +12,7 @@ namespace R8.Lib.MethodReturn
     /// <summary>
     /// Represents a collection of responses with sub-results
     /// </summary>
-    public class ResponseCollection : IDictionary<int, IResponseDatabase>, IResponseBase
+    public class ResponseCollection : IDictionary<int, IResponseDatabase>, IResponseTrack
     {
         /// <summary>
         /// Represents a collection of responses with sub-results

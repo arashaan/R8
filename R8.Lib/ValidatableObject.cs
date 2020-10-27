@@ -18,8 +18,7 @@ namespace R8.Lib
         {
             var model = this as TModel;
             var value = property.Compile().Invoke(model);
-            var checkValidation = ValidateProperty(property, value, out results);
-            return checkValidation;
+            return ValidateProperty(property, value, out results);
         }
     }
 
@@ -30,22 +29,20 @@ namespace R8.Lib
             return TryValidate(model, out _);
         }
 
+        public static bool Validate<TModel>(TModel model, out ValidatableResultCollection results)
+        {
+            return TryValidate(model, out results);
+        }
+
         public Response<TSource> ToResponse<TSource>() where TSource : class
         {
             var valid = this.Validate();
             var flags = valid ? Flags.Success : Flags.ModelIsNotValid;
-            var result = new Response<TSource>(flags, this.ValidationErrors);
-            return result;
+            return new Response<TSource>(flags, this.ValidationErrors);
         }
 
         public static bool ValidateProperty<TModel, TObject>(Expression<Func<TModel, TObject>> property, TObject value, out ValidatableResult results)
         {
-            if (value == null)
-            {
-                results = null;
-                return false;
-            }
-
             var prop = property.GetProperty();
             var key = prop.Name;
 
@@ -123,8 +120,7 @@ namespace R8.Lib
                 .Where(x => x != null && !string.IsNullOrEmpty(x.ErrorMessage))
                 .Select(x => x.ErrorMessage)
                 .ToList();
-            var final = new ValidatableResult(key, errors);
-            return final;
+            return new ValidatableResult(key, errors);
         }
 
         [NotMapped, EditorBrowsable(EditorBrowsableState.Never)]

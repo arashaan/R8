@@ -6,6 +6,25 @@ namespace R8.Lib
 {
     public static class LinqExtensions
     {
+        public static int FindByIndex(this string str, string value, int nth = 1)
+        {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+            if (nth <= 0)
+                throw new ArgumentException("Can not find the 0th index of substring in string. Must start with 1");
+
+            var offset = str.IndexOf(value, StringComparison.Ordinal);
+            for (var i = 1; i < nth; i++)
+            {
+                if (offset == -1)
+                    return -1;
+                offset = str.IndexOf(value, offset + 1, StringComparison.Ordinal);
+            }
+            return offset;
+        }
+
         public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
             if (items == null)
