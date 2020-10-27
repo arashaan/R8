@@ -101,6 +101,7 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
 
         public bool TryValidate(IResponseBase response, out ValidatableResultCollection errors)
         {
+            // TODO should be IResponseTrack
             if (response == null)
                 throw new ArgumentNullException(nameof(response));
 

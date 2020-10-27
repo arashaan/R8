@@ -77,7 +77,7 @@ namespace R8.Lib.AspNetCore.TagHelpers
 
         public static string GetString(this IHtmlContent content)
         {
-            using var writer = new System.IO.StringWriter();
+            using var writer = new Utf8StringWriter();
             content.WriteTo(writer, HtmlEncoder.Default);
             return writer.ToString();
         }
@@ -154,39 +154,53 @@ namespace R8.Lib.AspNetCore.TagHelpers
                     var tagDicName = tagGroup.Id;
                     var tag = tagGroup.Tag;
 
-                    var tagStart = $"<{tagDicName}>";
-                    var tagEnd = $"</{tagDicName}>";
-                    var attributes = string.Join(" ", tag.Attributes.Select(x => $"{x.Key}='{x.Value}'"));
+                    var temp = htmlDecodedText.TryReplaceCore(tag, tagDicName, out var tempHtmlDecodedText);
+                    if (!temp)
+                        continue;
 
-                    var innerHtmlStartIndex = htmlDecodedText.IndexOf(tagStart) + tagStart.Length;
-                    var innerHtmlEndIndex = htmlDecodedText.IndexOf(tagEnd, innerHtmlStartIndex);
-                    var innerHtml = htmlDecodedText[innerHtmlStartIndex..innerHtmlEndIndex];
-
-                    var stringBuilder = new StringBuilder(htmlDecodedText);
-                    var finalInnerHtml = tag.HasInnerHtml
-                        ? tag.InnerHtml.GetString().Trim()
-                        : innerHtml?.Trim();
-
-                    if (!string.IsNullOrEmpty(finalInnerHtml))
-                    {
-                        if (innerHtmlStartIndex >= 0)
-                            if (!string.IsNullOrEmpty(innerHtml))
-                                stringBuilder.Remove(innerHtmlStartIndex, innerHtml.Length);
-
-                        stringBuilder.Insert(innerHtmlStartIndex, finalInnerHtml);
-                        htmlDecodedText = stringBuilder.ToString();
-                    }
-
-                    htmlDecodedText = htmlDecodedText.Replace(tagStart, $"<{tag.TagName} {attributes}>");
-                    htmlDecodedText = htmlDecodedText.Replace(tagEnd, $"</{tag.TagName}>");
+                    htmlDecodedText = tempHtmlDecodedText;
                 }
                 catch
                 {
-                    continue;
                 }
             }
 
             return new HtmlString(htmlDecodedText);
+        }
+
+        private static bool TryReplaceCore(this string htmlDecodedText, TagBuilder tag, string tagName, out string editedHtmlText)
+        {
+            editedHtmlText = htmlDecodedText;
+            var tagStart = $"<{tagName}>";
+            var tagEnd = $"</{tagName}>";
+            var attributes = string.Join(" ", tag.Attributes.Select(x => $"{x.Key}='{x.Value}'"));
+
+            var innerHtmlStartIndex = htmlDecodedText.IndexOf(tagStart) + tagStart.Length;
+            var innerHtmlEndIndex = htmlDecodedText.IndexOf(tagEnd, innerHtmlStartIndex);
+
+            if (innerHtmlStartIndex == -1 || innerHtmlEndIndex == -1)
+                return false;
+
+            var innerHtml = htmlDecodedText[innerHtmlStartIndex..innerHtmlEndIndex];
+
+            var stringBuilder = new StringBuilder(htmlDecodedText);
+            var finalInnerHtml = tag.HasInnerHtml
+                ? tag.InnerHtml.GetString().Trim()
+                : innerHtml?.Trim();
+
+            if (!string.IsNullOrEmpty(finalInnerHtml))
+            {
+                if (innerHtmlStartIndex >= 0 && !string.IsNullOrEmpty(innerHtml))
+                    stringBuilder.Remove(innerHtmlStartIndex, innerHtml.Length);
+
+                stringBuilder.Insert(innerHtmlStartIndex, finalInnerHtml);
+                htmlDecodedText = stringBuilder.ToString();
+            }
+
+            htmlDecodedText = htmlDecodedText.Replace(tagStart, $"<{tag.TagName} {attributes}>");
+            htmlDecodedText = htmlDecodedText.Replace(tagEnd, $"</{tag.TagName}>");
+            editedHtmlText = htmlDecodedText;
+            return true;
         }
 
         public static HtmlString ReplaceHtml(this string htmlDecodedText, params Func<string, IHtmlContent>[] tags)
@@ -205,34 +219,11 @@ namespace R8.Lib.AspNetCore.TagHelpers
             {
                 var tag = tags[i].GetTagBuilder();
 
-                var tagStart = $"<{i}>";
-                var tagEnd = $"</{i}>";
-                var attributes = string.Join(" ", tag.Attributes.Select(x => $"{x.Key}='{x.Value}'"));
-
-                var innerHtmlStartIndex = htmlDecodedText.IndexOf(tagStart) + tagStart.Length;
-                var innerHtmlEndIndex = htmlDecodedText.IndexOf(tagEnd, innerHtmlStartIndex);
-
-                if (innerHtmlStartIndex == -1 || innerHtmlEndIndex == -1)
+                var temp = htmlDecodedText.TryReplaceCore(tag, i.ToString(), out var tempHtmlDecodedText);
+                if (!temp)
                     continue;
 
-                var innerHtml = htmlDecodedText[innerHtmlStartIndex..innerHtmlEndIndex];
-
-                var stringBuilder = new StringBuilder(htmlDecodedText);
-                var finalInnerHtml = tag.HasInnerHtml
-                    ? tag.InnerHtml.GetString().Trim()
-                    : innerHtml?.Trim();
-
-                if (!string.IsNullOrEmpty(finalInnerHtml))
-                {
-                    if (innerHtmlStartIndex >= 0 && !string.IsNullOrEmpty(innerHtml))
-                        stringBuilder.Remove(innerHtmlStartIndex, innerHtml.Length);
-
-                    stringBuilder.Insert(innerHtmlStartIndex, finalInnerHtml);
-                    htmlDecodedText = stringBuilder.ToString();
-                }
-
-                htmlDecodedText = htmlDecodedText.Replace(tagStart, $"<{tag.TagName} {attributes}>");
-                htmlDecodedText = htmlDecodedText.Replace(tagEnd, $"</{tag.TagName}>");
+                htmlDecodedText = tempHtmlDecodedText;
             }
 
             return new HtmlString(htmlDecodedText);
@@ -270,7 +261,7 @@ namespace R8.Lib.AspNetCore.TagHelpers
 
         public static async Task<TagBuilder> RenderAsync<THelper>(this THelper tagHelper) where THelper : TagHelper
         {
-            var (context, output) = await tagHelper.InitAsync();
+            var (context, output) = await tagHelper.InitAsync().ConfigureAwait(false);
             return output.RenderCore();
         }
     }

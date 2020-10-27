@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 
+using R8.Lib.Localization;
+
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using R8.Lib.Localization;
 
 namespace R8.Lib.AspNetCore.Base
 {
@@ -32,7 +33,7 @@ namespace R8.Lib.AspNetCore.Base
 
             var sb = new StringBuilder(finalUrl);
             if (!string.IsNullOrEmpty(urlCulture))
-                sb.Remove(0, finalUrl.IndexOfNth("/", 2));
+                sb.Remove(0, finalUrl.FindByIndex("/", 2));
 
             if (culture.Name != localizer.DefaultCulture.Name)
                 sb.Insert(0, $"/{culture.Name}");

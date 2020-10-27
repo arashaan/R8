@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 
+using System;
 using System.Globalization;
 
 namespace R8.Lib.AspNetCore.Globalization
@@ -9,17 +10,17 @@ namespace R8.Lib.AspNetCore.Globalization
     {
         public static CultureInfo GetCulture(this HttpContext context)
         {
-            var requestCulture = context.Features.Get<IRequestCultureFeature>();
-            var culture = requestCulture.RequestCulture.Culture;
-            var result = culture;
-            return result;
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+
+            var features = context.Features ?? throw new ArgumentNullException("context.Features");
+            var requestCulture = features.Get<IRequestCultureFeature>() ?? throw new ArgumentNullException("features.Get<IRequestCultureFeature>()");
+            return requestCulture.RequestCulture.Culture;
         }
 
         public static string GetCultureName(this HttpContext context)
         {
-            var culture = context.GetCulture();
-            var result = culture.Name;
-            return result;
+            return context.GetCulture().Name;
         }
 
         /// <summary>
@@ -28,9 +29,7 @@ namespace R8.Lib.AspNetCore.Globalization
         /// <param name="context"></param>
         public static string GetTwoLetterCulture(this HttpContext context)
         {
-            var culture = context.GetCulture();
-            var iso = culture.TwoLetterISOLanguageName;
-            return iso;
+            return context.GetCulture().TwoLetterISOLanguageName;
         }
 
         /// <summary>
@@ -39,9 +38,7 @@ namespace R8.Lib.AspNetCore.Globalization
         /// <param name="context"></param>
         public static bool IsCultureRightToLeft(this HttpContext context)
         {
-            var culture = context.GetCulture();
-            var rtl = culture.TextInfo.IsRightToLeft;
-            return rtl;
+            return context.GetCulture().TextInfo.IsRightToLeft;
         }
     }
 }

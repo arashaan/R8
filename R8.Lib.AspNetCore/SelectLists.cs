@@ -8,7 +8,7 @@ namespace R8.Lib.AspNetCore
 {
     public static class SelectLists
     {
-        public static string NoneItem = "---";
+        public const string NoneItem = "---";
 
         public static List<SelectListItem> AddNone(this IEnumerable<SelectListItem> selectList)
         {

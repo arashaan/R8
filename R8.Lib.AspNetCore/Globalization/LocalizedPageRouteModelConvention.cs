@@ -1,42 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-using System.Linq;
 using R8.Lib.AspNetCore.Base;
+
+using System.Linq;
 
 namespace R8.Lib.AspNetCore.Globalization
 {
     public class LocalizedPageRouteModelConvention : IPageRouteModelConvention
     {
-        // private readonly List<LocalRoute> _routes;
-        //
-        // public LocalizedPageRouteModelConvention()
-        // {
-        //     _routes ??= new List<LocalRoute>();
-        //     _routes.Add(new LocalRoute
-        //     {
-        //         Page = "/Pages/Contact.cshtml",
-        //         LocalizedPageNames = new List<string> { "iletisim" }
-        //     });
-        // }
-
         public void Apply(PageRouteModel model)
         {
-            // var selectorCount = model.Selectors.Count;
-            // var route = _routes.FirstOrDefault(p => p.Page == model.RelativePath);
-            // if (route != null)
-            // {
-            //     foreach (var localizedPageName in route.LocalizedPageNames)
-            //     {
-            //         model.Selectors.Add(new SelectorModel
-            //         {
-            //             AttributeRouteModel = new AttributeRouteModel
-            //             {
-            //                 Template = localizedPageName
-            //             }
-            //         });
-            //     }
-            // }
-
             foreach (var selector in model.Selectors.ToList())
             {
                 model.Selectors.Add(new SelectorModel
