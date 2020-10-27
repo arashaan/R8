@@ -1,4 +1,4 @@
-﻿namespace R8.Lib.AspNetCore.Api
+﻿namespace R8.Lib.AspNetCore.WebApi
 {
     public enum OsNames
     {

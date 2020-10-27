@@ -8,7 +8,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace R8.Lib.AspNetCore.Api
+namespace R8.Lib.AspNetCore.WebApi
 {
     public static class BuilderExtension
     {

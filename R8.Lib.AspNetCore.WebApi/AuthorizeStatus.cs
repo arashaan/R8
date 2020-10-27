@@ -1,10 +1,8 @@
-﻿using Newtonsoft.Json;
-
+﻿using System;
+using Newtonsoft.Json;
 using R8.Lib.MethodReturn;
 
-using System;
-
-namespace R8.Lib.AspNetCore.Api
+namespace R8.Lib.AspNetCore.WebApi
 {
     public class AuthorizeStatus : Response
     {

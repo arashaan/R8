@@ -1,6 +1,6 @@
 ﻿using R8.Lib.MethodReturn;
 
-namespace R8.Lib.AspNetCore.Api
+namespace R8.Lib.AspNetCore.WebApi
 {
     public class TokenCheck : Response
     {

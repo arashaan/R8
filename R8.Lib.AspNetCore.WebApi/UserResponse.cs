@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace R8.Lib.AspNetCore.Api
+namespace R8.Lib.AspNetCore.WebApi
 {
     public class UserResponse
     {
