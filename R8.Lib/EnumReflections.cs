@@ -1,5 +1,4 @@
-﻿#nullable enable
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -76,10 +75,11 @@ namespace R8.Lib
 
         public static Dictionary<int, string> ToDictionary()
         {
-            return Enum
-                .GetValues(typeof(T))
-                .Cast<object>()
-                .ToDictionary(x => (int)x, x => x.ToString());
+            var values = Enum.GetValues(typeof(T)).Cast<object>().ToList();
+            if (values.Any())
+                return values.ToDictionary(x => (int)x, x => x.ToString());
+
+            return new Dictionary<int, string>();
         }
     }
 
@@ -123,8 +123,11 @@ namespace R8.Lib
         {
             var result = name;
 
-            var attribute = enumType
-              .GetField(name)
+            var field = enumType.GetField(name);
+            if (field == null)
+                return result;
+
+            var attribute = field
               .GetCustomAttributes(inherit: false)
               .OfType<DisplayAttribute>()
               .FirstOrDefault();

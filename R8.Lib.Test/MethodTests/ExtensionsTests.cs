@@ -58,7 +58,7 @@ namespace R8.Lib.Test.MethodTests
         }
 
         [Fact]
-        public async Task CallGetMessage_LocalizerNull()
+        public void CallGetMessage_LocalizerNull()
         {
             // Assets
             var response = new Response(Flags.Success);
