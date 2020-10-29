@@ -6,6 +6,7 @@ using R8.Lib.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 
 using Xunit;
@@ -17,7 +18,7 @@ namespace R8.Lib.AspNetCore.Test
         private readonly Localizer _localizer;
 
         private static CultureInfo DefaultCulture => CultureInfo.GetCultureInfo("tr");
-        private static string FolderPath => "E:\\Work\\Develope\\Asp\\Ecohos\\Ecohos.Presentation\\Dictionary";
+        private static string FolderPath => Path.Combine(Directory.GetCurrentDirectory(), "Dictionary");
         private static string JsonFileName => "dic";
 
         private static List<CultureInfo> SupportedCultures => new List<CultureInfo>
