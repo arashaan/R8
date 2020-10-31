@@ -153,23 +153,22 @@ namespace R8.Lib.AspNetCore.TagHelpers
             position++;
             (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
 
-            var span = new TagBuilder("span");
-            span.Attributes.Add("itemprop", "name");
-            span.InnerHtml.AppendHtml(content);
-
             var meta = new TagBuilder("meta");
             meta.Attributes.Add("itemprop", "position");
             meta.Attributes.Add("content", position.ToString());
 
+            var span = new TagBuilder("span");
+            span.Attributes.Add("itemprop", "name");
+            span.InnerHtml.AppendHtml(content);
+
             var hasUrl = !string.IsNullOrEmpty(Page) || !string.IsNullOrEmpty(Action);
-            TagBuilder anchor;
             if (hasUrl)
             {
                 var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
                 if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
                     RouteValues[LanguageRouteConstraint.Key] = culture;
 
-                anchor = await new AnchorTagHelper(_htmlGenerator)
+                var anchor = await new AnchorTagHelper(_htmlGenerator)
                 {
                     Action = Action,
                     Area = Area,
@@ -180,14 +179,24 @@ namespace R8.Lib.AspNetCore.TagHelpers
                     RouteValues = RouteValues,
                     ViewContext = ViewContext
                 }.RenderAsync();
+
+                // get final page Url
+                var pageUrl =
+                    anchor.Attributes.First(x => x.Key.Equals("href", StringComparison.InvariantCultureIgnoreCase)).Value;
+                var pageFinalUrl = _httpContextAccessor.HttpContext.GetBaseUrl() + pageUrl.Substring(1);
+
+                anchor.Attributes.Add("itemprop", "item");
+                anchor.Attributes.Add("itemtype", "https://schema.org/WebPage");
+                anchor.Attributes.Add("itemscope", "");
+                anchor.Attributes.Add("itemid", pageFinalUrl);
+
+                anchor.InnerHtml.AppendHtml(span).AppendHtml(meta);
+                output.Content.AppendHtml(anchor);
             }
             else
             {
-                anchor = new TagBuilder("span");
+                output.Content.AppendHtml(span).AppendHtml(meta);
             }
-
-            anchor.Attributes.Add("itemprop", "item");
-            anchor.InnerHtml.AppendHtml(span).AppendHtml(meta);
 
             output.TagMode = TagMode.StartTagAndEndTag;
             output.TagName = "li";
@@ -200,7 +209,6 @@ namespace R8.Lib.AspNetCore.TagHelpers
             output.Attributes.Add("itemscope", "");
             output.Attributes.Add("itemprop", "itemListElement");
             output.Attributes.Add("itemtype", "http://schema.org/ListItem");
-            output.Content.AppendHtml(anchor);
 
             _httpContextAccessor.HttpContext.Items[HttpContextKey] = position;
         }

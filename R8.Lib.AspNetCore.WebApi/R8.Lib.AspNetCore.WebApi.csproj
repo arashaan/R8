@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>R8.Lib.AspNetCore.WebApi</PackageId>
+    <Version>1.0</Version>
+    <Authors>Arash Shabbeh</Authors>
+    <Company>arashaan</Company>
+    <PackageDescription>Add many useful WebApi features to AspNetCore 3.0</PackageDescription>
+    <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

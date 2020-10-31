@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore</PackageId>
-    <Version>1.1.13</Version>
+    <Version>1.1.14</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Add many useful features to AspNetCore 3.0</PackageDescription>
