@@ -8,15 +8,12 @@
     <Company>arashaan</Company>
     <PackageDescrption>Work easily with social medias and mail</PackageDescrption>
     <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
-
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="MailKit" Version="2.9.0" />
   </ItemGroup>

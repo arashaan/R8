@@ -10,15 +10,10 @@
     <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="gsdll64.dll" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="GhostScript.NET.dll" Version="1.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.3.0" />
