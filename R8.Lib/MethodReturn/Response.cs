@@ -77,8 +77,6 @@ namespace R8.Lib.MethodReturn
 
             return text;
         }
-
-        public DatabaseSaveState? Save { get; set; }
     }
 
     public class Response : IResponse
