@@ -18,7 +18,7 @@ namespace R8.Lib.AspNetCore.WebApi
         }
     }
 
-    public class WebApiAuthenticationMiddleware
+    public class WebApiAuthenticationMiddleware : IMiddleware
     {
         private readonly RequestDelegate _next;
         public string Token { get; set; } = "token";
@@ -31,7 +31,7 @@ namespace R8.Lib.AspNetCore.WebApi
             _next = next;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var bodyStream = context.Response.Body;
             var responseBodyStream = new MemoryStream();
@@ -39,7 +39,7 @@ namespace R8.Lib.AspNetCore.WebApi
             await _next(context).ConfigureAwait(false);
 
             responseBodyStream.Seek(0, SeekOrigin.Begin);
-            var responseBody = new StreamReader(responseBodyStream).ReadToEnd();
+            var responseBody = await new StreamReader(responseBodyStream).ReadToEndAsync().ConfigureAwait(false);
             if (string.IsNullOrEmpty(responseBody)) return;
 
             if (context.Response.ContentType?.Contains("application/json") == true)
