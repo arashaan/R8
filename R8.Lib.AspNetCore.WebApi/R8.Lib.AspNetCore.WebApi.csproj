@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore.WebApi</PackageId>
-    <Version>1.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Add many useful WebApi features to AspNetCore 3.0</PackageDescription>
@@ -16,7 +16,7 @@
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="R8.Lib" Version="1.4.7" />
+    <PackageReference Include="R8.Lib" Version="1.4.8" />
   </ItemGroup>
 
 </Project>

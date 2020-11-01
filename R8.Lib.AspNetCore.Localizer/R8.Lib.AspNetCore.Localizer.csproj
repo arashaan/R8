@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore.Localizer</PackageId>
-    <Version>1.0.18</Version>
+    <Version>1.0.19</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>An implementation for ILocalizer in ASP Core 3.1</PackageDescription>
@@ -17,6 +17,6 @@
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="R8.Lib" Version="1.4.7" />
+    <PackageReference Include="R8.Lib" Version="1.4.8" />
   </ItemGroup>
 </Project>

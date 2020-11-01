@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore.EntityFrameworkCore</PackageId>
-    <Version>1.2.6</Version>
+    <Version>1.2.7</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
@@ -25,7 +25,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.2.20475.6" />
-    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.18" />
+    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.20" />
     <PackageReference Include="R8.Lib.Encryption" Version="1.0.2" />
   </ItemGroup>
 

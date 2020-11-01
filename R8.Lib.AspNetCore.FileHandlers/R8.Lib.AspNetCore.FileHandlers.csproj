@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore.FileHandlers</PackageId>
-    <Version>1.0.20</Version>
+    <Version>1.0.21</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
@@ -17,7 +17,7 @@
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="R8.Lib" Version="1.4.7" />
+    <PackageReference Include="R8.Lib" Version="1.4.8" />
     <PackageReference Include="R8.Lib.FileHandlers" Version="1.0.8" />
   </ItemGroup>
 
