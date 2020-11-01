@@ -7,7 +7,7 @@
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Core package for R8.Lib.AspNetCore</PackageDescription>
-    <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
+    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
   </PropertyGroup>

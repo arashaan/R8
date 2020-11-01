@@ -7,7 +7,7 @@
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescrption>Work easily with social medias and mail</PackageDescrption>
-    <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
+    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

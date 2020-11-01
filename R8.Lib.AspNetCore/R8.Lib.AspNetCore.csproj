@@ -7,7 +7,7 @@
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Add many useful features to AspNetCore 3.0</PackageDescription>
-    <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
+    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
   </PropertyGroup>

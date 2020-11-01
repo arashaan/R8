@@ -7,7 +7,7 @@
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>An implementation for ILocalizer in ASP Core 3.1</PackageDescription>
-    <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
+    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
   </PropertyGroup>

@@ -7,7 +7,7 @@
     <Authors>Arash Shabbeh</Authors>
     <Company>arashaan</Company>
     <PackageDescription>Encryption and decryption methods</PackageDescription>
-    <RepositoryUrl>https://github.com/arashaan/R8.Lib</RepositoryUrl>
+    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
