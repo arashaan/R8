@@ -46,6 +46,20 @@ namespace R8.Lib
             Second = dateTime.Second;
         }
 
+        public PersianDateTime(int year, int month, int day) : this(year, month, day, 0, 0, 1)
+        {
+        }
+
+        public PersianDateTime(int year, int month, int day, int hour, int minute, int second)
+        {
+            this.Year = year;
+            this.Month = month;
+            this.DayOfMonth = day;
+            this.Hour = hour;
+            this.Minute = minute;
+            this.Second = second;
+        }
+
         private static int CountDayOfMonth(int month)
         {
             int dayOfMonth;
