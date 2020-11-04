@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore.Base</PackageId>
-    <Version>1.1.20</Version>
+    <Version>1.1.21</Version>
     <Authors>Arash Shabbeh</Authors>
-    <Company>arashaan</Company>
+    <Company>iamr8</Company>
     <PackageDescription>Core package for R8.Lib.AspNetCore</PackageDescription>
-    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
+    <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
   </PropertyGroup>
@@ -18,7 +18,7 @@
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="R8.Lib" Version="1.4.8" />
+    <PackageReference Include="R8.Lib" Version="1.4.9" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
   </ItemGroup>
 </Project>

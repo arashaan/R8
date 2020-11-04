@@ -5,9 +5,9 @@
     <PackageId>R8.Lib.Encryption</PackageId>
     <Version>1.0.2</Version>
     <Authors>Arash Shabbeh</Authors>
-    <Company>arashaan</Company>
+    <Company>iamr8</Company>
     <PackageDescription>Encryption and decryption methods</PackageDescription>
-    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
+    <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>

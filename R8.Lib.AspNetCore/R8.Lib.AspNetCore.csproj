@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore</PackageId>
-    <Version>1.1.15</Version>
+    <Version>1.1.16</Version>
     <Authors>Arash Shabbeh</Authors>
-    <Company>arashaan</Company>
+    <Company>iamr8</Company>
     <PackageDescription>Add many useful features to AspNetCore 3.0</PackageDescription>
-    <RepositoryUrl>https://github.com/arashaan/R8</RepositoryUrl>
+    <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
   </PropertyGroup>
@@ -20,7 +20,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.26" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
-    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.20" />
+    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.21" />
   </ItemGroup>
 
 </Project>
