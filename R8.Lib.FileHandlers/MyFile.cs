@@ -1,29 +1,72 @@
 ﻿namespace R8.Lib.FileHandlers
 {
+    /// <summary>
+    /// Represents a instance of <see cref="MyFile"/>
+    /// </summary>
     public class MyFile
     {
-        private string _filePath;
-
-        /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
+        /// <summary>
+        /// Represents a instance of <see cref="MyFile"/>
+        /// </summary>
+        /// <param name="filePath">An <see cref="string"/> value that representing file's absolute path</param>
         public MyFile(string filePath)
         {
             FilePath = filePath;
         }
 
-        /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
+        /// <summary>
+        /// Represents a instance of <see cref="MyFile"/>
+        /// </summary>
+        /// <param name="filePath">An <see cref="string"/> value that representing file's absolute path</param>
+        /// <param name="thumbnailPath">An <see cref="string"/> value that representing image file's preview</param>
+        public MyFile(string filePath, string thumbnailPath) : this(filePath)
+        {
+            ThumbnailPath = thumbnailPath;
+        }
+
+        /// <summary>
+        /// Represents a instance of <see cref="MyFile"/>
+        /// </summary>
+        /// <param name="filePath">An <see cref="string"/> value that representing file's absolute path</param>
+        /// <param name="thumbnailPath">An <see cref="string"/> value that representing image file's preview</param>
+        /// <param name="fileSize">A <see cref="long"/> value that representing file length</param>
+        public MyFile(string filePath, string thumbnailPath, long fileSize) : this(filePath, thumbnailPath)
+        {
+            FileSize = fileSize;
+        }
+
+        /// <summary>
+        /// Represents a instance of <see cref="MyFile"/>
+        /// </summary>
         public MyFile()
         {
         }
 
-        public string FilePath
-        {
-            get => _filePath;
-            set => _filePath = value.StartsWith("/") ? value : $"/{value}";
-        }
+        /// <summary>
+        /// Gets or sets file's absolute path
+        /// </summary>
+        public string FilePath { get; set; }
+
+        /// <summary>
+        /// Gets or sets file' length
+        /// </summary>
+        public long FileSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets Thumbnail for image file's absolute path
+        /// </summary>
+        /// <remarks>Only for PDF preview, so far</remarks>
+        public string ThumbnailPath { get; set; }
 
         public static implicit operator string(MyFile file)
         {
             return file?.ToString();
+        }
+
+        public void Deconstruct(out string path, out string thumbnail)
+        {
+            path = FilePath;
+            thumbnail = ThumbnailPath;
         }
 
         public static explicit operator MyFile(string path)
@@ -31,15 +74,9 @@
             return new MyFile(path);
         }
 
-        #region Overrides of Object
-
-        /// <summary>Returns a string that represents the current object.</summary>
-        /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
             return FilePath;
         }
-
-        #endregion Overrides of Object
     }
 }

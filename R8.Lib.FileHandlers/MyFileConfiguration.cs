@@ -1,20 +1,114 @@
-﻿using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Formats.Jpeg;
+﻿using System;
+using System.IO;
+using System.Reflection;
 
 namespace R8.Lib.FileHandlers
 {
+    /// <summary>
+    /// An <see cref="MyFileConfiguration"/> abstract class that representing configuration for Save Files.
+    /// </summary>
     public class MyFileConfiguration
     {
+        /// <summary>
+        /// Gets or sets an <see cref="bool"/> value that avoid to save file into disk. For testing.
+        /// </summary>
+        /// <remarks>This is an internal API, and maybe removed in future versions</remarks>
+        public bool TestDevelopment { get; set; }
+
+        /// <summary>
+        /// Gets or sets an <see cref="string"/> value that representing root folder for uploading files.
+        /// </summary>
+        /// <remarks>default: <c>/uploads</c></remarks>
+        public string Folder { get; set; } = "/uploads";
+
+        /// <summary>
+        /// Gets or sets an <see cref="bool"/> that representing hierarchically directory names from root to file.
+        /// If true hierarchically folders, otherwise right in <see cref="Folder"/>.
+        /// example: <example><c>/<see cref="Folder"/>/2020/10/03/file.xyz</c></example>.
+        /// </summary>
+        /// <remarks>default: <c>true</c></remarks>
+        public bool HierarchicallyFolderNameByDate { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets an <see cref="bool"/> value that representing if file should be named as real name or <c>Guid.NewGuid</c>.
+        /// </summary>
+        /// <remarks>default: <c>false</c></remarks>
         public bool RealFilename { get; set; } = false;
 
-        public string UploadFolder { get; set; } = "uploads";
+        /// <summary>
+        /// Gets or sets an <see cref="bool"/> value that overwrite on existing file or create new file with incremented number
+        /// </summary>
+        /// <remarks>default: <c>false</c></remarks>
+        public bool OverwriteFile { get; set; } = false;
 
-        public bool WatermarkOnImages { get; set; } = false;
-        public string GhostScriptDllPath { get; set; }
-        public string WatermarkPath { get; set; } = "/img/wm.png";
-        public bool GregorianDateFolderName { get; set; } = true;
-        public bool UseImageEncoder { get; set; } = true;
+        /// <summary>
+        /// Returns final file path
+        /// </summary>
+        /// <param name="currentFileName">An <see cref="string"/> value that representing real file name</param>
+        /// <param name="fileExtension">An <see cref="string"/> value that representing real file extension</param>
+        /// <returns>An <see cref="string"/> value that representing file path</returns>
+        /// <remarks>If you don't want to Get Real File Path, you can leave <c>currentFileName</c> null and fill <c>fileExtension</c>, and otherwise if you do need for real file name, you have to fill <c>currentFileName</c>.</remarks>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public string GetFilePath(string? currentFileName, string? fileExtension)
+        {
+            var path = GetPath();
+            if (path.EndsWith("/"))
+                path = path[..^1];
 
-        public IImageEncoder ImageEncoder { get; set; } = new JpegEncoder { Quality = 70 };
+            if (RealFilename)
+            {
+                if (string.IsNullOrEmpty(currentFileName))
+                    throw new ArgumentNullException(nameof(currentFileName));
+
+                path += $"/{currentFileName}";
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(fileExtension))
+                    throw new ArgumentNullException(nameof(fileExtension));
+
+                path += $"/{Guid.NewGuid()}.{fileExtension}";
+            }
+
+            return path;
+        }
+
+        /// <summary>
+        /// Returns final path
+        /// </summary>
+        /// <returns>An <see cref="string"/> value that representing path</returns>
+        /// <exception cref="NullReferenceException"></exception>
+        public string GetPath()
+        {
+            if (Folder == null)
+                throw new NullReferenceException(nameof(Folder));
+
+            var rootFolder = Folder;
+            if (rootFolder.Contains("\\"))
+                rootFolder = rootFolder.Replace("\\", "/");
+
+            if (rootFolder.StartsWith("/"))
+            {
+                var currentAssembly = Assembly.GetEntryAssembly();
+                var appPath = Path.GetDirectoryName(currentAssembly!.Location);
+                rootFolder = appPath + rootFolder;
+            }
+
+            if (rootFolder.EndsWith("/"))
+                rootFolder = rootFolder[..^1];
+
+            var toDate = DateTime.UtcNow;
+            var targetDir = rootFolder;
+            if (!HierarchicallyFolderNameByDate)
+                return targetDir;
+
+            var year = toDate.Year.ToString("D4");
+            var month = toDate.Month.ToString("D2");
+            var day = toDate.Day.ToString("D2");
+            targetDir += $"/{year}/{month}/{day}";
+
+            return targetDir;
+        }
     }
 }
