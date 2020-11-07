@@ -42,7 +42,7 @@ namespace R8.Lib.AspNetCore.Base
         [Required]
         public int PageNo
         {
-            get => _pageNo.FixPageNumber();
+            get => Numbers.FixPageNumber(_pageNo);
             set => _pageNo = value.ToString();
         }
 

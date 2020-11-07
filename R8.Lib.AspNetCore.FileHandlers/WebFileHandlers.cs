@@ -11,26 +11,69 @@ namespace R8.Lib.AspNetCore.FileHandlers
 {
     public static class WebFileHandlers
     {
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
         public static async Task<MyFile> UploadImageAsync(this IFormFile file, Action<MyFileConfigurationImage> config)
         {
             if (file == null)
                 return null;
 
-            var result = await file.OpenReadStream().SaveAsync(file.FileName, config).ConfigureAwait(false);
-            return result;
+            try
+            {
+                await using var stream = file.OpenReadStream();
+                return await stream.SaveAsync(file.FileName, config).ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        private static Task<MyFile> UploadAsync<TConfiguration>(this IFormFile file, Action<TConfiguration> config = null) where TConfiguration : MyFileConfiguration
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
+        /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
+        public static async Task<MyFile> UploadAsync<TConfiguration>(this IFormFile file, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration
         {
-            using var stream = file.OpenReadStream();
-            return stream.SaveAsync(file.FileName, config);
+            if (file == null)
+                return null;
+
+            try
+            {
+                await using var stream = file.OpenReadStream();
+                return await stream.SaveAsync(file.FileName, config);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        public static Task<List<MyFile>> UploadAsync(this IFormFileCollection files, Action<MyFileConfiguration> config = null)
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <param name="files">An <see cref="IFormFileCollection"/> interface that representing input file streams to save.</param>
+        /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
+        public static Task<List<MyFile>> UploadAsync(this IFormFileCollection files, Action<MyFileConfiguration> config)
         {
             return files.ToList().UploadAsync(config);
         }
 
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
+        /// <param name="files">An collection of <see cref="IFormFile"/> that representing input file streams to save.</param>
+        /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
         public static async Task<List<MyFile>> UploadAsync<TConfiguration>(this List<IFormFile> files,
             Action<TConfiguration> config) where TConfiguration : MyFileConfiguration
         {
@@ -49,8 +92,7 @@ namespace R8.Lib.AspNetCore.FileHandlers
                     list.Add(file);
             }
 
-            var result = list.Where(x => !string.IsNullOrEmpty(x)).ToList();
-            return result;
+            return list.Where(x => !string.IsNullOrEmpty(x)).ToList();
         }
     }
 }
