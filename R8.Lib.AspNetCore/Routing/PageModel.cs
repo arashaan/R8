@@ -8,7 +8,9 @@ using Newtonsoft.Json.Linq;
 
 using R8.Lib.AspNetCore.Base;
 using R8.Lib.Enums;
+using R8.Lib.Localization;
 using R8.Lib.MethodReturn;
+using R8.Lib.Paginator;
 
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,6 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
-using R8.Lib.Localization;
 
 namespace R8.Lib.AspNetCore.Routing
 {
@@ -209,12 +210,12 @@ namespace R8.Lib.AspNetCore.Routing
 
         private static JsonSerializerSettings SerializerSetting => new JsonSerializerSettings
         {
-            Error = JsonSettingsExtensions.JsonNetSettings.Error,
-            DefaultValueHandling = JsonSettingsExtensions.JsonNetSettings.DefaultValueHandling,
-            ReferenceLoopHandling = JsonSettingsExtensions.JsonNetSettings.ReferenceLoopHandling,
-            ObjectCreationHandling = JsonSettingsExtensions.JsonNetSettings.ObjectCreationHandling,
-            ContractResolver = JsonSettingsExtensions.JsonNetSettings.ContractResolver,
-            Formatting = JsonSettingsExtensions.JsonNetSettings.Formatting,
+            Error = JsonExtensions.CustomJsonSerializerSettings.Settings.Error,
+            DefaultValueHandling = JsonExtensions.CustomJsonSerializerSettings.Settings.DefaultValueHandling,
+            ReferenceLoopHandling = JsonExtensions.CustomJsonSerializerSettings.Settings.ReferenceLoopHandling,
+            ObjectCreationHandling = JsonExtensions.CustomJsonSerializerSettings.Settings.ObjectCreationHandling,
+            ContractResolver = JsonExtensions.CustomJsonSerializerSettings.Settings.ContractResolver,
+            Formatting = JsonExtensions.CustomJsonSerializerSettings.Settings.Formatting,
             PreserveReferencesHandling = PreserveReferencesHandling.Objects
         };
 

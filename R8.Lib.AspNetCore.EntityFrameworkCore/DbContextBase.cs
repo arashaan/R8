@@ -44,7 +44,7 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
         {
             get
             {
-                var jsonSettings = JsonSettingsExtensions.JsonNetSettings;
+                var jsonSettings = JsonExtensions.CustomJsonSerializerSettings.Settings;
                 jsonSettings.Formatting = Formatting.None;
                 jsonSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 return jsonSettings;

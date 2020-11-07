@@ -204,7 +204,7 @@ namespace R8.Lib.AspNetCore.EntityFrameworkCore
         {
             get
             {
-                var settings = JsonSettingsExtensions.JsonNetSettings;
+                var settings = JsonExtensions.CustomJsonSerializerSettings.Settings;
                 settings.DefaultValueHandling = DefaultValueHandling.Ignore;
 
                 return settings;
