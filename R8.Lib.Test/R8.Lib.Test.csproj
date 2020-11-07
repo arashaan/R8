@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\R8.Lib.xUnit.TestOrder\R8.Lib.xUnit.TestOrder.csproj" />
     <ProjectReference Include="..\R8.Lib\R8.Lib.csproj" />
   </ItemGroup>
 

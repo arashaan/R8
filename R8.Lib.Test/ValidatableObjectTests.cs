@@ -68,7 +68,7 @@ namespace R8.Lib.Test
         public void CallValidatableObject4()
         {
             // Act
-            var act = ValidatableObject.ValidateProperty<FakeValidatableObjectTest, string>(x => x.Name, "Arash", out _);
+            var act = ValidatableObject.TryValidateProperty<FakeValidatableObjectTest, string>(x => x.Name, "Arash", out _);
 
             // Arrange
             Assert.True(act);
@@ -78,7 +78,7 @@ namespace R8.Lib.Test
         public void CallValidatableObject5()
         {
             // Act
-            var act = ValidatableObject.ValidateProperty<FakeValidatableObjectTest, string>(x => x.Name, null, out var error);
+            var act = ValidatableObject.TryValidateProperty<FakeValidatableObjectTest, string>(x => x.Name, null, out var error);
 
             // Arrange
             Assert.False(act);
@@ -96,7 +96,7 @@ namespace R8.Lib.Test
             var context = new ValidationContext(obj);
 
             // Act
-            var act = ValidatableObject.CheckValidation(context, (FakeValidatableObjectTest)null);
+            var act = ValidatableObject.Validate(context, (FakeValidatableObjectTest)null);
 
             // Arrange
             Assert.Empty(act);

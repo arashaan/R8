@@ -16,155 +16,94 @@ namespace R8.Lib
             return character == ' ' || character == 'n' || character == 't';
         }
 
-        private static string ApplyModeratePersianRules(this string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return string.Empty;
-
-            if (!text.ContainsFarsi())
-                return text;
-
-            return text
-                .ApplyPersianYeKe()
-                .ApplyHalfSpaceRule()
-                .YeHeHalfSpace()
-                .CleanupZwnj()
-                .CleanupExtraMarks();
-        }
-
         /// <summary>
-        /// camelCase
+        /// Converts string to camelCase.
         /// </summary>
-        /// <param name="word"></param>
-        /// <returns></returns>
-        public static string ToCamelCase(this string word, bool ignoreSpaces = true, CultureInfo culture = null)
+        /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
+        /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <returns>An <see cref="string"/> value</returns>
+        public static string ToCamelCase(this string s, CultureInfo culture = null)
         {
             var currentCulture = culture ?? CultureInfo.CurrentCulture;
 
-            var result = word.ToNormalized(culture: currentCulture);
-            result = result.Substring(0, 1).ToLower(currentCulture) + result.Substring(1);
-            if (ignoreSpaces)
-                result = result.Replace(" ", string.Empty, true, currentCulture);
+            var result = s.Humanize(culture: currentCulture);
+            result = result[..1].ToLower(currentCulture) + result[1..];
+            result = result.Replace(" ", string.Empty, true, currentCulture);
 
             return result;
         }
 
         /// <summary>
-        /// Kebab Case
+        /// Converts kebab-case string to normal string
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        public static string FromKebabCase(this string text, CultureInfo culture = null)
+        /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
+        /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <returns>An <see cref="string"/> value</returns>
+        public static string FromKebabCase(this string s, CultureInfo culture = null)
         {
-            return text.Replace("-", " ", true, culture ?? CultureInfo.CurrentCulture);
+            var currentCulture = culture ?? CultureInfo.CurrentCulture;
+            return s.Replace("-", " ", true, currentCulture);
         }
 
         /// <summary>
-        /// kebab-case
+        /// Converts string to kebab-case
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static string ToKebabCase(this string text)
+        /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
+        /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <returns>An <see cref="string"/> value</returns>
+        public static string ToKebabCase(this string s, CultureInfo culture = null)
         {
-            return text.ToNormalized(culture: CultureInfo.InvariantCulture).ToLowerInvariant().Replace(" ", "-", true, CultureInfo.InvariantCulture);
+            var currentCulture = culture ?? CultureInfo.CurrentCulture;
+            return s.Humanize(culture: currentCulture).ToLower(currentCulture)
+                .Replace(" ", "-", true, currentCulture);
         }
 
         /// <summary>
-        /// Factory to Factories
+        /// Removes unescaped characters from string
         /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static string ToCollected(this string text)
+        /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
+        /// <param name="ignoreSpace"></param>
+        /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <returns>An <see cref="string"/> value</returns>
+        public static string ToUnescaped(this string s, bool ignoreSpace = false, CultureInfo culture = null)
         {
-            if (string.IsNullOrEmpty(text))
-                return string.Empty;
+            var currentCulture = culture ?? CultureInfo.CurrentCulture;
 
-            if (text.EndsWith("ch", StringComparison.InvariantCultureIgnoreCase)
-                || text.EndsWith("x", StringComparison.InvariantCultureIgnoreCase)
-                || text.EndsWith("sh", StringComparison.InvariantCultureIgnoreCase)
-                || text.EndsWith("s", StringComparison.InvariantCultureIgnoreCase))
-            {
-                text += "es";
-            }
-            else if (text.EndsWith("fe", StringComparison.InvariantCultureIgnoreCase)
-                     || text.EndsWith("f", StringComparison.InvariantCultureIgnoreCase))
-            {
-                text += "s";
-            }
-            else if (text.EndsWith("y", StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (text.Length <= 1)
-                    return text;
-
-                var prevChar = text[^2];
-                if (prevChar == 'o' || prevChar == 'a' || prevChar == 'e' || prevChar == 'i')
-                {
-                    text += "s";
-                }
-                else
-                {
-                    text = text.Substring(0, text.Length - 1) + "ies";
-                }
-            }
-            else if (text.EndsWith("o", StringComparison.InvariantCultureIgnoreCase))
-            {
-                if (text.Length <= 1)
-                    return text;
-
-                var prevChar = text[^2];
-                if (prevChar == 'o' || prevChar == 'a' || prevChar == 'e' || prevChar == 'i')
-                {
-                    text += "s";
-                }
-                else
-                {
-                    text += "es";
-                }
-            }
-            else
-            {
-                text += "s";
-            }
-
-            return text;
-        }
-
-        /// <summary>
-        /// Gets only words and digits from string
-        /// </summary>
-        /// <param name="text"></param>
-        /// <param name="ignoreSpace">Ignore space between words</param>
-        /// <returns></returns>
-        public static string ToUnescaped(this string text, bool ignoreSpace = false)
-        {
-            if (!string.IsNullOrEmpty(text))
-                text = Regex.Replace(text, @"[^\w\d-. ]", "");
+            if (!string.IsNullOrEmpty(s))
+                s = Regex.Replace(s, @"[^\w\d-. ]", "");
 
             if (ignoreSpace)
-                text = text.Replace(" ", string.Empty);
+                s = s.Replace(" ", string.Empty, true, currentCulture);
 
-            return text;
+            return s;
         }
 
-        public static string ToNormalized(this string text, bool ignoreSpace = false, CultureInfo culture = null, bool forceToTitleCase = false, params string[] noNeedToNormalized)
+        /// <summary>
+        /// Removes unescaped characters from string
+        /// </summary>
+        /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
+        /// <param name="ignoreSpace"></param>
+        /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <param name="forceToTitleCase">If true, output value will be in TitleCase</param>
+        /// <returns>An <see cref="string"/> value</returns>
+        public static string Humanize(this string s, bool ignoreSpace = false, CultureInfo culture = null, bool forceToTitleCase = false)
         {
-            if (string.IsNullOrEmpty(text))
-                return text;
+            if (string.IsNullOrEmpty(s))
+                return s;
 
             var currentCulture = culture ?? CultureInfo.CurrentCulture;
 
             // The only way we can recognize if language supports upper-lower cases
             if (currentCulture.TextInfo.IsRightToLeft)
-                return text;
+                return s;
 
             var textInfo = currentCulture.TextInfo;
             var result = new StringBuilder();
-            var stringArray = text.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            var stringArray = s.Split(" ", StringSplitOptions.RemoveEmptyEntries);
             if (stringArray.Length == 1)
             {
                 if (ignoreSpace)
-                    return text;
+                    return s;
 
                 // ThisIsFake
                 // IELTS&TOMER
@@ -287,11 +226,26 @@ namespace R8.Lib
             return result.ToString().Trim();
         }
 
-        public static string Replace(this string str, IEnumerable<string> oldValues, string newValue)
+        /// <summary>
+        /// Replaces a list of strings inside string to specific value
+        /// </summary>
+        /// <param name="s">An <see cref="string"/> value</param>
+        /// <param name="oldValues">An <see cref="IEnumerable{T}"/> of strings to be replaced/</param>
+        /// <param name="value">New value should been replaced with old values</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="string"/> value</returns>
+        public static string Replace(this string s, IEnumerable<string> oldValues, string value)
         {
-            return oldValues?.Any() != true
-              ? str
-              : oldValues.Aggregate(str, (current, oldValue) => current.Replace(oldValue, newValue));
+            if (s == null)
+                throw new ArgumentNullException(nameof(s));
+            if (oldValues == null)
+                throw new ArgumentNullException(nameof(oldValues));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            return oldValues
+                .ToList()
+                .Aggregate(s, (current, oldValue) => current.Replace(oldValue, value));
         }
 
         /// <summary>
@@ -300,7 +254,7 @@ namespace R8.Lib
         /// </summary>
         /// <param name="text">Text to process</param>
         /// <returns>Processed Text</returns>
-        public static string ApplyPersianYeKe(this string text)
+        private static string ApplyPersianYeKe(this string text)
         {
             return string.IsNullOrEmpty(text)
                 ? string.Empty
@@ -313,11 +267,11 @@ namespace R8.Lib
         private const char PersianYeChar = (char)1740;
 
         /// <summary>
-        /// Adds &zwnj; ( half-space) char between word and prefix/suffix
+        /// Adds half-space char between word and prefix/suffix
         /// </summary>
         /// <param name="text">Text to process</param>
         /// <returns>Processed Text</returns>
-        public static string ApplyHalfSpaceRule(this string text)
+        private static string ApplyHalfSpaceRule(this string text)
         {
             //put zwnj between word and prefix (mi* nemi*)
             var phase1 = Regex.Replace(text, @"\s+(ن?می)\s+", " $1‌");
@@ -326,17 +280,25 @@ namespace R8.Lib
             return Regex.Replace(phase1, @"\s+(تر(ی(ن)?)?|ها(ی)?)\s+", "‌$1 ");
         }
 
-        public static string FixPersian(this string text)
+        /// <summary>
+        /// Fixes non-unicode characters
+        /// </summary>
+        /// <param name="s">An <see cref="string"/> value that containing text to be fixed</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="string"/> value</returns>
+        public static string FixUnicode(this string s)
         {
-            if (string.IsNullOrEmpty(text))
-                return string.Empty;
+            if (s == null)
+                throw new ArgumentNullException(nameof(s));
 
-            if (!text.ContainsFarsi())
-                return text;
-
-            return text
-                .ApplyModeratePersianRules()
+            return s
+                .ApplyPersianYeKe()
+                .ApplyHalfSpaceRule()
+                .YeHeHalfSpace()
+                .CleanupZwnj()
+                .FixExtraMarks()
                 .FixUnicodeNumbers()
+                .FixExtraMarks()
                 .Replace((char)1610, (char)1740)
                 .Replace((char)1603, (char)1705)
                 .Trim();
@@ -347,7 +309,7 @@ namespace R8.Lib
         /// </summary>
         /// <param name="text">Text to process</param>
         /// <returns>Processed Text</returns>
-        public static string CleanupExtraMarks(this string text)
+        private static string FixExtraMarks(this string text)
         {
             var phrase = Regex.Replace(text, "(!){2,}", "$1");
             return Regex.Replace(phrase, "(؟){2,}", "$1");
@@ -358,19 +320,9 @@ namespace R8.Lib
         /// </summary>
         /// <param name="text">Text to process</param>
         /// <returns>Processed Text</returns>
-        public static string CleanupZwnj(this string text)
+        private static string CleanupZwnj(this string text)
         {
             return Regex.Replace(text, @"\s+‌|‌\s+", " ");
-        }
-
-        /// <summary>
-        ///     Does text contain Persian characters?
-        /// </summary>
-        /// <param name="text">Text to process</param>
-        /// <returns>true/false</returns>
-        public static bool ContainsFarsi(this string text)
-        {
-            return Regex.IsMatch(text, @"[\u0600-\u06FF]");
         }
 
         /// <summary>
@@ -378,7 +330,7 @@ namespace R8.Lib
         /// </summary>
         /// <param name="text">Text to process</param>
         /// <returns>Processed Text</returns>
-        public static string YeHeHalfSpace(this string text)
+        private static string YeHeHalfSpace(this string text)
         {
             return Regex.Replace(text, @"(\S)(ه[\s‌]+[یي])(\s)", "$1ه‌ی‌$3"); // fix zwnj
         }

@@ -11,7 +11,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddMinutes(-49);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -25,7 +25,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddDays(-30 * 13);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -39,7 +39,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddDays(-40);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -53,7 +53,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddDays(-13);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -69,12 +69,9 @@ namespace R8.Lib.Test
             var dateTime = new DateTime(2020, 10, 25, 22, 1, 0);
 
             // Acts
-            var pdate = new PersianDateTime(dateTime)
-            {
-                ShowTimeSecond = true,
-                ShowTime = true
-            };
+            var pdate = PersianDateTime.GetFromDateTime(dateTime);
 
+            // Arrange
             Assert.Equal("1399/08/04 22:01:00", pdate.ToString());
         }
 
@@ -85,13 +82,10 @@ namespace R8.Lib.Test
             var dateTime = new DateTime(2020, 10, 25, 22, 1, 0);
 
             // Acts
-            var pdate = new PersianDateTime(dateTime)
-            {
-                ShowTimeSecond = false,
-                ShowTime = true
-            };
+            var pdate = PersianDateTime.GetFromDateTime(dateTime);
 
-            Assert.Equal("1399/08/04 22:01", pdate.ToString());
+            // Arrange
+            Assert.Equal("1399/08/04 22:01", pdate.ToString(true, false));
         }
 
         [Fact]
@@ -101,13 +95,33 @@ namespace R8.Lib.Test
             var dateTime = new DateTime(2020, 10, 25, 22, 1, 0);
 
             // Acts
-            var pdate = new PersianDateTime(dateTime)
-            {
-                ShowTimeSecond = false,
-                ShowTime = false
-            };
+            var pdate = PersianDateTime.GetFromDateTime(dateTime);
 
-            Assert.Equal("1399/08/04", pdate.ToString());
+            // Arrange
+            Assert.Equal("1399/08/04", pdate.ToString(false, false));
+        }
+
+        [Fact]
+        public void CallToString_Full6()
+        {
+            // Acts
+            var pdate = new PersianDateTime(2020, 10, 25, 22, 1, 0, true);
+
+            // Arrange
+            Assert.Equal("1399/08/04", pdate.ToString(false, false));
+        }
+
+        [Fact]
+        public void CallToString_Full2()
+        {
+            // Assets
+            var dateTime = new DateTime(2020, 10, 25, 22, 1, 0);
+
+            // Acts
+            var pdate = PersianDateTime.GetFromDateTime(dateTime);
+
+            // Arrange
+            Assert.Equal("یکشنبه، 4 آبان 1399", pdate.ToString(true));
         }
 
         [Fact]
@@ -115,7 +129,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.Date;
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.ToDateTime().Date;
@@ -129,7 +143,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddDays(1);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Arranges
             Assert.Throws<ArgumentOutOfRangeException>(() => persianDateTime.Humanize());
@@ -140,10 +154,10 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = new DateTime(2020, 10, 25, 22, 1, 0);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
-            var day = persianDateTime.DayOfWeekPersian;
+            var day = persianDateTime.GetDayOfWeek();
 
             // Arranges
             Assert.Equal("یکشنبه", day);
@@ -154,7 +168,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddDays(-3);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -168,7 +182,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddMinutes(-33);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -182,7 +196,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddMinutes(-17);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -196,7 +210,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddMinutes(-5);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -210,7 +224,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddMinutes(-10);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -224,7 +238,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddSeconds(-10);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();
@@ -238,7 +252,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var dateTime = DateTime.Now.AddHours(-1);
-            var persianDateTime = new PersianDateTime(dateTime);
+            var persianDateTime = PersianDateTime.GetFromDateTime(dateTime);
 
             // Acts
             var relativeDateTime = persianDateTime.Humanize();

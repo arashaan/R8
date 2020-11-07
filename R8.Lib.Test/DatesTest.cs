@@ -73,14 +73,79 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public void CallPersianToGregorian2()
+        {
+            // Assets
+            var persianDate = "00:14";
+            var gregorianDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 14, 0);
+
+            // Acts
+            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
+
+            // Arranges
+            Assert.Equal(gregorianDate, persian);
+        }
+
+        [Fact]
+        public void CallPersianToGregorian7()
+        {
+            // Assets
+            var persianDate = "asd asd";
+            Assert.Throws<ArgumentException>(() => PersianDateTime.TryParse(persianDate).ToDateTime());
+        }
+        [Fact]
+        public void CallPersianToGregorian6()
+        {
+            // Assets
+            var persianDate = "asd";
+            Assert.Throws<ArgumentException>(() => PersianDateTime.TryParse(persianDate).ToDateTime());
+        }
+
+        [Fact]
+        public void CallPersianToGregorian5()
+        {
+            // Assets
+            var persianDate = "1399/08/04 asd";
+            Assert.Throws<ArgumentException>(() => PersianDateTime.TryParse(persianDate).ToDateTime());
+        }
+
+        [Fact]
+        public void CallPersianToGregorian4()
+        {
+            // Assets
+            var persianDate = "1399/08/04 00:14:33";
+            var gregorianDate = new DateTime(2020, 10, 25, 0, 14, 33);
+
+            // Acts
+            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
+
+            // Arranges
+            Assert.Equal(gregorianDate, persian);
+        }
+
+        [Fact]
+        public void CallPersianToGregorian3()
+        {
+            // Assets
+            var persianDate = "1399/08/04 00:14";
+            var gregorianDate = new DateTime(2020, 10, 25, 0, 14, 0);
+
+            // Acts
+            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
+
+            // Arranges
+            Assert.Equal(gregorianDate, persian);
+        }
+
+        [Fact]
         public void CallPersianToGregorian()
         {
             // Assets
             var persianDate = "1399/08/04";
-            var gregorianDate = new DateTime(2020, 10, 25, 0, 0, 0);
+            var gregorianDate = new DateTime(2020, 10, 25, 0, 0, 1);
 
             // Acts
-            var persian = Dates.PersianToGregorian(persianDate);
+            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
 
             // Arranges
             Assert.Equal(gregorianDate, persian);

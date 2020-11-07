@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 
 using R8.Lib.Enums;
+using R8.Lib.JsonExtensions;
 
 using System;
 using System.Collections.Generic;
@@ -10,30 +11,70 @@ using System.Linq;
 
 namespace R8.Lib.Localization
 {
+    /// <summary>
+    /// Initializes a <see cref="LocalizerContainer"/> to store a word in many languages.
+    /// </summary>
     [JsonConverter(typeof(ContainerJsonConverter))]
     public class LocalizerContainer : ICloneable
     {
+        /// <summary>
+        /// Initializes a <see cref="LocalizerContainer"/> to store a word in many languages.
+        /// </summary>
+        /// <param name="culture">A <see cref="CultureInfo"/> to store localized text in.</param>
+        /// <param name="localized">A <see cref="string"/> value that representing equivalent translation for given culture.</param>
         public LocalizerContainer(CultureInfo culture, string localized) : this()
         {
             Set(culture, localized);
         }
 
+        /// <summary>
+        /// Initializes a <see cref="LocalizerContainer"/> to store a word in many languages.
+        /// </summary>
+        /// <param name="localized">A <see cref="string"/> value that representing equivalent translation for current culture.</param>
         public LocalizerContainer(string localized) : this(CultureInfo.CurrentCulture, localized)
         {
         }
 
-        public LocalizerContainer(string language, string localized) : this(CultureInfo.GetCultureInfo(language), localized)
+        /// <summary>
+        /// Initializes a <see cref="LocalizerContainer"/> to store a word in many languages.
+        /// </summary>
+        /// <param name="language">A enumerator constant value to store localized text in.</param>
+        /// <param name="localized">A <see cref="string"/> value that representing equivalent translation for given culture.</param>
+        public LocalizerContainer(Languages language, string localized) : this(
+            CultureInfo.GetCultureInfo(language.GetDisplayName()), localized)
         {
         }
 
+        /// <summary>
+        /// Initializes a <see cref="LocalizerContainer"/> to store a word in many languages.
+        /// </summary>
+        /// <param name="language">A <see cref="string"/> value to store localized text in.</param>
+        /// <param name="localized">A <see cref="string"/> value that representing equivalent translation for given culture.</param>
+        public LocalizerContainer(string language, string localized) : this(CultureInfo.GetCultureInfo(language),
+            localized)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="LocalizerContainer"/> to store a word in many languages.
+        /// </summary>
         public LocalizerContainer()
         {
             _cultures = new List<LocalizerCulture>();
         }
 
+        /// <summary>
+        /// Gets a collection of specified cultures in current instance.
+        /// </summary>
         public IReadOnlyCollection<LocalizerCulture> Cultures => _cultures;
+
         private readonly List<LocalizerCulture> _cultures;
 
+        /// <summary>
+        /// Deserializes already-serialized JSON to new <see cref="LocalizerContainer"/> instance.
+        /// </summary>
+        /// <param name="json">A <see cref="string"/> json.</param>
+        /// <returns>A <see cref="LocalizerContainer"/> instance.</returns>
         public static LocalizerContainer Deserialize(string json)
         {
             return !string.IsNullOrEmpty(json)
@@ -46,9 +87,13 @@ namespace R8.Lib.Localization
             return _cultures.Any(x => !string.IsNullOrEmpty(x.Value));
         }
 
+        /// <summary>
+        /// Serializes current instance to JSON string in specific format.
+        /// </summary>
+        /// <returns>A <see cref="string"/> json value.</returns>
         public string Serialize()
         {
-            var settings = JsonSettingsExtensions.JsonNetSettings;
+            var settings = CustomJsonSerializerSettings.Settings;
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.DefaultValueHandling = DefaultValueHandling.Ignore;
             return !HasValue()
@@ -103,11 +148,20 @@ namespace R8.Lib.Localization
             }
         }
 
+        /// <summary>
+        /// Sets equivalent translation for current language.
+        /// </summary>
+        /// <param name="localized">An <see cref="string"/> value that represents equivalent translation.</param>
         public void Set(string localized)
         {
             Set(CultureInfo.CurrentCulture, localized);
         }
 
+        /// <summary>
+        /// Sets equivalent translation for given culture.
+        /// </summary>
+        /// <param name="culture">An <see cref="CultureInfo"/> that representing specific culture.</param>
+        /// <param name="localized">An <see cref="string"/> value that represents equivalent translation.</param>
         public void Set(CultureInfo culture, string localized)
         {
             var desiredCulture = this.Cultures.FirstOrDefault(x => x.Culture.Equals(culture));
@@ -125,103 +179,144 @@ namespace R8.Lib.Localization
             }
         }
 
+        /// <summary>
+        /// Sets equivalent translation for given culture.
+        /// </summary>
+        /// <param name="culture">An <see cref="string"/> that representing specific culture.</param>
+        /// <param name="localized">An <see cref="string"/> value that represents equivalent translation.</param>
         public void Set(string culture, string localized)
         {
             var _culture = CultureInfo.GetCultureInfo(culture);
             Set(_culture, localized);
         }
 
+        /// <summary>
+        /// Sets equivalent translation for given language.
+        /// </summary>
+        /// <param name="language">An enumerator constant that representing specific language.</param>
+        /// <param name="localized">An <see cref="string"/> value that represents equivalent translation.</param>
         public void Set(Languages language, string localized)
         {
             var description = language.GetDescription();
             Set(description, localized);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="language">An <see cref="string"/> that represents specified language to get translation value from.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string this[string language]
         {
             get => Get(language);
             set => Set(language, value);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="culture">A <see cref="CultureInfo"/> object that should get translation value from.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string this[CultureInfo culture]
         {
             get => Get(culture);
             set => Set(culture, value);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="language">An <see cref="string"/> that represents specified language to get translation value from.</param>
+        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string this[string language, bool useFallback]
         {
             get => Get(language, useFallback);
             set => Set(language, value);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="language">An enumerator constant that represents specified language to get translation value from.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string this[Languages language]
         {
             get => Get(language);
             set => Set(language, value);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="language">An enumerator constant that represents specified language to get translation value from.</param>
+        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string this[Languages language, bool useFallback]
         {
             get => Get(language, useFallback);
             set => Set(language, value);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="culture">A <see cref="CultureInfo"/> object that should get translation value from.</param>
+        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string this[CultureInfo culture, bool useFallback]
         {
             get => Get(culture, useFallback);
             set => Set(culture, value);
         }
 
-        public object Clone()
-        {
-            var newObj = new LocalizerContainer();
-            this._cultures.ForEach(localizerCulture => newObj.Set(localizerCulture.Culture, localizerCulture.Value));
-            return newObj;
-        }
-
-        public static LocalizerContainer Clone(LocalizerContainer container, string localized)
-        {
-            return Clone(container, CultureInfo.CurrentCulture, localized);
-        }
-
-        public static LocalizerContainer Clone(LocalizerContainer container, CultureInfo culture, string localized)
-        {
-            container ??= new LocalizerContainer();
-            var clone = (LocalizerContainer)container.Clone();
-            clone.Set(culture, localized);
-            return clone;
-        }
-
         /// <summary>
-        /// Returns a string that represents Final Meaning without Fallback
+        /// Returns equivalent translation for given culture.
         /// </summary>
-        /// <param name="returnNullIfEmpty">Determine return null of N/A</param>
+        /// <param name="returnNullIfEmpty">A <see cref="bool"/> value that represents <c>N/A</c> if set true, otherwise make output to be null. * This parameter will be applicable, if <c>useFallback</c> parameter set to false. *</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
+        /// <remarks>If <c>CurrentCulture</c> doesn't have value, Fallback will not be shown.</remarks>
         public string ToString(bool returnNullIfEmpty)
         {
             return Get(CultureInfo.CurrentCulture, false, returnNullIfEmpty);
         }
 
-        /// <summary>
-        /// Returns a string that represents Final Meaning with Fallback
-        /// </summary>
         public override string ToString()
         {
             return Get(CultureInfo.CurrentCulture, true, false);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="culture">A <see cref="CultureInfo"/> object that should get translation value from.</param>
+        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string Get(string culture, bool useFallback = true)
         {
             var locale = CultureInfo.GetCultureInfo(culture);
             return this.Get(locale, useFallback);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="language">An enumerator constant that should get translation value from.</param>
+        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string Get(Languages language, bool useFallback = true)
         {
             var locale = language.GetDescription();
             return this.Get(locale, useFallback);
         }
 
+        /// <summary>
+        /// Returns equivalent translation for given culture.
+        /// </summary>
+        /// <param name="culture">A <see cref="CultureInfo"/> object that should get translation value from.</param>
+        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
+        /// <param name="returnNullIfEmpty">A <see cref="bool"/> value that represents <c>N/A</c> if set true, otherwise make output to be null. * This parameter will be applicable, if <c>useFallback</c> parameter set to false. *</param>
+        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string Get(CultureInfo culture, bool useFallback = true, bool returnNullIfEmpty = true)
         {
             var desiredCulture = this._cultures.Find(x => x.Culture.Equals(culture));
@@ -258,7 +353,7 @@ namespace R8.Lib.Localization
                 return false;
 
             if (!(obj is LocalizerContainer container))
-                throw new Exception($"{nameof(obj)} must be in type of {nameof(LocalizerContainer)}");
+                return false;
 
             LocalizerContainer source;
             LocalizerContainer destination;
@@ -294,6 +389,45 @@ namespace R8.Lib.Localization
             }
 
             return true;
+        }
+
+        public object Clone()
+        {
+            var newObj = new LocalizerContainer();
+            this._cultures.ForEach(localizerCulture => newObj.Set(localizerCulture.Culture, localizerCulture.Value));
+            return newObj;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="LocalizerContainer"/> that is a copy of the current instance.
+        /// </summary>
+        /// <param name="container">A <see cref="LocalizerContainer"/> instance to being copied.</param>
+        /// <returns>A new <see cref="LocalizerContainer"/> that is a copy of this instance.</returns>
+        public static LocalizerContainer Clone(LocalizerContainer container) =>
+            (LocalizerContainer)container.Clone();
+
+        /// <summary>
+        /// Creates a new <see cref="LocalizerContainer"/> that is a copy of the current instance.
+        /// </summary>
+        /// <param name="container">A <see cref="LocalizerContainer"/> instance to being copied.</param>
+        /// <param name="localized">A <see cref="string"/> value that should be added to current instance for <c>CurrentCulture</c>.</param>
+        /// <returns>A new <see cref="LocalizerContainer"/> that is a copy of this instance.</returns>
+        public static LocalizerContainer Clone(LocalizerContainer container, string localized) =>
+            Clone(container, CultureInfo.CurrentCulture, localized);
+
+        /// <summary>
+        /// Creates a new <see cref="LocalizerContainer"/> that is a copy of the current instance.
+        /// </summary>
+        /// <param name="container">A <see cref="LocalizerContainer"/> instance to being copied.</param>
+        /// <param name="culture">A <see cref="CultureInfo"/> object that <c>localized</c> will be added to.</param>
+        /// <param name="localized">A <see cref="string"/> value that should be added to current instance for given culture.</param>
+        /// <returns>A new <see cref="LocalizerContainer"/> that is a copy of this instance.</returns>
+        public static LocalizerContainer Clone(LocalizerContainer container, CultureInfo culture, string localized)
+        {
+            container ??= new LocalizerContainer();
+            var clone = (LocalizerContainer)container.Clone();
+            clone.Set(culture, localized);
+            return clone;
         }
 
         public override int GetHashCode()

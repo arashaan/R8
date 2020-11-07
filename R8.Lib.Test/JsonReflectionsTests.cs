@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 
+using R8.Lib.JsonExtensions;
+
 using Xunit;
 
 namespace R8.Lib.Test
@@ -28,7 +30,7 @@ namespace R8.Lib.Test
 
             // Act
             var propertyInfo = obj.GetType().GetProperty(nameof(obj.Name));
-            var jsonName = propertyInfo.GetJsonProperty();
+            var jsonName = propertyInfo.GetJsonName();
 
             // Arrange
             Assert.Equal("nm", jsonName);
@@ -38,7 +40,7 @@ namespace R8.Lib.Test
         public void CallGetJsonProperty3()
         {
             // Act
-            var jsonName = JsonReflections.GetJsonProperty<FakeJsonTest2>(x => x.Name);
+            var jsonName = PropertyReflections.GetPropertyInfo<FakeObj>(x => x.Name).GetJsonName();
 
             // Arrange
             Assert.Equal("Name", jsonName);
@@ -48,7 +50,7 @@ namespace R8.Lib.Test
         public void CallGetJsonProperty2()
         {
             // Act
-            var jsonName = JsonReflections.GetJsonProperty<FakeJsonTest>(x => x.Name);
+            var jsonName = PropertyReflections.GetPropertyInfo<FakeJsonTest>(x => x.Name).GetJsonName();
 
             // Arrange
             Assert.Equal("nm", jsonName);

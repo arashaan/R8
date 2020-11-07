@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using Newtonsoft.Json.Serialization;
 
-namespace R8.Lib
+namespace R8.Lib.JsonExtensions
 {
+    /// <summary>
+    /// Initializes an <see cref="NullToEmptyContractResolver"/> that shows empty instead of null based on property type
+    /// </summary>
     public class NullToEmptyContractResolver : DefaultContractResolver
     {
         protected override IValueProvider CreateMemberValueProvider(MemberInfo member)

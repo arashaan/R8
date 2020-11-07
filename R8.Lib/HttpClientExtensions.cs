@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -6,26 +6,37 @@ namespace R8.Lib
 {
     public static class HttpClientExtensions
     {
-        public static async Task<string> GetAsync(this HttpClientHandler clientHandler, string url)
+        /// <summary>
+        /// Request a POST method
+        /// </summary>
+        /// <param name="clientHandler">An <see cref="HttpClientHandler"/> </param>
+        /// <param name="url">Url to send request</param>
+        /// <param name="content">Payload content to send</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="string"/> response content</returns>
+        public static async Task<HttpContent?> PostAsync(this HttpClientHandler clientHandler, string url, HttpContent content)
         {
             var client = new HttpClient(clientHandler);
-            var responseMessage = await client.GetAsync(url).ConfigureAwait(false);
-            var response = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return response;
+            var responseMessage = await client.PostAsync(url, content).ConfigureAwait(false);
+            return !responseMessage.IsSuccessStatusCode
+                ? null
+                : responseMessage.Content;
         }
 
         /// <summary>
-        /// Returns full information about specific ip address
+        /// Request a GET method
         /// </summary>
-        /// <param name="ipAddress">Ip Address that you want to parse</param>
-        /// <returns></returns>
-        public static async Task<IpViewModel> GetIpAddressAsync(string ipAddress)
+        /// <param name="clientHandler">An <see cref="HttpClientHandler"/> </param>
+        /// <param name="url">Url to send request</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="string"/> response content</returns>
+        public static async Task<HttpContent?> GetAsync(this HttpClientHandler clientHandler, string url)
         {
-            using var clientHandler = new HttpClientHandler();
-            var json = await clientHandler.GetAsync($"http://free.ipwhois.io/json/{ipAddress}").ConfigureAwait(false);
-            var jsonObj = JsonConvert.DeserializeObject<IpViewModel>(json);
-            clientHandler.Dispose();
-            return jsonObj;
+            var client = new HttpClient(clientHandler);
+            var responseMessage = await client.GetAsync(url).ConfigureAwait(false);
+            return !responseMessage.IsSuccessStatusCode
+                ? null
+                : responseMessage.Content;
         }
     }
 }

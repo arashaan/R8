@@ -43,7 +43,7 @@ namespace R8.Lib.Test
         [Fact]
         public void CallHandleDictionary_Null()
         {
-            Assert.Throws<Exception>(() => Localizer.HandleDictionary(null));
+            Assert.Throws<ArgumentNullException>(() => Localizer.HandleDictionary(null));
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var localized = _localizer.TryGetValue(culture, key);
+            var localized = _localizer.GetValue(culture, key);
 
             // Arrange
             Assert.NotNull(localized);
@@ -103,7 +103,7 @@ namespace R8.Lib.Test
         //
         //     // Act
         //     await _localizer.RefreshAsync();
-        //     var getter = _localizer.TryGetValue(key, out var localized);
+        //     var getter = _localizer.GetValue(key, out var localized);
         //
         //     // Arrange
         //     Assert.True(getter);
@@ -241,7 +241,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var localized = _localizer.TryGetValue(culture, key);
+            var localized = _localizer.GetValue(culture, key);
 
             // Arrange
             Assert.Equal(key, localized);

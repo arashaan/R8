@@ -3,7 +3,6 @@
 using R8.Lib.Enums;
 using R8.Lib.Localization;
 
-using System;
 using System.Globalization;
 
 using Xunit;
@@ -242,7 +241,7 @@ namespace R8.Lib.Test
             var container2 = true;
 
             // Arranges
-            Assert.Throws<Exception>(() => container1.Equals(container2));
+            Assert.False(container1.Equals(container2));
         }
 
         [Fact]

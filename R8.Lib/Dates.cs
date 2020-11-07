@@ -3,7 +3,6 @@ using NodaTime.TimeZones;
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -52,44 +51,35 @@ namespace R8.Lib
             return result;
         }
 
-        public static IEnumerable<DateTimeZoneMore> GetNodaTimeZones()
+        public static DateTimeZoneMore GetNodaTimeZone(string name)
         {
             var source = TzdbDateTimeZoneSource.Default;
-            var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
+            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(name);
 
-            var list = from timeZone in systemTimeZones
-                       let id = source.TzdbToWindowsIds.FirstOrDefault(x => x.Value.Equals(timeZone.Id)).Key
-                       where id != null
-                       let zone = DateTimeZoneProviders.Tzdb[id]
-                       let offset = zone.GetUtcOffset(SystemClock.Instance.GetCurrentInstant())
-                       orderby offset
-                       select new DateTimeZoneMore { NodaTimeZone = zone, Offset = offset, SystemTimeZone = timeZone };
-            return list;
+            var id = source.TzdbToWindowsIds.FirstOrDefault(x => x.Value.Equals(timeZone.Id)).Key;
+
+            var zone = DateTimeZoneProviders.Tzdb[id];
+            var offset = zone.GetUtcOffset(SystemClock.Instance.GetCurrentInstant());
+            return new DateTimeZoneMore
+            {
+                NodaTimeZone = zone,
+                Offset = offset,
+                SystemTimeZone = timeZone
+            };
         }
 
-        public static DateTime PersianToGregorian(string persianDate)
+        public static IEnumerable<DateTimeZoneMore> GetNodaTimeZones()
         {
-            var userInput = persianDate;
-            var userDateParts = userInput.Split(new[] { "/", "-" }, StringSplitOptions.None);
-            var userYear = int.Parse(userDateParts[0]);
-            var userMonth = int.Parse(userDateParts[1]);
-            var userDay = int.Parse(userDateParts[2]);
-
-            var persianCalendar = new PersianCalendar();
-            var dateTime = persianCalendar.ToDateTime(userYear, userMonth, userDay, 0, 0, 0, 0);
-            return dateTime;
+            var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
+            return from timeZone in systemTimeZones
+                   let more = GetNodaTimeZone(timeZone.Id)
+                   orderby more.Offset
+                   select more;
         }
 
         public static string ToPersianDateTime(this DateTime dt, bool truncateTime, bool showSecs = false)
         {
-            var pc = new PersianDateTime(dt)
-            {
-                ShowTime = !truncateTime,
-                ShowTimeSecond = showSecs
-            };
-
-            var pdt = pc.ToString();
-            return pdt;
+            return PersianDateTime.GetFromDateTime(dt).ToString(!truncateTime, showSecs);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace R8.Lib.Test
             var price = "";
 
             // Act
-            var final = price.FixCurrency();
+            var final = Numbers.HumanizeCurrencyTo3Numbers(price);
 
             var expected = (string)null;
 
@@ -26,7 +26,7 @@ namespace R8.Lib.Test
             var price = "10000";
 
             // Act
-            var final = price.FixCurrency();
+            var final = Numbers.HumanizeCurrencyTo3Numbers(price);
 
             var expected = "10,000";
 
@@ -41,7 +41,7 @@ namespace R8.Lib.Test
             var price = "Arash";
 
             // Act
-            var final = price.CurrencyToWords();
+            var final = Numbers.HumanizeCurrency(price);
 
             // Arrange
             Assert.Equal(price, final);
@@ -54,7 +54,7 @@ namespace R8.Lib.Test
             var price = "0";
 
             // Act
-            var final = price.CurrencyToWords();
+            var final = Numbers.HumanizeCurrency(price);
 
             var expected = "صفر";
 
@@ -69,7 +69,7 @@ namespace R8.Lib.Test
             var price = "10000";
 
             // Act
-            var final = price.CurrencyToWords();
+            var final = Numbers.HumanizeCurrency(price);
 
             var expected = "10 هزار";
 

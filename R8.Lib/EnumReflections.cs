@@ -49,7 +49,7 @@ namespace R8.Lib
 
             return enumValue
                 .FromKebabCase()
-                .ToNormalized(true)
+                .Humanize(true)
                 .ToEnum<T>();
         }
 

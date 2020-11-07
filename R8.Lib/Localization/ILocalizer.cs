@@ -13,23 +13,23 @@ using System.Web;
 namespace R8.Lib.Localization
 {
     /// <summary>
-    /// Returns User-defined dictionary value based on Database
+    /// An <see cref="ILocalizer"/> interface.
     /// </summary>
     public interface ILocalizer
     {
         /// <summary>
-        /// Refreshes internal dictionary
+        /// Refreshes internal dictionary to update to the latest data.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> object for asynchronous operation.</returns>
         Task RefreshAsync();
 
         /// <summary>
-        /// Gets default culture
+        /// Gets default culture.
         /// </summary>
         CultureInfo DefaultCulture { get; }
 
         /// <summary>
-        /// Gets list of supported cultures
+        /// Gets a collection of supported cultures.
         /// </summary>
         List<CultureInfo> SupportedCultures { get; }
 
@@ -50,7 +50,8 @@ namespace R8.Lib.Localization
         /// Gets value from internal dictionary
         /// </summary>
         /// <param name="key">A key to find in internal dictionary</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="LocalizerContainer"/> component.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         LocalizerContainer this[Expression<Func<string>> key] { get; }
     }
 
@@ -61,16 +62,14 @@ namespace R8.Lib.Localization
     {
         private readonly LocalizerConfiguration _configuration;
 
-        /// <summary>
-        /// Gets or sets list of supported cultures
-        /// </summary>
         public List<CultureInfo> SupportedCultures { get; set; }
 
-        /// <summary>
-        /// Gets or sets default culture
-        /// </summary>
         public CultureInfo DefaultCulture { get; set; }
 
+        /// <summary>
+        /// Returns User-defined dictionary value based on Database
+        /// </summary>
+        /// <param name="configuration">A <see cref="LocalizerConfiguration"/> object that represents initializing data.</param>
         public Localizer(LocalizerConfiguration configuration)
         {
             _configuration = configuration;
@@ -79,10 +78,6 @@ namespace R8.Lib.Localization
 
         private readonly Dictionary<string, LocalizerContainer> _dictionary;
 
-        /// <summary>
-        /// Refreshes internal dictionary
-        /// </summary>
-        /// <returns></returns>
         public async Task RefreshAsync()
         {
             if (_configuration == null)
@@ -102,6 +97,13 @@ namespace R8.Lib.Localization
                 await HandleLanguageAsync(supportedCulture).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Handles dictionary based on given culture.
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns>A <see cref="Task"/> that represents asynchronous operation.</returns>
+        /// <exception cref="FileNotFoundException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public async Task HandleLanguageAsync(CultureInfo culture)
         {
             var language = culture.GetTwoLetterCulture();
@@ -131,10 +133,16 @@ namespace R8.Lib.Localization
             sr.Dispose();
         }
 
+        /// <summary>
+        /// Represents a <see cref="Dictionary{TKey,TValue}"/> object from JSON data.
+        /// </summary>
+        /// <param name="jsonString">A <see cref="string"/> value that representing JSON data.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="Dictionary{TKey,TValue}"/> object.</returns>
         public static Dictionary<string, string> HandleDictionary(string jsonString)
         {
             if (string.IsNullOrEmpty(jsonString))
-                throw new Exception($"JSON file is not in an expected format");
+                throw new ArgumentNullException($"{jsonString} expected to being in JSON format.");
 
             var json = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonString);
             var dic = new Dictionary<string, string>();
@@ -144,9 +152,15 @@ namespace R8.Lib.Localization
             return dic;
         }
 
+        /// <summary>
+        /// Retrieves <see cref="string"/> key from given expression.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns>A <see cref="string"/> value.</returns>
         public static string GetKey(Expression<Func<string>> key)
         {
-            var myKey = key.Body switch
+            return key.Body switch
             {
                 MethodCallExpression call => key.Compile().Invoke(),
                 MemberExpression member => member.Member.Name,
@@ -154,47 +168,14 @@ namespace R8.Lib.Localization
                 _ => throw new ArgumentException(
                     $"{nameof(key)} must be an '{nameof(MemberExpression)}' type expression")
             };
-
-            return myKey;
         }
 
-        /// <summary>
-        /// Gets value from internal dictionary
-        /// </summary>
-        /// <param name="key">A key to find in internal dictionary</param>
-        /// <param name="culture">Specific culture to search in</param>
-        public string this[string key, CultureInfo culture]
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(key))
-                    return null;
+        public string this[string key, CultureInfo culture] =>
+            string.IsNullOrEmpty(key) ? null : GetValue(culture, key).Get(culture, false);
 
-                var localized = TryGetValue(culture, key).Get(culture, false, true);
-                return localized;
-            }
-        }
+        public LocalizerContainer this[string key] =>
+            string.IsNullOrEmpty(key) ? null : GetValue(CultureInfo.CurrentCulture, key);
 
-        /// <summary>
-        /// Gets value from internal dictionary
-        /// </summary>
-        /// <param name="key">A key to find in internal dictionary</param>
-        public LocalizerContainer this[string key]
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(key))
-                    return null;
-
-                var localized = TryGetValue(CultureInfo.CurrentCulture, key);
-                return localized;
-            }
-        }
-
-        /// <summary>
-        /// Gets value from internal dictionary
-        /// </summary>
-        /// <param name="key">A key to find in internal dictionary</param>
         public LocalizerContainer this[Expression<Func<string>> key]
         {
             get
@@ -207,7 +188,13 @@ namespace R8.Lib.Localization
             }
         }
 
-        public LocalizerContainer TryGetValue(CultureInfo culture, string key)
+        /// <summary>
+        /// Returns an equivalent translation for given key.
+        /// </summary>
+        /// <param name="culture">A <see cref="CultureInfo"/>.</param>
+        /// <param name="key">A <see cref="string"/> value that should be checked for translation.</param>
+        /// <returns>A <see cref="LocalizerContainer"/> object.</returns>
+        public LocalizerContainer GetValue(CultureInfo culture, string key)
         {
             var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
             if (container == null)
@@ -218,18 +205,5 @@ namespace R8.Lib.Localization
 
             return container;
         }
-    }
-
-    public class LocalizerConfiguration
-    {
-        /// <summary>
-        /// Absolute path under project root
-        /// </summary>
-        public string Folder { get; set; }
-
-        /// <summary>
-        /// Filename without culture and extension : dictionary => to be "dictionary.tr.json"
-        /// </summary>
-        public string FileName { get; set; }
     }
 }

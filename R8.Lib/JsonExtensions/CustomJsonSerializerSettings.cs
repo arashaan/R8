@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
 
-namespace R8.Lib
+namespace R8.Lib.JsonExtensions
 {
-    public static class JsonSettingsExtensions
+    public static class CustomJsonSerializerSettings
     {
-        public static JsonSerializerSettings JsonNetSettings => new JsonSerializerSettings
+        /// <summary>
+        /// A custom-defined <see cref="JsonSerializerSettings"/>
+        /// </summary>
+        public static JsonSerializerSettings Settings => new JsonSerializerSettings
         {
             Error = (serializer, err) => err.ErrorContext.Handled = true,
             DefaultValueHandling = DefaultValueHandling.Populate,

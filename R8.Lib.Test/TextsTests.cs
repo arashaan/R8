@@ -20,123 +20,6 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallToCollected_NullParam()
-        {
-            // Arrange
-            const string str = "";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal(string.Empty, act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithSh()
-        {
-            // Arrange
-            const string str = "Arash";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Arashes", act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithCh()
-        {
-            // Arrange
-            const string str = "Batch";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Batches", act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithX()
-        {
-            // Arrange
-            const string str = "Fax";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Faxes", act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithS()
-        {
-            // Arrange
-            const string str = "Bus";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Buses", act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithAy()
-        {
-            // Arrange
-            const string str = "Bay";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Bays", act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithOy()
-        {
-            // Arrange
-            const string str = "Boy";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Boys", act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithEy()
-        {
-            // Arrange
-            const string str = "Monkey";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Monkeys", act);
-        }
-
-        [Fact]
-        public void CallToCollected_EndingWithF()
-        {
-            // Arrange
-            const string str = "Roof";
-
-            // Act
-            var act = str.ToCollected();
-
-            // Assert
-            Assert.Equal("Roofs", act);
-        }
-
-        [Fact]
         public void CallFromKebabCase()
         {
             // Arrange
@@ -168,7 +51,7 @@ namespace R8.Lib.Test
             // Arrange
 
             // Act
-            var act = Texts.ToNormalized(null);
+            var act = Texts.Humanize(null);
 
             // Assert
             Assert.Null(act);
@@ -181,7 +64,7 @@ namespace R8.Lib.Test
             const string text = "ThisIsFake";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("This Is Fake", act);
@@ -194,7 +77,7 @@ namespace R8.Lib.Test
             const string text = "AlışverişMerkezi";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Alışveriş Merkezi", act);
@@ -207,7 +90,7 @@ namespace R8.Lib.Test
             const string text = "this is fake";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("This Is Fake", act);
@@ -220,7 +103,7 @@ namespace R8.Lib.Test
             const string text = "ThreeD";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Three D", act);
@@ -233,7 +116,7 @@ namespace R8.Lib.Test
             const string text = "^Fake";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("^ Fake", act);
@@ -246,7 +129,7 @@ namespace R8.Lib.Test
             const string text = "This Is Fake";
 
             // Act
-            var act = text.ToNormalized(true);
+            var act = text.Humanize(true);
 
             // Assert
             Assert.Equal("ThisIsFake", act);
@@ -259,7 +142,7 @@ namespace R8.Lib.Test
             const string text = "THIS IS FAKE";
 
             // Act
-            var act = text.ToNormalized(culture: new CultureInfo("en-US"), forceToTitleCase: true);
+            var act = text.Humanize(culture: new CultureInfo("en-US"), forceToTitleCase: true);
 
             // Assert
             Assert.Equal("This Is Fake", act);
@@ -272,7 +155,7 @@ namespace R8.Lib.Test
             const string text = "Café";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Café", act);
@@ -285,7 +168,7 @@ namespace R8.Lib.Test
             const string text = "Central-PayMeter";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Central - Pay Meter", act);
@@ -298,7 +181,7 @@ namespace R8.Lib.Test
             const string text = "PreciousMetals";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Precious Metals", act);
@@ -311,7 +194,7 @@ namespace R8.Lib.Test
             const string text = "Booking";
 
             // Act
-            var act = text.ToNormalized(true);
+            var act = text.Humanize(true);
 
             // Assert
             Assert.Equal("Booking", act);
@@ -324,7 +207,7 @@ namespace R8.Lib.Test
             const string text = "Oil&Gas";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Oil & Gas", act);
@@ -337,7 +220,7 @@ namespace R8.Lib.Test
             const string text = "TadilatHizmetleri";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Tadilat Hizmetleri", act);
@@ -350,7 +233,7 @@ namespace R8.Lib.Test
             const string text = "yer";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("Yer", act);
@@ -363,7 +246,7 @@ namespace R8.Lib.Test
             const string text = "IELTS&TOMER";
 
             // Act
-            var act = text.ToNormalized(false);
+            var act = text.Humanize(false);
 
             // Assert
             Assert.Equal("IELTS & TOMER", act);
