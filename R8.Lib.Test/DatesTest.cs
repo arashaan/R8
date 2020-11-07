@@ -80,7 +80,7 @@ namespace R8.Lib.Test
             var gregorianDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 14, 0);
 
             // Acts
-            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
+            var persian = PersianDateTime.Parse(persianDate).ToDateTime();
 
             // Arranges
             Assert.Equal(gregorianDate, persian);
@@ -91,14 +91,14 @@ namespace R8.Lib.Test
         {
             // Assets
             var persianDate = "asd asd";
-            Assert.Throws<ArgumentException>(() => PersianDateTime.TryParse(persianDate).ToDateTime());
+            Assert.Throws<ArgumentException>(() => PersianDateTime.Parse(persianDate).ToDateTime());
         }
         [Fact]
         public void CallPersianToGregorian6()
         {
             // Assets
             var persianDate = "asd";
-            Assert.Throws<ArgumentException>(() => PersianDateTime.TryParse(persianDate).ToDateTime());
+            Assert.Throws<ArgumentException>(() => PersianDateTime.Parse(persianDate).ToDateTime());
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace R8.Lib.Test
         {
             // Assets
             var persianDate = "1399/08/04 asd";
-            Assert.Throws<ArgumentException>(() => PersianDateTime.TryParse(persianDate).ToDateTime());
+            Assert.Throws<ArgumentException>(() => PersianDateTime.Parse(persianDate).ToDateTime());
         }
 
         [Fact]
@@ -117,7 +117,7 @@ namespace R8.Lib.Test
             var gregorianDate = new DateTime(2020, 10, 25, 0, 14, 33);
 
             // Acts
-            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
+            var persian = PersianDateTime.Parse(persianDate).ToDateTime();
 
             // Arranges
             Assert.Equal(gregorianDate, persian);
@@ -131,7 +131,7 @@ namespace R8.Lib.Test
             var gregorianDate = new DateTime(2020, 10, 25, 0, 14, 0);
 
             // Acts
-            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
+            var persian = PersianDateTime.Parse(persianDate).ToDateTime();
 
             // Arranges
             Assert.Equal(gregorianDate, persian);
@@ -145,7 +145,7 @@ namespace R8.Lib.Test
             var gregorianDate = new DateTime(2020, 10, 25, 0, 0, 1);
 
             // Acts
-            var persian = PersianDateTime.TryParse(persianDate).ToDateTime();
+            var persian = PersianDateTime.Parse(persianDate).ToDateTime();
 
             // Arranges
             Assert.Equal(gregorianDate, persian);

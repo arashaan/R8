@@ -157,11 +157,32 @@ namespace R8.Lib
         /// Converts the string representation of an <see cref="PersianDateTime"/> instance.
         /// </summary>
         /// <param name="s">An <see cref="string"/> containing Persian date time format</param>
+        /// <param name="value">A <see cref="PersianDateTime"/> instance that represents parsed string to instance.</param>
+        /// <returns>A <see cref="bool"/> that represents if string parsed to valid instance.</returns>
+        /// <remarks>If true, string fully parsed, not parsed otherwise.</remarks>
+        public static bool TryParse(string s, out PersianDateTime? value)
+        {
+            value = null;
+            try
+            {
+                value = Parse(s);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Converts the string representation of an <see cref="PersianDateTime"/> instance.
+        /// </summary>
+        /// <param name="s">An <see cref="string"/> containing Persian date time format</param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="PersianDateTime"/> instance</returns>
-        public static PersianDateTime TryParse(string s)
+        public static PersianDateTime Parse(string s)
         {
             if (s == null)
                 throw new ArgumentNullException(nameof(s));
