@@ -109,7 +109,7 @@ namespace R8.EntityFrameworkCore
             return property;
         }
 
-        internal static void HasDateTimeUtcConversion(this ModelBuilder modelBuilder)
+        public static void HasDateTimeUtcConversion(this ModelBuilder modelBuilder)
         {
             var converter = new ValueConverter<DateTime, DateTime>(
                 v => v.Kind == DateTimeKind.Utc ? v : v.ToUniversalTime(),
