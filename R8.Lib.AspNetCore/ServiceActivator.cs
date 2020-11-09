@@ -1,10 +1,9 @@
 ﻿using System;
-
 using Microsoft.Extensions.DependencyInjection;
 
 namespace R8.Lib.AspNetCore
 {
-    public class ServiceActivator
+    public static class ServiceActivator
     {
         internal static IServiceProvider ServiceProvider;
 

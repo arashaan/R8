@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Net.Http.Headers;
-
-using R8.Lib.AspNetCore.Base;
 using R8.Lib.MethodReturn;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace R8.Lib.AspNetCore.Routing
 {
@@ -51,7 +48,7 @@ namespace R8.Lib.AspNetCore.Routing
 
         [NonAction]
         public virtual ActionResult RedirectToForwardedPage<TInput, TResponse>(TInput inputModel, TResponse response,
-            string fallback = "/Index") where TResponse : Response where TInput : ValidatableObject
+            string fallback = "/Index") where TInput : ValidatableObject where TResponse : Response
         {
             var request = this.HttpContext.Request;
             var refererUrl = request.Headers[HeaderNames.Referer].ToString();

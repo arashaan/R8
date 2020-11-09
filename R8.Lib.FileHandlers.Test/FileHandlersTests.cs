@@ -25,7 +25,7 @@ namespace R8.Lib.FileHandlers.Test
                 RealFilename = true,
                 OverwriteFile = true,
                 TestDevelopment = true,
-                Watermark = new MyFileConfigurationWatermark(Constants.WatermarkFile)
+                WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
@@ -45,7 +45,7 @@ namespace R8.Lib.FileHandlers.Test
                 RealFilename = true,
                 OverwriteFile = true,
                 TestDevelopment = true,
-                Watermark = new MyFileConfigurationWatermark(Constants.WatermarkFile)
+                WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
@@ -65,7 +65,7 @@ namespace R8.Lib.FileHandlers.Test
                 RealFilename = true,
                 OverwriteFile = true,
                 TestDevelopment = true,
-                Watermark = new MyFileConfigurationWatermark(Constants.WatermarkFile)
+                WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
@@ -100,7 +100,7 @@ namespace R8.Lib.FileHandlers.Test
                 RealFilename = true,
                 OverwriteFile = true,
                 TestDevelopment = true,
-                Watermark = new MyFileConfigurationWatermark(Constants.WatermarkFile)
+                WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
@@ -166,7 +166,7 @@ namespace R8.Lib.FileHandlers.Test
                 cfg.RealFilename = true;
                 cfg.OverwriteFile = true;
                 cfg.TestDevelopment = true;
-                cfg.Watermark = new MyFileConfigurationWatermark(Constants.WatermarkFile);
+                cfg.WatermarkPath = Constants.WatermarkFile;
             });
 
             Assert.NotNull(file);
@@ -186,7 +186,7 @@ namespace R8.Lib.FileHandlers.Test
                 RealFilename = true,
                 OverwriteFile = true,
                 TestDevelopment = true,
-                Watermark = new MyFileConfigurationWatermark(Constants.WatermarkFile)
+                WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
@@ -221,7 +221,7 @@ namespace R8.Lib.FileHandlers.Test
                 RealFilename = true,
                 OverwriteFile = true,
                 TestDevelopment = true,
-                Watermark = new MyFileConfigurationWatermark(Constants.WatermarkFile),
+                WatermarkPath = Constants.WatermarkFile,
                 ResizeToSize = 300
             });
 

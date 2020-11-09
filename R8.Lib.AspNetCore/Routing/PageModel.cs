@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using R8.Lib.AspNetCore.Base;
 using R8.Lib.Enums;
 using R8.Lib.Localization;
 using R8.Lib.MethodReturn;
@@ -48,17 +47,16 @@ namespace R8.Lib.AspNetCore.Routing
         //    _localizer = localizer;
         //}
 
-        public new ICulturalizedUrlHelper Url;
-        public readonly ILocalizer Localizer;
+        public new ICulturalizedUrlHelper Url { get; }
+        public ILocalizer Localizer { get; }
 
-        public IOptions<RequestLocalizationOptions> Culture =>
-            HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>)) as
-                IOptions<RequestLocalizationOptions>;
+        public RequestLocalizationOptions Culture { get; }
 
-        public PageModel([FromServices] ICulturalizedUrlHelper page = null, [FromServices] ILocalizer localizer = null)
+        public PageModel()
         {
-            Url = page;
-            Localizer = localizer;
+            Url = this.HttpContext.RequestServices.GetService(typeof(ICulturalizedUrlHelper)) as ICulturalizedUrlHelper;
+            Localizer = this.HttpContext.RequestServices.GetService(typeof(ILocalizer)) as ILocalizer;
+            Culture = (this.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>)) as IOptions<RequestLocalizationOptions>).Value;
         }
 
         /// <summary>

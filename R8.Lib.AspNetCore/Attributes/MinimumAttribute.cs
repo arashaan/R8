@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-
-using System;
+﻿using System;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace R8.Lib.AspNetCore.Attributes
 {

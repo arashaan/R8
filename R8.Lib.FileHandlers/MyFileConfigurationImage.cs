@@ -21,9 +21,9 @@ namespace R8.Lib.FileHandlers
         public int? ResizeToSize { get; set; } = null;
 
         /// <summary>
-        /// Gets or sets an <see cref="MyFileConfigurationWatermark"/> instance that representing if pictures should have specific watermark.
+        /// Gets or sets an <see cref="string"/> value that representing a watermark image url.
         /// </summary>
         /// <remarks>default: <c>null</c></remarks>
-        public MyFileConfigurationWatermark? Watermark { get; set; }
+        public string? WatermarkPath { get; set; }
     }
 }

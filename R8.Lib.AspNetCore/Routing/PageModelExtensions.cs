@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Routing;
-
-using System;
-using R8.Lib.AspNetCore.Base;
 
 namespace R8.Lib.AspNetCore.Routing
 {

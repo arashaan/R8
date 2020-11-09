@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -6,17 +7,13 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-using R8.Lib.AspNetCore.Base;
-
-using System;
-
 namespace R8.Lib.AspNetCore.Routing
 {
     public class CulturalizedUrlHelper : ICulturalizedUrlHelper
     {
-        private IOptions<RequestLocalizationOptions> Culture =>
-            ActionContext.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>)) as
-                IOptions<RequestLocalizationOptions>;
+        private RequestLocalizationOptions Culture =>
+            (ActionContext.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>)) as
+                IOptions<RequestLocalizationOptions>).Value;
 
         private readonly IUrlHelper _urlHelper;
 
@@ -127,7 +124,7 @@ namespace R8.Lib.AspNetCore.Routing
             string host)
             => Page(pageName, pageHandler, values, protocol, host, fragment: null);
 
-        public static object TryAddCulture(IOptions<RequestLocalizationOptions> cultureProvider, RouteValueDictionary requestRoutes, object values)
+        public static object TryAddCulture(RequestLocalizationOptions cultureProvider, RouteValueDictionary requestRoutes, object values)
         {
             if (cultureProvider == null)
                 throw new ArgumentNullException(nameof(cultureProvider));
@@ -140,7 +137,7 @@ namespace R8.Lib.AspNetCore.Routing
                 return routeValues;
 
             var currentCulture = requestRoutes[LanguageRouteConstraint.Key].ToString();
-            var defaultCulture = cultureProvider.Value.DefaultRequestCulture.Culture.Name;
+            var defaultCulture = cultureProvider.DefaultRequestCulture.Culture.Name;
             if (routeValues.ContainsKey(LanguageRouteConstraint.Key))
                 return routeValues;
 

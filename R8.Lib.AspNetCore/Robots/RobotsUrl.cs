@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Policy;
-using System.Text;
-
-namespace R8.Lib.AspNetCore.Robots
+﻿namespace R8.Lib.AspNetCore.Robots
 {
     public class RobotsUrl
     {

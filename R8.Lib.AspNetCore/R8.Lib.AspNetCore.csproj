@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.AspNetCore</PackageId>
-    <Version>1.1.19</Version>
+    <Version>1.2.2</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
-    <PackageDescription>Add many useful features to AspNetCore 3.0</PackageDescription>
+    <PackageDescription>Core package for R8.Lib.AspNetCore</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
@@ -18,9 +18,16 @@
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.26" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
-    <PackageReference Include="R8.Lib.AspNetCore.Base" Version="1.1.24" />
+    <PackageReference Include="R8.Lib.FileHandlers" Version="1.2.5" />
+    <PackageReference Include="MailKit" Version="2.9.0" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Compile Remove="FileHandlers\IMyFormFileConfiguration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.2.20475.6" />
+    <PackageReference Include="R8.Lib.EntityFrameworkCore" Version="1.0.0" />
+  </ItemGroup>
 </Project>

@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-using R8.Lib.AspNetCore.Sitemap.Models;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using R8.Lib.AspNetCore.Base;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using R8.Lib.AspNetCore.Sitemap.Models;
 
 namespace R8.Lib.AspNetCore.Sitemap
 {

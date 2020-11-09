@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace R8.Lib.FileHandlers
@@ -12,8 +14,13 @@ namespace R8.Lib.FileHandlers
         /// <summary>
         /// Gets or sets an <see cref="bool"/> value that avoid to save file into disk. For testing.
         /// </summary>
-        /// <remarks>This is an internal API, and maybe removed in future versions</remarks>
+        /// <remarks>This is an internal API, and may be removed in future versions.</remarks>
         public bool TestDevelopment { get; set; }
+
+        /// <summary>
+        /// Gets or sets a collection of objects.
+        /// </summary>
+        private List<object> _services = new List<object>();
 
         /// <summary>
         /// Gets or sets an <see cref="string"/> value that representing root folder for uploading files.
@@ -42,10 +49,56 @@ namespace R8.Lib.FileHandlers
         public bool OverwriteFile { get; set; } = false;
 
         /// <summary>
+        /// Returns specified type from services.
+        /// </summary>
+        /// <typeparam name="T">A generic type of service that already registered.</typeparam>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <returns>A instance with specified type.</returns>
+        public T GetService<T>() where T : class
+        {
+            if (_services == null)
+                throw new NullReferenceException(nameof(_services));
+
+            var service = _services.OfType<T>().FirstOrDefault();
+            return service;
+        }
+
+        /// <summary>
+        /// Returns specified type from services.
+        /// </summary>
+        /// <param name="type">An instance of generic type that has been added to services.</param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <returns>A instance with specified type.</returns>
+        public object GetService(Type type)
+        {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (_services == null)
+                throw new NullReferenceException(nameof(_services));
+
+            var service = _services.Find(x => x.GetType() == type);
+            return service;
+        }
+
+        /// <summary>
+        /// Adds specific type of class to services.
+        /// </summary>
+        /// <typeparam name="T">A generic type of service.</typeparam>
+        /// <param name="type">An instance of generic type to be added to services.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public void AddService<T>(T type) where T : class
+        {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            _services.Add(type);
+        }
+
+        /// <summary>
         /// Returns final file path
         /// </summary>
         /// <param name="currentFileName">An <see cref="string"/> value that representing real file name</param>
-        /// <param name="fileExtension">An <see cref="string"/> value that representing real file extension</param>
+        /// <param name="fileExtension"></param>
         /// <returns>An <see cref="string"/> value that representing file path</returns>
         /// <remarks>If you don't want to Get Real File Path, you can leave <c>currentFileName</c> null and fill <c>fileExtension</c>, and otherwise if you do need for real file name, you have to fill <c>currentFileName</c>.</remarks>
         /// <exception cref="NullReferenceException"></exception>

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a instance of <see cref="MyFile"/>
     /// </summary>
-    public class MyFile
+    internal class MyFile : IMyFile
     {
         /// <summary>
         /// Represents a instance of <see cref="MyFile"/>
@@ -42,20 +42,10 @@
         {
         }
 
-        /// <summary>
-        /// Gets or sets file's absolute path
-        /// </summary>
         public string FilePath { get; set; }
 
-        /// <summary>
-        /// Gets or sets file' length
-        /// </summary>
         public long FileSize { get; set; }
 
-        /// <summary>
-        /// Gets or sets Thumbnail for image file's absolute path
-        /// </summary>
-        /// <remarks>Only for PDF preview, so far</remarks>
         public string ThumbnailPath { get; set; }
 
         public static implicit operator string(MyFile file)

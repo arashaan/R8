@@ -15,32 +15,32 @@ namespace R8.Lib.FileHandlers
     public static class FileHandlers
     {
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved file absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> that representing stream data to save</param>
         /// <param name="filename">An <see cref="string"/> value that representing file's full path</param>
         /// <param name="config">An <see cref="Action"/> to set configurations inside <see cref="MyFileConfiguration"/> instance</param>
-        /// <returns>Returns an <see cref="MyFile"/> instance that representing saved file path</returns>
+        /// <returns>Returns an <see cref="IMyFile"/> instance that representing saved file path</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static MyFile? Save(this Stream stream, string filename, Action<MyFileConfiguration> config) =>
+        public static IMyFile? Save(this Stream stream, string filename, Action<MyFileConfiguration> config) =>
             stream.SaveAsync(filename, config).GetAwaiter().GetResult();
 
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved file absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> that representing stream data to save</param>
         /// <param name="filename">An <see cref="string"/> value that representing file's full path</param>
         /// <param name="config">An <see cref="Action"/> to set configurations inside <see cref="MyFileConfiguration"/> instance</param>
-        /// <returns>Returns an <see cref="MyFile"/> instance that representing saved file path</returns>
+        /// <returns>Returns an <see cref="IMyFile"/> instance that representing saved file path</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static MyFile? Save<TConfiguration>(this Stream stream, string filename, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration =>
+        public static IMyFile? Save<TConfiguration>(this Stream stream, string filename, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration =>
             stream.SaveAsync(filename, config).GetAwaiter().GetResult();
 
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved file absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path
         /// </summary>
         /// <typeparam name="TConfiguration"></typeparam>
         /// <param name="stream">An <see cref="Stream"/> that representing stream data to save</param>
@@ -53,7 +53,29 @@ namespace R8.Lib.FileHandlers
         /// <exception cref="InvalidImageContentException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static async Task<MyFile?> SaveAsync<TConfiguration>(this Stream stream, string filename, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration
+        public static Task<IMyFile?> SaveAsync<TConfiguration>(this Stream stream, string filename, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration
+        {
+            var thisConfig = Activator.CreateInstance<TConfiguration>();
+            config?.Invoke(thisConfig);
+            return stream.SaveAsync(filename, thisConfig);
+        }
+
+        /// <summary>
+        /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path
+        /// </summary>
+        /// <typeparam name="TConfiguration"></typeparam>
+        /// <param name="stream">An <see cref="Stream"/> that representing stream data to save</param>
+        /// <param name="filename">An <see cref="string"/> value that representing file's full path</param>
+        /// <param name="config">A generic type of <see cref="MyFileConfiguration"/> to set configurations.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="UnknownImageFormatException"></exception>
+        /// <exception cref="InvalidImageContentException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ObjectDisposedException"></exception>
+        public static async Task<IMyFile?> SaveAsync<TConfiguration>(this Stream stream, string filename, TConfiguration config) where TConfiguration : MyFileConfiguration
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -63,46 +85,45 @@ namespace R8.Lib.FileHandlers
             if (stream.Length == 0)
                 return null;
 
-            var thisConfig = Activator.CreateInstance<TConfiguration>();
-            config?.Invoke(thisConfig);
-
             filename = filename.Replace("\\", "/");
-            return thisConfig switch
+            return config switch
             {
                 MyFileConfigurationImage imageConfiguration => await stream.SaveImageAsync(filename, imageConfiguration)
                     .ConfigureAwait(false),
                 MyFileConfigurationPdf pdfConfiguration => await stream.SavePdfAsync(filename, pdfConfiguration)
                     .ConfigureAwait(false),
-                _ => await stream.SaveAsync(filename, x => config((TConfiguration)x)).ConfigureAwait(false)
+                _ => await stream.SaveAsync(filename, (MyFileConfiguration)config).ConfigureAwait(false)
             };
         }
 
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved pdf absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved pdf absolute path
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> instance that representing pdf stream</param>
         /// <param name="filename">An <see cref="string"/> value that representing filename</param>
         /// <param name="config">An <see cref="Action"/> to set configurations inside <see cref="MyFileConfiguration"/> instance</param>
-        /// <returns>Returns an <see cref="MyFile"/> instance that representing saved file path</returns>
+        /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static MyFile SavePdf(this Stream stream, string filename,
+        /// <returns>Returns an <see cref="IMyFile"/> instance that representing saved file path</returns>
+        public static IMyFile SavePdf(this Stream stream, string filename,
             MyFileConfigurationPdf config) => stream.SavePdfAsync(filename, config).GetAwaiter().GetResult();
 
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved pdf absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved pdf absolute path
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> instance that representing pdf stream</param>
         /// <param name="filename">An <see cref="string"/> value that representing filename</param>
         /// <param name="config">An <see cref="Action"/> to set configurations inside <see cref="MyFileConfiguration"/> instance</param>
-        /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
+        /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static async Task<MyFile> SavePdfAsync(this Stream stream, string filename,
+        /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
+        public static async Task<IMyFile> SavePdfAsync(this Stream stream, string filename,
             MyFileConfigurationPdf config)
         {
             if (stream == null)
@@ -159,23 +180,23 @@ namespace R8.Lib.FileHandlers
             await stream.DisposeAsync().ConfigureAwait(false);
             return new MyFile
             {
-                FilePath = previewFile,
+                FilePath = previewFile.FilePath,
                 ThumbnailPath = pdfPreview
             };
         }
 
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved file absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> that representing stream data to save</param>
         /// <param name="filename">An <see cref="string"/> value that representing file's full path</param>
-        /// <param name="config">An <see cref="Action"/> to set configurations inside <see cref="MyFileConfiguration"/> instance</param>
+        /// <param name="config">A generic type of <see cref="MyFileConfiguration"/> to set configurations.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task<MyFile?> SaveAsync(this Stream stream, string filename, Action<MyFileConfiguration> config)
+        public static async Task<IMyFile?> SaveAsync(this Stream stream, string filename, MyFileConfiguration config)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -185,15 +206,12 @@ namespace R8.Lib.FileHandlers
             if (stream.Length == 0)
                 return null;
 
-            var thisConfig = Activator.CreateInstance<MyFileConfiguration>();
-            config?.Invoke(thisConfig);
-
             filename = filename.Replace("\\", "/");
             var fileExtension = Path.GetExtension(filename);
             if (string.IsNullOrEmpty(fileExtension))
                 throw new NullReferenceException($"{nameof(filename)} should have an extension for filename");
 
-            filename = thisConfig.GetFilePath(filename, null);
+            filename = config.GetFilePath(filename, null);
             var isValid = true;
             switch (Extensions.GetFileType(filename))
             {
@@ -222,9 +240,9 @@ namespace R8.Lib.FileHandlers
                 return null;
 
             var output = await stream
-                .SaveFileAsync(filename, thisConfig.OverwriteFile)
+                .SaveFileAsync(filename, config.OverwriteFile)
                 .ConfigureAwait(false);
-            return new MyFile(output);
+            return output;
         }
 
         /// <summary>
@@ -239,7 +257,7 @@ namespace R8.Lib.FileHandlers
         /// <exception cref="UnknownImageFormatException"></exception>
         /// <exception cref="InvalidImageContentException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static async Task<MyFile?> SaveImageAsync(this Image image, string name, MyFileConfigurationImage config)
+        public static async Task<IMyFile?> SaveImageAsync(this Image image, string name, MyFileConfigurationImage config)
         {
             if (image == null)
                 throw new ArgumentNullException(nameof(image));
@@ -254,9 +272,9 @@ namespace R8.Lib.FileHandlers
             var encoder = config.ImageEncoder ??= new JpegEncoder();
             await using var outputStream = new MemoryStream();
             {
-                if (config.Watermark != null && !string.IsNullOrEmpty(config.Watermark.Path))
+                if (!string.IsNullOrEmpty(config.WatermarkPath))
                 {
-                    using var watermark = await Image.LoadAsync(config.Watermark.Path).ConfigureAwait(false);
+                    using var watermark = await Image.LoadAsync(config.WatermarkPath).ConfigureAwait(false);
                     {
                         watermark.ResizeScaleByDimensions(image.Width, image.Height);
                         using var watermarkedImage = new Image<Rgba32>(image.Width, image.Height);
@@ -308,7 +326,7 @@ namespace R8.Lib.FileHandlers
                 var finalFileName = config.GetFilePath($"{name}.{ext}", null);
                 var outputImage = await outputStream.SaveFileAsync(finalFileName, config.OverwriteFile, config.TestDevelopment).ConfigureAwait(false);
                 await outputStream.DisposeAsync().ConfigureAwait(false);
-                return new MyFile(outputImage);
+                return outputImage;
             }
         }
 
@@ -318,29 +336,29 @@ namespace R8.Lib.FileHandlers
         /// <param name="image">An <see cref="Image"/> instance that representing image stream</param>
         /// <param name="name">An <see cref="string"/> value that representing file's full path</param>
         /// <param name="config">An <see cref="Action"/> to set configurations inside <see cref="MyFileConfiguration"/> instance</param>
-        /// <returns>Returns an <see cref="MyFile"/> instance that representing saved file path</returns>
+        /// <returns>Returns an <see cref="IMyFile"/> instance that representing saved file path</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="NotSupportedException"></exception>
         /// <exception cref="UnknownImageFormatException"></exception>
         /// <exception cref="InvalidImageContentException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static MyFile? SaveImage(this Image image, string name, MyFileConfigurationImage config) =>
+        public static IMyFile? SaveImage(this Image image, string name, MyFileConfigurationImage config) =>
             image.SaveImageAsync(name, config).GetAwaiter().GetResult();
 
         /// <summary>
-        /// Saves an <see cref="Stream"/> into an <see cref="MyFile"/> instance.
+        /// Saves an <see cref="Stream"/> into an <see cref="IMyFile"/> instance.
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> instance that representing file's data.</param>
         /// <param name="name">An <see cref="string"/> value that representing a path to save file in.</param>
         /// <param name="overwriteFile">An <see cref="bool"/> value that representing if overwriteFile on existing file or not</param>
-        /// <returns>An <see cref="MyFile"/> instance that representing saved file location</returns>
+        /// <returns>An <see cref="IMyFile"/> instance that representing saved file location</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static MyFile? SaveFile(this Stream stream, string name, bool overwriteFile) =>
+        public static IMyFile? SaveFile(this Stream stream, string name, bool overwriteFile) =>
             stream.SaveFileAsync(name, overwriteFile).GetAwaiter().GetResult();
 
         /// <summary>
-        /// Saves an <see cref="Stream"/> into an <see cref="MyFile"/> instance.
+        /// Saves an <see cref="Stream"/> into an <see cref="IMyFile"/> instance.
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> instance that representing file's data.</param>
         /// <param name="filename">An <see cref="string"/> value that representing a path to save file in.</param>
@@ -349,7 +367,7 @@ namespace R8.Lib.FileHandlers
         /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        private static async Task<MyFile?> SaveFileAsync(this Stream stream, string filename, bool overwriteFile, bool test)
+        private static async Task<IMyFile?> SaveFileAsync(this Stream stream, string filename, bool overwriteFile, bool test)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -398,7 +416,7 @@ namespace R8.Lib.FileHandlers
         }
 
         /// <summary>
-        /// Saves an <see cref="Stream"/> into an <see cref="MyFile"/> instance.
+        /// Saves an <see cref="Stream"/> into an <see cref="IMyFile"/> instance.
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> instance that representing file's data.</param>
         /// <param name="filename">An <see cref="string"/> value that representing a path to save file in.</param>
@@ -406,11 +424,11 @@ namespace R8.Lib.FileHandlers
         /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ObjectDisposedException"></exception>
-        public static Task<MyFile?> SaveFileAsync(this Stream stream, string filename, bool overwriteFile) =>
+        public static Task<IMyFile?> SaveFileAsync(this Stream stream, string filename, bool overwriteFile) =>
             stream.SaveFileAsync(filename, overwriteFile, false);
 
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved file absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> that representing stream data to save</param>
         /// <param name="name">An <see cref="string"/> value that representing file's full path</param>
@@ -420,7 +438,7 @@ namespace R8.Lib.FileHandlers
         /// <exception cref="NotSupportedException"></exception>
         /// <exception cref="UnknownImageFormatException"></exception>
         /// <exception cref="InvalidImageContentException"></exception>
-        public static async Task<MyFile?> SaveImageAsync(this Stream stream, string name, MyFileConfigurationImage config)
+        public static async Task<IMyFile?> SaveImageAsync(this Stream stream, string name, MyFileConfigurationImage config)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -437,17 +455,17 @@ namespace R8.Lib.FileHandlers
         }
 
         /// <summary>
-        /// Represents a <see cref="MyFile"/> instance that contains saved file absolute path
+        /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> that representing stream data to save</param>
         /// <param name="name">An <see cref="string"/> value that representing file's full path</param>
         /// <param name="config">An <see cref="Action"/> to set configurations inside <see cref="MyFileConfiguration"/> instance</param>
-        /// <returns>Returns an <see cref="MyFile"/> instance that representing saved file path</returns>
+        /// <returns>Returns an <see cref="IMyFile"/> instance that representing saved file path</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="NotSupportedException"></exception>
         /// <exception cref="UnknownImageFormatException"></exception>
         /// <exception cref="InvalidImageContentException"></exception>
-        public static MyFile? SaveImage(this Stream stream, string name, MyFileConfigurationImage config) =>
+        public static IMyFile? SaveImage(this Stream stream, string name, MyFileConfigurationImage config) =>
             stream.SaveImageAsync(name, config).GetAwaiter().GetResult();
     }
 }

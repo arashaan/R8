@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib.FileHandlers</PackageId>
-    <Version>1.2.3</Version>
+    <Version>1.2.5</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <PackageDescription>Handle files easily</PackageDescription>
