@@ -17,7 +17,7 @@ using System.Security.Principal;
 
 namespace R8.AspNetCore
 {
-    public static class HttpContexts
+    public static class HttpContextExtensions
     {
         /// <summary>
         /// Retrieves <see cref="IPAddress"/> from current <see cref="HttpRequest"/>.

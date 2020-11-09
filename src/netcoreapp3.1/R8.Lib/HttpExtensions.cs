@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace R8.Lib
 {
-    public static class HttpClientExtensions
+    public static class HttpExtensions
     {
         /// <summary>
         /// Request a POST method
@@ -21,6 +23,24 @@ namespace R8.Lib
             return !responseMessage.IsSuccessStatusCode
                 ? null
                 : responseMessage.Content;
+        }
+
+        /// <summary>
+        /// Retrieves <see cref="IPAddress"/> from according to current system network adapters.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="IPAddress"/> object.</returns>
+        public static IPAddress GetIPAddress(this IPAddress _)
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
+            socket.Connect("8.8.8.8", 65530);
+            if (!(socket.LocalEndPoint is IPEndPoint endPoint))
+                return null;
+
+            var localIp = endPoint.Address.ToString();
+            return !string.IsNullOrEmpty(localIp)
+                ? IPAddress.Parse(localIp)
+                : null;
         }
 
         /// <summary>
