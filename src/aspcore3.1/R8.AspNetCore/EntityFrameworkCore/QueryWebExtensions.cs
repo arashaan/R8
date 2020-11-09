@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 using R8.EntityFrameworkCore;
 using R8.Lib.Enums;
@@ -30,7 +32,11 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
         public static IQueryable<TSource> InitializeQuery<TDbContext, TSource>(this TDbContext context, Expression<Func<TDbContext, DbSet<TSource>>> dbSet, bool ignoreFilterForAdmins = true) where TDbContext : DbContextBase where TSource : EntityBase
         {
-            var currentUser = context.HttpContextAccessor.HttpContext.GetCurrentUser();
+            var httpContextAccessor = context.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor == null)
+                throw new NullReferenceException(nameof(HttpContextAccessor));
+
+            var currentUser = context.GetService<IHttpContextAccessor>().HttpContext.GetCurrentUser();
             if (currentUser != null && (currentUser.Role == Roles.Admin || currentUser.Role == Roles.Operator))
             {
                 return dbSet.Compile().Invoke(context)
@@ -43,7 +49,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
         public static IQueryable<TSource> InitializeQuery<TDbContext, TSource>(this TDbContext context, Expression<Func<TDbContext, DbSet<TSource>>> dbSet, out CurrentUser user, bool ignoreFilterForAdmins = true) where TDbContext : DbContextBase where TSource : EntityBase
         {
-            user = context.HttpContextAccessor.HttpContext.GetCurrentUser();
+            user = context.GetService<IHttpContextAccessor>().HttpContext.GetCurrentUser();
 
             var result = context.InitializeQuery(dbSet, user);
             return result;

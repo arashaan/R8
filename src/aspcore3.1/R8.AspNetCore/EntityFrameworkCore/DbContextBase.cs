@@ -17,28 +17,25 @@ namespace R8.AspNetCore.EntityFrameworkCore
     /// </summary>
     public partial class DbContextBase : R8.EntityFrameworkCore.DbContextBase
     {
-        public IHttpContextAccessor HttpContextAccessor { get; set; }
-
         protected DbContextBase() : this(new DbContextOptions<R8.EntityFrameworkCore.DbContextBase>())
         {
         }
 
         protected DbContextBase(DbContextOptions options) : base(options)
         {
-            this.HttpContextAccessor = this.GetService<IHttpContextAccessor>();
         }
 
         protected DbContextBase(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
-            this.HttpContextAccessor = httpContextAccessor;
         }
 
         public Response<TSource> TryUpdate<TSource>(TSource entity, [CallerMemberName] string caller = null, [CallerFilePath] string callerPath = null, [CallerLineNumber] int callerLine = 0) where TSource : EntityBase
         {
-            if (HttpContextAccessor == null)
+            var httpContextAccessor = this.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor == null)
                 throw new NullReferenceException(nameof(HttpContextAccessor));
 
-            var httpContext = HttpContextAccessor.HttpContext;
+            var httpContext = httpContextAccessor.HttpContext;
             var userId = httpContext.GetCurrentUser()?.GuidId;
             return base.TryUpdate(entity, userId, caller, callerPath, callerLine);
         }
@@ -46,10 +43,11 @@ namespace R8.AspNetCore.EntityFrameworkCore
         public Response<TSource> TryAdd<TSource>(TSource entity, string caller = null, string callerPath = null,
             int callerLine = 0) where TSource : EntityBase
         {
-            if (HttpContextAccessor == null)
+            var httpContextAccessor = this.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor == null)
                 throw new NullReferenceException(nameof(HttpContextAccessor));
 
-            var httpContext = HttpContextAccessor.HttpContext;
+            var httpContext = httpContextAccessor.HttpContext;
             var userId = httpContext.GetCurrentUser()?.GuidId;
             return base.TryAdd(entity, userId, caller, callerPath, callerLine);
         }
@@ -57,10 +55,11 @@ namespace R8.AspNetCore.EntityFrameworkCore
         public Response<TSource> TryUnHide<TSource>(TSource entity, string caller = null, string callerPath = null,
             int callerLine = 0) where TSource : EntityBase
         {
-            if (HttpContextAccessor == null)
+            var httpContextAccessor = this.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor == null)
                 throw new NullReferenceException(nameof(HttpContextAccessor));
 
-            var httpContext = HttpContextAccessor.HttpContext;
+            var httpContext = httpContextAccessor.HttpContext;
             var userId = httpContext.GetCurrentUser()?.GuidId;
             return base.TryUnHide(entity, userId, caller, callerPath, callerLine);
         }
@@ -68,10 +67,11 @@ namespace R8.AspNetCore.EntityFrameworkCore
         public Response<TSource> TryHideUnHide<TSource>(TSource entity, string caller = null, string callerPath = null,
             int callerLine = 0) where TSource : EntityBase
         {
-            if (HttpContextAccessor == null)
+            var httpContextAccessor = this.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor == null)
                 throw new NullReferenceException(nameof(HttpContextAccessor));
 
-            var httpContext = HttpContextAccessor.HttpContext;
+            var httpContext = httpContextAccessor.HttpContext;
             var userId = httpContext.GetCurrentUser()?.GuidId;
             return base.TryHideUnHide(entity, userId, caller, callerPath, callerLine);
         }
@@ -79,16 +79,23 @@ namespace R8.AspNetCore.EntityFrameworkCore
         public Response<TSource> TryHide<TSource>(TSource entity, string caller = null, string callerPath = null,
             int callerLine = 0) where TSource : EntityBase
         {
-            if (HttpContextAccessor == null)
+            var httpContextAccessor = this.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor == null)
                 throw new NullReferenceException(nameof(HttpContextAccessor));
 
-            var httpContext = HttpContextAccessor.HttpContext;
+            var httpContext = httpContextAccessor.HttpContext;
             var userId = httpContext.GetCurrentUser()?.GuidId;
             return base.TryHide(entity, userId, caller, callerPath, callerLine);
         }
 
         private void GenerateAudit(EntityEntry entry, string caller, string callerPath, int callerLine)
         {
+            var httpContextAccessor = this.GetService<IHttpContextAccessor>();
+            if (httpContextAccessor == null)
+                throw new NullReferenceException(nameof(HttpContextAccessor));
+
+            var httpContext = httpContextAccessor.HttpContext;
+
             AuditFlags flag;
             switch (entry.State)
             {
@@ -113,11 +120,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             if (!(entry.Entity is EntityBase entityBase))
                 return;
 
-            if (HttpContextAccessor == null)
-                throw new NullReferenceException($"'{nameof(HttpContextAccessor)}' should not be null in this level");
-
-            var httpContext = HttpContextAccessor.HttpContext;
-            var ipAddress = httpContext?.GetIpAddress() ?? IPAddress.None;
+            var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
             var userId = httpContext.GetCurrentUser()?.GuidId;
             var userAgent = httpContext?.Request?.Headers["User-Agent"];
             FindChanges(entry, out var oldValues, out var newValues);
