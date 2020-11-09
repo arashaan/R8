@@ -1,21 +1,45 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using R8.EntityFrameworkCore.JsonConverters;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Newtonsoft.Json;
-using R8.EntityFrameworkCore.JsonConverters;
+using System.Net;
 
 namespace R8.EntityFrameworkCore
 {
     /// <summary>
     /// An object to track creation, modification, and deletion of specific entity.
     /// </summary>
-    public class Audit : IAudit
+    internal class Audit : IAudit
     {
         /// <summary>
         /// An object to track creation, modification, and deletion of specific entity.
         /// </summary>
         public Audit()
         {
+        }
+
+        /// <summary>
+        /// An object to track creation, modification, and deletion of specific entity.
+        /// </summary>
+        /// <param name="userId">A <see cref="Nullable{TResult}"/> type of <see cref="Guid"/> that representing Internal ID of specific user that did changes.</param>
+        /// <param name="ipAddress">An <see cref="IPAddress"/> that representing current <see cref="HttpRequest"/>'s ip address.</param>
+        /// <param name="userAgent">A <see cref="string"/> that representing current <see cref="HttpRequest"/>'s user agent.</param>
+        /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of current instance.</param>
+        /// <param name="rowId">A <see cref="Guid"/> value that representing id of specific entity that changed.</param>
+        /// <param name="callingMethodName">A <see cref="string"/> value that representing method or member name that prepared to change data.</param>
+        /// <param name="callingMethodPath">A <see cref="string"/> value that representing file path of method or member name that prepared to change data.</param>
+        /// <param name="oldValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been changed.</param>
+        /// <param name="newValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been replaces with old values.</param>
+        public Audit(Guid? userId, IPAddress ipAddress, string userAgent, AuditFlags flag, Guid rowId,
+            string callingMethodName, string callingMethodPath, Dictionary<string, object> oldValues = null,
+            Dictionary<string, object> newValues = null) : this(userId, flag, rowId, callingMethodName,
+            callingMethodPath, oldValues, newValues)
+        {
+            IpAddress = ipAddress;
+            UserAgent = userAgent;
         }
 
         /// <summary>
@@ -40,6 +64,11 @@ namespace R8.EntityFrameworkCore
             OldValues = oldValues ?? new Dictionary<string, object>();
             NewValues = newValues ?? new Dictionary<string, object>();
         }
+
+        public string UserAgent { get; set; }
+
+        [JsonConverter(typeof(AuditIPAddressConverter))]
+        public IPAddress IpAddress { get; set; }
 
         public string CallingMethodName { get; set; }
 

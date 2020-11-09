@@ -1,15 +1,19 @@
-﻿using System;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using Humanizer;
+﻿using Humanizer;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 using Newtonsoft.Json;
+
 using R8.Lib.Localization;
 using R8.Lib.MethodReturn;
+
+using System;
+using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace R8.EntityFrameworkCore
 {
@@ -39,15 +43,13 @@ namespace R8.EntityFrameworkCore
         public static async Task SaveDatabaseAsync<TModel, TDbContext>(this TModel model, TDbContext dbContext, CancellationToken cancellationToken = default)
             where TModel : IResponseDatabase where TDbContext : DbContextBase
         {
-            model.Save = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            model.Save = await dbContext.SaveChangesAsync(cancellationToken);
         }
 
         internal static string GetTableName(this EntityEntry entry)
         {
             var entityType = entry.Context.Model.FindEntityType(entry.Entity.GetType());
-            var tableName = entityType.GetTableName();
-
-            return tableName;
+            return entityType.GetTableName();
         }
 
         internal static PropertyBuilder<CultureInfo> HasCultureConversion(this PropertyBuilder<CultureInfo> property)

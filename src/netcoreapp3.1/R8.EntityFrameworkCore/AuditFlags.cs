@@ -23,6 +23,6 @@
         /// <summary>
         /// This will be used when Entity is undeleted.
         /// </summary>
-        Undeleted = 3
+        UnDeleted = 3
     }
 }

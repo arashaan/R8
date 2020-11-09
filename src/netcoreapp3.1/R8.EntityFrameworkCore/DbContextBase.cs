@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 using R8.Lib;
 using R8.Lib.Enums;
 using R8.Lib.MethodReturn;
+
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace R8.EntityFrameworkCore
 {
@@ -18,30 +22,15 @@ namespace R8.EntityFrameworkCore
     public abstract class DbContextBase : DbContext
     {
         public string ConnectionString { get; set; }
+        private ConcurrentDictionary<string, object> internalDictionary;
 
         protected DbContextBase() : this(new DbContextOptions<DbContextBase>())
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-        }
-
         protected DbContextBase(DbContextOptions options) : base(options)
         {
         }
-
-        // public static JsonSerializerSettings AuditSerializerSettings
-        // {
-        //     get
-        //     {
-        //         var jsonSettings = JsonExtensions.CustomJsonSerializerSettings.Settings;
-        //         jsonSettings.Formatting = Formatting.None;
-        //         jsonSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-        //         return jsonSettings;
-        //     }
-        // }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,52 +42,67 @@ namespace R8.EntityFrameworkCore
             base.OnModelCreating(modelBuilder);
         }
 
-        private void DetachCore(EntityEntry entry)
+        public void AddOrUpdateDic(string key, object value)
         {
-            Entry(entry.Entity).State = entry.State switch
-            {
-                EntityState.Added => EntityState.Detached,
-                EntityState.Modified => EntityState.Unchanged,
-                EntityState.Deleted => EntityState.Unchanged,
-                _ => Entry(entry.Entity).State
-            };
+            internalDictionary ??= new ConcurrentDictionary<string, object>();
+            internalDictionary.AddOrUpdate(key, value, (s, o) => value);
         }
 
-        public virtual Response<TSource> TryAdd<TSource>(TSource entity, Guid? userId, [CallerMemberName] string caller = null, [CallerFilePath] string callerPath = null, [CallerLineNumber] int callerLine = 0) where TSource : EntityBase
+        public bool Add<TSource>(TSource entity, out ValidatableResultCollection errors) where TSource : EntityBase
         {
-            var isValid = TryValidate(entity, out var errors);
+            var isValid = TryValidate(entity, out errors);
             if (!isValid)
-                return new Response<TSource>(Flags.ModelIsNotValid, entity, errors);
+                return false;
 
-            var model = base.Add(entity);
-            GenerateAudit(model, userId, caller, callerPath, callerLine);
+            var entry = base.Add(entity);
 
-            return new Response<TSource>(Flags.Success, model.Entity);
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, AuditFlags.Created, null, null, null, frame);
+
+            return true;
         }
 
-        public Flags TryUnHideBase<TSource>(TSource entity)
-            where TSource : EntityBase
+        public bool Add<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : EntityBase
         {
-            if (!entity.IsDeleted)
-                return Flags.NotDeleted;
+            var isValid = TryValidate(entity, out errors);
+            if (!isValid)
+                return false;
 
-            entity.IsDeleted = false;
-            base.Update(entity);
-            return Flags.Success;
+            var entry = base.Add(entity);
+
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, AuditFlags.Created, userId, null, null, frame);
+
+            return true;
         }
 
-        public virtual Response<TSource> TryUnHide<TSource>(TSource entity, Guid? userId, [CallerMemberName] string caller = null, [CallerFilePath] string callerPath = null, [CallerLineNumber] int callerLine = 0)
-          where TSource : EntityBase
+        public bool UnHide<TSource>(TSource entity) where TSource : EntityBase
         {
-            var hide = TryUnHideBase(entity);
             if (!entity.IsDeleted)
-                return new Response<TSource>(Flags.NotDeleted, entity);
+                return false;
 
             entity.IsDeleted = false;
             var entry = base.Update(entity);
-            GenerateAudit(entry, userId, caller, callerPath, callerLine);
 
-            return new Response<TSource>(Flags.Success, entry.Entity);
+            var frame = new StackTrace().GetFrame(1);
+
+            GenerateAudit(entry, AuditFlags.UnDeleted, null, null, null, frame);
+
+            return true;
+        }
+
+        public bool UnHide<TSource>(TSource entity, Guid userId) where TSource : EntityBase
+        {
+            if (!entity.IsDeleted)
+                return false;
+
+            entity.IsDeleted = false;
+            var entry = base.Update(entity);
+
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, AuditFlags.UnDeleted, userId, null, null, frame);
+
+            return true;
         }
 
         public virtual bool TryValidate(IResponseTrack response, out ValidatableResultCollection errors)
@@ -154,59 +158,103 @@ namespace R8.EntityFrameworkCore
             return !errors.Any();
         }
 
-        public static object? GetIResponseUnderlyingEntity(IResponse childResponse)
+        private static object? GetIResponseUnderlyingEntity(IResponse childResponse)
         {
-            if (childResponse.GetType() == typeof(Response<>))
-            {
-                var childEntityProp = childResponse.GetType().GetProperty(nameof(Response<EntityBase>.Result));
-                return childEntityProp == null
-                    ? null
-                    : childEntityProp.GetValue(childResponse);
-            }
-            else
-            {
+            if (childResponse.GetType() != typeof(Response<>))
                 return null;
-            }
+
+            var childEntityProp = childResponse.GetType().GetProperty(nameof(Response<EntityBase>.Result));
+            return childEntityProp?.GetValue(childResponse);
         }
 
-        public virtual Response<TSource> TryUpdate<TSource>(TSource entity, Guid? userId, [CallerMemberName] string caller = null, [CallerFilePath] string callerPath = null, [CallerLineNumber] int callerLine = 0) where TSource : EntityBase
+        public bool Update<TSource>(TSource entity, out ValidatableResultCollection errors) where TSource : EntityBase
         {
-            var isValid = TryValidate(entity, out var errors);
+            var isValid = TryValidate(entity, out errors);
             if (!isValid)
-                return new Response<TSource>(Flags.ModelIsNotValid, entity, errors);
+                return false;
 
             var entry = base.Update(entity);
-            GenerateAudit(entry, userId, caller, callerPath, callerLine);
 
-            var result = new Response<TSource>(Flags.Success, entry.Entity);
-            return result;
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, AuditFlags.Changed, null, null, null, frame);
+
+            return true;
         }
 
-        public virtual Response<TSource> TryHideUnHide<TSource>(TSource entity, Guid? userId, [CallerMemberName] string caller = null, [CallerFilePath] string callerPath = null, [CallerLineNumber] int callerLine = 0) where TSource : EntityBase
+        public bool Update<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : EntityBase
         {
+            var isValid = TryValidate(entity, out errors);
+            if (!isValid)
+                return false;
+
+            var entry = base.Update(entity);
+
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, AuditFlags.Changed, userId, null, null, frame);
+
+            return true;
+        }
+
+        public bool ToggleHiding<TSource>(TSource entity) where TSource : EntityBase
+        {
+            var flag = entity.IsDeleted
+                ? AuditFlags.UnDeleted
+                : AuditFlags.Deleted;
             entity.IsDeleted = !entity.IsDeleted;
             var entry = base.Update(entity);
-            GenerateAudit(entry, userId, caller, callerPath, callerLine);
 
-            return new Response<TSource>(Flags.Success, entity);
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, flag, null, null, null, frame);
+
+            return true;
         }
 
-        public virtual Response<TSource> TryHide<TSource>(TSource entity, Guid? userId, [CallerMemberName] string caller = null, [CallerFilePath] string callerPath = null, [CallerLineNumber] int callerLine = 0) where TSource : EntityBase
+        public bool ToggleHiding<TSource>(TSource entity, Guid userId) where TSource : EntityBase
+        {
+            var flag = entity.IsDeleted
+                ? AuditFlags.UnDeleted
+                : AuditFlags.Deleted;
+            entity.IsDeleted = !entity.IsDeleted;
+            var entry = base.Update(entity);
+
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, flag, userId, null, null, frame);
+
+            return true;
+        }
+
+        public bool Hide<TSource>(TSource entity) where TSource : EntityBase
         {
             if (entity.IsDeleted)
-                return new Response<TSource>(Flags.AlreadyDeleted, entity);
+                return false;
 
             entity.IsDeleted = true;
             var entry = base.Update(entity);
-            GenerateAudit(entry, userId, caller, callerPath, callerLine);
 
-            return new Response<TSource>(Flags.Success, entry.Entity);
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, AuditFlags.Deleted, null, null, null, frame);
+
+            return true;
+        }
+
+        public bool Hide<TSource>(TSource entity, Guid userId) where TSource : EntityBase
+        {
+            if (entity.IsDeleted)
+                return false;
+
+            entity.IsDeleted = true;
+            var entry = base.Update(entity);
+
+            var frame = new StackTrace().GetFrame(1);
+            GenerateAudit(entry, AuditFlags.Deleted, userId, null, null, frame);
+
+            return true;
         }
 
         public new async Task<DatabaseSaveState> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var hasSavability = CheckSavability(out var changesCount);
-            if (!hasSavability)
+            var canSave = CanSave(out var changesCount);
+            if (!canSave)
                 return DatabaseSaveState.NoNeedToSave;
 
             base.ChangeTracker.DetectChanges();
@@ -214,7 +262,7 @@ namespace R8.EntityFrameworkCore
             try
             {
                 base.ChangeTracker.AutoDetectChangesEnabled = false;
-                var changesInDatabase = await base.SaveChangesAsync(cancellationToken);
+                var changesInDatabase = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 if (changesInDatabase > 0)
                 {
                     result = changesInDatabase == changesCount
@@ -239,18 +287,21 @@ namespace R8.EntityFrameworkCore
             return result;
         }
 
-        private bool CheckSavability(out int changes)
+        private bool CanSave(out int changesCount)
         {
-            var entityEntries = base.ChangeTracker.Entries().ToList();
-            var changesCount = entityEntries.Where(x => x.State != EntityState.Detached && x.State != EntityState.Unchanged).ToList();
-            changes = changesCount.Count;
-            return changesCount.Count != 0;
+            var entries = base
+                .ChangeTracker
+                .Entries()?
+                .Where(x => x.State != EntityState.Detached && x.State != EntityState.Unchanged)
+                .ToList();
+            changesCount = entries?.Count ?? 0;
+            return changesCount != 0;
         }
 
         public new DatabaseSaveState SaveChanges()
         {
-            var hasSavability = CheckSavability(out var changesCount);
-            if (!hasSavability)
+            var canSave = CanSave(out var changesCount);
+            if (!canSave)
                 return DatabaseSaveState.NoNeedToSave;
 
             base.ChangeTracker.DetectChanges();
@@ -283,39 +334,23 @@ namespace R8.EntityFrameworkCore
             return result;
         }
 
-        public virtual void DeletePermanently<TSource>(TSource entity) where TSource : class
+        private void GenerateAudit(EntityEntry entry, AuditFlags flag, Guid? userId, IPAddress ipAddress, string userAgent, StackFrame stackFrame)
         {
-            Entry(entity).State = EntityState.Deleted;
-        }
-
-        private void GenerateAudit(EntityEntry entry, Guid? userId, string caller, string callerPath, int callerLine)
-        {
-            AuditFlags flag;
-            switch (entry.State)
-            {
-                case EntityState.Deleted:
-                    flag = AuditFlags.Deleted;
-                    break;
-
-                case EntityState.Modified:
-                    flag = AuditFlags.Changed;
-                    break;
-
-                case EntityState.Added:
-                    flag = AuditFlags.Created;
-                    break;
-
-                case EntityState.Detached:
-                case EntityState.Unchanged:
-                default:
-                    return;
-            }
+            // var httpContextAccessor = this.GetInfrastructure().GetService(Type.GetType("IHttpContextAccessor"));
 
             if (!(entry.Entity is EntityBase entityBase))
                 return;
 
+            //var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
+            //var userId = httpContext.GetCurrentUser()?.GuidId;
+            //var userAgent = httpContext?.Request?.Headers["User-Agent"];
+
+            var caller = stackFrame?.GetMethod()?.Name;
+            var callerPath = stackFrame?.GetFileName();
+            var callerLine = stackFrame?.GetFileLineNumber() ?? 0;
+
             FindChanges(entry, out var oldValues, out var newValues);
-            var audit = new Audit(userId, flag, entityBase.Id, caller, $"{callerPath}::{callerLine}", oldValues, newValues);
+            var audit = new Audit(userId, ipAddress, userAgent, flag, entityBase.Id, caller, $"{callerPath}::{callerLine}", oldValues, newValues);
             entityBase.Audits ??= new AuditCollection();
             entityBase.Audits.Add(audit);
         }
@@ -367,7 +402,6 @@ namespace R8.EntityFrameworkCore
             {
                 nameof(entity.Id),
                 nameof(entity.Audits),
-                // nameof(entity.SafetyHash)
             };
             var ignored = errors.Where(x => ignoredNames.Contains(x.Name)).ToList();
             if (ignored?.Any() != true)
