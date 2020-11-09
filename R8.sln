@@ -3,21 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib", "R8.Lib\R8.Lib.csproj", "{3157B0A8-1ACA-4AB0-A757-42F2C2852C18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib", "src\netcoreapp3.1\R8.Lib\R8.Lib.csproj", "{3157B0A8-1ACA-4AB0-A757-42F2C2852C18}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.AspNetCore", "R8.Lib.AspNetCore\R8.Lib.AspNetCore.csproj", "{897ED8D2-D1F4-4844-A570-9927C2016A60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.AspNetCore", "src\aspcore3.1\R8.Lib.AspNetCore\R8.Lib.AspNetCore.csproj", "{897ED8D2-D1F4-4844-A570-9927C2016A60}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.Encryption", "R8.Lib.Encryption\R8.Lib.Encryption.csproj", "{04DC726E-DECD-4D37-95CC-F6372BD4EDA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.Encryption", "src\netcoreapp3.1\R8.Lib.Encryption\R8.Lib.Encryption.csproj", "{04DC726E-DECD-4D37-95CC-F6372BD4EDA4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.FileHandlers", "R8.Lib.FileHandlers\R8.Lib.FileHandlers.csproj", "{9A55C3EB-BE04-40B5-B95F-3FC6076A26D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.FileHandlers", "src\netcoreapp3.1\R8.Lib.FileHandlers\R8.Lib.FileHandlers.csproj", "{9A55C3EB-BE04-40B5-B95F-3FC6076A26D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.Test", "R8.Lib.Test\R8.Lib.Test.csproj", "{1BEDACA1-BDEB-45CE-933D-E8C3EC6129A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.Test", "test\R8.Lib.Test\R8.Lib.Test.csproj", "{1BEDACA1-BDEB-45CE-933D-E8C3EC6129A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.AspNetCore.Test", "R8.Lib.AspNetCore.Test\R8.Lib.AspNetCore.Test.csproj", "{57CB8645-47CB-4D21-81B4-C6E7C319C6F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.AspNetCore.Test", "test\R8.Lib.AspNetCore.Test\R8.Lib.AspNetCore.Test.csproj", "{57CB8645-47CB-4D21-81B4-C6E7C319C6F5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.FileHandlers.Test", "R8.Lib.FileHandlers.Test\R8.Lib.FileHandlers.Test.csproj", "{3AE8154E-7B1B-431F-815D-36AA442BD327}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.FileHandlers.Test", "test\R8.Lib.FileHandlers.Test\R8.Lib.FileHandlers.Test.csproj", "{3AE8154E-7B1B-431F-815D-36AA442BD327}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.EntityFrameworkCore", "R8.Lib.EntityFrameworkCore\R8.Lib.EntityFrameworkCore.csproj", "{B1AEF6C9-6D41-4393-A77A-46F07C5BF024}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.EntityFrameworkCore", "src\netcoreapp3.1\R8.Lib.EntityFrameworkCore\R8.Lib.EntityFrameworkCore.csproj", "{B1AEF6C9-6D41-4393-A77A-46F07C5BF024}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9C6EA3D5-AF4B-40BD-A0CD-A718C5344DAE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "netcoreapp3.1", "netcoreapp3.1", "{2DE432C9-139B-40E8-9F80-0FBE4D414271}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "aspcore3.1", "aspcore3.1", "{C7D40290-B2BE-45CB-A3B9-C4E130587BA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +68,18 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3157B0A8-1ACA-4AB0-A757-42F2C2852C18} = {2DE432C9-139B-40E8-9F80-0FBE4D414271}
+		{897ED8D2-D1F4-4844-A570-9927C2016A60} = {C7D40290-B2BE-45CB-A3B9-C4E130587BA7}
+		{04DC726E-DECD-4D37-95CC-F6372BD4EDA4} = {2DE432C9-139B-40E8-9F80-0FBE4D414271}
+		{9A55C3EB-BE04-40B5-B95F-3FC6076A26D7} = {2DE432C9-139B-40E8-9F80-0FBE4D414271}
+		{1BEDACA1-BDEB-45CE-933D-E8C3EC6129A0} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
+		{57CB8645-47CB-4D21-81B4-C6E7C319C6F5} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
+		{3AE8154E-7B1B-431F-815D-36AA442BD327} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
+		{B1AEF6C9-6D41-4393-A77A-46F07C5BF024} = {2DE432C9-139B-40E8-9F80-0FBE4D414271}
+		{2DE432C9-139B-40E8-9F80-0FBE4D414271} = {9C6EA3D5-AF4B-40BD-A0CD-A718C5344DAE}
+		{C7D40290-B2BE-45CB-A3B9-C4E130587BA7} = {9C6EA3D5-AF4B-40BD-A0CD-A718C5344DAE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {335BA588-BA31-47FF-A0BE-3C61EA63F88D}
