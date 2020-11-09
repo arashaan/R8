@@ -37,6 +37,22 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public void CallGetJsonProperty4()
+        {
+            // Assets
+            var obj = new FakeJsonTest
+            {
+                Name = "Arash"
+            };
+
+            // Act
+            var propertyInfo = JsonHandler<FakeJsonTest>.GetProperty(x => x.Name);
+
+            // Arrange
+            Assert.Equal("nm", propertyInfo);
+        }
+
+        [Fact]
         public void CallGetJsonProperty3()
         {
             // Act
