@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.EntityFrameworkCore</PackageId>
-    <Version>1.6.1</Version>
+    <Version>1.6.2</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
