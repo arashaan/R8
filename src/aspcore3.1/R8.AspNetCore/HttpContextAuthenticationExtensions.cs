@@ -1,15 +1,25 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 
 namespace R8.AspNetCore
 {
     public static class HttpContextAuthenticationExtensions
     {
+        /// <summary>
+        /// Signs in using given claims and according to specific authentication scheme.
+        /// </summary>
+        /// <param name="httpContext">An <see cref="HttpContext"/> object.</param>
+        /// <param name="claims">A collection of <see cref="Claim"/> that representing users credential data.</param>
+        /// <param name="authResult">The <see cref="AuthenticationProperties"/> properties.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="Task{T}"/> object that representing asynchronous operation.</returns>
+        /// <remarks>If returns true, user is fully signed in, and not signed in yet otherwise.</remarks>
         public static async Task<bool> SignInAsync(this HttpContext httpContext, List<Claim> claims,
             AuthenticateResult authResult = null)
         {
@@ -25,14 +35,13 @@ namespace R8.AspNetCore
                 IsPersistent = authResult?.Properties.IsPersistent ?? true
             };
 
-            await httpContext.SignInAsync(AuthDefaults.AuthenticationScheme, claimsPrincipal, authProperties);
+            await httpContext.SignInAsync(AuthDefaults.AuthenticationScheme, claimsPrincipal, authProperties).ConfigureAwait(false);
 
             httpContext.User.AddIdentity(claimsIdentity);
-            var isAuthenticated = httpContext.User.Identities?.Any(x =>
+            return httpContext.User.Identities?.Any(x =>
                 x.IsAuthenticated &&
                 x.AuthenticationType == AuthDefaults.AuthenticationScheme &&
                 x.Name == claimsPrincipal.Identity.Name) ?? false;
-            return isAuthenticated;
         }
     }
 }
