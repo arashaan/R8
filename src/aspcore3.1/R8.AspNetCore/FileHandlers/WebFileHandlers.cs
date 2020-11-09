@@ -12,29 +12,29 @@ namespace R8.AspNetCore.FileHandlers
 {
     public static class WebFileHandlers
     {
-        // /// <summary>
-        // /// Saves and uploads given file into the host.
-        // /// </summary>
-        // /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
-        // /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
-        // /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
-        // public static async Task<IMyFile> UploadImageAsync(this IFormFile file, Action<MyFileConfigurationImage> config)
-        // {
-        //     if (file == null)
-        //         return null;
-        //
-        //     var f = new MyFileConfigurationImage();
-        //     config.Invoke(f);
-        //     try
-        //     {
-        //         await using var stream = file.OpenReadStream();
-        //         return await stream.SaveAsync(file.FileName, config).ConfigureAwait(false);
-        //     }
-        //     catch (Exception)
-        //     {
-        //         return null;
-        //     }
-        // }
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
+        public static async Task<IMyFile> UploadAsync(this IFormFile file)
+        {
+            if (file == null)
+                return null;
+
+            var newConfig = Activator.CreateInstance<MyFileConfiguration>();
+            var environment = newConfig.GetService<IWebHostEnvironment>();
+            newConfig.Folder = environment.WebRootPath + newConfig.Folder;
+            try
+            {
+                await using var stream = file.OpenReadStream();
+                return await stream.SaveAsync(file.FileName, newConfig).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         /// <summary>
         /// Saves and uploads given file into the host.
@@ -52,8 +52,8 @@ namespace R8.AspNetCore.FileHandlers
 
             var newConfig = Activator.CreateInstance<TConfiguration>();
             var environment = newConfig.GetService<IWebHostEnvironment>();
-            newConfig.Folder = environment.WebRootPath + "/uploads";
             config.Invoke(newConfig);
+            newConfig.Folder = environment.WebRootPath + newConfig.Folder;
             try
             {
                 await using var stream = file.OpenReadStream();
