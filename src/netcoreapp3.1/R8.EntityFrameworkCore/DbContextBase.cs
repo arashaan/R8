@@ -5,7 +5,6 @@ using R8.Lib.Enums;
 using R8.Lib.MethodReturn;
 
 using System;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -18,8 +17,7 @@ namespace R8.EntityFrameworkCore
     /// </summary>
     public abstract class DbContextBase : DbContext
     {
-        public string ConnectionString { get; set; }
-        private ConcurrentDictionary<string, object> internalDictionary;
+        public string ConnectionString => Database.GetConnectionString();
 
         protected DbContextBase() : this(new DbContextOptions<DbContextBase>())
         {
@@ -37,12 +35,6 @@ namespace R8.EntityFrameworkCore
                 modelBuilder.AddCustomDbFunctions();
 
             base.OnModelCreating(modelBuilder);
-        }
-
-        public void AddOrUpdateDic(string key, object value)
-        {
-            internalDictionary ??= new ConcurrentDictionary<string, object>();
-            internalDictionary.AddOrUpdate(key, value, (s, o) => value);
         }
 
         public bool Add<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : EntityBase
@@ -133,20 +125,6 @@ namespace R8.EntityFrameworkCore
 
             var childEntityProp = childResponse.GetType().GetProperty(nameof(Response<EntityBase>.Result));
             return childEntityProp?.GetValue(childResponse);
-        }
-
-        public bool Update<TSource>(TSource entity, out ValidatableResultCollection errors) where TSource : EntityBase
-        {
-            var isValid = TryValidate(entity, out errors);
-            if (!isValid)
-                return false;
-
-            var entry = base.Update(entity);
-
-            var frame = new StackTrace().GetFrame(1);
-            entry.GenerateAudit(AuditFlags.Changed, null, null, null, frame);
-
-            return true;
         }
 
         public bool Update<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : EntityBase

@@ -50,6 +50,26 @@ namespace R8.AspNetCore.EntityFrameworkCore
             return true;
         }
 
+        public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : EntityBase
+        {
+            var isValid = DbContextBase.TryValidate(entity, out errors);
+            if (!isValid)
+                return false;
+
+            var entry = dbContext.Update(entity);
+
+            var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
+            var httpContext = httpContextAccessor.HttpContext;
+            var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
+            var userId = httpContext.GetCurrentUser()?.GuidId;
+            var userAgent = httpContext?.Request?.Headers["User-Agent"];
+            var frame = new StackTrace().GetFrame(1);
+
+            entry.GenerateAudit(AuditFlags.Changed, userId, ipAddress, userAgent, frame);
+
+            return true;
+        }
+
         public static bool Hide<TDbContext, TSource>(this TDbContext dbContext, TSource entity) where TDbContext : DbContextBase where TSource : EntityBase
         {
             if (entity.IsDeleted)
