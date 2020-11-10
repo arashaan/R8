@@ -79,7 +79,7 @@ namespace R8.Lib.MethodReturn
         }
     }
 
-    public class Response : IResponse
+    public class Response : ResponseBase, IResponse
     {
         public Response()
         {
@@ -105,28 +105,13 @@ namespace R8.Lib.MethodReturn
             Errors = errors;
         }
 
-        public Flags Status { get; set; }
-        public string Message => this.GetMessage();
-        public ValidatableResultCollection Errors { get; set; }
-
         public virtual bool Success => Status == Flags.Success;
-
-        public ILocalizer Localizer { get; set; }
-
-        public void SetLocalizer(ILocalizer localizer)
-        {
-            this.Localizer = localizer;
-        }
+        public ValidatableResultCollection Errors { get; set; }
 
         public void AddErrors(ValidatableResultCollection errors)
         {
             Errors ??= new ValidatableResultCollection();
             Errors.AddRange(errors);
-        }
-
-        public void SetStatus(Flags status)
-        {
-            this.Status = status;
         }
 
         public static implicit operator bool(Response response)
