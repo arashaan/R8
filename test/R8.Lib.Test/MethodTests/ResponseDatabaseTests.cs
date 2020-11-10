@@ -29,13 +29,11 @@ namespace R8.Lib.Test.MethodTests
             var configuration = new LocalizerConfiguration
             {
                 Folder = FolderPath,
-                FileName = JsonFileName
-            };
-            _localizer = new Localizer(configuration)
-            {
+                FileName = JsonFileName,
                 DefaultCulture = DefaultCulture,
                 SupportedCultures = SupportedCultures
             };
+            _localizer = new Localizer(configuration);
         }
 
         [Fact]

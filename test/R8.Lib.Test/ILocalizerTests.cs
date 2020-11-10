@@ -31,13 +31,11 @@ namespace R8.Lib.Test
             var configuration = new LocalizerConfiguration
             {
                 Folder = FolderPath,
-                FileName = JsonFileName
-            };
-            _localizer = new Localizer(configuration)
-            {
+                FileName = JsonFileName,
                 DefaultCulture = DefaultCulture,
                 SupportedCultures = SupportedCultures
             };
+            _localizer = new Localizer(configuration);
         }
 
         [Fact]
@@ -68,12 +66,10 @@ namespace R8.Lib.Test
             var configuration = new LocalizerConfiguration
             {
                 Folder = FolderPath,
-                FileName = "fa"
-            };
-            var localizer = new Localizer(configuration)
-            {
+                FileName = "fa",
                 SupportedCultures = SupportedCultures
             };
+            var localizer = new Localizer(configuration);
 
             // Arrange
             await Assert.ThrowsAsync<FileNotFoundException>(() =>
@@ -251,10 +247,7 @@ namespace R8.Lib.Test
         public async System.Threading.Tasks.Task CallRefreshAsync_ConfigurationNull()
         {
             // Act
-            var localizer = new Localizer(null)
-            {
-                SupportedCultures = SupportedCultures
-            };
+            var localizer = new Localizer(null);
 
             // Arrange
             await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());
@@ -266,14 +259,12 @@ namespace R8.Lib.Test
             // Assets
             var configuration = new LocalizerConfiguration
             {
-                Folder = FolderPath
+                Folder = FolderPath,
+                SupportedCultures = SupportedCultures
             };
 
             // Act
-            var localizer = new Localizer(configuration)
-            {
-                SupportedCultures = SupportedCultures
-            };
+            var localizer = new Localizer(configuration);
 
             // Arrange
             await Assert.ThrowsAsync<ArgumentNullException>(() => localizer.RefreshAsync());
@@ -283,13 +274,13 @@ namespace R8.Lib.Test
         public async System.Threading.Tasks.Task CallRefreshAsync_FolderNull()
         {
             // Assets
-            var configuration = new LocalizerConfiguration();
-
-            // Act
-            var localizer = new Localizer(configuration)
+            var configuration = new LocalizerConfiguration
             {
                 SupportedCultures = SupportedCultures
             };
+
+            // Act
+            var localizer = new Localizer(configuration);
 
             // Arrange
             await Assert.ThrowsAsync<ArgumentNullException>(() => localizer.RefreshAsync());
