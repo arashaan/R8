@@ -62,9 +62,9 @@ namespace R8.Lib.Localization
     {
         private readonly LocalizerConfiguration _configuration;
 
-        public List<CultureInfo> SupportedCultures { get; set; }
+        public List<CultureInfo> SupportedCultures => _configuration.SupportedCultures;
 
-        public CultureInfo DefaultCulture { get; set; }
+        public CultureInfo DefaultCulture => _configuration.DefaultCulture;
 
         /// <summary>
         /// Returns User-defined dictionary value based on Database
