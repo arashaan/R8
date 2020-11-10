@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib</PackageId>
-    <Version>1.6.1</Version>
+    <Version>1.6.2</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <PackageDescription>Core package for all R8.* packages</PackageDescription>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="NodaTime" Version="3.0.3" />
   </ItemGroup>

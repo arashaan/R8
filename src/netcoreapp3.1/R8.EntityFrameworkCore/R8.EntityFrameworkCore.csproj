@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.EntityFrameworkCore</PackageId>
-    <Version>1.6.2</Version>
+    <Version>1.6.4</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
@@ -20,12 +20,12 @@
     <PackageReference Include="EasyCaching.InMemory" Version="0.9.0" />
     <PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.0.0" />
     <PackageReference Include="Humanizer.Core" Version="2.8.26" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0-rc.2.20475.6">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.2.20475.6" />
-    <PackageReference Include="R8.Lib" Version="1.6.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
+    <PackageReference Include="R8.Lib" Version="1.6.2" />
     <PackageReference Include="R8.Encryption" Version="1.6.0" />
   </ItemGroup>
 </Project>
