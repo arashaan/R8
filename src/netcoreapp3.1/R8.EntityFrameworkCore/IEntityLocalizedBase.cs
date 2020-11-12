@@ -3,9 +3,9 @@
 namespace R8.EntityFrameworkCore
 {
     /// <summary>
-    /// An <see cref="IEntityGlobalized"/> interface that representing globalized information about specific entity.
+    /// An <see cref="IEntityLocalizedBase"/> interface that representing globalized information about specific entity.
     /// </summary>
-    public interface IEntityGlobalized
+    public interface IEntityLocalizedBase
     {
         /// <summary>
         /// Gets of sets serialized type of <see cref="Name"/> as JSON.

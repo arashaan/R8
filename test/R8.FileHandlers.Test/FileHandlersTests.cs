@@ -27,7 +27,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.png", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.png", file.FilePath);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.bmp", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.bmp", file.FilePath);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.gif", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.gif", file.FilePath);
         }
 
         [Fact]
@@ -128,7 +128,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/valid.zip", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/valid.zip", file.FilePath);
         }
 
         [Fact]
@@ -147,8 +147,8 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.pdf", file.FilePath);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test_thumbnail.jpg", file.ThumbnailPath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.pdf", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test_thumbnail.jpg", file.ThumbnailPath);
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
         }
 
         [Fact]
@@ -188,7 +188,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
         }
 
         [Fact]
@@ -224,7 +224,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/R8.Lib.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
         }
     }
 }

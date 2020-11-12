@@ -6,14 +6,14 @@ using R8.Lib.Localization;
 namespace R8.EntityFrameworkCore
 {
     /// <summary>
-    /// Initializes a <see cref="EntityBaseGlobalized"/> instance that representing some basic data about and also globalized information  specific entity.
+    /// Initializes a <see cref="EntityLocalized"/> instance that representing some basic data about and also globalized information  specific entity.
     /// </summary>
-    public class EntityBaseGlobalized : EntityBase, IEntityBaseGlobalized
+    public class EntityLocalized : EntityBase, IEntityLocalized
     {
         /// <summary>
-        /// Initializes a <see cref="EntityBaseGlobalized"/> instance that representing some basic data about and also globalized information  specific entity.
+        /// Initializes a <see cref="EntityLocalized"/> instance that representing some basic data about and also globalized information  specific entity.
         /// </summary>
-        public EntityBaseGlobalized()
+        public EntityLocalized()
         {
             NameJson = new LocalizerContainer().Serialize();
             Name = new LocalizerContainer();
@@ -36,9 +36,9 @@ namespace R8.EntityFrameworkCore
     }
 
     /// <summary>
-    /// Initializes a <see cref="EntityBaseGlobalized{TResult}"/> instance that representing some basic data about and also globalized information  specific entity.
+    /// Initializes a <see cref="EntityLocalized{TEntity}"/> instance that representing some basic data about and also globalized information  specific entity.
     /// </summary>
-    public abstract class EntityBaseGlobalized<TEntity> : EntityBaseGlobalized, IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityBaseGlobalized
+    public abstract class EntityLocalized<TEntity> : EntityLocalized, IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityLocalized
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder) => builder
                 .ApplyConfiguration()

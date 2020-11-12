@@ -7,12 +7,12 @@ namespace R8.AspNetCore.Routing
 {
     public static class PageModelExtensions
     {
-        public static CurrentUser GetCurrentUser<T>(this T page) where T : RazorPage
+        public static IAuthenticatedUser GetAuthenticatedUser<T>(this T page) where T : RazorPage
         {
             if (page == null)
                 throw new ArgumentNullException(nameof(page));
 
-            var connectedUser = page.User.GetCurrentUser();
+            var connectedUser = page.User.GetAuthenticatedUser();
             return connectedUser;
         }
 

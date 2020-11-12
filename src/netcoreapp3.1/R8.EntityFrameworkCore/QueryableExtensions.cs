@@ -41,7 +41,7 @@ namespace R8.EntityFrameworkCore
 
         //private static IQueryable<TSource> ApplyAdminSearchConditions<TSource, TSearch>(this IQueryable<TSource> query, HttpContext httpContext, TSearch searchModel, CurrentUser currentUser = null) where TSource : EntityBase where TSearch : BaseSearchModel
         //{
-        //    currentUser ??= httpContext.GetCurrentUser();
+        //    currentUser ??= httpContext.GetAuthenticatedUser();
         //    if (searchModel == null)
         //        return query;
 
@@ -86,7 +86,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="query">A <see cref="IQueryable{T}"/> that representing source query.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="IOrderedQueryable{TElement}"/> whose elements are sorted in descending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.</returns>
-        public static IQueryable<TSource> OrderByCreationDateTime<TSource>(this IQueryable<TSource> query) where TSource : EntityBase
+        public static IQueryable<TSource> OrderByCreationDateTime<TSource>(this IQueryable<TSource> query) where TSource : IEntityBase
         {
             if (query == null) 
                 throw new ArgumentNullException(nameof(query));
@@ -109,7 +109,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="sources">A collection of <see cref="TSource"/>.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="IOrderedEnumerable{TElement}"/> whose elements are sorted in ascending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.</returns>
-        public static IOrderedEnumerable<TSource> OrderByCreationDateTime<TSource>(this IEnumerable<TSource> sources) where TSource : EntityBase
+        public static IOrderedEnumerable<TSource> OrderByCreationDateTime<TSource>(this IEnumerable<TSource> sources) where TSource : IEntityBase
         {
             if (sources == null)
                 throw new ArgumentNullException(nameof(sources));
@@ -159,7 +159,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="sources">A collection of <see cref="TSource"/>.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="IOrderedEnumerable{TElement}"/> whose elements are sorted in descending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.</returns>
-        public static IOrderedEnumerable<TSource> OrderDescendingByCreationDateTime<TSource>(this IEnumerable<TSource> sources) where TSource : EntityBase
+        public static IOrderedEnumerable<TSource> OrderDescendingByCreationDateTime<TSource>(this IEnumerable<TSource> sources) where TSource : IEntityBase
         {
             if (sources == null)
                 throw new ArgumentNullException(nameof(sources));
@@ -174,7 +174,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="query">A <see cref="IQueryable{T}"/> that representing source query.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="IOrderedQueryable{TElement}"/> whose elements are sorted in descending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.</returns>
-        public static IOrderedQueryable<TSource> OrderDescendingByCreationDateTime<TSource>(this IQueryable<TSource> query) where TSource : EntityBase
+        public static IOrderedQueryable<TSource> OrderDescendingByCreationDateTime<TSource>(this IQueryable<TSource> query) where TSource : IEntityBase
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -212,7 +212,7 @@ namespace R8.EntityFrameworkCore
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
         private static async Task<Pagination<TSource>> PaginateAsync<TSource>(this IQueryable<TSource> query, int page, bool paginate, bool loadData, bool cacheData, int pageSize = 10)
-          where TSource : EntityBase
+          where TSource : class, IEntityBase
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -276,7 +276,7 @@ namespace R8.EntityFrameworkCore
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
         public static async Task<Pagination<TResult>> PaginateAsync<TSource, TSearch, TResult>(this IQueryable<TSource> query, Expression<Func<TSource, TResult>> selector, TSearch searchModel, bool sortByCreation = true, bool cacheData = true)
-            where TSource : EntityBase where TSearch : IBaseSearch where TResult : class
+            where TSource : IEntityBase where TSearch : IBaseSearch where TResult : class
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -332,7 +332,7 @@ namespace R8.EntityFrameworkCore
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
         public static Task<Pagination<TSource>> PaginateAsync<TSource, TSearch>(this IQueryable<TSource> query, TSearch searchModel)
-            where TSource : EntityBase where TSearch : IBaseSearch
+            where TSource : class, IEntityBase where TSearch : IBaseSearch
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -359,7 +359,7 @@ namespace R8.EntityFrameworkCore
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
         public static Task<Pagination<TSource>> PaginateAsync<TSource, TSearch>(this IQueryable<TSource> query,
             TSearch searchModel, bool paginate, bool loadData, bool cacheData)
-            where TSource : EntityBase where TSearch : IBaseSearch
+            where TSource : class, IEntityBase where TSearch : IBaseSearch
         {
             var page = searchModel?.PageNo ?? 1;
             var pageSize = searchModel?.PageSize ?? 10;

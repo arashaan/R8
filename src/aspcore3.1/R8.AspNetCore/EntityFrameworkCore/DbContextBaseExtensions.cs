@@ -11,7 +11,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
 {
     public static class DbContextBaseExtensions
     {
-        public static bool UnHide<TDbContext, TSource>(this TDbContext dbContext, TSource entity) where TDbContext : DbContextBase where TSource : EntityBase
+        public static bool UnHide<TDbContext, TSource>(this TDbContext dbContext, TSource entity) where TDbContext : DbContextBase where TSource : IEntityBase
         {
             if (!entity.IsDeleted)
                 return false;
@@ -22,7 +22,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
             var httpContext = httpContextAccessor.HttpContext;
             var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
-            var userId = httpContext.GetCurrentUser()?.GuidId;
+            var userId = httpContext.GetAuthenticatedUser()?.Id;
             var userAgent = httpContext?.Request?.Headers["User-Agent"];
             var frame = new StackTrace().GetFrame(1);
 
@@ -30,7 +30,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             return true;
         }
 
-        public static bool ToggleHiding<TDbContext, TSource>(this TDbContext dbContext, TSource entity) where TDbContext : DbContextBase where TSource : EntityBase
+        public static bool ToggleHiding<TDbContext, TSource>(this TDbContext dbContext, TSource entity) where TDbContext : DbContextBase where TSource : IEntityBase
         {
             var flag = entity.IsDeleted
                 ? AuditFlags.UnDeleted
@@ -41,7 +41,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
             var httpContext = httpContextAccessor.HttpContext;
             var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
-            var userId = httpContext.GetCurrentUser()?.GuidId;
+            var userId = httpContext.GetAuthenticatedUser()?.Id;
             var userAgent = httpContext?.Request?.Headers["User-Agent"];
             var frame = new StackTrace().GetFrame(1);
 
@@ -50,7 +50,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             return true;
         }
 
-        public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : EntityBase
+        public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : IEntityBase
         {
             var isValid = DbContextBase.TryValidate(entity, out errors);
             if (!isValid)
@@ -61,7 +61,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
             var httpContext = httpContextAccessor.HttpContext;
             var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
-            var userId = httpContext.GetCurrentUser()?.GuidId;
+            var userId = httpContext.GetAuthenticatedUser()?.Id;
             var userAgent = httpContext?.Request?.Headers["User-Agent"];
             var frame = new StackTrace().GetFrame(1);
 
@@ -70,7 +70,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             return true;
         }
 
-        public static bool Hide<TDbContext, TSource>(this TDbContext dbContext, TSource entity) where TDbContext : DbContextBase where TSource : EntityBase
+        public static bool Hide<TDbContext, TSource>(this TDbContext dbContext, TSource entity) where TDbContext : DbContextBase where TSource : IEntityBase
         {
             if (entity.IsDeleted)
                 return false;
@@ -81,7 +81,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
             var httpContext = httpContextAccessor.HttpContext;
             var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
-            var userId = httpContext.GetCurrentUser()?.GuidId;
+            var userId = httpContext.GetAuthenticatedUser()?.Id;
             var userAgent = httpContext?.Request?.Headers["User-Agent"];
             var frame = new StackTrace().GetFrame(1);
 
@@ -89,7 +89,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             return true;
         }
 
-        public static bool Add<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : EntityBase
+        public static bool Add<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : IEntityBase
         {
             var isValid = DbContextBase.TryValidate(entity, out errors);
             if (!isValid)
@@ -100,7 +100,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
             var httpContext = httpContextAccessor.HttpContext;
             var ipAddress = httpContext?.GetIPAddress() ?? IPAddress.None;
-            var userId = httpContext.GetCurrentUser()?.GuidId;
+            var userId = httpContext.GetAuthenticatedUser()?.Id;
             var userAgent = httpContext?.Request?.Headers["User-Agent"];
             var frame = new StackTrace().GetFrame(1);
 

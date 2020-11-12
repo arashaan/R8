@@ -37,7 +37,7 @@ namespace R8.EntityFrameworkCore
             base.OnModelCreating(modelBuilder);
         }
 
-        public bool Add<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : EntityBase
+        public bool Add<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : IEntityBase
         {
             var isValid = TryValidate(entity, out errors);
             if (!isValid)
@@ -51,7 +51,7 @@ namespace R8.EntityFrameworkCore
             return true;
         }
 
-        public bool UnHide<TSource>(TSource entity, Guid userId) where TSource : EntityBase
+        public bool UnHide<TSource>(TSource entity, Guid userId) where TSource : IEntityBase
         {
             if (!entity.IsDeleted)
                 return false;
@@ -123,11 +123,11 @@ namespace R8.EntityFrameworkCore
             if (childResponse.GetType() != typeof(Response<>))
                 return null;
 
-            var childEntityProp = childResponse.GetType().GetProperty(nameof(Response<EntityBase>.Result));
+            var childEntityProp = childResponse.GetType().GetProperty(nameof(Response<IEntityBase>.Result));
             return childEntityProp?.GetValue(childResponse);
         }
 
-        public bool Update<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : EntityBase
+        public bool Update<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : IEntityBase
         {
             var isValid = TryValidate(entity, out errors);
             if (!isValid)
@@ -141,7 +141,7 @@ namespace R8.EntityFrameworkCore
             return true;
         }
 
-        public bool ToggleHiding<TSource>(TSource entity, Guid userId) where TSource : EntityBase
+        public bool ToggleHiding<TSource>(TSource entity, Guid userId) where TSource : IEntityBase
         {
             var flag = entity.IsDeleted
                 ? AuditFlags.UnDeleted
@@ -155,7 +155,7 @@ namespace R8.EntityFrameworkCore
             return true;
         }
 
-        public bool Hide<TSource>(TSource entity, Guid userId) where TSource : EntityBase
+        public bool Hide<TSource>(TSource entity, Guid userId) where TSource : IEntityBase
         {
             if (entity.IsDeleted)
                 return false;
@@ -290,8 +290,8 @@ namespace R8.EntityFrameworkCore
 
             var ignoredNames = new[]
             {
-                nameof(EntityBase.Id),
-                nameof(EntityBase.Audits),
+                nameof(IEntityBase.Id),
+                nameof(IEntityBase.Audits),
             };
             var ignored = errors.Where(x => ignoredNames.Contains(x.Name)).ToList();
             if (ignored?.Any() != true)

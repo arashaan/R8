@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Routing;
 
 using NodaTime;
 
-using R8.Lib;
-using R8.Lib.Enums;
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -63,8 +60,8 @@ namespace R8.AspNetCore
             DateTimeZone finalZone;
             if (context.User.Identity.IsAuthenticated)
             {
-                var user = context.User.GetCurrentUser();
-                finalZone = user.TimeZone;
+                var user = context.User.GetAuthenticatedUser();
+                finalZone = user.GetClaim<DateTimeZone>("TimeZone");
             }
             else
             {
@@ -171,50 +168,66 @@ namespace R8.AspNetCore
         }
 
         /// <summary>
-        /// Returns a <see cref="CurrentUser"/> object according to a collection of <see cref="Claim"/>.
+        /// Returns a <see cref="AuthenticatedUser"/> object according to a collection of <see cref="Claim"/>.
         /// </summary>
         /// <param name="claims">A collection o <see cref="Claim"/> that representing authenticated user claims.</param>
-        /// <returns>A <see cref="CurrentUser"/> object.</returns>
-        public static CurrentUser GetCurrentUser(this IEnumerable<Claim> claims)
+        /// <returns>A <see cref="AuthenticatedUser"/> object.</returns>
+        public static IAuthenticatedUser GetAuthenticatedUser(this IEnumerable<Claim> claims)
         {
             var claimsList = claims.ToList();
             if (claimsList?.Any() != true)
                 return null;
 
-            var currentUser = new CurrentUser();
-
-            var email = claimsList.Find(x => x.Type == ClaimTypes.Email);
-            if (email != null)
-                currentUser.Email = email.Value;
-
-            var username = claimsList.Find(x => x.Type == ClaimTypes.Name);
-            if (username != null)
-                currentUser.Username = username.Value;
-
-            var firstname = claimsList.Find(x => x.Type == ClaimTypes.GivenName);
-            if (firstname != null)
-                currentUser.FirstName = firstname.Value;
-
-            var lastname = claimsList.Find(x => x.Type == ClaimTypes.Surname);
-            if (lastname != null)
-                currentUser.LastName = lastname.Value;
-
-            var password = claimsList.Find(x => x.Type == ClaimTypes.Hash);
-            if (password != null)
-                currentUser.Password = password.Value;
-
-            var timeZone = claimsList.Find(x => x.Type == "TimeZone");
-            if (timeZone != null)
-                currentUser.TimeZone = DateTimeZoneProviders.Tzdb[timeZone.Value];
-
-            var id = claimsList.Find(x => x.Type == ClaimTypes.NameIdentifier);
-            if (id != null)
-                currentUser.Id = id.Value;
-
-            var role = claimsList.Find(x => x.Type == ClaimTypes.Role);
-            currentUser.Role = role != null && !string.IsNullOrEmpty(role.Value)
-                ? role.Value.ToEnum<Roles>()
-                : Roles.User;
+            var currentUser = new AuthenticatedUser();
+            currentUser.AddClaims(claimsList);
+            // var dictionary = new Dictionary<string, object>();
+            // foreach (var claim in claimsList)
+            // {
+            //     var key = claim.Type switch
+            //     {
+            //         ClaimTypes.Email => AuthenticatedUser.Key_Email,
+            //         ClaimTypes.Name => AuthenticatedUser.Key_Username,
+            //         ClaimTypes.GivenName => AuthenticatedUser.Key_FirstName,
+            //         ClaimTypes.Surname => AuthenticatedUser.Key_LastName,
+            //         ClaimTypes.
+            //         _ => string.Empty
+            //     };
+            //
+            //     dictionary.Add(key, claim.Value);
+            // }
+            //
+            // var email = claimsList.Find(x => x.Type == ClaimTypes.Email);
+            // if (email != null)
+            //     currentUser.Email = email.Value;
+            //
+            // var username = claimsList.Find(x => x.Type == ClaimTypes.Name);
+            // if (username != null)
+            //     currentUser.Username = username.Value;
+            //
+            // var firstname = claimsList.Find(x => x.Type == ClaimTypes.GivenName);
+            // if (firstname != null)
+            //     currentUser.FirstName = firstname.Value;
+            //
+            // var lastname = claimsList.Find(x => x.Type == ClaimTypes.Surname);
+            // if (lastname != null)
+            //     currentUser.LastName = lastname.Value;
+            //
+            // var password = claimsList.Find(x => x.Type == ClaimTypes.Hash);
+            // if (password != null)
+            //     currentUser.Password = password.Value;
+            //
+            // var timeZone = claimsList.Find(x => x.Type == "TimeZone");
+            // if (timeZone != null)
+            //     currentUser.TimeZone = DateTimeZoneProviders.Tzdb[timeZone.Value];
+            //
+            // var id = claimsList.Find(x => x.Type == ClaimTypes.NameIdentifier);
+            // if (id != null)
+            //     currentUser.Id = id.Value;
+            //
+            // var role = claimsList.Find(x => x.Type == ClaimTypes.Role);
+            // currentUser.Role = role != null && !string.IsNullOrEmpty(role.Value)
+            //     ? role.Value.ToEnum<Roles>()
+            //     : Roles.User;
 
             return currentUser;
         }
@@ -222,26 +235,26 @@ namespace R8.AspNetCore
         private const string UserTimeZoneConstant = "UserTimeZone";
 
         /// <summary>
-        /// Returns a <see cref="CurrentUser"/> object according to an <see cref="IPrincipal"/> interface.
+        /// Returns a <see cref="AuthenticatedUser"/> object according to an <see cref="IPrincipal"/> interface.
         /// </summary>
         /// <param name="principal">An <see cref="IPrincipal"/> object.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>A <see cref="CurrentUser"/> object.</returns>
-        public static CurrentUser GetCurrentUser(this IPrincipal principal)
+        /// <returns>A <see cref="AuthenticatedUser"/> object.</returns>
+        public static IAuthenticatedUser GetAuthenticatedUser(this IPrincipal principal)
         {
             if (principal == null)
                 throw new ArgumentNullException(nameof(HttpContext));
 
-            return ((ClaimsPrincipal)principal).Claims.GetCurrentUser();
+            return ((ClaimsPrincipal)principal).Claims.GetAuthenticatedUser();
         }
 
         /// <summary>
-        /// Returns a <see cref="CurrentUser"/> object according to an a collection of claims that stored in <see cref="HttpContext"/>.
+        /// Returns a <see cref="AuthenticatedUser"/> object according to an a collection of claims that stored in <see cref="HttpContext"/>.
         /// </summary>
         /// <param name="httpContext">An <see cref="HttpContext"/> object.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>A <see cref="CurrentUser"/> object.</returns>
-        public static CurrentUser GetCurrentUser(this HttpContext httpContext)
+        /// <returns>A <see cref="AuthenticatedUser"/> object.</returns>
+        public static IAuthenticatedUser GetAuthenticatedUser(this HttpContext httpContext)
         {
             if (httpContext == null)
                 throw new ArgumentNullException(nameof(HttpContext));
@@ -249,7 +262,7 @@ namespace R8.AspNetCore
             if (!httpContext.User.Identity.IsAuthenticated)
                 return null;
 
-            return httpContext.User.GetCurrentUser();
+            return httpContext.User.GetAuthenticatedUser();
         }
     }
 }

@@ -37,6 +37,15 @@ namespace R8.AspNetCore.FileHandlers
         }
 
         /// <summary>
+        /// Saves and uploads given image file into the host.
+        /// </summary>
+        /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
+        public static Task<IMyFile> UploadImageAsync(this IFormFile file, Action<MyFileConfigurationImage> config) =>
+            file.UploadAsync(config);
+
+        /// <summary>
         /// Saves and uploads given file into the host.
         /// </summary>
         /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
@@ -54,15 +63,18 @@ namespace R8.AspNetCore.FileHandlers
             var environment = newConfig.GetService<IWebHostEnvironment>();
             config.Invoke(newConfig);
             newConfig.Folder = environment.WebRootPath + newConfig.Folder;
-            try
+
+            await using var stream = file.OpenReadStream();
+            if (newConfig is MyFileConfigurationImage imageConfig)
             {
-                await using var stream = file.OpenReadStream();
-                return await stream.SaveAsync(file.FileName, newConfig).ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(imageConfig.WatermarkPath))
+                {
+                    imageConfig.WatermarkPath = environment.WebRootPath + imageConfig.WatermarkPath;
+                    return await stream.SaveAsync(file.FileName, newConfig).ConfigureAwait(false);
+                }
             }
-            catch (Exception)
-            {
-                return null;
-            }
+
+            return await stream.SaveAsync(file.FileName, newConfig).ConfigureAwait(false);
         }
 
         /// <summary>

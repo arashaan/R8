@@ -12,17 +12,13 @@ namespace R8.Lib.Localization
         /// Registers <see cref="ILocalizer"/> as a service.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="config"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        public static IServiceCollection AddLocalizer(this IServiceCollection services, Action<LocalizerConfiguration> config)
+        public static IServiceCollection AddLocalizer(this IServiceCollection services, Func<IServiceProvider, LocalizerConfiguration> options)
         {
             services.AddSingleton<ILocalizer>(serviceProvider =>
             {
-                using var scope = serviceProvider.CreateScope();
-
-                var configuration = new LocalizerConfiguration();
-                config(configuration);
-
+                var configuration = options.Invoke(serviceProvider);
                 return new Localizer(configuration);
             });
 

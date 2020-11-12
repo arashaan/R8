@@ -1,8 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+
 using R8.Lib;
+using R8.Lib.Enums;
 using R8.Lib.MethodReturn;
+
+using System;
+using System.Threading.Tasks;
 
 namespace R8.AspNetCore
 {
@@ -18,47 +21,43 @@ namespace R8.AspNetCore
         public TId Id { get; set; }
 
         public async Task<Response<TSource>> HandleAsync<TSource>(
-        Func<Task<Response<TSource>>> onAddition, Func<Task<Response<TSource>>> onUpdate)
-        where TSource : class
+            Func<Task<Flags>> onAddition, Func<Task<Flags>> onUpdate)
+            where TSource : class
         {
             var status = IsNew
-              ? await onAddition.Invoke().ConfigureAwait(false)
-              : await onUpdate.Invoke().ConfigureAwait(false);
-
-            return status;
+                ? await onAddition.Invoke().ConfigureAwait(false)
+                : await onUpdate.Invoke().ConfigureAwait(false);
+            return new Response<TSource>(status);
         }
 
         public async Task<Response<TSource>> HandleAsync<TSource>(
-            Func<Task<Response<TSource>>> onAddition, Func<Response<TSource>> onUpdate)
+            Func<Task<Flags>> onAddition, Func<Flags> onUpdate)
             where TSource : class
         {
             var status = IsNew
                 ? await onAddition.Invoke().ConfigureAwait(false)
                 : onUpdate.Invoke();
-
-            return status;
+            return new Response<TSource>(status);
         }
 
         public async Task<Response<TSource>> HandleAsync<TSource>(
-            Func<Response<TSource>> onAddition, Func<Task<Response<TSource>>> onUpdate)
+            Func<Flags> onAddition, Func<Task<Flags>> onUpdate)
             where TSource : class
         {
             var status = IsNew
                 ? onAddition.Invoke()
                 : await onUpdate.Invoke().ConfigureAwait(false);
-
-            return status;
+            return new Response<TSource>(status);
         }
 
         public Response<TSource> Handle<TSource>(
-            Func<Response<TSource>> onAddition, Func<Response<TSource>> onUpdate)
+            Func<Flags> onAddition, Func<Flags> onUpdate)
             where TSource : class
         {
             var status = IsNew
                 ? onAddition.Invoke()
                 : onUpdate.Invoke();
-
-            return status;
+            return new Response<TSource>(status);
         }
     }
 }
