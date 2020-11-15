@@ -24,14 +24,6 @@ namespace R8.AspNetCore.TagBuilders
             return new ModelExpression($"{model.Name}.{propertyName}", model.ModelExplorer.GetExplorerForProperty(propertyName));
         }
 
-        public static string GetUiName(this ModelExpression model, JsonValidatable jsonModel)
-        {
-            var text = $"{model.Name}.{jsonModel.Name.ToUnescaped(true)}";
-            if (!string.IsNullOrEmpty(jsonModel.Id))
-                text += $"${jsonModel.Id}";
-
-            return text;
-        }
 
         public static void ApplyNewBindProperty(this ModelMetadata metadata, ref TagHelperOutput output)
         {

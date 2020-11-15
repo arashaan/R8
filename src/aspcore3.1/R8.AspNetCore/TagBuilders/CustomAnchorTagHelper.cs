@@ -17,14 +17,14 @@ namespace R8.AspNetCore.TagBuilders
     [HtmlTargetElement("a", Attributes = RouteAttributeName)]
     [HtmlTargetElement("a", Attributes = RouteValuesDictionaryName)]
     [HtmlTargetElement("a", Attributes = RouteValuesPrefix + "*")]
-    public class R8AnchorTagHelper : AnchorTagHelper
+    public class CustomAnchorTagHelper : AnchorTagHelper
     {
         private readonly IOptions<RequestLocalizationOptions> _options;
 
         [HtmlAttributeName("asp-disabled")]
         public bool Disabled { get; set; }
 
-        public R8AnchorTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
+        public CustomAnchorTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
         {
             _options = options;
         }

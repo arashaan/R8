@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -11,7 +6,14 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
+
 using R8.AspNetCore.Routing;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace R8.AspNetCore.TagBuilders
 {
@@ -131,7 +133,7 @@ namespace R8.AspNetCore.TagBuilders
             var content = contentContext.GetContent();
             if (string.IsNullOrEmpty(content))
             {
-                var page = ViewContext.ViewData.Model as PageModel
+                var page = ViewContext.ViewData.Model as PageModelBase
                            ?? throw new NullReferenceException(nameof(Page));
                 if (page.PageTitle == null)
                 {

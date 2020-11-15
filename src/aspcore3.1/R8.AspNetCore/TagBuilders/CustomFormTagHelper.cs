@@ -17,11 +17,11 @@ namespace R8.AspNetCore.TagBuilders
     [HtmlTargetElement("form", Attributes = RouteAttributeName)]
     [HtmlTargetElement("form", Attributes = RouteValuesDictionaryName)]
     [HtmlTargetElement("form", Attributes = RouteValuesPrefix + "*")]
-    public class R8FormTagHelper : FormTagHelper
+    public class CustomFormTagHelper : FormTagHelper
     {
         private readonly IOptions<RequestLocalizationOptions> _options;
 
-        public R8FormTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
+        public CustomFormTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
         {
             _options = options;
         }
