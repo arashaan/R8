@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-using System.Threading.Tasks;
 using R8.AspNetCore.FileHandlers;
-using R8.FileHandlers;
+
+using System.Threading.Tasks;
 
 namespace R8.AspNetCore.Demo.Pages
 {
