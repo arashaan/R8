@@ -23,7 +23,7 @@ namespace R8.AspNetCore.Routing
             _urlHelper = urlHelperFactory.GetUrlHelper(ActionContext);
         }
 
-        public string Page<TPage>(bool endpointRoute = false) where TPage : PageModel
+        public string Page<TPage>(bool endpointRoute = false) where TPage : PageModelBase
         {
             var currentConfig = new PageHandlerConfiguration
             {

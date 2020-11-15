@@ -186,6 +186,6 @@ namespace R8.AspNetCore.Routing
         /// </summary>
         /// <param name="endpointRoute"></param>
         /// <returns>The generated URL.</returns>
-        string Page<TPage>(bool endpointRoute = false) where TPage : PageModel;
+        string Page<TPage>(bool endpointRoute = false) where TPage : PageModelBase;
     }
 }
