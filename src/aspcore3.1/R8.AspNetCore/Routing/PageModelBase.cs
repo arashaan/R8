@@ -37,24 +37,34 @@ namespace R8.AspNetCore.Routing
 
     public class PageModelBase : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
     {
-        public new ICulturalizedUrlHelper Url { get; }
-        public ILocalizer Localizer { get; }
-
-        public RequestLocalizationOptions Culture { get; }
-
-        public PageModelBase()
+        public new ICulturalizedUrlHelper Url
         {
-            var culturized = this.HttpContext.RequestServices.GetService(typeof(ICulturalizedUrlHelper));
-            if (culturized != null)
-                Url = culturized as ICulturalizedUrlHelper;
+            get
+            {
+                var service = this.HttpContext.RequestServices.GetService(typeof(ICulturalizedUrlHelper));
+                return service as ICulturalizedUrlHelper;
+            }
+        }
 
-            var localizer = this.HttpContext.RequestServices.GetService(typeof(ILocalizer));
-            if (localizer != null)
-                Localizer = localizer as ILocalizer;
+        public ILocalizer Localizer
+        {
+            get
+            {
+                var service = this.HttpContext.RequestServices.GetService(typeof(ILocalizer));
+                return service as ILocalizer;
+            }
+        }
 
-            var requestLocalization = this.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>));
-            if (requestLocalization != null)
-                Culture = (requestLocalization as IOptions<RequestLocalizationOptions>).Value;
+        public RequestLocalizationOptions Culture
+        {
+            get
+            {
+                var service = this.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>));
+                if (service is IOptions<RequestLocalizationOptions> options)
+                    return options.Value;
+
+                return null;
+            }
         }
 
         /// <summary>
