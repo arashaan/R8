@@ -3,7 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
-	<LangVersion>8.0</LangVersion>
+    <PreserveCompilationReferences>true</PreserveCompilationReferences>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
+    <LangVersion>8.0</LangVersion>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -13,5 +18,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\aspcore3.1\R8.AspNetCore\R8.AspNetCore.csproj" />
   </ItemGroup>
-
 </Project>
