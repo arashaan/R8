@@ -5,6 +5,7 @@
     <PackageId>R8.Encryption</PackageId>
     <Version>1.7.0</Version>
     <Authors>Arash Shabbeh</Authors>
+	<LangVersion>8.0</LangVersion>
     <Company>iamr8</Company>
     <PackageDescription>Encryption and decryption methods</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>

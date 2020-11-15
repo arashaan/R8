@@ -3,9 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib</PackageId>
-    <Version>1.7.2</Version>
+    <Version>1.7.3</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
+	<LangVersion>8.0</LangVersion>
     <PackageDescription>Core package for all R8.* packages</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

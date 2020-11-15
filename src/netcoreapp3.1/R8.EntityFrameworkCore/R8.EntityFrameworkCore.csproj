@@ -3,9 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.EntityFrameworkCore</PackageId>
-    <Version>1.7.2</Version>
+    <Version>1.7.3</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
+	<LangVersion>8.0</LangVersion>
     <PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
@@ -26,7 +27,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
-    <PackageReference Include="R8.Lib" Version="1.7.2" />
+    <PackageReference Include="R8.Lib" Version="1.7.3" />
     <PackageReference Include="R8.Encryption" Version="1.7.0" />
   </ItemGroup>
 </Project>
