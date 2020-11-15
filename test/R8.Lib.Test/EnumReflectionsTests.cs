@@ -23,26 +23,26 @@ namespace R8.Lib.Test
         public void CallToEnum_Lowercase()
         {
             // Arrange
-            const string str = "operator";
+            const string str = "noneedtosave";
 
             // Act
-            var act = str.ToEnum<Roles>();
+            var act = str.ToEnum<DatabaseSaveState>();
 
             // Assert
-            Assert.Equal(Roles.Operator, act);
+            Assert.Equal(DatabaseSaveState.NoNeedToSave, act);
         }
 
         [Fact]
         public void CallToEnum()
         {
             // Arrange
-            const string str = "Operator";
+            const string str = "NoNeedToSave";
 
             // Act
-            var act = str.ToEnum<Roles>();
+            var act = str.ToEnum<DatabaseSaveState>();
 
             // Assert
-            Assert.Equal(Roles.Operator, act);
+            Assert.Equal(DatabaseSaveState.NoNeedToSave, act);
         }
     }
 }

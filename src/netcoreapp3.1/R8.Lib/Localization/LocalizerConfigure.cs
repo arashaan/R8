@@ -22,7 +22,7 @@ namespace R8.Lib.Localization
                 return new Localizer(configuration);
             });
 
-            services.AddTransient<IResponseBase>(serviceProvider =>
+            services.AddTransient<IResponseStatus>(serviceProvider =>
             {
                 using var scope = serviceProvider.CreateScope();
 
@@ -30,7 +30,7 @@ namespace R8.Lib.Localization
                 if (localizer == null)
                     throw new NullReferenceException($"Can't find {nameof(ILocalizer)} related service");
 
-                var obj = new ResponseBase();
+                var obj = new ResponseStatus();
                 obj.SetLocalizer(localizer);
                 return obj;
             });

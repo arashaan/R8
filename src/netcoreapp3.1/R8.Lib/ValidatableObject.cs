@@ -1,7 +1,4 @@
-﻿using R8.Lib.Enums;
-using R8.Lib.MethodReturn;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -71,13 +68,6 @@ namespace R8.Lib
             var context = new ValidationContext(model);
             validatableResultCollection = Validate(context, model);
             return validatableResultCollection.Count == 0;
-        }
-
-        public Response<TSource> ToResponse<TSource>() where TSource : class
-        {
-            var valid = this.Validate();
-            var flags = valid ? Flags.Success : Flags.ModelIsNotValid;
-            return new Response<TSource>(flags, this.ValidationErrors);
         }
 
         /// <summary>

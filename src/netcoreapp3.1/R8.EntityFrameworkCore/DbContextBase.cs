@@ -95,7 +95,7 @@ namespace R8.EntityFrameworkCore
 
                         break;
                     }
-                case IResponseDatabase responseDatabase:
+                case IResponseBaseDatabase responseDatabase:
                     {
                         var childEntity = GetIResponseUnderlyingEntity(responseDatabase);
                         if (childEntity != null)
@@ -118,13 +118,13 @@ namespace R8.EntityFrameworkCore
             return !errors.Any();
         }
 
-        private static object? GetIResponseUnderlyingEntity(IResponse childResponse)
+        private static object? GetIResponseUnderlyingEntity(IResponseBase childResponseBase)
         {
-            if (childResponse.GetType() != typeof(Response<>))
+            if (childResponseBase.GetType() != typeof(ResponseBase<>))
                 return null;
 
-            var childEntityProp = childResponse.GetType().GetProperty(nameof(Response<IEntityBase>.Result));
-            return childEntityProp?.GetValue(childResponse);
+            var childEntityProp = childResponseBase.GetType().GetProperty(nameof(ResponseBase<IEntityBase>.Result));
+            return childEntityProp?.GetValue(childResponseBase);
         }
 
         public bool Update<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : IEntityBase

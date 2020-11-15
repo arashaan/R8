@@ -4,7 +4,7 @@ using R8.Lib.MethodReturn;
 
 namespace R8.AspNetCore.WebApi
 {
-    public class AuthorizeStatus : Response
+    public class AuthorizeStatus : ResponseBase
     {
         [JsonIgnore]
         public UserResponse User { get; set; }

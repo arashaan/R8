@@ -22,12 +22,12 @@ namespace R8.EntityFrameworkCore
         /// <summary>
         /// Saves changes that occurred in <see cref="TModel"/> to Database
         /// </summary>
-        /// <typeparam name="TModel">A generic type of <see cref="IResponseDatabase"/>.</typeparam>
+        /// <typeparam name="TModel">A generic type of <see cref="IResponseBaseDatabase"/>.</typeparam>
         /// <typeparam name="TDbContext">A generic type of <see cref="DbContextBase"/>.</typeparam>
         /// <param name="model">A model that contains trackable data.</param>
         /// <param name="dbContext">An instance of DbContext</param>
         public static void SaveDatabase<TModel, TDbContext>(this TModel model, TDbContext dbContext)
-            where TModel : IResponseDatabase where TDbContext : DbContextBase
+            where TModel : IResponseBaseDatabase where TDbContext : DbContextBase
         {
             model.Save = dbContext.SaveChanges();
         }
@@ -35,13 +35,13 @@ namespace R8.EntityFrameworkCore
         /// <summary>
         /// Saves changes that occurred in <see cref="TModel"/> to Database
         /// </summary>
-        /// <typeparam name="TModel">A generic type of <see cref="IResponseDatabase"/>.</typeparam>
+        /// <typeparam name="TModel">A generic type of <see cref="IResponseBaseDatabase"/>.</typeparam>
         /// <typeparam name="TDbContext">A generic type of <see cref="DbContextBase"/>.</typeparam>
         /// <param name="model">A model that contains trackable data.</param>
         /// <param name="dbContext">An instance of DbContext</param>
         /// <returns>A <see cref="Task"/> value that representing asynchronous operation.</returns>
         public static async Task SaveDatabaseAsync<TModel, TDbContext>(this TModel model, TDbContext dbContext, CancellationToken cancellationToken = default)
-            where TModel : IResponseDatabase where TDbContext : DbContextBase
+            where TModel : IResponseBaseDatabase where TDbContext : DbContextBase
         {
             model.Save = await dbContext.SaveChangesAsync(cancellationToken);
         }

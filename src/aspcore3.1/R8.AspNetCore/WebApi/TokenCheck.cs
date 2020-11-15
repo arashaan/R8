@@ -2,7 +2,7 @@
 
 namespace R8.AspNetCore.WebApi
 {
-    public class TokenCheck : Response
+    public class TokenCheck : ResponseBase
     {
         public UserResponse User { get; set; }
     }

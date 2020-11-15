@@ -2,7 +2,6 @@
 {
     public interface IResponseTrack
     {
-        bool Success { get; }
         ValidatableResultCollection Errors { get; }
     }
 }

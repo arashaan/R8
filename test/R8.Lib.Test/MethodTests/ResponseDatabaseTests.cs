@@ -36,31 +36,31 @@ namespace R8.Lib.Test.MethodTests
             _localizer = new Localizer(configuration);
         }
 
-        [Fact]
-        public void CallResponseDatabase_CheckSuccess()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //[Fact]
+        //public void CallResponseDatabase_CheckSuccess()
+        //{
+        //    // Assets
+        //    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
 
-            // Act
-            var response = new ResponseDatabase(Flags.Success);
+        //    // Act
+        //    var response = new ResponseDatabase(Flags.Success);
 
-            // Arrange
-            Assert.True(response.Success);
-        }
+        //    // Arrange
+        //    Assert.True(response.Success);
+        //}
 
-        [Fact]
-        public void CallResponseDatabase_CheckSuccess2()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //[Fact]
+        //public void CallResponseDatabase_CheckSuccess2()
+        //{
+        //    // Assets
+        //    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
 
-            // Act
-            var response = new ResponseDatabase(Flags.Success);
-            response.Save = DatabaseSaveState.SaveFailure;
+        //    // Act
+        //    var response = new ResponseDatabase(Flags.Success);
+        //    response.Save = DatabaseSaveState.SaveFailure;
 
-            // Arrange
-            Assert.False(response.Success);
-        }
+        //    // Arrange
+        //    Assert.False(response.Success);
+        //}
     }
 }

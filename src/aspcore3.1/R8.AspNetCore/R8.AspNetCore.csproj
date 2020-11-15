@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.AspNetCore</PackageId>
-    <Version>1.6.11</Version>
+    <Version>1.7.1</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <PackageDescription>Core package for R8.Lib.AspNetCore</PackageDescription>
@@ -22,7 +22,10 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.27" />
     <PackageReference Include="MailKit" Version="2.9.0" />
-    <PackageReference Include="R8.EntityFrameworkCore" Version="1.6.8" />
-    <PackageReference Include="R8.FileHandlers" Version="1.6.6" />
+    <PackageReference Include="R8.EntityFrameworkCore" Version="1.7.1" />
+    <!--<PackageReference Include="R8.FileHandlers" Version="1.7.2" />-->
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\netcoreapp3.1\R8.FileHandlers\R8.FileHandlers.csproj" />
   </ItemGroup>
 </Project>
