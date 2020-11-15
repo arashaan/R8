@@ -3,7 +3,7 @@
     /// <summary>
     /// Initializes an instance of <see cref="MyFileConfigurationPdf"/>
     /// </summary>
-    public class MyFileConfigurationPdf : MyFileConfiguration
+    public class MyFileConfigurationPdf : MyFileConfiguration, IMyFileConfigurationPdfBase
     {
         /// <summary>
         /// Initializes an instance of <see cref="MyFileConfigurationPdf"/>
@@ -52,14 +52,14 @@
 
         /// <summary>
         /// Gets or sets An <see cref="int"/> value that representing Pdf thumbnail resolution.
-        /// default: <c>300</c>
         /// </summary>
-        public int ResolutionDpi { get; set; } = 300;
+        /// <remarks>default: <c>300</c></remarks>
+        public int? ResolutionDpi { get; set; } 
 
         /// <summary>
         /// Gets or sets An <see cref="int"/> value that representing Preview image quality for <c>JpegEncoder</c>.
-        /// default: <c>80</c>
         /// </summary>
-        public int ImageQuality { get; set; } = 80;
+        /// <remarks>default: <c>80</c></remarks>
+        public int? ImageQuality { get; set; } 
     }
 }

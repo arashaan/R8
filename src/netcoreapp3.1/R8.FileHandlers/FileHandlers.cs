@@ -1,13 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace R8.FileHandlers
 {
@@ -110,6 +111,9 @@ namespace R8.FileHandlers
         public static IMyFile SavePdf(this Stream stream, string filename,
             MyFileConfigurationPdf config) => stream.SavePdfAsync(filename, config).GetAwaiter().GetResult();
 
+        internal const int DefaultPdfImageQuality = 80;
+        internal const int DefaultPdfImageResolution = 300;
+
         /// <summary>
         /// Represents a <see cref="IMyFile"/> instance that contains saved pdf absolute path
         /// </summary>
@@ -142,45 +146,58 @@ namespace R8.FileHandlers
             if (!isPdf)
                 throw new NullReferenceException($"{nameof(filename)} should be a valid pdf file");
 
-            var pdfPreview = (string)null;
-            await stream.PdfToImageAsync(config.GhostScriptDllPath, async pdfThumbnailStream =>
+            await using var outputPdf = new MemoryStream();
+            await using var outputThumbnail = new MemoryStream();
+            var tempThumbnailStream = await stream.PdfToImageAsync(config.GhostScriptDllPath,
+                config.ImageQuality ?? DefaultPdfImageQuality, config.ResolutionDpi ?? DefaultPdfImageResolution);
+
+            await tempThumbnailStream.CopyToAsync(outputThumbnail);
+
+            stream.Position = 0;
+            stream.Seek(0, SeekOrigin.Begin);
+            await stream.CopyToAsync(outputPdf);
+            await tempThumbnailStream.DisposeAsync();
+            await stream.DisposeAsync();
+
+            outputPdf.Position = 0;
+            outputPdf.Seek(0, SeekOrigin.Begin);
+            outputThumbnail.Position = 0;
+            outputThumbnail.Seek(0, SeekOrigin.Begin);
+
+            var imageConfig = new MyFileConfigurationImage
             {
-                pdfThumbnailStream.Position = 0;
-                pdfThumbnailStream.Seek(0, SeekOrigin.Begin);
-
-                var imageConfig = new MyFileConfigurationImage
-                {
-                    Folder = config.Folder,
-                    HierarchicallyFolderNameByDate = config.HierarchicallyFolderNameByDate,
-                    OverwriteFile = config.OverwriteFile,
-                    TestDevelopment = config.TestDevelopment,
-                    RealFilename = true
-                };
-                var pdfThumbnail = await pdfThumbnailStream
-                    .SaveImageAsync($"{Path.GetFileNameWithoutExtension(filename)}_thumbnail", imageConfig)
-                    .ConfigureAwait(false);
-                if (pdfThumbnail == null)
-                    return;
-
-                pdfPreview = pdfThumbnail.FilePath;
-            }, config.ImageQuality, config.ResolutionDpi).ConfigureAwait(false);
-
-            if (string.IsNullOrEmpty(pdfPreview))
-                return null;
-
-            var pdfFileName = config.GetFilePath(filename, null);
-            var previewFile = await stream
-                .SaveFileAsync(pdfFileName, config.OverwriteFile, config.TestDevelopment)
+                RootPath = config.RootPath,
+                Folder = config.Folder,
+                HierarchicallyFolderNameByDate = config.HierarchicallyFolderNameByDate,
+                OverwriteFile = false,
+                RealFilename = true,
+            };
+            var pdfFilePath = config.GetFilePath(filename, "pdf");
+            var imageFilePath =
+                imageConfig.GetFilePath($"{Path.GetFileNameWithoutExtension(pdfFilePath)}_thumbnail", null);
+            var thumbnail = await outputThumbnail
+                .SaveImageAsync(imageFilePath, imageConfig)
                 .ConfigureAwait(false);
-            if (previewFile == null)
+            if (thumbnail == null)
                 return null;
 
-            await stream.FlushAsync().ConfigureAwait(false);
-            await stream.DisposeAsync().ConfigureAwait(false);
+            var pdf = await outputPdf
+                .SaveFileAsync(pdfFilePath, config.OverwriteFile ?? false, config.TestDevelopment)
+                .ConfigureAwait(false);
+            if (pdf == null)
+            {
+                File.Delete(thumbnail.FilePath);
+                return null;
+            }
+
+            await outputPdf.DisposeAsync();
+            await outputThumbnail.DisposeAsync();
+
             return new MyFile
             {
-                FilePath = previewFile.FilePath,
-                ThumbnailPath = pdfPreview
+                FilePath = pdf.FilePath,
+                ThumbnailPath = thumbnail.FilePath,
+                FileSize = new FileInfo(pdf.FilePath).Length
             };
         }
 
@@ -210,7 +227,7 @@ namespace R8.FileHandlers
             if (string.IsNullOrEmpty(fileExtension))
                 throw new NullReferenceException($"{nameof(filename)} should have an extension for filename");
 
-            filename = config.GetFilePath(filename, null);
+            filename = config.GetFilePath(filename, fileExtension[1..]);
             var isValid = true;
             switch (Extensions.GetFileType(filename))
             {
@@ -239,7 +256,7 @@ namespace R8.FileHandlers
                 return null;
 
             var output = await stream
-                .SaveFileAsync(filename, config.OverwriteFile)
+                .SaveFileAsync(filename, config.OverwriteFile ?? false)
                 .ConfigureAwait(false);
             return output;
         }
@@ -322,9 +339,13 @@ namespace R8.FileHandlers
                 }
 
                 var ext = encoder.GetImageFormat().GetImageExtension();
-                var finalFileName = config.GetFilePath($"{name}.{ext}", null);
-                var outputImage = await outputStream.SaveFileAsync(finalFileName, config.OverwriteFile, config.TestDevelopment).ConfigureAwait(false);
+                var finalFileName = config.GetFilePath($"{name}.{ext}", ext);
+                var outputImage = await outputStream.SaveFileAsync(finalFileName, config.OverwriteFile ?? false, config.TestDevelopment).ConfigureAwait(false);
                 await outputStream.DisposeAsync().ConfigureAwait(false);
+
+                if (outputImage != null && string.IsNullOrEmpty(outputImage.FilePath))
+                    return null;
+
                 return outputImage;
             }
         }
@@ -448,9 +469,7 @@ namespace R8.FileHandlers
             stream.Seek(0, SeekOrigin.Begin);
 
             using var image = await Image.LoadAsync(stream).ConfigureAwait(false);
-            {
-                return await image.SaveImageAsync(name, config).ConfigureAwait(false);
-            }
+            return await image.SaveImageAsync(name, config).ConfigureAwait(false);
         }
 
         /// <summary>

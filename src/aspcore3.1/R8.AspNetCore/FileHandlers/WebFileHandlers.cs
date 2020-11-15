@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 using R8.FileHandlers;
+using R8.Lib;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,31 +17,17 @@ namespace R8.AspNetCore.FileHandlers
         /// Saves and uploads given file into the host.
         /// </summary>
         /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
-        public static async Task<IMyFile> UploadAsync(this IFormFile file)
-        {
-            if (file == null)
-                return null;
-
-            var newConfig = Activator.CreateInstance<MyFileConfiguration>();
-            var environment = newConfig.GetService<IWebHostEnvironment>();
-            newConfig.Folder = environment.WebRootPath + newConfig.Folder;
-            try
-            {
-                await using var stream = file.OpenReadStream();
-                return await stream.SaveAsync(file.FileName, newConfig).ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
+        public static Task<IMyFile> UploadAsync(this IFormFile file) =>
+            file.UploadAsync(Activator.CreateInstance<MyFileConfiguration>());
 
         /// <summary>
         /// Saves and uploads given image file into the host.
         /// </summary>
         /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
         /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
         public static Task<IMyFile> UploadImageAsync(this IFormFile file, Action<MyFileConfigurationImage> config) =>
             file.UploadAsync(config);
@@ -51,31 +38,121 @@ namespace R8.AspNetCore.FileHandlers
         /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
         /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
         /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
-        public static async Task<IMyFile> UploadAsync<TConfiguration>(this IFormFile file, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration
+        public static Task<IMyFile> UploadAsync<TConfiguration>(this IFormFile file, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration
         {
-            if (config == null)
+            var configuration = Activator.CreateInstance<TConfiguration>();
+            config(configuration);
+            return file.UploadAsync(configuration);
+        }
+
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
+        /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <param name="configuration"></param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
+        internal static async Task<IMyFile> UploadAsync<TConfiguration>(this IFormFile file, TConfiguration configuration) where TConfiguration : MyFileConfiguration
+        {
+            if (configuration == null)
                 return null;
             if (file == null)
                 return null;
 
-            var newConfig = Activator.CreateInstance<TConfiguration>();
-            var environment = newConfig.GetService<IWebHostEnvironment>();
-            config.Invoke(newConfig);
-            newConfig.Folder = environment.WebRootPath + newConfig.Folder;
+            var options = FileHandlersConnection.Options;
+            if (options == null)
+                throw new NullReferenceException($"File handlers required service must be registered.");
+
+            var environment = options.Environment;
+            if (environment == null)
+                throw new NullReferenceException($"{nameof(AddFileHandlersExtensions.AddFileHandlers)} must be registered in dependencies injection.");
+
+            configuration.RootPath ??= options.RootPath;
+            configuration.Folder ??= options.Folder;
+            configuration.HierarchicallyFolderNameByDate ??= options.HierarchicallyFolderNameByDate;
+            configuration.OverwriteFile ??= options.OverwriteFile;
+            configuration.RealFilename ??= options.RealFilename;
+            configuration.RootPath ??= environment.WebRootPath;
 
             await using var stream = file.OpenReadStream();
-            if (newConfig is MyFileConfigurationImage imageConfig)
+            switch (configuration)
             {
-                if (!string.IsNullOrEmpty(imageConfig.WatermarkPath))
-                {
-                    imageConfig.WatermarkPath = environment.WebRootPath + imageConfig.WatermarkPath;
-                    return await stream.SaveAsync(file.FileName, newConfig).ConfigureAwait(false);
-                }
-            }
+                case MyFileConfigurationImage imageConfig:
+                    {
+                        var imageConfiguration = options.Runtimes.OfType<IMyFileConfigurationImageBase>()
+                            .FirstOrDefault();
+                        if (imageConfiguration == null)
+                            throw new NullReferenceException($"{nameof(IMyFileConfigurationImageBase)} must be added to configurations.");
 
-            return await stream.SaveAsync(file.FileName, newConfig).ConfigureAwait(false);
+                        imageConfig.WatermarkPath ??= imageConfiguration.WatermarkPath;
+                        imageConfig.ImageEncoder ??= imageConfiguration.ImageEncoder;
+                        imageConfig.ResizeToSize ??= imageConfiguration.ResizeToSize;
+
+                        return await stream.SaveAsync(file.FileName, imageConfig).ConfigureAwait(false);
+                    }
+                case MyFileConfigurationPdf pdfConfig:
+                    {
+                        var pdfConfiguration = options.Runtimes.OfType<IMyFileConfigurationPdfBase>().FirstOrDefault();
+                        if (pdfConfiguration == null)
+                            throw new NullReferenceException($"{nameof(IMyFileConfigurationPdfBase)} must be added to configurations.");
+
+                        pdfConfig.GhostScriptDllPath ??= pdfConfiguration.GhostScriptDllPath;
+                        pdfConfig.ImageQuality ??= pdfConfiguration.ImageQuality;
+                        pdfConfig.ResolutionDpi ??= pdfConfiguration.ResolutionDpi;
+
+                        return await stream.SaveAsync(file.FileName, pdfConfig).ConfigureAwait(false);
+                    }
+                default:
+                    {
+                        var fileType = Path.GetExtension(file.FileName);
+                        if (string.IsNullOrEmpty(fileType))
+                            throw new ArgumentException($"{file} must have a valid extension.");
+
+                        fileType = fileType[1..];
+                        if (fileType.Equals("pdf", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            var pdf = new MyFileConfigurationPdf();
+                            configuration.CopyTo(pdf);
+                            return await file.UploadAsync(pdf);
+                        }
+
+                        if (fileType.Equals("jpg", StringComparison.InvariantCultureIgnoreCase) ||
+                            fileType.Equals("gif", StringComparison.InvariantCultureIgnoreCase) ||
+                            fileType.Equals("png", StringComparison.InvariantCultureIgnoreCase) ||
+                            fileType.Equals("bmp", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            var image = new MyFileConfigurationImage();
+                            configuration.CopyTo(image);
+                            return await file.UploadAsync(image);
+                        }
+
+                        return await stream.SaveAsync(file.FileName, configuration).ConfigureAwait(false);
+                    }
+            }
         }
+
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
+        /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
+        public static Task<IMyFile> UploadAsync<TConfiguration>(this IFormFile file)
+            where TConfiguration : MyFileConfiguration => file.UploadAsync(Activator.CreateInstance<TConfiguration>());
+
+        /// <summary>
+        /// Saves and uploads given file into the host.
+        /// </summary>
+        /// <param name="file">An <see cref="IFormFile"/> interface that representing input file stream to save.</param>
+        /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
+        public static Task<IMyFile> UploadAsync(this IFormFile file, Action<MyFileConfiguration> config) =>
+            file.UploadAsync<MyFileConfiguration>(config);
 
         /// <summary>
         /// Saves and uploads given file into the host.
@@ -83,11 +160,11 @@ namespace R8.AspNetCore.FileHandlers
         /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
         /// <param name="files">An <see cref="IFormFileCollection"/> interface that representing input file streams to save.</param>
         /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
-        public static Task<List<IMyFile>> UploadAsync<TConfiguration>(this IFormFileCollection files, Action<TConfiguration> config) where TConfiguration : MyFileConfiguration
-        {
-            return files.ToList().UploadAsync(config);
-        }
+        public static Task<List<IMyFile>> UploadAsync<TConfiguration>(this IFormFileCollection files,
+            Action<TConfiguration> config) where TConfiguration : MyFileConfiguration =>
+            files.ToList().UploadAsync(config);
 
         /// <summary>
         /// Saves and uploads given file into the host.
@@ -95,6 +172,7 @@ namespace R8.AspNetCore.FileHandlers
         /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
         /// <param name="files">An collection of <see cref="IFormFile"/> that representing input file streams to save.</param>
         /// <param name="config">A <see cref="Action{TResult}"/> instance that representing configurations to save.</param>
+        /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object that representing asynchronous operation.</returns>
         public static async Task<List<IMyFile>> UploadAsync<TConfiguration>(this List<IFormFile> files,
             Action<TConfiguration> config) where TConfiguration : MyFileConfiguration

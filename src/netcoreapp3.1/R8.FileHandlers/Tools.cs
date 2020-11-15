@@ -1,15 +1,17 @@
-﻿using System;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Ghostscript.NET;
+﻿using Ghostscript.NET;
 using Ghostscript.NET.Rasterizer;
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Transforms;
+
+using System;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace R8.FileHandlers
 {
@@ -81,6 +83,54 @@ namespace R8.FileHandlers
 
         //    return areEqual;
         //}
+        /// <summary>
+        /// Represents a instance of <see cref="Stream"/> contains PDF Preview
+        /// </summary>
+        /// <param name="stream">An <see cref="Stream"/> contains PDF data</param>
+        /// <param name="ghostScriptPath">An <see cref="string"/> path for <c>gsdll64.dll</c> fill path</param>
+        /// <param name="outputStreamHandler">An <see cref="Action{TResult}"/> to do whatever need to be done when still output stream scope is open.</param>
+        /// <param name="jpgQuality">An <see cref="int"/> value that representing Preview image quality for <c>JpegEncoder</c>.</param>
+        /// <param name="dpi">An <see cref="int"/> value that representing Pdf thumbnail resolution</param>
+        /// <returns>An <see cref="Task"/> representing the asynchronous operation.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static async Task<Stream> PdfToImageAsync(this Stream stream, string ghostScriptPath, int jpgQuality = 80, int dpi = 300)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+            if (ghostScriptPath == null)
+                throw new ArgumentNullException(nameof(ghostScriptPath));
+
+            var versionInfo = new GhostscriptVersionInfo(ghostScriptPath);
+            if (stream.Length == 0)
+                throw new ArgumentNullException(nameof(stream.Length));
+
+            stream.Position = 0;
+            stream.Seek(0, SeekOrigin.Begin);
+
+            using var rasterizer = new GhostscriptRasterizer();
+            rasterizer.Open(stream, versionInfo, true);
+
+            await using var inputStream = new MemoryStream();
+            using var inputImage = rasterizer.GetPage(dpi, dpi, 1);
+            inputImage.Save(inputStream, ImageFormat.Jpeg);
+            inputImage.Dispose();
+            rasterizer.Dispose();
+
+            inputStream.Position = 0;
+            inputStream.Seek(0, SeekOrigin.Begin);
+            var outputStream = new MemoryStream();
+            using var outputImage = await Image.LoadAsync(inputStream);
+            await outputImage.SaveAsync(outputStream, new JpegEncoder { Quality = jpgQuality });
+
+            outputStream.Position = 0;
+            outputStream.Seek(0, SeekOrigin.Begin);
+
+            outputImage.Dispose();
+            await inputStream.DisposeAsync();
+
+            return outputStream;
+        }
 
         /// <summary>
         /// Represents a instance of <see cref="Stream"/> contains PDF Preview
@@ -101,15 +151,11 @@ namespace R8.FileHandlers
                 throw new ArgumentNullException(nameof(ghostScriptPath));
 
             var versionInfo = new GhostscriptVersionInfo(ghostScriptPath);
-
             if (stream.Length == 0)
                 throw new ArgumentNullException(nameof(stream.Length));
 
             stream.Position = 0;
             stream.Seek(0, SeekOrigin.Begin);
-
-            // var currentAssembly = Assembly.GetEntryAssembly();
-            // var appPath = Path.GetDirectoryName(currentAssembly!.Location);
 
             await using var inputStream = new MemoryStream();
             {

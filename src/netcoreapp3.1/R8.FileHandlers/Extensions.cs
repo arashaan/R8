@@ -45,27 +45,27 @@ namespace R8.FileHandlers
             }
         }
 
-        /// <summary>
-        /// Represents an existing directory, or create that instead
-        /// </summary>
-        /// <param name="serverRootPath">An string for server root path like <c>http://localhosts:8080/</c></param>
-        /// <param name="path">Full path for directory</param>
-        /// <exception cref="ArgumentException"></exception>
-        public static void GetOrCreateDirectory(string serverRootPath, string path)
-        {
-            if (string.IsNullOrEmpty(path))
-                throw new ArgumentException(path);
+        ///// <summary>
+        ///// Represents an existing directory, or create that instead
+        ///// </summary>
+        ///// <param name="serverRootPath">An string for server root path like <c>http://localhosts:8080/</c></param>
+        ///// <param name="path">Full path for directory</param>
+        ///// <exception cref="ArgumentException"></exception>
+        //public static void GetOrCreateDirectory(string serverRootPath, string path)
+        //{
+        //    if (string.IsNullOrEmpty(path))
+        //        throw new ArgumentException(path);
 
-            var dirArrays = path.Split("\\");
-            for (var i = 0; i < dirArrays.Length; i++)
-            {
-                var inHostPath = string.Join("\\", dirArrays.Take(i + 1));
-                var thisPath = Path.Combine(serverRootPath, inHostPath);
-                var directory = new DirectoryInfo(thisPath);
-                if (!directory.Exists)
-                    directory.Create();
-            }
-        }
+        //    var dirArrays = path.Split("\\");
+        //    for (var i = 0; i < dirArrays.Length; i++)
+        //    {
+        //        var inHostPath = string.Join("\\", dirArrays.Take(i + 1));
+        //        var thisPath = Path.Combine(serverRootPath, inHostPath);
+        //        var directory = new DirectoryInfo(thisPath);
+        //        if (!directory.Exists)
+        //            directory.Create();
+        //    }
+        //}
 
         /// <summary>
         /// Represents a Unique FileName.
