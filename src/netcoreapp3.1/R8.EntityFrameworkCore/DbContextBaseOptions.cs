@@ -1,9 +1,12 @@
-﻿using System;
-using EasyCaching.InMemory;
+﻿using EasyCaching.InMemory;
+
 using EFCoreSecondLevelCacheInterceptor;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+
+using System;
 
 namespace R8.EntityFrameworkCore
 {
@@ -14,87 +17,126 @@ namespace R8.EntityFrameworkCore
         /// </summary>
         public static void AddCustomPooledDbContextFactory<TContext>(this IServiceCollection services, Action<DbContextBaseConfiguration> config) where TContext : DbContext
         {
-            var preConfig = new DbContextBaseConfiguration();
-            config?.Invoke(preConfig);
+            var configuration = new DbContextBaseConfiguration();
+            config?.Invoke(configuration);
 
-            if (string.IsNullOrEmpty(preConfig.ConnectionString))
-                throw new NullReferenceException(nameof(preConfig.ConnectionString));
+            if (string.IsNullOrEmpty(configuration.ConnectionString))
+                throw new NullReferenceException(nameof(configuration.ConnectionString));
 
-            services.AddDbContextCaching<TContext>();
-            services.AddPooledDbContextFactory<TContext>((serviceProvider, builder) =>
-            {
-                builder.EnableDetailedErrors();
-                builder.EnableSensitiveDataLogging(); // Often also useful with EnableDetailedErrors
-                builder.Configure(preConfig);
-                builder.AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>());
-            });
-        }
-
-        /// <summary>
-        /// Adds some predefined caching registration and configuration for specific <see cref="DbContext"/>.
-        /// </summary>
-        public static void AddDbContextCaching<TContext>(this IServiceCollection services) where TContext : DbContext
-        {
+            services.AddEntityFrameworkSqlServer();
             var providerName = typeof(TContext).Name;
             services.AddEFSecondLevelCache(options =>
                 options.UseEasyCachingCoreProvider(providerName, isHybridCache: false).DisableLogging(true));
 
             services.AddEasyCaching(options =>
             {
-                options.UseInMemory(config =>
+                options.UseInMemory(memoryOptions =>
                 {
-                    config.DBConfig = new InMemoryCachingOptions
+                    memoryOptions.DBConfig = new InMemoryCachingOptions
                     {
                         ExpirationScanFrequency = 60,
                         SizeLimit = 100,
                         EnableReadDeepClone = false,
                         EnableWriteDeepClone = false,
                     };
-                    config.MaxRdSecond = 120;
-                    config.EnableLogging = false;
-                    config.LockMs = 5000;
-                    config.SleepMs = 300;
+                    memoryOptions.MaxRdSecond = 120;
+                    memoryOptions.EnableLogging = false;
+                    memoryOptions.LockMs = 5000;
+                    memoryOptions.SleepMs = 300;
                 }, providerName);
+            });
+
+            services.AddPooledDbContextFactory<TContext>((serviceProvider, builder) =>
+            {
+                builder.UseSqlServer(
+                    configuration.ConnectionString,
+                    optionsBuilder =>
+                    {
+                        optionsBuilder.CommandTimeout((int)configuration.CommandTimeout.TotalSeconds);
+                        optionsBuilder.EnableRetryOnFailure();
+
+                        if (!string.IsNullOrEmpty(configuration.MigrationAssembly))
+                            optionsBuilder.MigrationsAssembly(configuration.MigrationAssembly);
+
+                        configuration.Action?.Invoke(optionsBuilder);
+                    });
+
+                if (configuration.LoggerFactory != null)
+                    builder.UseLoggerFactory(configuration.LoggerFactory);
+
+                // builder.ConfigureWarnings(warnings => warnings.Log(CoreEventId.SaveChangesCompleted));
+                builder.EnableDetailedErrors();
+                builder.EnableSensitiveDataLogging(); // Often also useful with EnableDetailedErrors
+                builder.AddInterceptors(serviceProvider.GetRequiredService<SecondLevelCacheInterceptor>());
+                builder.UseInternalServiceProvider(serviceProvider);
             });
         }
 
-        public static DbContextOptionsBuilder Configure(this DbContextOptionsBuilder builder, DbContextBaseConfiguration config)
-        {
-            builder.UseSqlServer(
-              config.ConnectionString,
-              optionsBuilder =>
-              {
-                  optionsBuilder.CommandTimeout((int)config.CommandTimeout.TotalSeconds);
-                  optionsBuilder.EnableRetryOnFailure();
+        ///// <summary>
+        ///// Adds some predefined caching registration and configuration for specific <see cref="DbContext"/>.
+        ///// </summary>
+        //public static void AddDbContextCaching<TContext>(this IServiceCollection services) where TContext : DbContext
+        //{
+        //    var providerName = typeof(TContext).Name;
+        //    services.AddEFSecondLevelCache(options =>
+        //        options.UseEasyCachingCoreProvider(providerName, isHybridCache: false).DisableLogging(true));
 
-                  if (!string.IsNullOrEmpty(config.MigrationAssembly))
-                      optionsBuilder.MigrationsAssembly(config.MigrationAssembly);
+        //    services.AddEasyCaching(options =>
+        //    {
+        //        options.UseInMemory(config =>
+        //        {
+        //            config.DBConfig = new InMemoryCachingOptions
+        //            {
+        //                ExpirationScanFrequency = 60,
+        //                SizeLimit = 100,
+        //                EnableReadDeepClone = false,
+        //                EnableWriteDeepClone = false,
+        //            };
+        //            config.MaxRdSecond = 120;
+        //            config.EnableLogging = false;
+        //            config.LockMs = 5000;
+        //            config.SleepMs = 300;
+        //        }, providerName);
+        //    });
+        //}
 
-                  config.Action?.Invoke(optionsBuilder);
-              });
+        //public static DbContextOptionsBuilder Configure(this DbContextOptionsBuilder builder, DbContextBaseConfiguration config)
+        //{
+        //    builder.UseSqlServer(
+        //      config.ConnectionString,
+        //      optionsBuilder =>
+        //      {
+        //          optionsBuilder.CommandTimeout((int)config.CommandTimeout.TotalSeconds);
+        //          optionsBuilder.EnableRetryOnFailure();
 
-            if (config.LoggerFactory != null)
-                builder.UseLoggerFactory(config.LoggerFactory);
+        //          if (!string.IsNullOrEmpty(config.MigrationAssembly))
+        //              optionsBuilder.MigrationsAssembly(config.MigrationAssembly);
 
-            builder.ConfigureWarnings(warnings => warnings.Log(CoreEventId.SaveChangesCompleted));
-            return builder;
-        }
+        //          config.Action?.Invoke(optionsBuilder);
+        //      });
 
-        public static DbContextOptionsBuilder CreateBuilder(this DbContextBaseConfiguration config)
-        {
-            return new DbContextOptionsBuilder()
-                .Configure(config);
-        }
+        //    if (config.LoggerFactory != null)
+        //        builder.UseLoggerFactory(config.LoggerFactory);
 
-        public static DbContextOptionsBuilder<TContext> CreateBuilder<TContext>(this DbContextBaseConfiguration config)
-            where TContext : DbContext
-        {
-            return new DbContextOptionsBuilder<TContext>().Configure(config);
-        }
+        //    builder.ConfigureWarnings(warnings => warnings.Log(CoreEventId.SaveChangesCompleted));
+        //    return builder;
+        //}
 
-        public static DbContextOptionsBuilder<TContext> Configure<TContext>(this DbContextOptionsBuilder<TContext> builder, DbContextBaseConfiguration config) where TContext : DbContext
-        {
-            return (DbContextOptionsBuilder<TContext>)Configure((DbContextOptionsBuilder)builder, config);
-        }
+        //public static DbContextOptionsBuilder CreateBuilder(this DbContextBaseConfiguration config)
+        //{
+        //    return new DbContextOptionsBuilder()
+        //        .Configure(config);
+        //}
+
+        //public static DbContextOptionsBuilder<TContext> CreateBuilder<TContext>(this DbContextBaseConfiguration config)
+        //    where TContext : DbContext
+        //{
+        //    return new DbContextOptionsBuilder<TContext>().Configure(config);
+        //}
+
+        //public static DbContextOptionsBuilder<TContext> Configure<TContext>(this DbContextOptionsBuilder<TContext> builder, DbContextBaseConfiguration config) where TContext : DbContext
+        //{
+        //    return (DbContextOptionsBuilder<TContext>)Configure((DbContextOptionsBuilder)builder, config);
+        //}
     }
 }

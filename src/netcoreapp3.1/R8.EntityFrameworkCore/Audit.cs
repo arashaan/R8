@@ -12,7 +12,7 @@ namespace R8.EntityFrameworkCore
     /// <summary>
     /// An object to track creation, modification, and deletion of specific entity.
     /// </summary>
-    internal class Audit : IAudit
+    public class Audit : IAudit
     {
         /// <summary>
         /// An object to track creation, modification, and deletion of specific entity.

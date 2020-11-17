@@ -7,7 +7,7 @@ namespace R8.EntityFrameworkCore
     /// <summary>
     /// Represents a strongly typed list of <see cref="IAudit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
     /// </summary>
-    public class AuditCollection : List<IAudit>
+    public class AuditCollection : List<Audit>
     {
         public override string ToString()
         {
