@@ -94,8 +94,9 @@ namespace R8.AspNetCore.Demo
             services.AddLocalizer(serviceProvider =>
             {
                 using var scope = serviceProvider.CreateScope();
+
                 var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
-                var configuration = new LocalizerConfiguration
+                var configuration = new LocalizerJsonProvider
                 {
                     Folder = "E:/Work/Develope/Asp/Ecohos/Ecohos.Presentation/Dictionary",
                     FileName = "dic",

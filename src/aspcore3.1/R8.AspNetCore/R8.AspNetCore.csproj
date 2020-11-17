@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.AspNetCore</PackageId>
-    <Version>1.7.7</Version>
+    <Version>1.8.1</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
-	<LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <PackageDescription>Core package for R8.Lib.AspNetCore</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -21,10 +21,12 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.27" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.28" />
     <PackageReference Include="MailKit" Version="2.9.0" />
-    <PackageReference Include="R8.EntityFrameworkCore" Version="1.7.4" />
-    <PackageReference Include="R8.FileHandlers" Version="1.7.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="R8.EntityFrameworkCore" Version="1.8.1" />
+    <PackageReference Include="R8.FileHandlers" Version="1.8.1" />
   </ItemGroup>
   <!--<ItemGroup>
     <ProjectReference Include="..\..\netcoreapp3.1\R8.FileHandlers\R8.FileHandlers.csproj" />
