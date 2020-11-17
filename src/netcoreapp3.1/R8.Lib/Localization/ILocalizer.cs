@@ -24,6 +24,12 @@ namespace R8.Lib.Localization
         Task RefreshAsync();
 
         /// <summary>
+        /// Returns a <see cref="Dictionary{TKey,TValue}"/> object that representing collection of words and translations.
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<string, LocalizerContainer> GetDictionary();
+
+        /// <summary>
         /// Gets default culture.
         /// </summary>
         CultureInfo DefaultCulture { get; }
@@ -39,6 +45,11 @@ namespace R8.Lib.Localization
         /// <param name="key">A key to find in internal dictionary</param>
         /// <param name="culture">Specific culture to search in</param>
         string this[string key, CultureInfo culture] { get; }
+
+        // /// <summary>
+        // /// Gets an enumerator constant that representing current provider type.
+        // /// </summary>
+        // LocalizerProvider Provider { get; }
 
         /// <summary>
         /// Gets value from internal dictionary
@@ -60,77 +71,97 @@ namespace R8.Lib.Localization
     /// </summary>
     public class Localizer : ILocalizer
     {
-        private readonly LocalizerConfiguration _configuration;
+        private readonly ILocalizerProvider _provider;
 
-        public List<CultureInfo> SupportedCultures => _configuration.SupportedCultures;
+        public List<CultureInfo> SupportedCultures => _provider.SupportedCultures;
 
-        public CultureInfo DefaultCulture => _configuration.DefaultCulture;
+        public CultureInfo DefaultCulture => _provider.DefaultCulture;
 
         /// <summary>
         /// Returns User-defined dictionary value based on Database
         /// </summary>
-        /// <param name="configuration">A <see cref="LocalizerConfiguration"/> object that represents initializing data.</param>
-        public Localizer(LocalizerConfiguration configuration)
+        /// <param name="provider">A <see cref="ILocalizerCultureProvider"/> object that represents initializing data.</param>
+        public Localizer(ILocalizerProvider provider)
         {
-            _configuration = configuration;
+            _provider = provider;
             _dictionary = new Dictionary<string, LocalizerContainer>();
         }
 
         private readonly Dictionary<string, LocalizerContainer> _dictionary;
 
+        public Dictionary<string, LocalizerContainer> GetDictionary() => _dictionary;
+
+        public ILocalizerProvider GetProvider() => _provider;
+
         public async Task RefreshAsync()
         {
-            if (_configuration == null)
-                throw new NullReferenceException($"'{nameof(_configuration)}' expected to be filled");
+            if (_provider == null)
+                throw new NullReferenceException($"'{nameof(_provider)}' expected to be filled");
+
+            if (DefaultCulture == null)
+                throw new NullReferenceException($"'{nameof(DefaultCulture)}' expected to be filled");
 
             if (SupportedCultures == null || !SupportedCultures.Any())
                 throw new NullReferenceException($"'{nameof(SupportedCultures)}' expected to be filled");
 
-            if (string.IsNullOrEmpty(_configuration.Folder))
-                throw new ArgumentNullException($"Missing {nameof(_configuration.Folder)}");
+            if (_provider == null)
+                throw new NullReferenceException($"{nameof(_provider)} must be implemented.");
 
-            if (string.IsNullOrEmpty(_configuration.FileName))
-                throw new ArgumentNullException($"Missing {nameof(_configuration.FileName)}");
-
-            _dictionary.Clear();
-            foreach (var supportedCulture in SupportedCultures)
-                await HandleLanguageAsync(supportedCulture).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Handles dictionary based on given culture.
-        /// </summary>
-        /// <param name="culture"></param>
-        /// <returns>A <see cref="Task"/> that represents asynchronous operation.</returns>
-        /// <exception cref="FileNotFoundException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
-        public async Task HandleLanguageAsync(CultureInfo culture)
-        {
-            var language = culture.GetTwoLetterCulture();
-
-            var jsonFile = $"{_configuration.FileName}.{language}.json";
-            var jsonPath = Path.Combine(_configuration.Folder, jsonFile);
-
-            using var sr = new StreamReader(jsonPath, Encoding.UTF8);
-            var jsonString = await sr.ReadToEndAsync().ConfigureAwait(false);
-            var dic = HandleDictionary(jsonString);
-            if (dic?.Any() == true)
+            if (_provider is LocalizerCustomProvider dbProvider)
             {
-                foreach (var (key, value) in dic)
+                var tempDic = dbProvider.Dictionary?.Compile().Invoke();
+                if (tempDic == null || !tempDic.Any())
+                    tempDic = await dbProvider.DictionaryAsync.Compile().Invoke();
+
+                if (tempDic?.Any() == true)
                 {
-                    var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
-                    if (container == null)
-                    {
-                        _dictionary.Add(key, new LocalizerContainer(culture, value));
-                    }
-                    else
-                    {
-                        container.Set(culture, value);
-                    }
+                    _dictionary.Clear();
+                    foreach (var (key, localizerContainer) in tempDic)
+                        _dictionary.Add(key, localizerContainer);
                 }
             }
+            else if (_provider is LocalizerJsonProvider jsonProvider)
+            {
+                if (string.IsNullOrEmpty(jsonProvider.Folder))
+                    throw new ArgumentNullException($"Missing {nameof(jsonProvider.Folder)}");
 
-            sr.Dispose();
+                if (string.IsNullOrEmpty(jsonProvider.FileName))
+                    throw new ArgumentNullException($"Missing {nameof(jsonProvider.FileName)}");
+
+                _dictionary.Clear();
+                foreach (var supportedCulture in SupportedCultures)
+                {
+                    var language = supportedCulture.GetTwoLetterCulture();
+
+                    var jsonFile = $"{jsonProvider.FileName}.{language}.json";
+                    var jsonPath = Path.Combine(jsonProvider.Folder, jsonFile);
+
+                    using var sr = new StreamReader(jsonPath, Encoding.UTF8);
+                    var jsonString = await sr.ReadToEndAsync().ConfigureAwait(false);
+                    var dic = HandleDictionary(jsonString);
+                    if (dic?.Any() == true)
+                    {
+                        foreach (var (key, value) in dic)
+                        {
+                            var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
+                            if (container == null)
+                            {
+                                _dictionary.Add(key, new LocalizerContainer(supportedCulture, value));
+                            }
+                            else
+                            {
+                                container.Set(supportedCulture, value);
+                            }
+                        }
+                    }
+
+                    sr.Dispose();
+                }
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
         }
 
         /// <summary>

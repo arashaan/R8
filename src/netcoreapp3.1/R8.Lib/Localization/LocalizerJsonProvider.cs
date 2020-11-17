@@ -3,18 +3,11 @@ using System.Globalization;
 
 namespace R8.Lib.Localization
 {
-    public class LocalizerConfiguration
+    /// <summary>
+    /// Initializes an instance of <see cref="ILocalizerProvider"/>.
+    /// </summary>
+    public class LocalizerJsonProvider : ILocalizerProvider
     {
-        /// <summary>
-        /// A collection of supported cultures.
-        /// </summary>
-        public List<CultureInfo> SupportedCultures { get; set; }
-
-        /// <summary>
-        /// Default culture.
-        /// </summary>
-        public CultureInfo DefaultCulture { get; set; }
-
         /// <summary>
         /// Absolute path under project root
         /// </summary>
@@ -24,5 +17,8 @@ namespace R8.Lib.Localization
         /// Filename without culture and extension : dictionary => to be "dictionary.tr.json"
         /// </summary>
         public string FileName { get; set; }
+
+        public List<CultureInfo> SupportedCultures { get; set; }
+        public CultureInfo DefaultCulture { get; set; }
     }
 }

@@ -1,12 +1,7 @@
-﻿using R8.Lib.Enums;
-using R8.Lib.Localization;
-using R8.Lib.MethodReturn;
+﻿using R8.Lib.Localization;
 
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
-
-using Xunit;
 
 namespace R8.Lib.Test.MethodTests
 {
@@ -27,7 +22,7 @@ namespace R8.Lib.Test.MethodTests
 
         public ExtensionsTests()
         {
-            var configuration = new LocalizerConfiguration
+            var configuration = new LocalizerJsonProvider
             {
                 Folder = FolderPath,
                 FileName = JsonFileName,

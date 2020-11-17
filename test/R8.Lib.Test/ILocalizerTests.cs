@@ -28,7 +28,7 @@ namespace R8.Lib.Test
 
         public ILocalizerTests()
         {
-            var configuration = new LocalizerConfiguration
+            var configuration = new LocalizerJsonProvider
             {
                 Folder = FolderPath,
                 FileName = JsonFileName,
@@ -56,24 +56,6 @@ namespace R8.Lib.Test
             // Arrange
             Assert.NotNull(dic);
             Assert.Empty(dic);
-        }
-
-        [Fact]
-        public async Task CallHandleLanguage_FileNotFound()
-        {
-            // Assets
-            var culture = CultureInfo.GetCultureInfo("tr");
-            var configuration = new LocalizerConfiguration
-            {
-                Folder = FolderPath,
-                FileName = "fa",
-                SupportedCultures = SupportedCultures
-            };
-            var localizer = new Localizer(configuration);
-
-            // Arrange
-            await Assert.ThrowsAsync<FileNotFoundException>(() =>
-                localizer.HandleLanguageAsync(culture));
         }
 
         [Fact]
@@ -257,7 +239,7 @@ namespace R8.Lib.Test
         public async System.Threading.Tasks.Task CallRefreshAsync_FileNameNull()
         {
             // Assets
-            var configuration = new LocalizerConfiguration
+            var configuration = new LocalizerJsonProvider()
             {
                 Folder = FolderPath,
                 SupportedCultures = SupportedCultures
@@ -274,7 +256,7 @@ namespace R8.Lib.Test
         public async System.Threading.Tasks.Task CallRefreshAsync_FolderNull()
         {
             // Assets
-            var configuration = new LocalizerConfiguration
+            var configuration = new LocalizerJsonProvider
             {
                 SupportedCultures = SupportedCultures
             };
@@ -290,7 +272,7 @@ namespace R8.Lib.Test
         public async System.Threading.Tasks.Task CallRefreshAsync_SupportedNull()
         {
             // Act
-            var localizer = new Localizer(new LocalizerConfiguration());
+            var localizer = new Localizer(new LocalizerJsonProvider());
 
             // Arrange
             await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());

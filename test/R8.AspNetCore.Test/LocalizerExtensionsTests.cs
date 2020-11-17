@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Html;
+
+using R8.AspNetCore.TagBuilders;
+using R8.Lib.Localization;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Html;
-using R8.AspNetCore.TagBuilders;
-using R8.Lib.Localization;
+
 using Xunit;
 
 namespace R8.AspNetCore.Test
@@ -27,7 +30,7 @@ namespace R8.AspNetCore.Test
 
         public LocalizerExtensionsTests()
         {
-            var configuration = new LocalizerConfiguration
+            var configuration = new LocalizerJsonProvider
             {
                 Folder = FolderPath,
                 FileName = JsonFileName,

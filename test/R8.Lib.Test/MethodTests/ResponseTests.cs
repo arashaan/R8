@@ -26,7 +26,7 @@ namespace R8.Lib.Test.MethodTests
 
         public ResponseTests()
         {
-            var configuration = new LocalizerConfiguration
+            var configuration = new LocalizerJsonProvider
             {
                 Folder = FolderPath,
                 FileName = JsonFileName,

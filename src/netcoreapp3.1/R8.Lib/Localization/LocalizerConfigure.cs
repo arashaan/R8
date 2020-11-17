@@ -14,12 +14,13 @@ namespace R8.Lib.Localization
         /// <param name="services"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public static IServiceCollection AddLocalizer(this IServiceCollection services, Func<IServiceProvider, LocalizerConfiguration> options)
+        public static IServiceCollection AddLocalizer<TProvider>(this IServiceCollection services, Func<IServiceProvider, TProvider> options) where TProvider : ILocalizerProvider
         {
             services.AddSingleton<ILocalizer>(serviceProvider =>
             {
                 var configuration = options.Invoke(serviceProvider);
-                return new Localizer(configuration);
+                var instance = new Localizer(configuration);
+                return instance;
             });
 
             services.AddTransient<IResponseStatus>(serviceProvider =>
