@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using Humanizer;
+﻿using Humanizer;
+
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
+
+using System;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace R8.FileHandlers
 {
@@ -226,18 +224,6 @@ namespace R8.FileHandlers
         }
 
         /// <summary>
-        /// Represents file extensions saved in <see cref="FileTypes"/> member
-        /// </summary>
-        /// <param name="fileType">A <see cref="FileTypes"/> enum member to get file extensions</param>
-        /// <returns>An enumerated list of file extensions</returns>
-        public static IEnumerable<string> GetFileExtensions(this FileTypes fileType)
-        {
-            var attribute = fileType.GetType().GetCustomAttribute<DisplayAttribute>();
-            var display = attribute?.GetName() ?? Enum.GetName(fileType.GetType(), fileType);
-            return display.Split("|").ToList();
-        }
-
-        /// <summary>
         /// Represents an <see cref="string"/> extension by <see cref="ImageFormat"/>
         /// </summary>
         /// <param name="format"></param>
@@ -286,70 +272,6 @@ namespace R8.FileHandlers
                     $"Unable to recognize {nameof(encoder)} encoder of type {typeof(IImageEncoder)}")
             };
             return imageFormat;
-        }
-
-        /// <summary>
-        /// Represents <see cref="FileTypes"/> for specific file extension
-        /// </summary>
-        /// <param name="fileExtension">An <see cref="string"/> to get file extension</param>
-        /// <returns>A <see cref="FileTypes"/> <see cref="Enum"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static FileTypes GetFileTypeByExtension(string fileExtension)
-        {
-            if (fileExtension == null)
-                throw new ArgumentNullException($"{nameof(fileExtension)} should be a valid file extension");
-
-            var fields = typeof(FileTypes)
-                .GetFields(BindingFlags.Public | BindingFlags.Static)
-                .ToList();
-
-            FileTypes? type = null;
-            foreach (var field in fields)
-            {
-                var displayAttribute = field.GetCustomAttribute<DisplayAttribute>();
-                if (displayAttribute == null)
-                    continue;
-
-                var allowedExtensions = displayAttribute.Name.Split("|");
-                if (allowedExtensions.Length == 0)
-                    continue;
-
-                if (string.IsNullOrEmpty(fileExtension))
-                    continue;
-
-                if (fileExtension.StartsWith("."))
-                    fileExtension = fileExtension.Split(".")[1];
-
-                var contain = allowedExtensions.Contains(fileExtension);
-                if (!contain)
-                    continue;
-
-                var hasValidEnum = Enum.TryParse(typeof(FileTypes), field.Name, true, out var tempType);
-                if (!hasValidEnum || tempType == null)
-                    continue;
-
-                type = (FileTypes)tempType;
-                break;
-            }
-
-            var result = type ?? FileTypes.Unknown;
-            return result;
-        }
-
-        /// <summary>
-        /// Represents <see cref="FileTypes"/> for specific file extension
-        /// </summary>
-        /// <param name="fileName">An <see cref="string"/> to get file extension</param>
-        /// <returns>A <see cref="FileTypes"/> <see cref="Enum"/></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        public static FileTypes GetFileType(string fileName)
-        {
-            if (fileName == null)
-                throw new ArgumentNullException($"{nameof(fileName)} should be a valid filename");
-
-            var fileExtension = Path.GetExtension(fileName);
-            return GetFileTypeByExtension(fileExtension);
         }
     }
 }

@@ -1,14 +1,16 @@
-﻿using SixLabors.ImageSharp;
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+
+using R8.Lib;
+
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace R8.FileHandlers
 {
@@ -133,6 +135,14 @@ namespace R8.FileHandlers
                 throw new ArgumentNullException(nameof(stream));
             if (filename == null)
                 throw new ArgumentNullException(nameof(filename));
+
+            var fileExtension = Path.GetExtension(filename);
+            if (string.IsNullOrEmpty(filename))
+                throw new ArgumentException(null, nameof(filename));
+
+            if (!fileExtension[1..].Equals("pdf", StringComparison.InvariantCultureIgnoreCase))
+                throw new ArgumentException(null, nameof(filename));
+
             if (config == null)
                 throw new ArgumentNullException(nameof(config));
 
@@ -164,14 +174,11 @@ namespace R8.FileHandlers
             outputThumbnail.Position = 0;
             outputThumbnail.Seek(0, SeekOrigin.Begin);
 
-            var imageConfig = new MyFileConfigurationImage
-            {
-                RootPath = config.RootPath,
-                Folder = config.Folder,
-                HierarchicallyFolderNameByDate = config.HierarchicallyFolderNameByDate,
-                OverwriteFile = false,
-                RealFilename = true,
-            };
+            var imageConfig = new MyFileConfigurationImage();
+            ((MyFileConfiguration)config).CopyTo(imageConfig);
+            imageConfig.OverwriteExistingFile = true;
+            imageConfig.SaveAsRealName = true;
+
             var pdfFilePath = config.GetFilePath(filename, "pdf");
             var imageFilePath =
                 imageConfig.GetFilePath($"{Path.GetFileNameWithoutExtension(pdfFilePath)}_thumbnail", null);
@@ -182,7 +189,7 @@ namespace R8.FileHandlers
                 return null;
 
             var pdf = await outputPdf
-                .SaveFileAsync(pdfFilePath, config.OverwriteFile ?? false, config.TestDevelopment)
+                .SaveFileAsync(pdfFilePath, config.OverwriteExistingFile ?? false, config.TestDevelopment)
                 .ConfigureAwait(false);
             if (pdf == null)
             {
@@ -228,35 +235,21 @@ namespace R8.FileHandlers
                 throw new NullReferenceException($"{nameof(filename)} should have an extension for filename");
 
             filename = config.GetFilePath(filename, fileExtension[1..]);
-            var isValid = true;
-            switch (Extensions.GetFileType(filename))
+            var isValid = fileExtension[1..].ToLowerInvariant() switch
             {
-                case FileTypes.Zip:
-                    isValid = stream.IsArchive(false);
-                    break;
-
-                case FileTypes.Svg:
-                    isValid = stream.IsSvg();
-                    break;
-
-                case FileTypes.Image:
-                    throw new ArgumentException($"Use this method with {nameof(MyFileConfigurationImage)} instead");
-
-                case FileTypes.Document:
-                    throw new ArgumentException($"Use this method with {nameof(MyFileConfigurationPdf)} instead");
-
-                case FileTypes.Audio:
-                case FileTypes.Video:
-                case FileTypes.Unknown:
-                default:
-                    break;
-            }
+                "zip" => stream.IsArchive(false),
+                "gzip" => stream.IsArchive(false),
+                "bzip2" => stream.IsArchive(false),
+                "tar" => stream.IsArchive(false),
+                "svg" => stream.IsSvg(),
+                _ => true
+            };
 
             if (!isValid)
                 return null;
 
             var output = await stream
-                .SaveFileAsync(filename, config.OverwriteFile ?? false)
+                .SaveFileAsync(filename, config.OverwriteExistingFile ?? false)
                 .ConfigureAwait(false);
             return output;
         }
@@ -340,7 +333,7 @@ namespace R8.FileHandlers
 
                 var ext = encoder.GetImageFormat().GetImageExtension();
                 var finalFileName = config.GetFilePath($"{name}.{ext}", ext);
-                var outputImage = await outputStream.SaveFileAsync(finalFileName, config.OverwriteFile ?? false, config.TestDevelopment).ConfigureAwait(false);
+                var outputImage = await outputStream.SaveFileAsync(finalFileName, config.OverwriteExistingFile ?? false, config.TestDevelopment).ConfigureAwait(false);
                 await outputStream.DisposeAsync().ConfigureAwait(false);
 
                 if (outputImage != null && string.IsNullOrEmpty(outputImage.FilePath))
@@ -430,9 +423,7 @@ namespace R8.FileHandlers
                 }
             }
 
-            var uri = new Uri(filename);
-            var absolutePath = uri.AbsolutePath;
-            return new MyFile(absolutePath);
+            return new MyFile(filename);
         }
 
         /// <summary>
