@@ -3,10 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -18,10 +16,26 @@ namespace R8.Lib.Localization
     public interface ILocalizer
     {
         /// <summary>
-        /// Refreshes internal dictionary to update to the latest data.
+        /// Initializes internal dictionary to update to the latest data.
         /// </summary>
         /// <returns>A <see cref="Task"/> object for asynchronous operation.</returns>
+        Task InitializeAsync();
+
+        /// <summary>
+        /// Initializes internal dictionary to update to the latest data.
+        /// </summary>
+        void Initialize();
+
+        /// <summary>
+        /// Refreshes internal dictionary based on last update.
+        /// </summary>
+        /// <returns>An <see cref="Task"/> object that representing asynchronous operation.</returns>
         Task RefreshAsync();
+
+        /// <summary>
+        /// Refreshes internal dictionary based on last update.
+        /// </summary>
+        void Refresh();
 
         /// <summary>
         /// Returns a <see cref="Dictionary{TKey,TValue}"/> object that representing collection of words and translations.
@@ -33,6 +47,12 @@ namespace R8.Lib.Localization
         /// Gets default culture.
         /// </summary>
         CultureInfo DefaultCulture { get; }
+
+        /// <summary>
+        /// Gets provider instance.
+        /// </summary>
+        /// <returns></returns>
+        ILocalizerProvider GetProvider();
 
         /// <summary>
         /// Gets a collection of supported cultures.
@@ -49,7 +69,7 @@ namespace R8.Lib.Localization
         // /// <summary>
         // /// Gets an enumerator constant that representing current provider type.
         // /// </summary>
-        // LocalizerProvider Provider { get; }
+        // LocalizerProviders Provider { get; }
 
         /// <summary>
         /// Gets value from internal dictionary
@@ -76,6 +96,8 @@ namespace R8.Lib.Localization
         public List<CultureInfo> SupportedCultures => _provider.SupportedCultures;
 
         public CultureInfo DefaultCulture => _provider.DefaultCulture;
+        private bool _initialized;
+        private IServiceProvider _serviceProvider;
 
         /// <summary>
         /// Returns User-defined dictionary value based on Database
@@ -85,7 +107,11 @@ namespace R8.Lib.Localization
         {
             _provider = provider;
             _dictionary = new Dictionary<string, LocalizerContainer>();
+            _initialized = false;
         }
+
+        public void SetServiceProvider(IServiceProvider provider) =>
+            _serviceProvider = provider ?? throw new ArgumentNullException(nameof(provider));
 
         private readonly Dictionary<string, LocalizerContainer> _dictionary;
 
@@ -93,7 +119,23 @@ namespace R8.Lib.Localization
 
         public ILocalizerProvider GetProvider() => _provider;
 
+        public void Refresh()
+        {
+            if (!_initialized)
+                throw new Exception($"Service must be initialized before refresh.");
+
+            _provider.Refresh(_serviceProvider, _dictionary);
+        }
+
         public async Task RefreshAsync()
+        {
+            if (!_initialized)
+                throw new Exception($"Service must be initialized before refresh.");
+
+            await _provider.RefreshAsync(_serviceProvider, _dictionary);
+        }
+
+        public async Task InitializeAsync()
         {
             if (_provider == null)
                 throw new NullReferenceException($"'{nameof(_provider)}' expected to be filled");
@@ -107,61 +149,26 @@ namespace R8.Lib.Localization
             if (_provider == null)
                 throw new NullReferenceException($"{nameof(_provider)} must be implemented.");
 
-            if (_provider is LocalizerCustomProvider dbProvider)
-            {
-                var tempDic = dbProvider.Dictionary?.Compile().Invoke();
-                if (tempDic == null || !tempDic.Any())
-                    tempDic = await dbProvider.DictionaryAsync.Compile().Invoke();
+            _initialized = true;
+            await RefreshAsync();
+        }
 
-                if (tempDic?.Any() == true)
-                {
-                    _dictionary.Clear();
-                    foreach (var (key, localizerContainer) in tempDic)
-                        _dictionary.Add(key, localizerContainer);
-                }
-            }
-            else if (_provider is LocalizerJsonProvider jsonProvider)
-            {
-                if (string.IsNullOrEmpty(jsonProvider.Folder))
-                    throw new ArgumentNullException($"Missing {nameof(jsonProvider.Folder)}");
+        public void Initialize()
+        {
+            if (_provider == null)
+                throw new NullReferenceException($"'{nameof(_provider)}' expected to be filled");
 
-                if (string.IsNullOrEmpty(jsonProvider.FileName))
-                    throw new ArgumentNullException($"Missing {nameof(jsonProvider.FileName)}");
+            if (DefaultCulture == null)
+                throw new NullReferenceException($"'{nameof(DefaultCulture)}' expected to be filled");
 
-                _dictionary.Clear();
-                foreach (var supportedCulture in SupportedCultures)
-                {
-                    var language = supportedCulture.GetTwoLetterCulture();
+            if (SupportedCultures == null || !SupportedCultures.Any())
+                throw new NullReferenceException($"'{nameof(SupportedCultures)}' expected to be filled");
 
-                    var jsonFile = $"{jsonProvider.FileName}.{language}.json";
-                    var jsonPath = Path.Combine(jsonProvider.Folder, jsonFile);
+            if (_provider == null)
+                throw new NullReferenceException($"{nameof(_provider)} must be implemented.");
 
-                    using var sr = new StreamReader(jsonPath, Encoding.UTF8);
-                    var jsonString = await sr.ReadToEndAsync().ConfigureAwait(false);
-                    var dic = HandleDictionary(jsonString);
-                    if (dic?.Any() == true)
-                    {
-                        foreach (var (key, value) in dic)
-                        {
-                            var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
-                            if (container == null)
-                            {
-                                _dictionary.Add(key, new LocalizerContainer(supportedCulture, value));
-                            }
-                            else
-                            {
-                                container.Set(supportedCulture, value);
-                            }
-                        }
-                    }
-
-                    sr.Dispose();
-                }
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException();
-            }
+            _initialized = true;
+            Refresh();
         }
 
         /// <summary>

@@ -20,6 +20,7 @@ namespace R8.Lib.Localization
             {
                 var configuration = options.Invoke(serviceProvider);
                 var instance = new Localizer(configuration);
+                instance.SetServiceProvider(serviceProvider);
                 return instance;
             });
 
