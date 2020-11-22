@@ -1,3 +1,5 @@
+using EFCoreSecondLevelCacheInterceptor;
+
 using Humanizer.Localisation;
 
 using Microsoft.AspNetCore.Builder;
@@ -6,17 +8,20 @@ using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using R8.AspNetCore.Demo.Pages;
+using R8.AspNetCore.Demo.Services.Database;
 using R8.AspNetCore.Demo.Services.Globalization;
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.ModelBinders;
 using R8.AspNetCore.Routing;
+using R8.Lib;
 using R8.Lib.Localization;
 
 using SixLabors.ImageSharp.Formats.Png;
@@ -49,48 +54,67 @@ namespace R8.AspNetCore.Demo
                         Options = options
                     });
 
-                    //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
-                    //{
-                    //    var userLang = context.Request.Headers[HeaderNames.AcceptLanguage].ToString();
-                    //    var firstLang = userLang.Split(",").FirstOrDefault();
-                    //    var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
-                    //    return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
-                    //}));
-                });
-            // serv
+                     //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
+                     //{
+                     //    var userLang = context.Request.Headers[HeaderNames.AcceptLanguage].ToString();
+                     //    var firstLang = userLang.Split(",").FirstOrDefault();
+                     //    var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
+                     //    return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
+                     //}));
+                 });
 
-            services
-                .AddMvc(options =>
-                {
-                    options.ModelBinderProviders.Insert(0, new StringModelBinderProvider());
-                    options.ModelBinderProviders.Insert(0, new DateTimeUtcModelBinderProvider());
-                    options.EnableEndpointRouting = false;
-                    options.SuppressAsyncSuffixInActionNames = false;
-                    options.ValueProviderFactories.Insert(0, new SeparatedQueryStringValueProviderFactory());
+             services
+                 .AddMvc(options =>
+                 {
+                     options.ModelBinderProviders.Insert(0, new StringModelBinderProvider());
+                     options.ModelBinderProviders.Insert(0, new DateTimeUtcModelBinderProvider());
+                     options.EnableEndpointRouting = false;
+                     options.SuppressAsyncSuffixInActionNames = false;
+                     options.ValueProviderFactories.Insert(0, new SeparatedQueryStringValueProviderFactory());
 
-                    options.Conventions.Add(new LocalizeActionRouteModelConvention());
-                    //options.Filters.Add(new MiddlewareFilterAttribute(typeof(LocalizationPipeline)));
-                })
-                .AddMvcLocalization()
-                .AddViewLocalization()
-                .AddViewOptions(options =>
-                {
-                    options.HtmlHelperOptions.ClientValidationEnabled = true;
-                    options.HtmlHelperOptions.Html5DateRenderingMode = Html5DateRenderingMode.Rfc3339;
-                })
+                     options.Conventions.Add(new LocalizeActionRouteModelConvention());
+                     //options.Filters.Add(new MiddlewareFilterAttribute(typeof(LocalizationPipeline)));
+                 })
+                 .AddMvcLocalization()
+                 .AddViewLocalization()
+                 .AddViewOptions(options =>
+                 {
+                     options.HtmlHelperOptions.ClientValidationEnabled = true;
+                     options.HtmlHelperOptions.Html5DateRenderingMode = Html5DateRenderingMode.Rfc3339;
+                 })
 
-                .AddDataAnnotationsLocalization(options =>
-                {
-                    options.DataAnnotationLocalizerProvider = (_, factory) =>
-                        factory.Create(typeof(Resources));
-                })
-                .AddControllersAsServices()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = null;
-                });
+                 .AddDataAnnotationsLocalization(options =>
+                 {
+                     options.DataAnnotationLocalizerProvider = (_, factory) =>
+                         factory.Create(typeof(Resources));
+                 })
+                 .AddControllersAsServices()
+                 .AddJsonOptions(options =>
+                 {
+                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                     options.JsonSerializerOptions.DictionaryKeyPolicy = null;
+                 });
 
+            //services.AddLocalizer(serviceProvider =>
+            //{
+            //    using var scope = serviceProvider.CreateScope();
+            //    var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
+            //    var configuration = new LocalizerCustomProvider
+            //    {
+            //        ExpressionAsync = provider =>
+            //        {
+            //            using var scope2 = provider.CreateScope();
+            //            using var dbContext = scope2.ServiceProvider.GetService<ApplicationDbContext>();
+            //            return dbContext.Translation
+            //                .AsNoTrackingWithIdentityResolution()
+            //                .Cacheable()
+            //                .ToDictionaryAsync(x => x.Key, x => x.Name);
+            //        },
+            //        DefaultCulture = request.Value.DefaultRequestCulture.Culture,
+            //        SupportedCultures = request.Value.SupportedCultures.ToList()
+            //    };
+            //    return configuration;
+            //});
             services.AddLocalizer(serviceProvider =>
             {
                 using var scope = serviceProvider.CreateScope();
@@ -98,7 +122,7 @@ namespace R8.AspNetCore.Demo
                 var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
                 var configuration = new LocalizerJsonProvider
                 {
-                    Folder = "E:/Work/Develope/Asp/Ecohos/Ecohos.Presentation/Dictionary",
+                    Folder = "E:/Work/Develope/Ecohos/Ecohos.Presentation/Dictionary",
                     FileName = "dic",
                     DefaultCulture = request.Value.DefaultRequestCulture.Culture,
                     SupportedCultures = request.Value.SupportedCultures.ToList()
@@ -119,10 +143,10 @@ namespace R8.AspNetCore.Demo
 
             services.AddFileHandlers((environment, options) =>
             {
-                options.Folder = "/uploads";
-                options.HierarchicallyFolderNameByDate = true;
-                options.RealFilename = false;
-                options.OverwriteFile = false;
+                options.Path = "/uploads";
+                options.HierarchicallyDateFolders = true;
+                options.SaveAsRealName = false;
+                options.OverwriteExistingFile = false;
                 options.Runtimes.Add(new FileHandlerImageRuntime
                 {
                     ImageEncoder = new PngEncoder()
@@ -147,14 +171,14 @@ namespace R8.AspNetCore.Demo
             else
             {
                 app.UseExceptionHandler(typeof(ErrorModel).GetPagePath());
-                app.UseHsts();
-                app.UseHttpsRedirection();
+                // app.UseHsts();
+                // app.UseHttpsRedirection();
             }
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
+            // app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
             ServiceActivator.Configure(app.ApplicationServices);
 
             app.UseLocalizer();
