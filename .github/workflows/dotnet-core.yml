@@ -18,8 +18,11 @@ jobs:
       with:
         dotnet-version: 3.1.404
 
-    - name: Install NuGet client 
-      uses: warrenbuckley/Setup-Nuget@v1
+    - name: Setup NuGet.exe for use with actions
+      uses: NuGet/setup-nuget@v1.0.5
+      with:
+        nuget-version: '5.x'    
+    - run: nuget restore R8.sln
 
     - name: Add private GitHub registry to NuGet
       run: |
