@@ -13,7 +13,7 @@ namespace R8.Lib.MethodReturn
             this.Localizer = localizer;
         }
 
-        public void SetStatus(object status)
+        public virtual void SetStatus(object status)
         {
             this.Status = status;
         }
