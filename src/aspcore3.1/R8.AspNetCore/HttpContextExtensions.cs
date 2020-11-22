@@ -259,10 +259,9 @@ namespace R8.AspNetCore
             if (httpContext == null)
                 throw new ArgumentNullException(nameof(HttpContext));
 
-            if (!httpContext.User.Identity.IsAuthenticated)
-                return null;
-
-            return httpContext.User.GetAuthenticatedUser();
+            return !httpContext.User.Identity.IsAuthenticated
+                ? null
+                : httpContext.User.GetAuthenticatedUser();
         }
     }
 }

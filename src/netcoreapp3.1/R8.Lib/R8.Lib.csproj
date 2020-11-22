@@ -3,14 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Lib</PackageId>
-    <Version>1.8.1</Version>
+    <Version>1.9.0</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
-	<LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <PackageDescription>Core package for all R8.* packages</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

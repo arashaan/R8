@@ -3,14 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.Encryption</PackageId>
-    <Version>1.7.0</Version>
+    <Version>1.9.0</Version>
     <Authors>Arash Shabbeh</Authors>
-	<LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <Company>iamr8</Company>
     <PackageDescription>Encryption and decryption methods</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -19,5 +17,4 @@
   <ItemGroup>
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.8" />
   </ItemGroup>
-
 </Project>

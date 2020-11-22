@@ -51,10 +51,21 @@ namespace R8.Lib
             return result;
         }
 
-        public static DateTimeZoneMore GetNodaTimeZone(string name)
+        /// <summary>
+        /// Returns an <see cref="object"/> that representing information about given timezone.
+        /// </summary>
+        /// <param name="nativeTimeZoneName">An <see cref="string"/> that representing timezone's id.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="TimeZoneNotFoundException"></exception>
+        /// <returns>An <see cref="DateTimeZoneMore"/> object.</returns>
+        /// <remarks>parameter should be like <c>Iran Standard Time</c></remarks>
+        public static DateTimeZoneMore GetNodaTimeZone(string nativeTimeZoneName)
         {
+            if (nativeTimeZoneName == null)
+                throw new ArgumentNullException(nameof(nativeTimeZoneName));
+
             var source = TzdbDateTimeZoneSource.Default;
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(name);
+            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(nativeTimeZoneName);
 
             var id = source.TzdbToWindowsIds.FirstOrDefault(x => x.Value.Equals(timeZone.Id)).Key;
 
@@ -68,6 +79,10 @@ namespace R8.Lib
             };
         }
 
+        /// <summary>
+        /// Returns a collection of <see cref="DateTimeZoneMore"/> objects.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{T}"/> object that contains timezone objects.</returns>
         public static IEnumerable<DateTimeZoneMore> GetNodaTimeZones()
         {
             var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
@@ -77,9 +92,9 @@ namespace R8.Lib
                    select more;
         }
 
-        public static string ToPersianDateTime(this DateTime dt, bool truncateTime, bool showSecs = false)
-        {
-            return PersianDateTime.GetFromDateTime(dt).ToString(!truncateTime, showSecs);
-        }
+        //public static string ToPersianDateTime(this DateTime dt, bool truncateTime, bool showSecs = false)
+        //{
+        //    return PersianDateTime.GetFromDateTime(dt).ToString(!truncateTime, showSecs);
+        //}
     }
 }

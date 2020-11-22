@@ -1,7 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace R8.AspNetCore
+using System;
+
+namespace R8.Lib
 {
     public static class ServiceActivator
     {
