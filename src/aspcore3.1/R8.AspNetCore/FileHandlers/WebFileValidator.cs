@@ -8,6 +8,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 
+using Path = System.IO.Path;
+
 namespace R8.AspNetCore.FileHandlers
 {
     public static class WebFileValidator
@@ -34,16 +36,19 @@ namespace R8.AspNetCore.FileHandlers
             if (!isValid)
                 return false;
 
-            var fileType = files.Select(x => R8.FileHandlers.Extensions.GetFileType(x.FileName)).First();
-            var validationContext = new ValidationContext(model) { MemberName = property.Name };
-            var validationAttribute = new FileTypeValidationAttribute(fileType);
-            var valid = validationAttribute.GetValidationResult(files, validationContext);
-            if (valid == null)
-                return true;
+            var fileTypes = files.Select(x => Path.GetExtension(x.FileName)[1..]).ToList();
+            foreach (var error in from fileType in fileTypes
+                                  let validationContext = new ValidationContext(model) { MemberName = property.Name }
+                                  let validationAttribute = new FileTypeValidationAttribute(fileType)
+                                  let valid = validationAttribute.GetValidationResult(files, validationContext)
+                                  where valid != null
+                                  select validationAttribute.FormatErrorMessage(null))
+            {
+                validatableResultCollection.Add(new ValidatableResult(property.Name, new[] { error }.ToList()));
+                return false;
+            }
 
-            var error = validationAttribute.FormatErrorMessage(null);
-            validatableResultCollection.Add(new ValidatableResult(property.Name, new[] { error }.ToList()));
-            return false;
+            return true;
         }
     }
 }

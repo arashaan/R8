@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-using R8.FileHandlers;
-using R8.Lib;
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,15 +10,15 @@ using System.Linq;
 namespace R8.AspNetCore.FileHandlers
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class FileTypeValidationAttribute : ValidationAttribute, IClientModelValidator
+    public class FileTypeValidationAttribute : ValidationAttribute, IClientModelValidator
     {
         private readonly List<string> _extensions;
 
         public List<IFormFile> AllowedFiles;
 
-        public FileTypeValidationAttribute(params FileTypes[] fileTypes)
+        public FileTypeValidationAttribute(params string[] fileTypes)
         {
-            var fullTypes = string.Join("|", fileTypes.Select(x => x.GetDisplayName()).ToList());
+            var fullTypes = string.Join("|", fileTypes.ToList());
             _extensions = fullTypes.Split("|").Select(x => x.ToLower()).ToList();
         }
 

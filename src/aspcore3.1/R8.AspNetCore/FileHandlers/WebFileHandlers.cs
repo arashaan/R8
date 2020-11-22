@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-
-using R8.FileHandlers;
-using R8.Lib;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Http;
+
+using R8.FileHandlers;
+using R8.Lib;
 
 namespace R8.AspNetCore.FileHandlers
 {
@@ -122,13 +122,19 @@ namespace R8.AspNetCore.FileHandlers
             if (environment == null)
                 throw new NullReferenceException($"{nameof(AddFileHandlersExtensions.AddFileHandlers)} must be registered in dependencies injection.");
 
-            configuration.RootPath ??= options.RootPath;
-            configuration.Folder ??= options.Folder;
-            configuration.HierarchicallyFolderNameByDate ??= options.HierarchicallyFolderNameByDate;
-            configuration.OverwriteFile ??= options.OverwriteFile;
-            configuration.RealFilename ??= options.RealFilename;
-            configuration.RootPath ??= environment.WebRootPath;
+            var baseUrl = environment.WebRootPath;
+            if (baseUrl.EndsWith("/"))
+                baseUrl = baseUrl[..^1];
 
+            configuration.Internal ??= new Dictionary<string, object>();
+            configuration.Internal["baseUrl"] = baseUrl;
+            configuration.Internal["isWeb"] = true;
+            configuration.Path ??= options.Path;
+            configuration.HierarchicallyDateFolders ??= options.HierarchicallyDateFolders;
+            configuration.OverwriteExistingFile ??= options.OverwriteExistingFile;
+            configuration.SaveAsRealName ??= options.SaveAsRealName;
+
+            IMyFile? file;
             switch (configuration)
             {
                 case MyFileConfigurationImage imageConfig:
@@ -142,7 +148,8 @@ namespace R8.AspNetCore.FileHandlers
                         imageConfig.ImageEncoder ??= imageConfiguration.ImageEncoder;
                         imageConfig.ResizeToSize ??= imageConfiguration.ResizeToSize;
 
-                        return await stream.SaveAsync(filename, imageConfig).ConfigureAwait(false);
+                        file = await stream.SaveAsync(filename, imageConfig).ConfigureAwait(false);
+                        break;
                     }
                 case MyFileConfigurationPdf pdfConfig:
                     {
@@ -154,7 +161,8 @@ namespace R8.AspNetCore.FileHandlers
                         pdfConfig.ImageQuality ??= pdfConfiguration.ImageQuality;
                         pdfConfig.ResolutionDpi ??= pdfConfiguration.ResolutionDpi;
 
-                        return await stream.SaveAsync(filename, pdfConfig).ConfigureAwait(false);
+                        file = await stream.SaveAsync(filename, pdfConfig).ConfigureAwait(false);
+                        break;
                     }
                 default:
                     {
@@ -180,9 +188,24 @@ namespace R8.AspNetCore.FileHandlers
                             return await stream.UploadAsync(filename, image);
                         }
 
-                        return await stream.SaveAsync(filename, configuration).ConfigureAwait(false);
+                        file = await stream.SaveAsync(filename, configuration).ConfigureAwait(false);
+                        break;
                     }
             }
+
+            if (file == null)
+                return null;
+
+            file.FilePath = file.FilePath.Replace(baseUrl.Replace("\\", "/"), null);
+            file.FilePath = file.FilePath.StartsWith("/") ? file.FilePath : $"/{file.FilePath}";
+
+            if (string.IsNullOrEmpty(file.ThumbnailPath))
+                return file;
+
+            file.ThumbnailPath = file.ThumbnailPath.Replace(baseUrl.Replace("\\", "/"), null);
+            file.ThumbnailPath = file.ThumbnailPath.StartsWith("/") ? file.ThumbnailPath : $"/{file.ThumbnailPath}";
+
+            return file;
         }
 
         /// <summary>

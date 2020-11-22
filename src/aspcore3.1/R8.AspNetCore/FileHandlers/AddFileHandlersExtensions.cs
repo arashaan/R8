@@ -15,10 +15,10 @@ namespace R8.AspNetCore.FileHandlers
                 using var scope = serviceProvider.CreateScope();
 
                 var hostEnvironment = scope.ServiceProvider.GetService<IWebHostEnvironment>();
-                var configuration = new FileHandlerConfiguration();
+                var configuration = new FileHandlerConfiguration(hostEnvironment);
                 config.Invoke(hostEnvironment, configuration);
 
-                configuration.SetWebHost(hostEnvironment);
+                // configuration.SetWebHost(hostEnvironment);
                 return configuration;
             });
             return services;
