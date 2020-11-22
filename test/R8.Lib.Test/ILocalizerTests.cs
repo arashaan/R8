@@ -66,7 +66,7 @@ namespace R8.Lib.Test
             var culture = CultureInfo.GetCultureInfo("tr");
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var localized = _localizer.GetValue(culture, key);
 
             // Arrange
@@ -80,7 +80,7 @@ namespace R8.Lib.Test
         //     var key = "AppName";
         //
         //     // Act
-        //     await _localizer.RefreshAsync();
+        //     await _localizer.InitializeAsync();
         //     var getter = _localizer.GetValue(key, out var localized);
         //
         //     // Arrange
@@ -108,7 +108,7 @@ namespace R8.Lib.Test
             Expression<Func<string>> key = null;
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             Assert.Throws<ArgumentNullException>(() => _localizer[key]);
         }
 
@@ -119,7 +119,7 @@ namespace R8.Lib.Test
             Expression<Func<string>> key = () => "AppName";
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var translation = _localizer[key][DefaultCulture, false];
 
             // Arrange
@@ -133,7 +133,7 @@ namespace R8.Lib.Test
             Expression<Func<string>> key = () => "AppName";
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var translation = _localizer[key]["en", false];
 
             // Arrange
@@ -147,7 +147,7 @@ namespace R8.Lib.Test
             var key = "AppName";
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var translation = _localizer[key, DefaultCulture];
 
             // Arrange
@@ -161,7 +161,7 @@ namespace R8.Lib.Test
             var key = (string)null;
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var translation = _localizer[key, DefaultCulture];
 
             // Arrange
@@ -175,7 +175,7 @@ namespace R8.Lib.Test
             Expression<Func<string>> key = () => "AppName";
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var translation = _localizer[(string)null];
 
             // Arrange
@@ -189,7 +189,7 @@ namespace R8.Lib.Test
             var key = "AppName";
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var translation = _localizer[key][DefaultCulture, false];
 
             // Arrange
@@ -203,7 +203,7 @@ namespace R8.Lib.Test
             var key = "AppName";
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var translation = _localizer[key][DefaultCulture, false];
 
             // Arrange
@@ -218,7 +218,7 @@ namespace R8.Lib.Test
             var culture = CultureInfo.GetCultureInfo("tr");
 
             // Act
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var localized = _localizer.GetValue(culture, key);
 
             // Arrange
@@ -232,7 +232,7 @@ namespace R8.Lib.Test
             var localizer = new Localizer(null);
 
             // Arrange
-            await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());
+            await Assert.ThrowsAsync<NullReferenceException>(() => localizer.InitializeAsync());
         }
 
         [Fact]
@@ -249,7 +249,7 @@ namespace R8.Lib.Test
             var localizer = new Localizer(configuration);
 
             // Arrange
-            await Assert.ThrowsAsync<ArgumentNullException>(() => localizer.RefreshAsync());
+            await Assert.ThrowsAsync<NullReferenceException>(() => localizer.InitializeAsync());
         }
 
         [Fact]
@@ -265,7 +265,7 @@ namespace R8.Lib.Test
             var localizer = new Localizer(configuration);
 
             // Arrange
-            await Assert.ThrowsAsync<ArgumentNullException>(() => localizer.RefreshAsync());
+            await Assert.ThrowsAsync<NullReferenceException>(() => localizer.InitializeAsync());
         }
 
         [Fact]
@@ -275,7 +275,7 @@ namespace R8.Lib.Test
             var localizer = new Localizer(new LocalizerJsonProvider());
 
             // Arrange
-            await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());
+            await Assert.ThrowsAsync<NullReferenceException>(() => localizer.InitializeAsync());
         }
 
         [Fact]

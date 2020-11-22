@@ -37,7 +37,7 @@ namespace R8.Lib.Test.MethodTests
         //{
         //    // Assets
         //    var response = new Response(Flags.ParamIsNull);
-        //    await _localizer.RefreshAsync();
+        //    await _localizer.InitializeAsync();
         //    response.Localizer = _localizer;
 
         //    // Act
@@ -71,7 +71,7 @@ namespace R8.Lib.Test.MethodTests
         //{
         //    // Assets
         //    var response = new Response(Flags.Success);
-        //    await _localizer.RefreshAsync();
+        //    await _localizer.InitializeAsync();
         //    response.Localizer = _localizer;
 
         //    // Act

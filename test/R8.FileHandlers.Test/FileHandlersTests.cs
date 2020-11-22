@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
+
 using Xunit;
 
 namespace R8.FileHandlers.Test
@@ -18,16 +20,16 @@ namespace R8.FileHandlers.Test
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new JpegEncoder(),
-                Folder = Constants.Assets,
-                HierarchicallyFolderNameByDate = false,
-                RealFilename = true,
-                OverwriteFile = true,
+                Path = Constants.Assets,
+                HierarchicallyDateFolders = false,
+                SaveAsRealName = true,
+                OverwriteExistingFile = true,
                 TestDevelopment = true,
                 WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
         }
 
         [Fact]
@@ -38,16 +40,16 @@ namespace R8.FileHandlers.Test
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new PngEncoder(),
-                Folder = Constants.Assets,
-                HierarchicallyFolderNameByDate = false,
-                RealFilename = true,
-                OverwriteFile = true,
+                Path = Constants.Assets,
+                HierarchicallyDateFolders = false,
+                SaveAsRealName = true,
+                OverwriteExistingFile = true,
                 TestDevelopment = true,
                 WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.png", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.png", file.FilePath);
         }
 
         [Fact]
@@ -58,16 +60,16 @@ namespace R8.FileHandlers.Test
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new BmpEncoder(),
-                Folder = Constants.Assets,
-                HierarchicallyFolderNameByDate = false,
-                RealFilename = true,
-                OverwriteFile = true,
+                Path = Constants.Assets,
+                HierarchicallyDateFolders = false,
+                SaveAsRealName = true,
+                OverwriteExistingFile = true,
                 TestDevelopment = true,
                 WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.bmp", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.bmp", file.FilePath);
         }
 
         [Fact]
@@ -93,16 +95,16 @@ namespace R8.FileHandlers.Test
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new GifEncoder(),
-                Folder = Constants.Assets,
-                HierarchicallyFolderNameByDate = false,
-                RealFilename = true,
-                OverwriteFile = true,
+                Path = Constants.Assets,
+                HierarchicallyDateFolders = false,
+                SaveAsRealName = true,
+                OverwriteExistingFile = true,
                 TestDevelopment = true,
                 WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.gif", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.gif", file.FilePath);
         }
 
         [Fact]
@@ -120,15 +122,15 @@ namespace R8.FileHandlers.Test
             using var fileStream = new FileStream(Constants.ValidZipFile2, FileMode.Open);
             var file = fileStream.Save<MyFileConfiguration>("valid.zip", cfg =>
             {
-                cfg.Folder = Constants.Assets;
-                cfg.HierarchicallyFolderNameByDate = false;
-                cfg.RealFilename = true;
-                cfg.OverwriteFile = true;
+                cfg.Path = Constants.Assets;
+                cfg.HierarchicallyDateFolders = false;
+                cfg.SaveAsRealName = true;
+                cfg.OverwriteExistingFile = true;
                 cfg.TestDevelopment = true;
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/valid.zip", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\valid.zip", file.FilePath);
         }
 
         [Fact]
@@ -139,16 +141,16 @@ namespace R8.FileHandlers.Test
             var file = fileStream.Save<MyFileConfigurationPdf>("test.pdf", cfg =>
             {
                 cfg.GhostScriptDllPath = Constants.GhostScriptFile;
-                cfg.Folder = Constants.Assets;
-                cfg.HierarchicallyFolderNameByDate = false;
-                cfg.RealFilename = true;
-                cfg.OverwriteFile = true;
-                cfg.TestDevelopment = true;
+                cfg.Path = Constants.Assets;
+                cfg.HierarchicallyDateFolders = false;
+                cfg.SaveAsRealName = true;
+                cfg.OverwriteExistingFile = true;
+                cfg.TestDevelopment = false;
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.pdf", file.FilePath);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test_thumbnail.jpg", file.ThumbnailPath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.pdf", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test_thumbnail.jpg", file.ThumbnailPath);
         }
 
         [Fact]
@@ -159,16 +161,41 @@ namespace R8.FileHandlers.Test
             var file = fileStream.Save<MyFileConfigurationImage>("test.jpg", cfg =>
             {
                 cfg.ImageEncoder = new JpegEncoder();
-                cfg.Folder = Constants.Assets;
-                cfg.HierarchicallyFolderNameByDate = false;
-                cfg.RealFilename = true;
-                cfg.OverwriteFile = true;
+                cfg.Path = Constants.Assets;
+                cfg.HierarchicallyDateFolders = false;
+                cfg.SaveAsRealName = true;
+                cfg.OverwriteExistingFile = true;
                 cfg.TestDevelopment = true;
                 cfg.WatermarkPath = Constants.WatermarkFile;
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
+        }
+
+        [Fact]
+        public void CallSave_ImageHierarchically()
+        {
+            // Assets
+            var toDate = DateTime.UtcNow;
+            var year = toDate.Year.ToString("D4");
+            var month = toDate.Month.ToString("D2");
+            var day = toDate.Day.ToString("D2");
+
+            // Act
+            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            var file = fileStream.Save<MyFileConfigurationImage>("test.jpg", cfg =>
+            {
+                cfg.ImageEncoder = new JpegEncoder();
+                cfg.Path = Constants.Assets;
+                cfg.HierarchicallyDateFolders = true;
+                cfg.SaveAsRealName = true;
+                cfg.OverwriteExistingFile = true;
+                cfg.TestDevelopment = true;
+            });
+
+            Assert.NotNull(file);
+            Assert.Equal($"E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\{year}\\{month}\\{day}\\test.jpg", file.FilePath);
         }
 
         [Fact]
@@ -179,16 +206,16 @@ namespace R8.FileHandlers.Test
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new JpegEncoder(),
-                Folder = Constants.Assets,
-                HierarchicallyFolderNameByDate = false,
-                RealFilename = true,
-                OverwriteFile = true,
+                Path = Constants.Assets,
+                HierarchicallyDateFolders = false,
+                SaveAsRealName = true,
+                OverwriteExistingFile = true,
                 TestDevelopment = true,
                 WatermarkPath = Constants.WatermarkFile
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
         }
 
         [Fact]
@@ -214,17 +241,17 @@ namespace R8.FileHandlers.Test
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new JpegEncoder(),
-                Folder = Constants.Assets,
-                HierarchicallyFolderNameByDate = false,
-                RealFilename = true,
-                OverwriteFile = true,
+                Path = Constants.Assets,
+                HierarchicallyDateFolders = false,
+                SaveAsRealName = true,
+                OverwriteExistingFile = true,
                 TestDevelopment = true,
                 WatermarkPath = Constants.WatermarkFile,
                 ResizeToSize = 300
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:/Work/Develope/Libraries/R8.Lib/test/R8.FileHandlers.Test/assets/test.jpg", file.FilePath);
+            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
         }
     }
 }

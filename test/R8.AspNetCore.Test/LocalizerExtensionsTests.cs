@@ -51,7 +51,7 @@ namespace R8.AspNetCore.Test
 
             // Acts
             CultureInfo.CurrentCulture = DefaultCulture;
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var act = _localizer.Html(key, tags.ToArray());
             var html = act.GetString();
 
@@ -70,7 +70,7 @@ namespace R8.AspNetCore.Test
 
             // Acts
             CultureInfo.CurrentCulture = DefaultCulture;
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
 
             // Arrange
             Assert.Throws<NullReferenceException>(() => _localizer.Format(key, (List<string>)null));
@@ -87,7 +87,7 @@ namespace R8.AspNetCore.Test
 
             // Acts
             CultureInfo.CurrentCulture = DefaultCulture;
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
 
             // Arrange
             Assert.Throws<ArgumentNullException>(() => _localizer.Format(key, tags.ToArray()));
@@ -111,7 +111,7 @@ namespace R8.AspNetCore.Test
 
             // Acts
             CultureInfo.CurrentCulture = DefaultCulture;
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var act = _localizer.Format(key, tags.ToArray());
             var html = act.GetString();
 
@@ -158,7 +158,7 @@ namespace R8.AspNetCore.Test
 
             // Acts
             CultureInfo.CurrentCulture = DefaultCulture;
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             var act = _localizer.Format(key, tags.ToArray());
             var html = act.GetString();
 

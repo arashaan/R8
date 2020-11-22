@@ -93,6 +93,7 @@ namespace R8.Lib.Test
             var persianDate = "asd asd";
             Assert.Throws<ArgumentException>(() => PersianDateTime.Parse(persianDate).ToDateTime());
         }
+
         [Fact]
         public void CallPersianToGregorian6()
         {
@@ -149,20 +150,6 @@ namespace R8.Lib.Test
 
             // Arranges
             Assert.Equal(gregorianDate, persian);
-        }
-
-        [Fact]
-        public void CallGregorianToPersian()
-        {
-            // Assets
-            var gregorianDate = new DateTime(2020, 10, 25, 0, 0, 0);
-            var persianDate = "1399/08/04";
-
-            // Acts
-            var persian = gregorianDate.ToPersianDateTime(true);
-
-            // Arranges
-            Assert.Equal(persianDate, persian);
         }
     }
 }

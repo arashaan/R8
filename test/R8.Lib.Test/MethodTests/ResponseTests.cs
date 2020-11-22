@@ -14,7 +14,7 @@ namespace R8.Lib.Test.MethodTests
         private readonly Localizer _localizer;
 
         private static CultureInfo DefaultCulture => CultureInfo.GetCultureInfo("tr");
-        private static string FolderPath => "E:\\Work\\Develope\\Asp\\Ecohos\\Ecohos.Presentation\\Dictionary";
+        private static string FolderPath => "E:\\Work\\Develope\\Ecohos\\Ecohos.Presentation\\Dictionary";
         private static string JsonFileName => "dic";
 
         private static List<CultureInfo> SupportedCultures => new List<CultureInfo>
@@ -44,7 +44,7 @@ namespace R8.Lib.Test.MethodTests
 
         //    // Act
         //    var response = new Response(Flags.Success);
-        //    await _localizer.RefreshAsync();
+        //    await _localizer.InitializeAsync();
         //    response.SetLocalizer(_localizer);
 
         //    var expected = "عملیات به موفقیت انجام شد";
@@ -61,7 +61,7 @@ namespace R8.Lib.Test.MethodTests
 
         //    // Act
         //    var response = new Response<Response>(Flags.Success);
-        //    await _localizer.RefreshAsync();
+        //    await _localizer.InitializeAsync();
         //    response.SetLocalizer(_localizer);
 
         //    var expected = "عملیات به موفقیت انجام شد";
@@ -220,7 +220,7 @@ namespace R8.Lib.Test.MethodTests
 
         //    // Act
         //    var response = new Response(Flags.Success);
-        //    await _localizer.RefreshAsync();
+        //    await _localizer.InitializeAsync();
         //    response.SetLocalizer(_localizer);
 
         //    var expected = "عملیات به موفقیت انجام شد";
@@ -236,7 +236,7 @@ namespace R8.Lib.Test.MethodTests
 
             // Act
             var response = new FakeResponse();
-            await _localizer.RefreshAsync();
+            await _localizer.InitializeAsync();
             response.SetLocalizer(_localizer);
 
             // Arrange

@@ -5,7 +5,7 @@ namespace R8.FileHandlers.Test
 {
     public static class Constants
     {
-        public const string Assets = "E:\\Work\\Develope\\Libraries\\R8.Lib\\R8.Lib.FileHandlers.Test\\assets";
+        public const string Assets = "E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets";
         public static string GhostScriptFile => Path.Combine(Assets, "gsdll64.dll");
         public static string WatermarkFile => Path.Combine(Assets, "wm.png");
         public static string NewGuidName => Guid.NewGuid().ToString("N");
