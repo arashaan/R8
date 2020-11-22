@@ -3,7 +3,6 @@
 using EFCoreSecondLevelCacheInterceptor;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
 using System;
@@ -60,9 +59,6 @@ namespace R8.EntityFrameworkCore
 
                         configuration.Action?.Invoke(optionsBuilder);
                     });
-
-                if (configuration.LoggerFactory != null)
-                    builder.UseLoggerFactory(configuration.LoggerFactory);
 
                 // builder.ConfigureWarnings(warnings => warnings.Log(CoreEventId.SaveChangesCompleted));
                 builder.EnableDetailedErrors();

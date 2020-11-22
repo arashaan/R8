@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+
+using System;
 
 namespace R8.EntityFrameworkCore
 {
@@ -26,15 +26,8 @@ namespace R8.EntityFrameworkCore
         public TimeSpan CommandTimeout { get; set; } = TimeSpan.FromMinutes(3);
 
         /// <summary>
-        /// Gets or sets a logger factory for logging sensitive commands of database.
-        /// </summary>
-        public ILoggerFactory LoggerFactory { get; set; }
-
-        /// <summary>
         /// Gets of sets a <see cref="Action{TResult}"/> for more accuracy.
         /// </summary>
         public Action<SqlServerDbContextOptionsBuilder> Action { get; set; }
-
-        //public Func<HttpRequest, DbContextRequestConfig> RequestConfiguration { get; set; }
     }
 }
