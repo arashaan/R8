@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.EntityFrameworkCore</PackageId>
-    <Version>1.9.0</Version>
+    <Version>1.9.1</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <LangVersion>8.0</LangVersion>
