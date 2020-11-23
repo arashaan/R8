@@ -211,7 +211,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="pageSize">A <see cref="int"/> value that representing number of items in each page.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
-        private static async Task<Pagination<TSource>> PaginateAsync<TSource>(this IQueryable<TSource> query, int page, bool paginate, bool loadData, bool cacheData, int pageSize = 10)
+        private static async Task<Pagination<TSource>> ToPaginatedListAsync<TSource>(this IQueryable<TSource> query, int page, bool paginate, bool loadData, bool cacheData, int pageSize = 10)
           where TSource : class, IEntityBase
         {
             if (query == null)
@@ -275,7 +275,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="cacheData">A <see cref="bool"/> value that asking for caching of data.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
-        public static async Task<Pagination<TResult>> PaginateAsync<TSource, TSearch, TResult>(this IQueryable<TSource> query, Expression<Func<TSource, TResult>> selector, TSearch searchModel, bool sortByCreation = true, bool cacheData = true)
+        public static async Task<Pagination<TResult>> ToPaginatedListAsync<TSource, TSearch, TResult>(this IQueryable<TSource> query, Expression<Func<TSource, TResult>> selector, TSearch searchModel, bool sortByCreation = true, bool cacheData = true)
             where TSource : IEntityBase where TSearch : IBaseSearch where TResult : class
         {
             if (query == null)
@@ -331,7 +331,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="searchModel">An object of type <see cref="IBaseSearch"/> that representing page number and page size.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
-        public static Task<Pagination<TSource>> PaginateAsync<TSource, TSearch>(this IQueryable<TSource> query, TSearch searchModel)
+        public static Task<Pagination<TSource>> ToPaginatedListAsync<TSource, TSearch>(this IQueryable<TSource> query, TSearch searchModel)
             where TSource : class, IEntityBase where TSearch : IBaseSearch
         {
             if (query == null)
@@ -342,7 +342,7 @@ namespace R8.EntityFrameworkCore
             var page = searchModel?.PageNo ?? 1;
             var pageSize = searchModel?.PageSize ?? 10;
 
-            return query.PaginateAsync(page, true, true, false, pageSize);
+            return query.ToPaginatedListAsync(page, true, true, false, pageSize);
         }
 
         /// <summary>
@@ -357,14 +357,14 @@ namespace R8.EntityFrameworkCore
         /// <param name="cacheData">A <see cref="bool"/> value that asking for caching of data.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
-        public static Task<Pagination<TSource>> PaginateAsync<TSource, TSearch>(this IQueryable<TSource> query,
+        public static Task<Pagination<TSource>> ToPaginatedListAsync<TSource, TSearch>(this IQueryable<TSource> query,
             TSearch searchModel, bool paginate, bool loadData, bool cacheData)
             where TSource : class, IEntityBase where TSearch : IBaseSearch
         {
             var page = searchModel?.PageNo ?? 1;
             var pageSize = searchModel?.PageSize ?? 10;
 
-            return query.PaginateAsync(page, paginate, loadData, cacheData, pageSize);
+            return query.ToPaginatedListAsync(page, paginate, loadData, cacheData, pageSize);
         }
     }
 }
