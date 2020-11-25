@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -21,9 +20,9 @@ namespace R8.AspNetCore.Routing
         /// <param name="component"></param>
         /// <param name="viewUrl"></param>
         /// <param name="paginationPropertyName"></param>
-        /// <param name="pageNoQueryName"></param>
+        /// <param name="pageNoIdentifier"></param>
         /// <remarks>Output model is a collection of type <see cref="PaginationPageModel"/>.</remarks>
-        public static IViewComponentResult InvokePagination<TComponent>(this TComponent component, string viewUrl, string paginationPropertyName, string pageNoQueryName = "pageNo") where TComponent : ViewComponent
+        public static IViewComponentResult InvokePagination<TComponent>(this TComponent component, string viewUrl, string paginationPropertyName, string pageNoIdentifier = "pageNo") where TComponent : ViewComponent
         {
             var viewDataModel = component.ViewContext.ViewData.Model;
             if (viewDataModel == null)
@@ -49,59 +48,43 @@ namespace R8.AspNetCore.Routing
                 throw new NullReferenceException($"Cannot find expected route values from {nameof(component.ViewContext)}.");
             }
 
-            var currentUrlIsPage = currentUrlData.Values.Keys.FirstOrDefault() == "page";
-            var currentUrlRoutes = currentUrlData.Values.Values;
-
+            var routeTemplate = new Dictionary<string, object>();
             var model = new List<PaginationPageModel>();
-
-            var routeTemplate = new Dictionary<string, string>();
-            var queryString = component.ViewContext.HttpContext.Request.QueryString.Value;
-            if (!string.IsNullOrEmpty(queryString))
-            {
-                queryString = queryString.StartsWith("?") ? queryString[1..] : queryString;
-                if (!string.IsNullOrEmpty(queryString))
-                {
-                    routeTemplate = queryString
-                        .Split("&")
-                        .Where(x => x.Split("=")[0] != pageNoQueryName)
-                        .ToDictionary(x => x.Split("=")[0], x => HttpUtility.UrlDecode(x.Split("=")[1]));
-                }
-            }
-
             for (var x = 0; x < pagination.Pages; x++)
             {
-                var page = x + 1;
-                var routes = new Dictionary<string, string>(routeTemplate) { { pageNoQueryName, page.ToString() } };
+                var pageNo = x + 1;
+                var routes = new Dictionary<string, object>(routeTemplate) { { pageNoIdentifier, pageNo } };
 
                 string currentUrl;
-                if (currentUrlIsPage)
+                if (currentUrlData.Values.ContainsKey("page"))
                 {
-                    var str = currentUrlRoutes.FirstOrDefault()?.ToString();
-                    currentUrl = component.Url.Page(str, routes);
+                    var page = currentUrlData.Values["page"].ToString();
+                    currentUrl = component.Url.Page(page, routes);
                 }
                 else
                 {
-                    var arr = currentUrlRoutes.Take(2).Cast<string>().ToArray();
-                    currentUrl = component.Url.Action(arr[1], arr[0], routes);
+                    var arr = currentUrlData.Values.Take(2).Cast<string>().ToList();
+                    var controller = arr[0];
+                    var action = arr[1];
+                    currentUrl = component.Url.Action(action, controller, routes);
                 }
 
                 model.Add(new PaginationPageModel
                 {
-                    Num = page,
-                    IsCurrent = page == pagination.CurrentPage,
+                    Num = pageNo,
+                    IsCurrent = pageNo == pagination.CurrentPage,
                     Link = currentUrl,
                 });
             }
 
             var viewData = new ViewDataDictionary<List<PaginationPageModel>>(component.ViewData, model);
-            var result = new ViewViewComponentResult()
+            return new ViewViewComponentResult()
             {
                 ViewData = viewData,
                 TempData = component.TempData,
                 ViewEngine = component.ViewEngine,
                 ViewName = viewUrl
             };
-            return result;
         }
     }
 }
