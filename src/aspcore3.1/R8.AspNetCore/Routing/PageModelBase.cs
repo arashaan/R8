@@ -18,12 +18,12 @@ using System.Threading.Tasks;
 
 namespace R8.AspNetCore.Routing
 {
-    public class PageModelBase<TSearch, TModel> : PageModelBase<TSearch> where TSearch : BaseSearchModel where TModel : class
+    public class PageModelBase<TSearch, TModel> : PageModelBase<TSearch> where TSearch : BaseSearch where TModel : class
     {
         public Pagination<TModel> List { get; set; }
     }
 
-    public class PageModelBase<TSearch> : PageModelBase where TSearch : BaseSearchModel
+    public class PageModelBase<TSearch> : PageModelBase where TSearch : BaseSearch
     {
         [BindProperty]
         public TSearch SearchInput { get; set; }
@@ -176,7 +176,7 @@ namespace R8.AspNetCore.Routing
             return deserialized;
         }
 
-        protected virtual async Task<IActionResult> OnGetAsync<TSearch, TModel>(string json, Func<TSearch, Task<Pagination<TModel>>> getList, Type pageComponent) where TSearch : BaseSearchModel where TModel : class
+        protected virtual async Task<IActionResult> OnGetAsync<TSearch, TModel>(string json, Func<TSearch, Task<Pagination<TModel>>> getList, Type pageComponent) where TSearch : BaseSearch where TModel : class
         {
             var model = Activator.CreateInstance<TSearch>();
             try
