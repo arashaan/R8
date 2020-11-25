@@ -15,11 +15,11 @@ using System.Threading.Tasks;
 
 namespace R8.AspNetCore.Demo.Services.Routing
 {
-    public class PageModel<TSearch, TModel> : PageModelBase<TSearch, TModel> where TSearch : BaseSearchModel where TModel : class
+    public class PageModel<TSearch, TModel> : PageModelBase<TSearch, TModel> where TSearch : BaseSearch where TModel : class
     {
     }
 
-    public class PageModel<TSearch> : PageModelBase<TSearch> where TSearch : BaseSearchModel
+    public class PageModel<TSearch> : PageModelBase<TSearch> where TSearch : BaseSearch
     {
     }
 
