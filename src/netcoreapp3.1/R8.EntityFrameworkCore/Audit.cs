@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-
-using R8.EntityFrameworkCore.JsonConverters;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Net;
+
+using Newtonsoft.Json;
+
+using R8.EntityFrameworkCore.JsonConverters;
 
 namespace R8.EntityFrameworkCore
 {
@@ -25,7 +26,8 @@ namespace R8.EntityFrameworkCore
         /// An object to track creation, modification, and deletion of specific entity.
         /// </summary>
         /// <param name="userId">A <see cref="Nullable{TResult}"/> type of <see cref="Guid"/> that representing Internal ID of specific user that did changes.</param>
-        /// <param name="ipAddress">An <see cref="IPAddress"/> that representing current <see cref="HttpRequest"/>'s ip address.</param>
+        /// <param name="remoteIpAddress">An <see cref="IPAddress"/> that representing current <see cref="HttpRequest"/>'s remote ip address.</param>
+        /// <param name="localIpAddress">An <see cref="IPAddress"/> that representing current <see cref="HttpRequest"/>'s local ip address.</param>
         /// <param name="userAgent">A <see cref="string"/> that representing current <see cref="HttpRequest"/>'s user agent.</param>
         /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of current instance.</param>
         /// <param name="rowId">A <see cref="Guid"/> value that representing id of specific entity that changed.</param>
@@ -33,12 +35,13 @@ namespace R8.EntityFrameworkCore
         /// <param name="callingMethodPath">A <see cref="string"/> value that representing file path of method or member name that prepared to change data.</param>
         /// <param name="oldValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been changed.</param>
         /// <param name="newValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been replaces with old values.</param>
-        public Audit(Guid? userId, IPAddress ipAddress, string userAgent, AuditFlags flag, Guid rowId,
+        public Audit(Guid? userId, IPAddress remoteIpAddress, IPAddress localIpAddress, string userAgent, AuditFlags flag, Guid rowId,
             string callingMethodName, string callingMethodPath, Dictionary<string, object> oldValues = null,
             Dictionary<string, object> newValues = null) : this(userId, flag, rowId, callingMethodName,
             callingMethodPath, oldValues, newValues)
         {
-            IpAddress = ipAddress;
+            RemoteIpAddress = remoteIpAddress;
+            LocalIpAddress = localIpAddress;
             UserAgent = userAgent;
         }
 
@@ -68,7 +71,11 @@ namespace R8.EntityFrameworkCore
         public string UserAgent { get; set; }
 
         [JsonConverter(typeof(AuditIPAddressConverter))]
-        public IPAddress IpAddress { get; set; }
+        [Column("IpAddress")]
+        public IPAddress RemoteIpAddress { get; set; }
+
+        [JsonConverter(typeof(AuditIPAddressConverter))]
+        public IPAddress LocalIpAddress { get; set; }
 
         public string CallingMethodName { get; set; }
 

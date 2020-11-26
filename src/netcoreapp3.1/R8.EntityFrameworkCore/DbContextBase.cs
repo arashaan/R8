@@ -1,14 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using R8.Lib;
-using R8.Lib.Enums;
-using R8.Lib.MethodReturn;
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+using R8.Lib;
+using R8.Lib.Enums;
+using R8.Lib.MethodReturn;
 
 namespace R8.EntityFrameworkCore
 {
@@ -44,11 +45,16 @@ namespace R8.EntityFrameworkCore
                 return false;
 
             var entry = base.Add(entity);
-
             var frame = new StackTrace().GetFrame(1);
-            entry.GenerateAudit(AuditFlags.Created, userId, null, null, frame);
-
+            GenerateAudit(entry, AuditFlags.Created, userId, frame);
             return true;
+        }
+
+        private static void GenerateAudit(EntityEntry entry, AuditFlags flag, Guid userId, StackFrame frame)
+        {
+            var remoteIpAddress = HttpExtensions.GetIPAddress();
+            var localIpAddress = HttpExtensions.GetLocalIPAddress();
+            entry.GenerateAudit(flag, userId, remoteIpAddress, localIpAddress, null, frame);
         }
 
         public bool UnHide<TSource>(TSource entity, Guid userId) where TSource : IEntityBase
@@ -58,10 +64,8 @@ namespace R8.EntityFrameworkCore
 
             entity.IsDeleted = false;
             var entry = base.Update(entity);
-
             var frame = new StackTrace().GetFrame(1);
-            entry.GenerateAudit(AuditFlags.UnDeleted, userId, null, null, frame);
-
+            GenerateAudit(entry, AuditFlags.UnDeleted, userId, frame);
             return true;
         }
 
@@ -73,7 +77,7 @@ namespace R8.EntityFrameworkCore
             errors = new ValidatableResultCollection();
             switch (response)
             {
-                case ResponseCollection responseGroup when responseGroup.Results == null || !responseGroup.Results.Any():
+                case ResponseCollection responseGroup when responseGroup.Results?.Any() != true:
                     return !errors.Any();
 
                 case ResponseCollection responseGroup:
@@ -134,10 +138,8 @@ namespace R8.EntityFrameworkCore
                 return false;
 
             var entry = base.Update(entity);
-
             var frame = new StackTrace().GetFrame(1);
-            entry.GenerateAudit(AuditFlags.Changed, userId, null, null, frame);
-
+            GenerateAudit(entry, AuditFlags.Changed, userId, frame);
             return true;
         }
 
@@ -148,10 +150,8 @@ namespace R8.EntityFrameworkCore
                 : AuditFlags.Deleted;
             entity.IsDeleted = !entity.IsDeleted;
             var entry = base.Update(entity);
-
             var frame = new StackTrace().GetFrame(1);
-            entry.GenerateAudit(flag, userId, null, null, frame);
-
+            GenerateAudit(entry, flag, userId, frame);
             return true;
         }
 
@@ -162,10 +162,8 @@ namespace R8.EntityFrameworkCore
 
             entity.IsDeleted = true;
             var entry = base.Update(entity);
-
             var frame = new StackTrace().GetFrame(1);
-            entry.GenerateAudit(AuditFlags.Deleted, userId, null, null, frame);
-
+            GenerateAudit(entry, AuditFlags.Deleted, userId, frame);
             return true;
         }
 

@@ -30,7 +30,7 @@ namespace R8.Lib
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="IPAddress"/> object.</returns>
-        public static IPAddress GetIPAddress(this IPAddress _)
+        public static IPAddress GetIPAddress()
         {
             using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
             socket.Connect("8.8.8.8", 65530);
@@ -40,7 +40,22 @@ namespace R8.Lib
             var localIp = endPoint.Address.ToString();
             return !string.IsNullOrEmpty(localIp)
                 ? IPAddress.Parse(localIp)
-                : null;
+                : IPAddress.None;
+        }
+
+        /// <summary>
+        /// Retrieves <see cref="IPAddress"/> from according to current system network adapters.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="IPAddress"/> object.</returns>
+        public static IPAddress GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    return ip;
+
+            return IPAddress.None;
         }
 
         /// <summary>

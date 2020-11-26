@@ -61,11 +61,12 @@ namespace R8.EntityFrameworkCore
         /// <param name="entry">A <see cref="EntityEntry"/> object that containing an database entry.</param>
         /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of audit.</param>
         /// <param name="userId">A <see cref="Guid"/> object that representing which user did changes.</param>
-        /// <param name="ipAddress">A <see cref="IPAddress"/> object that representing what is user's ip address.</param>
+        /// <param name="remoteIpAddress">A <see cref="IPAddress"/> object that representing what is user's remote ip address.</param>
+        /// <param name="localIpAddress">A <see cref="IPAddress"/> object that representing what is user's local ip address.</param>
         /// <param name="userAgent">A <see cref="string"/> value that representing user-agent according to request.</param>
         /// <param name="stackFrame">A <see cref="StackFrame"/> object that representing method caller.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag, Guid? userId, IPAddress ipAddress, string userAgent, StackFrame stackFrame)
+        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag, Guid? userId, IPAddress remoteIpAddress, IPAddress localIpAddress, string userAgent, StackFrame stackFrame)
         {
             if (entry == null)
                 throw new ArgumentNullException(nameof(entry));
@@ -78,7 +79,7 @@ namespace R8.EntityFrameworkCore
             var callerLine = stackFrame?.GetFileLineNumber() ?? 0;
 
             FindChanges(entry, out var oldValues, out var newValues);
-            var audit = new Audit(userId, ipAddress, userAgent, flag, entityBase.Id, caller, $"{callerPath}::{callerLine}", oldValues, newValues);
+            var audit = new Audit(userId, remoteIpAddress, localIpAddress,userAgent, flag, entityBase.Id, caller, $"{callerPath}::{callerLine}", oldValues, newValues);
             entityBase.Audits ??= new AuditCollection();
             entityBase.Audits.Add(audit);
         }

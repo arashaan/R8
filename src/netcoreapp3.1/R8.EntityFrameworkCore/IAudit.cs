@@ -69,8 +69,13 @@ namespace R8.EntityFrameworkCore
         string UserAgent { get; }
 
         /// <summary>
-        /// Gets or sets an <see cref="IPAddress"/> that representing IP Address according to request.
+        /// Gets or sets an <see cref="IPAddress"/> that representing user's remote IP Address according to request.
         /// </summary>
-        IPAddress IpAddress { get; }
+        IPAddress RemoteIpAddress { get; }
+
+        /// <summary>
+        /// Gets or sets an <see cref="IPAddress"/> that representing user's local IP Address according to request.
+        /// </summary>
+        public IPAddress LocalIpAddress { get; set; }
     }
 }
