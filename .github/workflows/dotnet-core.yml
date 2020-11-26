@@ -22,11 +22,12 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.5
       with:
         nuget-version: '5.x'    
-    - run: nuget restore R8.sln
 
     - name: Add private GitHub registry to NuGet
       run: |
           nuget sources add -name "github" -Source https://nuget.pkg.github.com/iamr8/index.json -Username arash.shabbeh@gmail.com -Password ${{ secrets.GITHUB_TOKEN }}
+
+    - run: nuget restore R8.sln
 
     - name: Install dependencies
       run: dotnet restore
