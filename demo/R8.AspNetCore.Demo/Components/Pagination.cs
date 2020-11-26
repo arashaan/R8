@@ -6,6 +6,6 @@ namespace R8.AspNetCore.Demo.Components
 {
     public class Pagination : ViewComponent
     {
-        public IViewComponentResult Invoke() => this.InvokePaginationByRoute("~/", "List");
+        public IViewComponentResult Invoke() => this.InvokePagination("~/", "List");
     }
 }

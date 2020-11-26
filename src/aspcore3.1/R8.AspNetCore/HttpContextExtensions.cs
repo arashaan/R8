@@ -17,20 +17,6 @@ namespace R8.AspNetCore
     public static class HttpContextExtensions
     {
         /// <summary>
-        /// Retrieves <see cref="IPAddress"/> from current <see cref="HttpRequest"/>.
-        /// </summary>
-        /// <param name="context">An <see cref="HttpContext"/> object.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>A <see cref="IPAddress"/> object.</returns>
-        public static IPAddress GetIPAddress(this HttpContext context)
-        {
-            if (context == null)
-                throw new ArgumentNullException(nameof(context));
-
-            return context.Connection?.RemoteIpAddress;
-        }
-
-        /// <summary>
         /// Retrieves Absolute Path for current page according to <see cref="HttpContext"/>.
         /// </summary>
         /// <param name="context">An <see cref="HttpContext"/> object.</param>
