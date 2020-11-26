@@ -13,16 +13,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>false</Optimize>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="gsdll64.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="gsdll64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\aspcore3.1\R8.AspNetCore\R8.AspNetCore.csproj" />
   </ItemGroup>

@@ -151,10 +151,6 @@ namespace R8.AspNetCore.Demo
                 {
                     ImageEncoder = new PngEncoder()
                 });
-                options.Runtimes.Add(new FileHandlerPdfRuntime
-                {
-                    GhostScriptDllPath = environment.ContentRootPath + "/gsdll64.dll",
-                });
             });
 
             services.AddRazorPages();
