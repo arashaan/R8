@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 using R8.AspNetCore.Sitemap.Models;
 using R8.Lib;
@@ -33,7 +36,7 @@ namespace R8.AspNetCore.Sitemap
             result.ExecuteResult(context);
         }
 
-        public static XAttribute XmlNamespace = new XAttribute("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9");
+        private static readonly XAttribute XmlNamespace = new XAttribute("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9");
 
         public static XElement CreateIndex(string baseUrl, IEnumerable<SitemapIndexNode> indexNodes)
         {
@@ -72,25 +75,39 @@ namespace R8.AspNetCore.Sitemap
                 if (string.IsNullOrEmpty(node.Url))
                     throw new NullReferenceException($"{nameof(node.Url)} needed");
 
-                var url = new XElement("url");
-                var finalUrl = baseUrl;
+                var element = new XElement("url");
+                var url = baseUrl;
                 if (node.Url.StartsWith("/"))
-                    finalUrl += node.Url.Substring(1);
+                    url += node.Url.Substring(1);
 
-                url.SetElementValue("loc", finalUrl);
+                element.SetElementValue("loc", HttpUtility.UrlDecode(url));
 
                 if (node.LastModificationDate != null)
-                    url.SetElementValue("lastmod", node.LastModificationDate.Value.ToString("yyyy-MM-dd"));
+                    element.SetElementValue("lastmod", node.LastModificationDate.Value.ToString("yyyy-MM-dd"));
 
                 if (node.Priority != null)
-                    url.SetElementValue("priority", node.Priority);
+                    element.SetElementValue("priority", node.Priority);
 
                 if (node.ChangeFrequency != null)
-                    url.SetElementValue("changefreq", node.ChangeFrequency.Value.ToString().ToLower());
+                    element.SetElementValue("changefreq", node.ChangeFrequency.Value.ToString().ToLower());
 
-                urlSet.Add(url);
+                urlSet.Add(element);
             }
             return urlSet;
+        }
+
+        public static IEnumerable<Type> ScanPageTypesUnderNamespace(string nameSpace)
+        {
+            var pageModels = Assembly
+                .GetEntryAssembly()
+                .GetTypes()
+                .Where(x => !string.IsNullOrEmpty(x.Namespace)
+                            && x.IsClass
+                            && x.Namespace.StartsWith(nameSpace)
+                            && x.IsSubclassOf(typeof(PageModel))
+                            && x.GetCustomAttribute<SitemapNoIndexAttribute>() == null
+                            && x.GetCustomAttribute<SitemapSettingsAttribute>() != null);
+            return pageModels;
         }
 
         private ContentResult Prepare(ActionContext context)
