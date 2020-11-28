@@ -10,6 +10,7 @@ Some of the useful features, packed in **Separated Useful Packages**
 | [R8.FileHandlers](https://github.com/iamr8/R8/packages/494825)                          | **1.9.2**   | :white_check_mark: In progress |
 | [R8.EntityFrameworkCore](https://github.com/iamr8/R8/packages/494829)                   | **1.9.4**   | :white_check_mark: In progress |
 | [R8.AspNetCore](https://github.com/iamr8/R8/packages/494830)                            | **1.9.6**   | :white_check_mark: In progress |
+| [R8.GoogleAnalytics](https://github.com/iamr8/R8/packages/521005)                            | **1.9.0**   | :white_check_mark: In progress |
 | ~~R8.Encryption~~  | 1.9.0   | :x: Deprecated  |
 | ~~R8.Lib.Encryption~~                    | 1.0.2   | :x: Deprecated  |
 | ~~R8.Lib.AspNetCore.Base~~               | 1.1.24  | :x: Deprecated  |

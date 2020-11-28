@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 using R8.AspNetCore.Sitemap.Models;
 using R8.Lib;
 
@@ -98,6 +100,12 @@ namespace R8.AspNetCore.Sitemap
             {
                 Declaration = new XDeclaration("1.0", Encoding.UTF8.EncodingName, string.Empty)
             };
+
+            var result = new ContentResult
+            {
+                ContentType = "application/xml",
+                StatusCode = StatusCodes.Status200OK
+            };
             if (_nodes?.Any() == true)
             {
                 if (_nodes.Any(x => x.LastModificationDate != null && x.LastModificationDate.Value.Kind != DateTimeKind.Utc))
@@ -122,18 +130,16 @@ namespace R8.AspNetCore.Sitemap
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
+                using var stringWriter = new Utf8StringWriter();
+                using var xmlTextWriter = new XmlTextWriter(stringWriter);
+                xml.WriteTo(xmlTextWriter);
+                result.Content = stringWriter.ToString();
             }
-
-            using var stringWriter = new Utf8StringWriter();
-            using var xmlTextWriter = new XmlTextWriter(stringWriter);
-            xml.WriteTo(xmlTextWriter);
-            var result = new ContentResult
+            else
             {
-                Content = stringWriter.ToString(),
-                ContentType = "application/xml",
-                StatusCode = StatusCodes.Status200OK
-            };
-
+                result.Content = string.Empty;
+            }
             return result;
         }
 

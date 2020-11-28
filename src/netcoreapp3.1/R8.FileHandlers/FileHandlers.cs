@@ -159,15 +159,15 @@ namespace R8.FileHandlers
             await using var outputPdf = new MemoryStream();
             await using var outputThumbnail = new MemoryStream();
             var tempThumbnailStream = await stream.PdfToImageAsync(config.GhostScriptDllPath,
-                config.ImageQuality ?? DefaultPdfImageQuality, config.ResolutionDpi ?? DefaultPdfImageResolution);
+                config.ImageQuality ?? DefaultPdfImageQuality, config.ResolutionDpi ?? DefaultPdfImageResolution).ConfigureAwait(false);
 
-            await tempThumbnailStream.CopyToAsync(outputThumbnail);
+            await tempThumbnailStream.CopyToAsync(outputThumbnail).ConfigureAwait(false);
 
             stream.Position = 0;
             stream.Seek(0, SeekOrigin.Begin);
-            await stream.CopyToAsync(outputPdf);
-            await tempThumbnailStream.DisposeAsync();
-            await stream.DisposeAsync();
+            await stream.CopyToAsync(outputPdf).ConfigureAwait(false);
+            await tempThumbnailStream.DisposeAsync().ConfigureAwait(false);
+            await stream.DisposeAsync().ConfigureAwait(false);
 
             outputPdf.Position = 0;
             outputPdf.Seek(0, SeekOrigin.Begin);
@@ -398,13 +398,13 @@ namespace R8.FileHandlers
 
             if (overwriteFile)
             {
-                if (!test)
+                if (test) 
+                    return new MyFile(filename);
+
+                await using var fileStream = new FileStream(filename, FileMode.OpenOrCreate);
                 {
-                    await using var fileStream = new FileStream(filename, FileMode.OpenOrCreate);
-                    {
-                        await stream.CopyToAsync(fileStream).ConfigureAwait(false);
-                        await fileStream.DisposeAsync().ConfigureAwait(false);
-                    }
+                    await stream.CopyToAsync(fileStream).ConfigureAwait(false);
+                    await fileStream.DisposeAsync().ConfigureAwait(false);
                 }
             }
             else
@@ -413,13 +413,13 @@ namespace R8.FileHandlers
                 if (checkForDuplication)
                     filename = Extensions.GetUniqueFileName(filename);
 
-                if (!test)
+                if (test) 
+                    return new MyFile(filename);
+
+                await using var fileStream = new FileStream(filename, FileMode.Create);
                 {
-                    await using var fileStream = new FileStream(filename, FileMode.Create);
-                    {
-                        await stream.CopyToAsync(fileStream).ConfigureAwait(false);
-                        await fileStream.DisposeAsync().ConfigureAwait(false);
-                    }
+                    await stream.CopyToAsync(fileStream).ConfigureAwait(false);
+                    await fileStream.DisposeAsync().ConfigureAwait(false);
                 }
             }
 

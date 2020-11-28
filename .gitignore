@@ -343,3 +343,4 @@ healthchecksdb
 */gsdll64.dll
 gsdll64.dll
 /test/R8.FileHandlers.Test/assets
+/R8.GoogleAnalytics.Test/google.json
