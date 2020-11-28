@@ -151,10 +151,7 @@ namespace R8.AspNetCore.TagBuilders
             position++;
             (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
 
-            var meta = new TagBuilder("meta");
-            meta.Attributes.Add("itemprop", "position");
-            meta.Attributes.Add("content", position.ToString());
-
+           
             var span = new TagBuilder("span");
             span.Attributes.Add("itemprop", "name");
             span.InnerHtml.AppendHtml(content);
@@ -188,12 +185,12 @@ namespace R8.AspNetCore.TagBuilders
                 anchor.Attributes.Add("itemscope", "");
                 anchor.Attributes.Add("itemid", pageFinalUrl);
 
-                anchor.InnerHtml.AppendHtml(span).AppendHtml(meta);
+                anchor.InnerHtml.AppendHtml(span);
                 output.Content.AppendHtml(anchor);
             }
             else
             {
-                output.Content.AppendHtml(span).AppendHtml(meta);
+                output.Content.AppendHtml(span);
             }
 
             output.TagMode = TagMode.StartTagAndEndTag;
@@ -207,6 +204,12 @@ namespace R8.AspNetCore.TagBuilders
             output.Attributes.Add("itemscope", "");
             output.Attributes.Add("itemprop", "itemListElement");
             output.Attributes.Add("itemtype", "http://schema.org/ListItem");
+
+            var meta = new TagBuilder("meta");
+            meta.Attributes.Add("itemprop", "position");
+            meta.Attributes.Add("content", position.ToString());
+
+            output.Content.AppendHtml(meta);
 
             _httpContextAccessor.HttpContext.Items[HttpContextKey] = position;
         }
