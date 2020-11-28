@@ -30,6 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\netcoreapp3.1\R8.GoogleAnalytics\R8.GoogleAnalytics.csproj" />
+    <ProjectReference Include="..\..\src\netcoreapp3.1\R8.GoogleAnalytics\R8.GoogleAnalytics.csproj" />
   </ItemGroup>
 </Project>
