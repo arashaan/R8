@@ -8,11 +8,6 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace R8.AspNetCore.TagBuilders
 {
-    //public class BreadcrumbContext
-    //{
-    //    public List<IHtmlContent> Items { get; set; } = new List<IHtmlContent>();
-    //}
-
     [HtmlTargetElement("breadcrumb-list", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class BreadcrumbListTagHelper : TagHelper
     {
@@ -64,7 +59,7 @@ namespace R8.AspNetCore.TagBuilders
 
                             tagBuilder.InnerHtml.Clear();
                             if (spanTag != null)
-                                tagBuilder.InnerHtml.AppendHtml(spanTag);
+                                tagBuilder.InnerHtml.AppendHtml(spanTag.InnerHtml);
                         }
                         else
                         {
