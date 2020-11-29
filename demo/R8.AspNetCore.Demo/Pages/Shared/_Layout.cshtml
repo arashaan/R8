@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using R8.AspNetCore.Routing
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,6 +31,14 @@
         </nav>
     </header>
     <div class="container">
+        <nav aria-label="breadcrumb">
+            <breadcrumb-list class="breadcrumb">
+                <breadcrumb asp-page="@typeof(IndexModel).GetPagePath()">
+                    Home
+                </breadcrumb>
+                @await RenderSectionAsync("Breadcrumbs", false)
+            </breadcrumb-list>
+        </nav>
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

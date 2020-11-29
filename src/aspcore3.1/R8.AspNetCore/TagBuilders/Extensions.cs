@@ -6,13 +6,16 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using System.Web;
+
 using HtmlAgilityPack;
+
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+
 using R8.Lib;
 
 namespace R8.AspNetCore.TagBuilders
@@ -23,7 +26,6 @@ namespace R8.AspNetCore.TagBuilders
         {
             return new ModelExpression($"{model.Name}.{propertyName}", model.ModelExplorer.GetExplorerForProperty(propertyName));
         }
-
 
         public static void ApplyNewBindProperty(this ModelMetadata metadata, ref TagHelperOutput output)
         {
@@ -41,7 +43,7 @@ namespace R8.AspNetCore.TagBuilders
                 output.Attributes.Insert(0, new TagHelperAttribute("name", bindPropertyAttribute.Name));
         }
 
-        public static TagBuilder GetTagBuilder(this IHtmlContent tag)
+        public static ITagBuilder GetTagBuilder(this IHtmlContent tag)
         {
             var contentToStr = tag.GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
@@ -49,7 +51,15 @@ namespace R8.AspNetCore.TagBuilders
             return result;
         }
 
-        public static TagBuilder GetTagBuilder(this Func<string, IHtmlContent> tag)
+        public static ITagBuilderCollection GetTagBuilders(this IHtmlContent tag)
+        {
+            var contentToStr = tag.GetString();
+            var decoded = HttpUtility.HtmlDecode(contentToStr);
+            var result = GetTagBuilders(decoded);
+            return result;
+        }
+
+        public static ITagBuilder GetTagBuilder(this Func<string, IHtmlContent> tag)
         {
             var contentToStr = tag.Invoke("").GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
@@ -57,13 +67,52 @@ namespace R8.AspNetCore.TagBuilders
             return result;
         }
 
-        public static TagBuilder GetTagBuilder(string html)
+        public static ITagBuilderCollection GetTagBuilders(string html)
         {
-            var node = HtmlNode.CreateNode(html);
-            var tagBuilder = new TagBuilder(node.Name);
-            tagBuilder.MergeAttributes(node.Attributes.ToDictionary(x => x.Name, x => x.Value));
-            tagBuilder.InnerHtml.SetHtmlContent(node.InnerHtml);
-            return tagBuilder;
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+
+            var result = new TagBuilderCollection();
+            if (doc.DocumentNode?.ChildNodes == null || !doc.DocumentNode.ChildNodes.Any() || doc.DocumentNode.ChildNodes.All(x => x.NodeType != HtmlNodeType.Element))
+                return result;
+
+            foreach (var node in doc.DocumentNode.ChildNodes)
+            {
+                if (node.NodeType != HtmlNodeType.Element)
+                    continue;
+
+                var tagBuilder = new TagBuilderWithUnderlying(node.Name);
+                tagBuilder.MergeAttributes(node.Attributes.ToDictionary(x => x.Name, x => x.Value));
+                tagBuilder.InnerHtml.AppendHtml(node.InnerHtml);
+
+                if (tagBuilder.HasInnerHtml)
+                    tagBuilder.Nodes = GetTagBuilders(tagBuilder.InnerHtml);
+
+                result.Nodes.Add(tagBuilder);
+            }
+
+            return result;
+        }
+
+        //public static ITagBuilder GetTagBuilder(this HtmlNode node)
+        //{
+        //    if (node.NodeType != HtmlNodeType.Element)
+        //        return null;
+
+        //    var tagBuilder = new TagBuilderWithUnderlying(node.Name);
+        //    tagBuilder.MergeAttributes(node.Attributes.ToDictionary(x => x.Name, x => x.Value));
+        //    tagBuilder.InnerHtml.AppendHtml(node.InnerHtml);
+
+        //    if (tagBuilder.HasInnerHtml)
+        //        tagBuilder.Nodes = GetTagBuilders(tagBuilder.InnerHtml);
+
+        //    return tagBuilder;
+        //}
+
+        public static ITagBuilder GetTagBuilder(string html)
+        {
+            var node = GetTagBuilders(html);
+            return node?.Nodes?.First();
         }
 
         public static string GetString(this IHtmlContent content)
@@ -145,7 +194,7 @@ namespace R8.AspNetCore.TagBuilders
                     var tagDicName = tagGroup.Id;
                     var tag = tagGroup.Tag;
 
-                    var temp = htmlDecodedText.TryReplaceCore(tag, tagDicName, out var tempHtmlDecodedText);
+                    var temp = htmlDecodedText.TryReplaceCore((TagBuilder)tag, tagDicName, out var tempHtmlDecodedText);
                     if (!temp)
                         continue;
 
@@ -210,7 +259,7 @@ namespace R8.AspNetCore.TagBuilders
             {
                 var tag = tags[i].GetTagBuilder();
 
-                var temp = htmlDecodedText.TryReplaceCore(tag, i.ToString(), out var tempHtmlDecodedText);
+                var temp = htmlDecodedText.TryReplaceCore((TagBuilder)tag, i.ToString(), out var tempHtmlDecodedText);
                 if (!temp)
                     continue;
 
@@ -230,14 +279,14 @@ namespace R8.AspNetCore.TagBuilders
             return ReplaceHtmlByTagName(htmlDecodedText, tags);
         }
 
-        public static (TagHelperContext, TagHelperOutput) Init<THelper>(this THelper tagHelper) where THelper : TagHelper
+        internal static (TagHelperContext, TagHelperOutput) Init<THelper>(this THelper tagHelper) where THelper : TagHelper
         {
             var (context, output) = tagHelper.InitCore();
             tagHelper.Process(context, output);
             return new ValueTuple<TagHelperContext, TagHelperOutput>(context, output);
         }
 
-        public static async Task<(TagHelperContext, TagHelperOutput)> InitAsync<THelper>(this THelper tagHelper) where THelper : TagHelper
+        internal static async Task<(TagHelperContext, TagHelperOutput)> InitAsync<THelper>(this THelper tagHelper) where THelper : TagHelper
         {
             var (context, output) = tagHelper.InitCore();
             await tagHelper.ProcessAsync(context, output);

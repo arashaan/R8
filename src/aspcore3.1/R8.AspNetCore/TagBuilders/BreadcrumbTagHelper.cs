@@ -1,19 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
 
 using R8.AspNetCore.Routing;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
 namespace R8.AspNetCore.TagBuilders
 {
@@ -29,7 +28,6 @@ namespace R8.AspNetCore.TagBuilders
     public class BreadcrumbTagHelper : TagHelper
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IUrlHelperFactory _urlHelperFactory;
         private const string HttpContextKey = "Breadcrumb";
 
         private const string RouteAttributeName = "asp-route";
@@ -117,10 +115,9 @@ namespace R8.AspNetCore.TagBuilders
         private readonly IHtmlGenerator _htmlGenerator;
         private readonly IOptions<RequestLocalizationOptions> _options;
 
-        public BreadcrumbTagHelper(IHttpContextAccessor actionContextAccessor, IUrlHelperFactory urlHelperFactory, IHtmlHelper htmlHelper, IHtmlGenerator htmlGenerator, IOptions<RequestLocalizationOptions> options)
+        public BreadcrumbTagHelper(IHttpContextAccessor actionContextAccessor, IHtmlHelper htmlHelper, IHtmlGenerator htmlGenerator, IOptions<RequestLocalizationOptions> options)
         {
             _httpContextAccessor = actionContextAccessor;
-            _urlHelperFactory = urlHelperFactory;
             _htmlHelper = htmlHelper;
             _htmlGenerator = htmlGenerator;
             _options = options;
@@ -129,8 +126,8 @@ namespace R8.AspNetCore.TagBuilders
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             var currentPage = false;
-            var contentContext = await output.GetChildContentAsync();
-            var content = contentContext.GetContent();
+            var contentContent = await output.GetChildContentAsync();
+            var content = contentContent.GetContent();
             if (string.IsNullOrEmpty(content))
             {
                 var page = ViewContext.ViewData.Model as PageModelBase
@@ -145,13 +142,13 @@ namespace R8.AspNetCore.TagBuilders
                 currentPage = true;
             }
 
-            var positions = _httpContextAccessor.HttpContext.Items.FirstOrDefault(x => x.Key.Equals(HttpContextKey)).Value
-              ?.ToString();
-            int.TryParse(positions, out var position);
+            var position = 0;
+            if (_httpContextAccessor.HttpContext.Items.ContainsKey(HttpContextKey))
+                int.TryParse(_httpContextAccessor.HttpContext.Items[HttpContextKey].ToString(), out position);
             position++;
+
             (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
 
-           
             var span = new TagBuilder("span");
             span.Attributes.Add("itemprop", "name");
             span.InnerHtml.AppendHtml(content);
@@ -211,7 +208,8 @@ namespace R8.AspNetCore.TagBuilders
 
             output.Content.AppendHtml(meta);
 
-            _httpContextAccessor.HttpContext.Items[HttpContextKey] = position;
+            if (!_httpContextAccessor.HttpContext.Items.ContainsKey(BreadcrumbListTagHelper.BreadcrumbListContextName))
+                _httpContextAccessor.HttpContext.Items[HttpContextKey] = position;
         }
     }
 }

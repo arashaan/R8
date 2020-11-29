@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,8 +10,6 @@ using Microsoft.Extensions.Options;
 using R8.AspNetCore.Demo.Services.Routing;
 using R8.AspNetCore.FileHandlers;
 using R8.Lib.Localization;
-
-using System.Threading.Tasks;
 
 namespace R8.AspNetCore.Demo.Pages
 {
@@ -27,6 +27,7 @@ namespace R8.AspNetCore.Demo.Pages
             _localizer = localizer;
             _options = options;
             _environment = environment;
+            PageTitle = "Index";
         }
 
         [BindProperty]
