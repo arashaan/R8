@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+
+using Newtonsoft.Json;
 
 namespace R8.Lib.Paginator
 {
@@ -26,7 +26,7 @@ namespace R8.Lib.Paginator
         /// An <see cref="List{T}"/> that representing values being loaded into pagination
         /// </summary>
         [JsonProperty("results")]
-        public List<TModel> Items { get; set; }
+        public PaginationItemsCollection<TModel> Items { get; set; }
 
         /// <summary>
         /// Initializes an <see cref="Pagination{TResult}"/> instance
@@ -36,7 +36,7 @@ namespace R8.Lib.Paginator
         /// <param name="pages">An <see cref="int"/> value that representing page numbers</param>
         public Pagination(List<TModel> items, int currentPage, int pages)
         {
-            Items = items;
+            Items = (PaginationItemsCollection<TModel>)items;
             CurrentPage = currentPage <= 0 ? 1 : currentPage;
             Pages = pages;
             CountAll = items.Count;
@@ -51,7 +51,7 @@ namespace R8.Lib.Paginator
         /// <param name="countAll">An <see cref="int"/> value that representing loaded data count</param>
         public Pagination(List<TModel> items, int currentPage, int pages, int countAll)
         {
-            Items = items;
+            Items = (PaginationItemsCollection<TModel>)items;
             CurrentPage = currentPage <= 0 ? 1 : currentPage;
             Pages = pages;
             CountAll = countAll;

@@ -263,6 +263,20 @@ namespace R8.EntityFrameworkCore
             return new Pagination<TSource>(models, page, pages, rowCount);
         }
 
+        public static Task<Pagination<TResult>> ToPaginatedListAsync<TSource, TResult>(
+            this IQueryable<TSource> query, int page = 1, int pageSize = 10,
+            bool cacheData = true) where TSource : class where TResult : class
+        {
+            return query.ToPaginatedListAsync<TSource, TResult>(null, page, pageSize, cacheData);
+        }
+
+        public static Task<Pagination<TSource>> ToPaginatedListAsync<TSource>(
+            this IQueryable<TSource> query, int page = 1, int pageSize = 10,
+            bool cacheData = true) where TSource : class
+        {
+            return query.ToPaginatedListAsync<TSource, TSource>(null, page, pageSize, cacheData);
+        }
+
         /// <summary>
         /// Paginates results according to given page number and page size.
         /// </summary>
@@ -275,7 +289,9 @@ namespace R8.EntityFrameworkCore
         /// <param name="cacheData">A <see cref="bool"/> value that asking for caching of data.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
-        public static async Task<Pagination<TResult>> ToPaginatedListAsync<TSource, TResult>(this IQueryable<TSource> query, Expression<Func<TSource, TResult>> selector, int page, int pageSize = 10, bool cacheData = true)
+        public static async Task<Pagination<TResult>> ToPaginatedListAsync<TSource, TResult>(
+            this IQueryable<TSource> query, Expression<Func<TSource, TResult>> selector, int page, int pageSize = 10,
+            bool cacheData = true)
             where TSource : class where TResult : class
         {
             if (query == null)
@@ -301,8 +317,8 @@ namespace R8.EntityFrameworkCore
                 page = 1;
 
             var pagingQuery = page > 1
-                    ? query.Skip(pageSize * (page - 1))
-                    : query;
+                ? query.Skip(pageSize * (page - 1))
+                : query;
             pagingQuery = pagingQuery.Take(pageSize);
 
             var dataQue = pagingQuery;
