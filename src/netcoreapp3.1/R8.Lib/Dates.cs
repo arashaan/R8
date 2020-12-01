@@ -1,16 +1,16 @@
-﻿using NodaTime;
-using NodaTime.TimeZones;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+
+using NodaTime;
+using NodaTime.TimeZones;
 
 namespace R8.Lib
 {
     public static class Dates
     {
-        public static DateTime FromUnixTime(this long unixTimeStamp)
+        public static DateTime FromUnixTime(long unixTimeStamp)
         {
             return DateTimeOffset.FromUnixTimeSeconds(unixTimeStamp).UtcDateTime;
         }
@@ -91,10 +91,5 @@ namespace R8.Lib
                    orderby more.Offset
                    select more;
         }
-
-        //public static string ToPersianDateTime(this DateTime dt, bool truncateTime, bool showSecs = false)
-        //{
-        //    return PersianDateTime.GetFromDateTime(dt).ToString(!truncateTime, showSecs);
-        //}
     }
 }
