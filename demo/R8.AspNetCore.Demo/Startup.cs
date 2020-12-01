@@ -1,4 +1,5 @@
-using EFCoreSecondLevelCacheInterceptor;
+using System;
+using System.Linq;
 
 using Humanizer.Localisation;
 
@@ -8,14 +9,12 @@ using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using R8.AspNetCore.Demo.Pages;
-using R8.AspNetCore.Demo.Services.Database;
 using R8.AspNetCore.Demo.Services.Globalization;
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
@@ -25,8 +24,6 @@ using R8.Lib;
 using R8.Lib.Localization;
 
 using SixLabors.ImageSharp.Formats.Png;
-
-using System.Linq;
 
 namespace R8.AspNetCore.Demo
 {
@@ -44,6 +41,10 @@ namespace R8.AspNetCore.Demo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddCustomPooledDbContextFactory<ApplicationDbContext>(options =>
+            //    options.ConnectionString =
+            //        "Data Source=mssql10.trwww.com;Initial Catalog=ecohosco__DB;User ID=eCoDbaSeHOs;Password=?fs7e9M9;MultipleActiveResultSets=True;App=EntityFramework;integrated security=False");
+
             services.AddLocalization(options => options.ResourcesPath = nameof(Resources))
                 .Configure<RequestLocalizationOptions>(options =>
                 {
@@ -54,81 +55,46 @@ namespace R8.AspNetCore.Demo
                         Options = options
                     });
 
-                     //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
-                     //{
-                     //    var userLang = context.Request.Headers[HeaderNames.AcceptLanguage].ToString();
-                     //    var firstLang = userLang.Split(",").FirstOrDefault();
-                     //    var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
-                     //    return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
-                     //}));
-                 });
+                    //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
+                    //{
+                    //    var userLang = context.Request.Headers[HeaderNames.AcceptLanguage].ToString();
+                    //    var firstLang = userLang.Split(",").FirstOrDefault();
+                    //    var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
+                    //    return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
+                    //}));
+                });
 
-             services
-                 .AddMvc(options =>
-                 {
-                     options.ModelBinderProviders.Insert(0, new StringModelBinderProvider());
-                     options.ModelBinderProviders.Insert(0, new DateTimeUtcModelBinderProvider());
-                     options.EnableEndpointRouting = false;
-                     options.SuppressAsyncSuffixInActionNames = false;
-                     options.ValueProviderFactories.Insert(0, new SeparatedQueryStringValueProviderFactory());
-
-                     options.Conventions.Add(new LocalizeActionRouteModelConvention());
-                     //options.Filters.Add(new MiddlewareFilterAttribute(typeof(LocalizationPipeline)));
-                 })
-                 .AddMvcLocalization()
-                 .AddViewLocalization()
-                 .AddViewOptions(options =>
-                 {
-                     options.HtmlHelperOptions.ClientValidationEnabled = true;
-                     options.HtmlHelperOptions.Html5DateRenderingMode = Html5DateRenderingMode.Rfc3339;
-                 })
-
-                 .AddDataAnnotationsLocalization(options =>
-                 {
-                     options.DataAnnotationLocalizerProvider = (_, factory) =>
-                         factory.Create(typeof(Resources));
-                 })
-                 .AddControllersAsServices()
-                 .AddJsonOptions(options =>
-                 {
-                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
-                     options.JsonSerializerOptions.DictionaryKeyPolicy = null;
-                 });
-
-            //services.AddLocalizer(serviceProvider =>
-            //{
-            //    using var scope = serviceProvider.CreateScope();
-            //    var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
-            //    var configuration = new LocalizerCustomProvider
-            //    {
-            //        ExpressionAsync = provider =>
-            //        {
-            //            using var scope2 = provider.CreateScope();
-            //            using var dbContext = scope2.ServiceProvider.GetService<ApplicationDbContext>();
-            //            return dbContext.Translation
-            //                .AsNoTrackingWithIdentityResolution()
-            //                .Cacheable()
-            //                .ToDictionaryAsync(x => x.Key, x => x.Name);
-            //        },
-            //        DefaultCulture = request.Value.DefaultRequestCulture.Culture,
-            //        SupportedCultures = request.Value.SupportedCultures.ToList()
-            //    };
-            //    return configuration;
-            //});
-            services.AddLocalizer(serviceProvider =>
-            {
-                using var scope = serviceProvider.CreateScope();
-
-                var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
-                var configuration = new LocalizerJsonProvider
+            services
+                .AddMvc(options =>
                 {
-                    Folder = "E:/Work/Develope/Ecohos/Ecohos.Presentation/Dictionary",
-                    FileName = "dic",
-                    DefaultCulture = request.Value.DefaultRequestCulture.Culture,
-                    SupportedCultures = request.Value.SupportedCultures.ToList()
-                };
-                return configuration;
-            });
+                    options.ModelBinderProviders.Insert(0, new StringModelBinderProvider());
+                    options.ModelBinderProviders.Insert(0, new DateTimeUtcModelBinderProvider());
+                    options.EnableEndpointRouting = false;
+                    options.SuppressAsyncSuffixInActionNames = false;
+                    options.ValueProviderFactories.Insert(0, new SeparatedQueryStringValueProviderFactory());
+
+                    options.Conventions.Add(new LocalizeActionRouteModelConvention());
+                    //options.Filters.Add(new MiddlewareFilterAttribute(typeof(LocalizationPipeline)));
+                })
+                .AddMvcLocalization()
+                .AddViewLocalization()
+                .AddViewOptions(options =>
+                {
+                    options.HtmlHelperOptions.ClientValidationEnabled = true;
+                    options.HtmlHelperOptions.Html5DateRenderingMode = Html5DateRenderingMode.Rfc3339;
+                })
+
+                .AddDataAnnotationsLocalization(options =>
+                {
+                    options.DataAnnotationLocalizerProvider = (_, factory) =>
+                        factory.Create(typeof(Resources));
+                })
+                .AddControllersAsServices()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = null;
+                });
 
             services.AddHttpContextAccessor();
             services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
@@ -139,9 +105,43 @@ namespace R8.AspNetCore.Demo
                 var factory = x.GetRequiredService<IUrlHelperFactory>();
                 return factory.GetUrlHelper(actionContext);
             });
-            services.AddScoped<ICulturalizedUrlHelper, CulturalizedUrlHelper>();
 
-            services.AddFileHandlers((environment, options) =>
+            services.AddScoped<ICulturalizedUrlHelper, CulturalizedUrlHelper>();
+            // services.AddTransient<ApplicationDbContext>();
+            //services.AddLocalizer((serviceProvider, config) =>
+            //{
+            //    using var scope = serviceProvider.CreateScope();
+            //    var localizationOptions = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>().Value;
+            //    config.SupportedCultures = localizationOptions.SupportedCultures.ToList();
+            //    config.UseMemoryCache = true;
+            //    config.Provider = new LocalizerCustomProvider
+            //    {
+            //        DictionaryAsync = async provider =>
+            //        {
+            //            await using var dbContext = serviceProvider.GetService<ApplicationDbContext>();
+            //            return await dbContext.Translation
+            //                .AsNoTracking()
+            //                .Cacheable()
+            //                .ToDictionaryAsync(x => x.Key, x => x.Name);
+            //        },
+            //    };
+            //});
+            services.AddLocalizer((serviceProvider, config) =>
+            {
+                using var scope = serviceProvider.CreateScope();
+                var localizationOptions = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>().Value;
+
+                config.SupportedCultures = localizationOptions.SupportedCultures.ToList();
+                config.UseMemoryCache = true;
+                // config.CacheSlidingExpiration = TimeSpan.FromDays(3);
+                config.Provider = new LocalizerJsonProvider
+                {
+                    Folder = "E:/Work/Develope/Ecohos/Ecohos.Presentation/Dictionary",
+                    FileName = "dic",
+                };
+            });
+
+            services.AddFileHandlers((_, options) =>
             {
                 options.Path = "/uploads";
                 options.HierarchicallyDateFolders = true;
