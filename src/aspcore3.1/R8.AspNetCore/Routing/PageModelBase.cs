@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
@@ -8,13 +15,6 @@ using Newtonsoft.Json.Linq;
 
 using R8.Lib.Localization;
 using R8.Lib.Paginator;
-
-using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace R8.AspNetCore.Routing
 {
@@ -42,7 +42,7 @@ namespace R8.AspNetCore.Routing
             get
             {
                 var service = this.HttpContext.RequestServices.GetService(typeof(ICulturalizedUrlHelper));
-                return service as ICulturalizedUrlHelper;
+                return (service ?? base.Url) as ICulturalizedUrlHelper;
             }
         }
 
@@ -60,10 +60,7 @@ namespace R8.AspNetCore.Routing
             get
             {
                 var service = this.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>));
-                if (service is IOptions<RequestLocalizationOptions> options)
-                    return options.Value;
-
-                return null;
+                return ((IOptions<RequestLocalizationOptions>)service)?.Value;
             }
         }
 
