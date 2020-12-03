@@ -4,14 +4,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-
+using R8.AspNetCore.Test.FakeBack;
 using R8.Lib.Localization;
 
 using Xunit;
 
-namespace R8.Lib.Test
+namespace R8.AspNetCore.Test.ILocalizer
 {
-    public class ILocalizerTests
+    public class ILocalizerCachedTests : FakeCore
     {
         private readonly Localizer _localizer;
 
@@ -26,18 +26,41 @@ namespace R8.Lib.Test
             CultureInfo.GetCultureInfo("fa"),
         };
 
-        public ILocalizerTests()
+        public ILocalizerCachedTests()
         {
             var configuration = new LocalizerConfiguration
             {
                 SupportedCultures = SupportedCultures,
+                UseMemoryCache = true,
                 Provider = new LocalizerJsonProvider
                 {
                     Folder = FolderPath,
                     FileName = JsonFileName,
                 }
             };
-            _localizer = new Localizer(configuration, null);
+            _localizer = new Localizer(configuration, MemoryCache);
+        }
+
+        [Fact]
+        public void CallLocalizerCached_NotRegisteredIMemoryCache()
+        {
+            // Assets
+            var configuration = new LocalizerConfiguration
+            {
+                SupportedCultures = SupportedCultures,
+                UseMemoryCache = true,
+                Provider = new LocalizerJsonProvider
+                {
+                    Folder = FolderPath,
+                    FileName = JsonFileName,
+                }
+            };
+
+            // Act
+            var ctor = new Localizer(configuration, null);
+
+            // Arrange
+            Assert.Throws<NullReferenceException>(() => ctor.Refresh());
         }
 
         [Fact]
@@ -54,34 +77,6 @@ namespace R8.Lib.Test
             // Arrange
             Assert.NotNull(localized);
         }
-
-        // [Fact]
-        // public async Task CallTryGetValue()
-        // {
-        //     // Assets
-        //     var key = "AppName";
-        //
-        //     // Act
-        //     await _localizer.RefreshAsync();
-        //     var getter = _localizer.GetValue(key, out var localized);
-        //
-        //     // Arrange
-        //     Assert.True(getter);
-        //     Assert.NotNull(localized);
-        // }
-
-        //[Fact]
-        //public void CallGetter_NullText()
-        //{
-        //    // Assets
-        //    var key = string.Empty;
-
-        //    // Act
-        //    var translation = _localizer[key];
-
-        //    // Arrange
-        //    Assert.Null(translation[DefaultCulture]);
-        //}
 
         [Fact]
         public async Task CallGetter_NullExpressionKey()
@@ -226,7 +221,7 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task CallRefreshAsync_FileNameNull()
+        public async Task CallRefreshAsync_FileNameNull()
         {
             // Assets
             var configuration = new LocalizerConfiguration
@@ -239,14 +234,14 @@ namespace R8.Lib.Test
             };
 
             // Act
-            var localizer = new Localizer(configuration, null);
+            var localizer = new Localizer(configuration, MemoryCache);
 
             // Arrange
             await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task CallRefreshAsync_FolderNull()
+        public async Task CallRefreshAsync_FolderNull()
         {
             // Assets
             var configuration = new LocalizerConfiguration
@@ -256,17 +251,17 @@ namespace R8.Lib.Test
             };
 
             // Act
-            var localizer = new Localizer(configuration, null);
+            var localizer = new Localizer(configuration, MemoryCache);
 
             // Arrange
             await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task CallRefreshAsync_SupportedNull()
+        public async Task CallRefreshAsync_SupportedNull()
         {
             // Act
-            var localizer = new Localizer(new LocalizerConfiguration(), null);
+            var localizer = new Localizer(new LocalizerConfiguration(), MemoryCache);
 
             // Arrange
             await Assert.ThrowsAsync<NullReferenceException>(() => localizer.RefreshAsync());

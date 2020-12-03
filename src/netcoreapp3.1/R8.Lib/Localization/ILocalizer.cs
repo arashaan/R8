@@ -1,12 +1,14 @@
-﻿using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Web;
+
+using Microsoft.Extensions.Caching.Memory;
+
+using Newtonsoft.Json;
 
 namespace R8.Lib.Localization
 {
@@ -16,43 +18,24 @@ namespace R8.Lib.Localization
     public interface ILocalizer
     {
         /// <summary>
-        /// Initializes internal dictionary to update to the latest data.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> object for asynchronous operation.</returns>
-        Task InitializeAsync();
-
-        /// <summary>
-        /// Initializes internal dictionary to update to the latest data.
-        /// </summary>
-        void Initialize();
-
-        /// <summary>
         /// Refreshes internal dictionary based on last update.
         /// </summary>
+        /// <param name="forceToUpdate">Asks if dictionary should be enforced to update from supplier, or skip it if not null.</param>
         /// <returns>An <see cref="Task"/> object that representing asynchronous operation.</returns>
-        Task RefreshAsync();
+        /// <remarks>Force Update is useful when <see cref="IMemoryCache"/> is not null. otherwise doesn't matter <c>forceToUpdate</c> be neither true or false.</remarks>
+        Task RefreshAsync(bool forceToUpdate = false);
 
         /// <summary>
         /// Refreshes internal dictionary based on last update.
         /// </summary>
-        void Refresh();
-
-        /// <summary>
-        /// Returns a <see cref="Dictionary{TKey,TValue}"/> object that representing collection of words and translations.
-        /// </summary>
-        /// <returns></returns>
-        Dictionary<string, LocalizerContainer> GetDictionary();
+        /// <param name="forceToUpdate">Asks if dictionary should be enforced to update from supplier, or skip it if not null.</param>
+        /// <remarks>Force Update is useful when <see cref="IMemoryCache"/> is not null. otherwise doesn't matter <c>forceToUpdate</c> be neither true or false.</remarks>
+        void Refresh(bool forceToUpdate = false);
 
         /// <summary>
         /// Gets default culture.
         /// </summary>
         CultureInfo DefaultCulture { get; }
-
-        /// <summary>
-        /// Gets provider instance.
-        /// </summary>
-        /// <returns></returns>
-        ILocalizerProvider GetProvider();
 
         /// <summary>
         /// Gets a collection of supported cultures.
@@ -66,10 +49,15 @@ namespace R8.Lib.Localization
         /// <param name="culture">Specific culture to search in</param>
         string this[string key, CultureInfo culture] { get; }
 
-        // /// <summary>
-        // /// Gets an enumerator constant that representing current provider type.
-        // /// </summary>
-        // LocalizerProviders Provider { get; }
+        /// <summary>
+        /// Gets initializing configuration.
+        /// </summary>
+        LocalizerConfiguration Configuration { get; }
+
+        /// <summary>
+        /// Gets <see cref="Dictionary{TKey,TValue}"/> object that representing collection of words and translations.
+        /// </summary>
+        Dictionary<string, LocalizerContainer> Dictionary { get; }
 
         /// <summary>
         /// Gets value from internal dictionary
@@ -83,6 +71,7 @@ namespace R8.Lib.Localization
         /// <param name="key">A key to find in internal dictionary</param>
         /// <returns>A <see cref="LocalizerContainer"/> component.</returns>
         /// <exception cref="ArgumentNullException"></exception>
+        [Obsolete]
         LocalizerContainer this[Expression<Func<string>> key] { get; }
     }
 
@@ -91,84 +80,94 @@ namespace R8.Lib.Localization
     /// </summary>
     public class Localizer : ILocalizer
     {
-        private readonly ILocalizerProvider _provider;
-
-        public List<CultureInfo> SupportedCultures => _provider.SupportedCultures;
-
-        public CultureInfo DefaultCulture => _provider.DefaultCulture;
-        private bool _initialized;
-        private IServiceProvider _serviceProvider;
+        private readonly IMemoryCache _memoryCache;
 
         /// <summary>
         /// Returns User-defined dictionary value based on Database
         /// </summary>
-        /// <param name="provider">A <see cref="ILocalizerCultureProvider"/> object that represents initializing data.</param>
-        public Localizer(ILocalizerProvider provider)
+        /// <param name="configuration">A <see cref="LocalizerConfiguration"/> object that represents initializing data.</param>
+        /// <param name="memoryCache"></param>
+        public Localizer(LocalizerConfiguration configuration, IMemoryCache memoryCache)
         {
-            _provider = provider;
-            _dictionary = new Dictionary<string, LocalizerContainer>();
-            _initialized = false;
+            Configuration = configuration ??
+                            throw new ArgumentNullException($"{nameof(configuration)} expected to be not null.");
+
+            _memoryCache = memoryCache;
+            Dictionary = new Dictionary<string, LocalizerContainer>();
         }
 
-        public void SetServiceProvider(IServiceProvider provider) =>
-            _serviceProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+        public Dictionary<string, LocalizerContainer> Dictionary { get; private set; }
 
-        private readonly Dictionary<string, LocalizerContainer> _dictionary;
+        public LocalizerConfiguration Configuration { get; internal set; }
+        public List<CultureInfo> SupportedCultures => Configuration.SupportedCultures;
 
-        public Dictionary<string, LocalizerContainer> GetDictionary() => _dictionary;
-
-        public ILocalizerProvider GetProvider() => _provider;
-
-        public void Refresh()
+        public CultureInfo DefaultCulture
         {
-            if (!_initialized)
-                throw new Exception($"Service must be initialized before refresh.");
+            get
+            {
+                if (Configuration.SupportedCultures == null || !Configuration.SupportedCultures.Any())
+                    throw new NullReferenceException($"{nameof(Configuration.SupportedCultures)} does not have any items.");
 
-            _provider.Refresh(_serviceProvider, _dictionary);
+                return Configuration.SupportedCultures[0];
+            }
         }
 
-        public async Task RefreshAsync()
+        public void Refresh(bool forceToUpdate = false)
         {
-            if (!_initialized)
-                throw new Exception($"Service must be initialized before refresh.");
-
-            await _provider.RefreshAsync(_serviceProvider, _dictionary);
+            var provider = (ILocalizerRefresher)Configuration.Provider;
+            RefreshCore(forceToUpdate, () => Task.FromResult(provider.Refresh(SupportedCultures))).GetAwaiter().GetResult();
         }
 
-        public async Task InitializeAsync()
-        {
-            if (_provider == null)
-                throw new NullReferenceException($"'{nameof(_provider)}' expected to be filled");
+        private const string CacheKey = "ILocalizerCacheStorage";
+        private const long CacheSize = 1000;
 
-            if (DefaultCulture == null)
-                throw new NullReferenceException($"'{nameof(DefaultCulture)}' expected to be filled");
+        private async Task RefreshCore(bool forceToUpdate, Func<Task<Dictionary<string, LocalizerContainer>>> func)
+        {
+            if (Configuration == null)
+                throw new NullReferenceException($"'{nameof(Configuration)}' expected to be filled");
 
             if (SupportedCultures == null || !SupportedCultures.Any())
                 throw new NullReferenceException($"'{nameof(SupportedCultures)}' expected to be filled");
 
-            if (_provider == null)
-                throw new NullReferenceException($"{nameof(_provider)} must be implemented.");
+            if (Configuration.Provider == null)
+                throw new NullReferenceException($"{nameof(Configuration)} must be implemented.");
 
-            _initialized = true;
-            await RefreshAsync();
+            var slidingExpiration = Configuration.CacheSlidingExpiration ?? TimeSpan.FromDays(1);
+            Dictionary<string, LocalizerContainer> dictionary;
+
+            if (Configuration.UseMemoryCache)
+            {
+                if (_memoryCache == null)
+                    throw new NullReferenceException($"Unable to find registered {nameof(IMemoryCache)} service.");
+
+                var hasCache = _memoryCache.TryGetValue(CacheKey, out dictionary);
+                dictionary ??= new Dictionary<string, LocalizerContainer>();
+                if (forceToUpdate || !hasCache || dictionary.Count == 0)
+                {
+                    _memoryCache.Remove(CacheKey);
+                    var tempDictionary = await func.Invoke().ConfigureAwait(false);
+                    var cacheEntryOptions = new MemoryCacheEntryOptions
+                    {
+                        SlidingExpiration = slidingExpiration,
+                        Size = CacheSize
+                    };
+                    _memoryCache.Set(CacheKey, tempDictionary, cacheEntryOptions);
+                    dictionary = tempDictionary;
+                }
+            }
+            else
+            {
+                Dictionary.Clear();
+                dictionary = await func.Invoke().ConfigureAwait(false);
+            }
+
+            Dictionary = dictionary;
         }
 
-        public void Initialize()
+        public async Task RefreshAsync(bool forceToUpdate = false)
         {
-            if (_provider == null)
-                throw new NullReferenceException($"'{nameof(_provider)}' expected to be filled");
-
-            if (DefaultCulture == null)
-                throw new NullReferenceException($"'{nameof(DefaultCulture)}' expected to be filled");
-
-            if (SupportedCultures == null || !SupportedCultures.Any())
-                throw new NullReferenceException($"'{nameof(SupportedCultures)}' expected to be filled");
-
-            if (_provider == null)
-                throw new NullReferenceException($"{nameof(_provider)} must be implemented.");
-
-            _initialized = true;
-            Refresh();
+            var provider = (ILocalizerRefresher)Configuration.Provider;
+            await RefreshCore(forceToUpdate, () => provider.RefreshAsync(SupportedCultures));
         }
 
         /// <summary>
@@ -177,7 +176,7 @@ namespace R8.Lib.Localization
         /// <param name="jsonString">A <see cref="string"/> value that representing JSON data.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Dictionary{TKey,TValue}"/> object.</returns>
-        public static Dictionary<string, string> HandleDictionary(string jsonString)
+        internal static Dictionary<string, string> HandleDictionary(string jsonString)
         {
             if (string.IsNullOrEmpty(jsonString))
                 throw new ArgumentNullException($"{jsonString} expected to being in JSON format.");
@@ -196,6 +195,7 @@ namespace R8.Lib.Localization
         /// <param name="key"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <returns>A <see cref="string"/> value.</returns>
+        [Obsolete]
         public static string GetKey(Expression<Func<string>> key)
         {
             return key.Body switch
@@ -234,7 +234,10 @@ namespace R8.Lib.Localization
         /// <returns>A <see cref="LocalizerContainer"/> object.</returns>
         public LocalizerContainer GetValue(CultureInfo culture, string key)
         {
-            var (_, container) = _dictionary.FirstOrDefault(x => x.Key.Equals(key));
+            if (Dictionary == null)
+                return new LocalizerContainer(culture, key);
+
+            var (_, container) = Dictionary.FirstOrDefault(x => x.Key.Equals(key));
             if (container == null)
                 return new LocalizerContainer(culture, key);
 

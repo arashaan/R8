@@ -60,15 +60,15 @@ namespace R8.Lib.Localization
         /// </summary>
         public LocalizerContainer()
         {
-            _cultures = new List<LocalizerCulture>();
+            _cultures = new List<LocalizerCultureNode>();
         }
 
         /// <summary>
         /// Gets a collection of specified cultures in current instance.
         /// </summary>
-        public IReadOnlyCollection<LocalizerCulture> Cultures => _cultures;
+        public IReadOnlyCollection<LocalizerCultureNode> Cultures => _cultures;
 
-        private readonly List<LocalizerCulture> _cultures;
+        private readonly List<LocalizerCultureNode> _cultures;
 
         /// <summary>
         /// Deserializes already-serialized JSON to new <see cref="LocalizerContainer"/> instance.
@@ -167,7 +167,7 @@ namespace R8.Lib.Localization
             var desiredCulture = this.Cultures.FirstOrDefault(x => x.Culture.Equals(culture));
             if (desiredCulture == null)
             {
-                this._cultures.Add(new LocalizerCulture
+                this._cultures.Add(new LocalizerCultureNode
                 {
                     Culture = culture,
                     Value = localized

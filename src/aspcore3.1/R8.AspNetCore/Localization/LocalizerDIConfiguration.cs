@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+
+using Microsoft.AspNetCore.Builder;
 
 using R8.Lib.Localization;
-
-using System;
 
 namespace R8.AspNetCore.Localization
 {
@@ -13,12 +12,33 @@ namespace R8.AspNetCore.Localization
         {
             app.Use(async (context, next) =>
             {
-                var serviceProvider = context.RequestServices;
-                var localizer = serviceProvider.GetService<ILocalizer>();
-                if (localizer == null)
+                if (!(context.RequestServices.GetService(typeof(ILocalizer)) is ILocalizer localizer))
                     throw new NullReferenceException($"{nameof(ILocalizer)} must be registered as a service.");
 
-                await localizer.InitializeAsync();
+                var provider = localizer.Configuration.Provider;
+                if (provider is LocalizerCustomProvider customProvider)
+                {
+                    if (customProvider.DictionaryAsync != null)
+                    {
+                        await localizer.RefreshAsync();
+                    }
+                    else
+                    {
+                        if (customProvider.Dictionary != null)
+                        {
+                            localizer.Refresh();
+                        }
+                        else
+                        {
+                            throw new NullReferenceException($"Either {nameof(LocalizerCustomProvider.Dictionary)} or {nameof(LocalizerCustomProvider.DictionaryAsync)} must be filled.");
+                        }
+                    }
+                }
+                else
+                {
+                    await localizer.RefreshAsync();
+                }
+
                 await next();
             });
 

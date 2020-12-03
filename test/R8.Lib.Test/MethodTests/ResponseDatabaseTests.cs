@@ -1,7 +1,7 @@
-﻿using R8.Lib.Localization;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
+
+using R8.Lib.Localization;
 
 namespace R8.Lib.Test.MethodTests
 {
@@ -22,14 +22,17 @@ namespace R8.Lib.Test.MethodTests
 
         public ResponseDatabaseTests()
         {
-            var configuration = new LocalizerJsonProvider
+            var configuration = new LocalizerConfiguration
             {
-                Folder = FolderPath,
-                FileName = JsonFileName,
-                DefaultCulture = DefaultCulture,
-                SupportedCultures = SupportedCultures
+                SupportedCultures = SupportedCultures,
+                Provider = new LocalizerJsonProvider
+                {
+                    Folder = FolderPath,
+                    FileName = JsonFileName,
+                }
             };
-            _localizer = new Localizer(configuration);
+
+            _localizer = new Localizer(configuration, null);
         }
 
         //[Fact]

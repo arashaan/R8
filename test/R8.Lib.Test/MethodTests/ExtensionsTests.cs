@@ -22,14 +22,17 @@ namespace R8.Lib.Test.MethodTests
 
         public ExtensionsTests()
         {
-            var configuration = new LocalizerJsonProvider
+            var configuration = new LocalizerConfiguration
             {
-                Folder = FolderPath,
-                FileName = JsonFileName,
-                DefaultCulture = DefaultCulture,
-                SupportedCultures = SupportedCultures
+                SupportedCultures = SupportedCultures,
+                Provider = new LocalizerJsonProvider
+                {
+                    Folder = FolderPath,
+                    FileName = JsonFileName,
+                }
             };
-            _localizer = new Localizer(configuration);
+           
+            _localizer = new Localizer(configuration, null);
         }
 
         //[Fact]
@@ -37,7 +40,7 @@ namespace R8.Lib.Test.MethodTests
         //{
         //    // Assets
         //    var response = new Response(Flags.ParamIsNull);
-        //    await _localizer.InitializeAsync();
+        //    await _localizer.RefreshAsync();
         //    response.Localizer = _localizer;
 
         //    // Act
@@ -71,7 +74,7 @@ namespace R8.Lib.Test.MethodTests
         //{
         //    // Assets
         //    var response = new Response(Flags.Success);
-        //    await _localizer.InitializeAsync();
+        //    await _localizer.RefreshAsync();
         //    response.Localizer = _localizer;
 
         //    // Act

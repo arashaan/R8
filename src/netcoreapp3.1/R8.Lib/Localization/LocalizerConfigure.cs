@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 
 using R8.Lib.MethodReturn;
-
-using System;
 
 namespace R8.Lib.Localization
 {
@@ -12,15 +13,16 @@ namespace R8.Lib.Localization
         /// Registers <see cref="ILocalizer"/> as a service.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="options"></param>
+        /// <param name="config"></param>
         /// <returns></returns>
-        public static IServiceCollection AddLocalizer<TProvider>(this IServiceCollection services, Func<IServiceProvider, TProvider> options) where TProvider : ILocalizerProvider
+        public static IServiceCollection AddLocalizer(this IServiceCollection services, Action<IServiceProvider, LocalizerConfiguration> config)
         {
             services.AddSingleton<ILocalizer>(serviceProvider =>
             {
-                var configuration = options.Invoke(serviceProvider);
-                var instance = new Localizer(configuration);
-                instance.SetServiceProvider(serviceProvider);
+                var memoryCache = serviceProvider.GetService<IMemoryCache>();
+                var configuration = new LocalizerConfiguration();
+                config(serviceProvider, configuration);
+                var instance = new Localizer(configuration, memoryCache);
                 return instance;
             });
 

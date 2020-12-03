@@ -1,9 +1,9 @@
-﻿using R8.Lib.Localization;
-using R8.Lib.MethodReturn;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+
+using R8.Lib.Localization;
+using R8.Lib.MethodReturn;
 
 using Xunit;
 
@@ -26,14 +26,17 @@ namespace R8.Lib.Test.MethodTests
 
         public ResponseTests()
         {
-            var configuration = new LocalizerJsonProvider
+            var configuration = new LocalizerConfiguration
             {
-                Folder = FolderPath,
-                FileName = JsonFileName,
-                DefaultCulture = DefaultCulture,
-                SupportedCultures = SupportedCultures
+                SupportedCultures = SupportedCultures,
+                Provider = new LocalizerJsonProvider
+                {
+                    Folder = FolderPath,
+                    FileName = JsonFileName,
+                }
             };
-            _localizer = new Localizer(configuration);
+
+            _localizer = new Localizer(configuration, null);
         }
 
         //[Fact]
@@ -44,7 +47,7 @@ namespace R8.Lib.Test.MethodTests
 
         //    // Act
         //    var response = new Response(Flags.Success);
-        //    await _localizer.InitializeAsync();
+        //    await _localizer.RefreshAsync();
         //    response.SetLocalizer(_localizer);
 
         //    var expected = "عملیات به موفقیت انجام شد";
@@ -61,7 +64,7 @@ namespace R8.Lib.Test.MethodTests
 
         //    // Act
         //    var response = new Response<Response>(Flags.Success);
-        //    await _localizer.InitializeAsync();
+        //    await _localizer.RefreshAsync();
         //    response.SetLocalizer(_localizer);
 
         //    var expected = "عملیات به موفقیت انجام شد";
@@ -220,7 +223,7 @@ namespace R8.Lib.Test.MethodTests
 
         //    // Act
         //    var response = new Response(Flags.Success);
-        //    await _localizer.InitializeAsync();
+        //    await _localizer.RefreshAsync();
         //    response.SetLocalizer(_localizer);
 
         //    var expected = "عملیات به موفقیت انجام شد";
@@ -236,7 +239,7 @@ namespace R8.Lib.Test.MethodTests
 
             // Act
             var response = new FakeResponse();
-            await _localizer.InitializeAsync();
+            await _localizer.RefreshAsync();
             response.SetLocalizer(_localizer);
 
             // Arrange
