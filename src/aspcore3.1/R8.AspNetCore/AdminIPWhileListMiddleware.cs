@@ -2,12 +2,13 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace R8.AspNetCore
 {
-    public class AdminIpWhileListMiddleware
+    public class AdminIpWhileListMiddleware : IMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<AdminIpWhileListMiddleware> _logger;
@@ -23,12 +24,12 @@ namespace R8.AspNetCore
             _logger = logger;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             if (context.Request.Method != HttpMethod.Get.Method)
             {
                 var remoteIp = context.Connection.RemoteIpAddress;
-                _logger.LogDebug("Request from Remote IP address: {RemoteIp}", remoteIp);
+                _logger.LogDebug("Request from Remote IP address: {remoteIp}", remoteIp);
 
                 var ip = _safelist.Split(';');
 
@@ -42,13 +43,13 @@ namespace R8.AspNetCore
                 if (badIp)
                 {
                     _logger.LogWarning(
-                        "Forbidden Request from Remote IP address: {RemoteIp}", remoteIp);
+                        "Forbidden Request from Remote IP address: {remoteIp}", remoteIp);
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     return;
                 }
             }
 
-            await _next.Invoke(context);
+            await _next(context);
         }
     }
 }

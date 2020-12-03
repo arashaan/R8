@@ -44,11 +44,11 @@ namespace R8.EntityFrameworkCore
 
             var entry = base.Add(entity);
             var frame = new StackTrace().GetFrame(1);
-            GenerateAudit(entry, AuditFlags.Created, userId, frame);
+            GenerateAudit(entry, AuditFlags.Created, userId);
             return true;
         }
 
-        private static void GenerateAudit(EntityEntry entry, AuditFlags flag, Guid userId, StackFrame frame)
+        private static void GenerateAudit(EntityEntry entry, AuditFlags flag, Guid userId)
         {
             var remoteIpAddress = HttpExtensions.GetIPAddress();
             var localIpAddress = HttpExtensions.GetLocalIPAddress();
@@ -63,7 +63,7 @@ namespace R8.EntityFrameworkCore
             entity.IsDeleted = false;
             var entry = base.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            GenerateAudit(entry, AuditFlags.UnDeleted, userId, frame);
+            GenerateAudit(entry, AuditFlags.UnDeleted, userId);
             return true;
         }
 
@@ -137,7 +137,7 @@ namespace R8.EntityFrameworkCore
 
             var entry = base.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            GenerateAudit(entry, AuditFlags.Changed, userId, frame);
+            GenerateAudit(entry, AuditFlags.Changed, userId);
             return true;
         }
 
@@ -149,7 +149,7 @@ namespace R8.EntityFrameworkCore
             entity.IsDeleted = !entity.IsDeleted;
             var entry = base.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            GenerateAudit(entry, flag, userId, frame);
+            GenerateAudit(entry, flag, userId);
             return true;
         }
 
@@ -161,7 +161,7 @@ namespace R8.EntityFrameworkCore
             entity.IsDeleted = true;
             var entry = base.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            GenerateAudit(entry, AuditFlags.Deleted, userId, frame);
+            GenerateAudit(entry, AuditFlags.Deleted, userId);
             return true;
         }
 

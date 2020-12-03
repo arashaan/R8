@@ -11,18 +11,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using Newtonsoft.Json;
 
-using R8.Lib.Localization;
-
 namespace R8.EntityFrameworkCore
 {
     public static class EntityBaseExtensions
     {
-        internal static string GetTableName(this EntityEntry entry)
+        public static string GetTableName(this EntityEntry entry)
         {
             return entry.Context.GetTableName(entry.Entity.GetType());
         }
 
-        internal static string GetTableName<TDbContext>(this TDbContext context, Type entity) where TDbContext : DbContext
+        public static string GetTableName<TDbContext>(this TDbContext context, Type entity) where TDbContext : DbContext
         {
             var entityType = context.Model.FindEntityType(entity);
             return entityType.GetTableName();
@@ -45,14 +43,13 @@ namespace R8.EntityFrameworkCore
             return builder;
         }
 
-        public static void ConfigureAuditCollection<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
+        internal static void ConfigureAuditCollection<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
         {
             var tableName = builder.Metadata.AsEntityType().GetTableName();
             var pluralizeAudit = nameof(Audit).Pluralize();
             builder.OwnsMany(x => x.Audits, action =>
             {
                 action.WithOwner().HasForeignKey(x => x.RowId);
-                action.IsMemoryOptimized();
                 action.ToTable($"{tableName}_{pluralizeAudit}");
                 action.HasKey(x => x.Id);
                 action.Property(x => x.Id).ValueGeneratedOnAdd();
@@ -60,22 +57,6 @@ namespace R8.EntityFrameworkCore
                 action.Property(x => x.NewValues).HasJsonConversion();
                 action.Property(x => x.OldValues).HasJsonConversion();
             });
-        }
-
-        public const string LocalizedNameColumn = "Name";
-
-        internal static PropertyBuilder<LocalizerContainer> HasLocalizerContainerConversion(this PropertyBuilder<LocalizerContainer> property)
-        {
-            property.HasConversion(
-                v => v.Serialize(),
-                v => LocalizerContainer.Deserialize(v))
-                .Metadata.SetValueComparer(
-                new ValueComparer<LocalizerContainer>(
-                    (l, r) => l.Serialize() == r.Serialize(),
-                    v => v == null ? 0 : v.Serialize().GetHashCode(),
-                    v => LocalizerContainer.Deserialize(v.Serialize())));
-
-            return property;
         }
 
         internal static PropertyBuilder<T> HasJsonConversion<T>(this PropertyBuilder<T> property)

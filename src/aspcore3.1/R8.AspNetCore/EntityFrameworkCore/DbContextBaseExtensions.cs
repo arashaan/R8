@@ -20,7 +20,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             entity.IsDeleted = false;
             var entry = dbContext.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            dbContext.GenerateAudit(entry, AuditFlags.UnDeleted, frame);
+            dbContext.GenerateAudit(entry, AuditFlags.UnDeleted);
             return true;
         }
 
@@ -32,11 +32,11 @@ namespace R8.AspNetCore.EntityFrameworkCore
             entity.IsDeleted = !entity.IsDeleted;
             var entry = dbContext.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            dbContext.GenerateAudit(entry, flag, frame);
+            dbContext.GenerateAudit(entry, flag);
             return true;
         }
 
-        private static void GenerateAudit<TDbContext>(this TDbContext dbContext, EntityEntry entry, AuditFlags flag, StackFrame frame) where TDbContext : DbContextBase
+        private static void GenerateAudit<TDbContext>(this TDbContext dbContext, EntityEntry entry, AuditFlags flag) where TDbContext : DbContextBase
         {
             var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
             var httpContext = httpContextAccessor.HttpContext;
@@ -56,7 +56,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
             var entry = dbContext.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            dbContext.GenerateAudit(entry, AuditFlags.Changed, frame);
+            dbContext.GenerateAudit(entry, AuditFlags.Changed);
 
             return true;
         }
@@ -69,7 +69,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
             entity.IsDeleted = true;
             var entry = dbContext.Update(entity);
             var frame = new StackTrace().GetFrame(1);
-            dbContext.GenerateAudit(entry, AuditFlags.Deleted, frame);
+            dbContext.GenerateAudit(entry, AuditFlags.Deleted);
             return true;
         }
 
@@ -81,7 +81,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
             var entry = dbContext.Add(entity);
             var frame = new StackTrace().GetFrame(1);
-            dbContext.GenerateAudit(entry, AuditFlags.Created, frame);
+            dbContext.GenerateAudit(entry, AuditFlags.Created);
             return true;
         }
     }
