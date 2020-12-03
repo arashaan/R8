@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
 
-using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace R8.AspNetCore.FileHandlers
 {
-    internal static class FileHandlersConnection
+    public static class FileHandlersConnection
     {
         private static IServiceProvider _services;
 
@@ -19,6 +19,8 @@ namespace R8.AspNetCore.FileHandlers
             }
         }
 
-        public static FileHandlerConfiguration Options => _services.GetService<FileHandlerConfiguration>();
+        public static FileHandlerConfiguration Options => _services.GetService<FileHandlerConfiguration>()
+                                                          ?? throw new NullReferenceException(
+                                                              "File handlers required service must be registered.");
     }
 }

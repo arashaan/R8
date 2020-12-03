@@ -2,9 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <!--<LangVersion>8.0</LangVersion>-->
     <IsPackable>false</IsPackable>
-    <!--<IsTestProject>true</IsTestProject>-->
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +28,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.0" />
     <PackageReference Include="Moq" Version="4.15.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -40,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\demo\R8.AspNetCore.Demo\R8.AspNetCore.Demo.csproj" />
     <ProjectReference Include="..\..\src\aspcore3.1\R8.AspNetCore\R8.AspNetCore.csproj" />
   </ItemGroup>
 </Project>

@@ -115,9 +115,6 @@ namespace R8.AspNetCore.FileHandlers
                 return null;
 
             var options = FileHandlersConnection.Options;
-            if (options == null)
-                throw new NullReferenceException($"File handlers required service must be registered.");
-
             var environment = options.Environment;
             if (environment == null)
                 throw new NullReferenceException($"{nameof(AddFileHandlersExtensions.AddFileHandlers)} must be registered in dependencies injection.");
@@ -145,7 +142,14 @@ namespace R8.AspNetCore.FileHandlers
                             throw new NullReferenceException($"{nameof(IMyFileConfigurationImageBase)} must be added to configurations.");
 
                         imageConfig.WatermarkPath ??= imageConfiguration.WatermarkPath;
-                        imageConfig.ImageEncoder ??= imageConfiguration.ImageEncoder;
+
+                        if (imageConfig.ImageEncoder == null)
+                        {
+                            if (imageConfiguration.ImageEncoder == null)
+                                throw new NullReferenceException($"{nameof(IMyFileConfigurationImageBase.ImageEncoder)} has not to be null.");
+
+                            imageConfig.ImageEncoder = imageConfiguration.ImageEncoder;
+                        }
                         imageConfig.ResizeToSize ??= imageConfiguration.ResizeToSize;
 
                         file = await stream.SaveAsync(filename, imageConfig).ConfigureAwait(false);

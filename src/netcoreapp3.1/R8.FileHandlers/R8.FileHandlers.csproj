@@ -3,13 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.FileHandlers</PackageId>
-    <Version>1.9.3</Version>
+    <Version>1.10.9</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <LangVersion>8.0</LangVersion>
     <PackageDescription>Handle files easily</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -20,7 +21,7 @@
     <PackageReference Include="SharpZipLib" Version="1.3.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.2" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0010" />
-    <PackageReference Include="R8.Lib" Version="1.9.3" />
+    <PackageReference Include="R8.Lib" Version="1.10.9" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
     <PackageReference Include="Humanizer.Core" Version="2.8.26" />
   </ItemGroup>

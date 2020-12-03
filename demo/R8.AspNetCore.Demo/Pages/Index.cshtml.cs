@@ -35,5 +35,11 @@ namespace R8.AspNetCore.Demo.Pages
             var upload = await Test.UploadAsync();
             return RedirectToPage();
         }
+
+        public async Task<IActionResult> OnGetUpdateLocalizerAsync()
+        {
+            await Localizer.RefreshAsync(true);
+            return Page();
+        }
     }
 }

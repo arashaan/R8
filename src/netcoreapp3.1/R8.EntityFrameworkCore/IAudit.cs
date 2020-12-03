@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
-using System.Runtime.CompilerServices;
 
 namespace R8.EntityFrameworkCore
 {
@@ -11,16 +10,6 @@ namespace R8.EntityFrameworkCore
     /// </summary>
     public interface IAudit
     {
-        /// <summary>
-        /// Gets or sets calling method name based on <see cref="CallerMemberNameAttribute"/>.
-        /// </summary>
-        string CallingMethodName { get; }
-
-        /// <summary>
-        /// Gets of sets calling method path based on <see cref="CallerFilePathAttribute"/>.
-        /// </summary>
-        string CallingMethodPath { get; }
-
         /// <summary>
         /// Gets or sets a <see cref="long"/> value that representing Context-generated id for current instance.
         /// </summary>

@@ -1,11 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace R8.EntityFrameworkCore
 {
@@ -64,9 +63,8 @@ namespace R8.EntityFrameworkCore
         /// <param name="remoteIpAddress">A <see cref="IPAddress"/> object that representing what is user's remote ip address.</param>
         /// <param name="localIpAddress">A <see cref="IPAddress"/> object that representing what is user's local ip address.</param>
         /// <param name="userAgent">A <see cref="string"/> value that representing user-agent according to request.</param>
-        /// <param name="stackFrame">A <see cref="StackFrame"/> object that representing method caller.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag, Guid? userId, IPAddress remoteIpAddress, IPAddress localIpAddress, string userAgent, StackFrame stackFrame)
+        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag, Guid? userId, IPAddress remoteIpAddress, IPAddress localIpAddress, string userAgent)
         {
             if (entry == null)
                 throw new ArgumentNullException(nameof(entry));
@@ -74,12 +72,8 @@ namespace R8.EntityFrameworkCore
             if (!(entry.Entity is EntityBase entityBase))
                 return;
 
-            var caller = stackFrame?.GetMethod()?.Name;
-            var callerPath = stackFrame?.GetFileName();
-            var callerLine = stackFrame?.GetFileLineNumber() ?? 0;
-
             FindChanges(entry, out var oldValues, out var newValues);
-            var audit = new Audit(userId, remoteIpAddress, localIpAddress,userAgent, flag, entityBase.Id, caller, $"{callerPath}::{callerLine}", oldValues, newValues);
+            var audit = new Audit(userId, remoteIpAddress, localIpAddress, userAgent, flag, entityBase.Id, oldValues: oldValues, newValues: newValues);
             entityBase.Audits ??= new AuditCollection();
             entityBase.Audits.Add(audit);
         }

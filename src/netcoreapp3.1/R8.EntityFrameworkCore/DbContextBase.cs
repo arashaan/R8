@@ -18,8 +18,6 @@ namespace R8.EntityFrameworkCore
     /// </summary>
     public abstract class DbContextBase : DbContext
     {
-        public string ConnectionString => Database.GetConnectionString();
-
         protected DbContextBase() : this(new DbContextOptions<DbContextBase>())
         {
         }
@@ -54,7 +52,7 @@ namespace R8.EntityFrameworkCore
         {
             var remoteIpAddress = HttpExtensions.GetIPAddress();
             var localIpAddress = HttpExtensions.GetLocalIPAddress();
-            entry.GenerateAudit(flag, userId, remoteIpAddress, localIpAddress, null, frame);
+            entry.GenerateAudit(flag, userId, remoteIpAddress, localIpAddress, null);
         }
 
         public bool UnHide<TSource>(TSource entity, Guid userId) where TSource : IEntityBase

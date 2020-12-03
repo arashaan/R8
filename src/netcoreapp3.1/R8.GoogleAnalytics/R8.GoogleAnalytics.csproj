@@ -3,13 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>R8.GoogleAnalytics</PackageId>
-    <Version>1.9.1</Version>
+    <Version>1.10.0</Version>
     <Authors>Arash Shabbeh</Authors>
     <Company>iamr8</Company>
     <LangVersion>8.0</LangVersion>
     <PackageDescription>Handle files easily</PackageDescription>
     <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>

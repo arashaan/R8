@@ -398,7 +398,7 @@ namespace R8.FileHandlers
 
             if (overwriteFile)
             {
-                if (test) 
+                if (test)
                     return new MyFile(filename);
 
                 await using var fileStream = new FileStream(filename, FileMode.OpenOrCreate);
@@ -413,7 +413,7 @@ namespace R8.FileHandlers
                 if (checkForDuplication)
                     filename = Extensions.GetUniqueFileName(filename);
 
-                if (test) 
+                if (test)
                     return new MyFile(filename);
 
                 await using var fileStream = new FileStream(filename, FileMode.Create);
@@ -449,6 +449,7 @@ namespace R8.FileHandlers
         /// <exception cref="NotSupportedException"></exception>
         /// <exception cref="UnknownImageFormatException"></exception>
         /// <exception cref="InvalidImageContentException"></exception>
+        /// <exception cref="ObjectDisposedException"></exception>
         public static async Task<IMyFile?> SaveImageAsync(this Stream stream, string name, MyFileConfigurationImage config)
         {
             if (stream == null)
@@ -459,8 +460,10 @@ namespace R8.FileHandlers
             stream.Position = 0;
             stream.Seek(0, SeekOrigin.Begin);
 
-            using var image = await Image.LoadAsync(stream).ConfigureAwait(false);
-            return await image.SaveImageAsync(name, config).ConfigureAwait(false);
+            var image = await Image.LoadAsync(stream).ConfigureAwait(false);
+            var file = await image.SaveImageAsync(name, config).ConfigureAwait(false);
+            image.Dispose();
+            return file;
         }
 
         /// <summary>

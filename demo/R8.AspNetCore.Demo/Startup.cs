@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 using Humanizer.Localisation;
@@ -9,17 +11,21 @@ using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using R8.AspNetCore.Demo.Pages;
+using R8.AspNetCore.Demo.Services.Database;
 using R8.AspNetCore.Demo.Services.Globalization;
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.ModelBinders;
 using R8.AspNetCore.Routing;
+using R8.EntityFrameworkCore;
 using R8.Lib;
 using R8.Lib.Localization;
 
@@ -41,9 +47,11 @@ namespace R8.AspNetCore.Demo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCustomPooledDbContextFactory<ApplicationDbContext>(options =>
-            //    options.ConnectionString =
-            //        "Data Source=mssql10.trwww.com;Initial Catalog=ecohosco__DB;User ID=eCoDbaSeHOs;Password=?fs7e9M9;MultipleActiveResultSets=True;App=EntityFramework;integrated security=False");
+            var appDbContextConnectionString = Configuration
+                .GetConnectionString("ApplicationDbContextConnection");
+
+            services.AddCustomPooledDbContextFactory<ApplicationDbContext>(options =>
+                options.ConnectionString = appDbContextConnectionString);
 
             services.AddLocalization(options => options.ResourcesPath = nameof(Resources))
                 .Configure<RequestLocalizationOptions>(options =>
@@ -54,14 +62,6 @@ namespace R8.AspNetCore.Demo
                         RouteDataStringKey = LanguageRouteConstraint.Key,
                         Options = options
                     });
-
-                    //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
-                    //{
-                    //    var userLang = context.Request.Headers[HeaderNames.AcceptLanguage].ToString();
-                    //    var firstLang = userLang.Split(",").FirstOrDefault();
-                    //    var defaultLang = string.IsNullOrEmpty(firstLang) ? "tr" : firstLang;
-                    //    return Task.FromResult(new ProviderCultureResult(defaultLang, defaultLang));
-                    //}));
                 });
 
             services
@@ -96,6 +96,9 @@ namespace R8.AspNetCore.Demo
                     options.JsonSerializerOptions.DictionaryKeyPolicy = null;
                 });
 
+            services.AddDistributedMemoryCache();
+            services.AddMemoryCache();
+
             services.AddHttpContextAccessor();
             services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
             services.AddTransient<IApplicationBuilder, ApplicationBuilder>();
@@ -107,23 +110,43 @@ namespace R8.AspNetCore.Demo
             });
 
             services.AddScoped<ICulturalizedUrlHelper, CulturalizedUrlHelper>();
-            // services.AddTransient<ApplicationDbContext>();
+            services.AddTransient<ApplicationDbContext>();
+
             //services.AddLocalizer((serviceProvider, config) =>
             //{
             //    using var scope = serviceProvider.CreateScope();
-            //    var localizationOptions = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>().Value;
-            //    config.SupportedCultures = localizationOptions.SupportedCultures.ToList();
+            //    var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
+
+            //    config.SupportedCultures = request.Value.SupportedCultures.ToList();
             //    config.UseMemoryCache = true;
             //    config.Provider = new LocalizerCustomProvider
             //    {
-            //        DictionaryAsync = async provider =>
+            //        DictionaryAsync = async () =>
             //        {
-            //            await using var dbContext = serviceProvider.GetService<ApplicationDbContext>();
-            //            return await dbContext.Translation
-            //                .AsNoTracking()
-            //                .Cacheable()
-            //                .ToDictionaryAsync(x => x.Key, x => x.Name);
-            //        },
+            //            var dictionary = new Dictionary<string, LocalizerContainer>();
+            //            await using var connection = new SqlConnection(appDbContextConnectionString);
+            //            const string queryRaw = @"SELECT [Key], [IsDeleted], [Name]
+            //                             FROM [Translations]
+            //                             WHERE [IsDeleted] <> CAST(1 AS bit)
+            //                             ORDER BY [Key]";
+            //            var cmd = new SqlCommand(queryRaw, connection);
+            //            connection.Open();
+            //            var reader = await cmd.ExecuteReaderAsync();
+            //            while (reader.HasRows)
+            //            {
+            //                while (reader.Read())
+            //                {
+            //                    var key = reader.GetString("Key");
+            //                    var containerJson = reader.GetString("Name");
+            //                    var container = LocalizerContainer.Deserialize(containerJson);
+            //                    dictionary.Add(key, container);
+            //                }
+            //                reader.NextResult();
+            //            }
+
+            //            connection.Close();
+            //            return dictionary;
+            //        }
             //    };
             //});
             services.AddLocalizer((serviceProvider, config) =>
@@ -133,7 +156,7 @@ namespace R8.AspNetCore.Demo
 
                 config.SupportedCultures = localizationOptions.SupportedCultures.ToList();
                 config.UseMemoryCache = true;
-                // config.CacheSlidingExpiration = TimeSpan.FromDays(3);
+                config.CacheSlidingExpiration = TimeSpan.FromDays(3);
                 config.Provider = new LocalizerJsonProvider
                 {
                     Folder = "E:/Work/Develope/Ecohos/Ecohos.Presentation/Dictionary",
@@ -145,8 +168,8 @@ namespace R8.AspNetCore.Demo
             {
                 options.Path = "/uploads";
                 options.HierarchicallyDateFolders = true;
-                options.SaveAsRealName = false;
-                options.OverwriteExistingFile = false;
+                options.SaveAsRealName = true;
+                options.OverwriteExistingFile = true;
                 options.Runtimes.Add(new FileHandlerImageRuntime
                 {
                     ImageEncoder = new PngEncoder()
@@ -167,14 +190,12 @@ namespace R8.AspNetCore.Demo
             else
             {
                 app.UseExceptionHandler(typeof(ErrorModel).GetPagePath());
-                // app.UseHsts();
-                // app.UseHttpsRedirection();
             }
 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            // app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
+            app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
             ServiceActivator.Configure(app.ApplicationServices);
 
             app.UseLocalizer();

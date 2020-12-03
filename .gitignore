@@ -344,3 +344,11 @@ healthchecksdb
 gsdll64.dll
 /test/R8.FileHandlers.Test/assets
 /R8.GoogleAnalytics.Test/google.json
+*/google.json
+*/appsettings.json
+*/appsettings.Development.json
+/demo/R8.AspNetCore.Demo/appsettings.json
+/demo/R8.AspNetCore.Demo/appsettings.Development.json
+/test/R8.GoogleAnalytics.Test/google.json
+/demo/R8.AspNetCore.Demo/Services/Database
+/demo/R8.AspNetCore.Demo/wwwroot/uploads/2020/12/02

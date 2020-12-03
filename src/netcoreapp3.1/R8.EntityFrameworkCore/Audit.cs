@@ -31,39 +31,18 @@ namespace R8.EntityFrameworkCore
         /// <param name="userAgent">A <see cref="string"/> that representing current <see cref="HttpRequest"/>'s user agent.</param>
         /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of current instance.</param>
         /// <param name="rowId">A <see cref="Guid"/> value that representing id of specific entity that changed.</param>
-        /// <param name="callingMethodName">A <see cref="string"/> value that representing method or member name that prepared to change data.</param>
-        /// <param name="callingMethodPath">A <see cref="string"/> value that representing file path of method or member name that prepared to change data.</param>
         /// <param name="oldValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been changed.</param>
         /// <param name="newValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been replaces with old values.</param>
-        public Audit(Guid? userId, IPAddress remoteIpAddress, IPAddress localIpAddress, string userAgent, AuditFlags flag, Guid rowId,
-            string callingMethodName, string callingMethodPath, Dictionary<string, object> oldValues = null,
-            Dictionary<string, object> newValues = null) : this(userId, flag, rowId, callingMethodName,
-            callingMethodPath, oldValues, newValues)
-        {
-            RemoteIpAddress = remoteIpAddress;
-            LocalIpAddress = localIpAddress;
-            UserAgent = userAgent;
-        }
-
-        /// <summary>
-        /// An object to track creation, modification, and deletion of specific entity.
-        /// </summary>
-        /// <param name="userId">A <see cref="Nullable{TResult}"/> type of <see cref="Guid"/> that representing Internal ID of specific user that did changes.</param>
-        /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of current instance.</param>
-        /// <param name="rowId">A <see cref="Guid"/> value that representing id of specific entity that changed.</param>
-        /// <param name="callingMethodName">A <see cref="string"/> value that representing method or member name that prepared to change data.</param>
-        /// <param name="callingMethodPath">A <see cref="string"/> value that representing file path of method or member name that prepared to change data.</param>
-        /// <param name="oldValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been changed.</param>
-        /// <param name="newValues">A <see cref="Dictionary{TKey,TValue}"/> that representing a dictionary of values that has been replaces with old values.</param>
-        public Audit(Guid? userId, AuditFlags flag, Guid rowId, string callingMethodName, string callingMethodPath, Dictionary<string, object> oldValues = null, Dictionary<string, object> newValues = null) : this()
+        public Audit(Guid? userId, IPAddress remoteIpAddress, IPAddress localIpAddress, string userAgent, AuditFlags flag, Guid rowId, Dictionary<string, object> oldValues = null, Dictionary<string, object> newValues = null) : this()
         {
             UserId = userId;
             Flag = flag;
             DateTime = DateTime.UtcNow;
             Culture = CultureInfo.CurrentCulture;
             RowId = rowId;
-            CallingMethodName = callingMethodName;
-            CallingMethodPath = callingMethodPath;
+            RemoteIpAddress = remoteIpAddress;
+            LocalIpAddress = localIpAddress;
+            UserAgent = userAgent;
             OldValues = oldValues ?? new Dictionary<string, object>();
             NewValues = newValues ?? new Dictionary<string, object>();
         }
@@ -76,10 +55,6 @@ namespace R8.EntityFrameworkCore
 
         [JsonConverter(typeof(AuditIPAddressConverter))]
         public IPAddress LocalIpAddress { get; set; }
-
-        public string CallingMethodName { get; set; }
-
-        public string CallingMethodPath { get; set; }
 
         public long Id { get; set; }
 

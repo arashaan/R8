@@ -12,8 +12,12 @@ using R8.Lib.MethodReturn;
 
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace R8.EntityFrameworkCore
 {
@@ -48,7 +52,12 @@ namespace R8.EntityFrameworkCore
 
         internal static string GetTableName(this EntityEntry entry)
         {
-            var entityType = entry.Context.Model.FindEntityType(entry.Entity.GetType());
+            return entry.Context.GetTableName(entry.Entity.GetType());
+        }
+
+        internal static string GetTableName<TDbContext>(this TDbContext context, Type entity) where TDbContext : DbContext
+        {
+            var entityType = context.Model.FindEntityType(entity);
             return entityType.GetTableName();
         }
 
@@ -71,9 +80,13 @@ namespace R8.EntityFrameworkCore
 
         public static void ConfigureAuditCollection<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
         {
+            var tableName = builder.Metadata.AsEntityType().GetTableName();
+            var pluralizeAudit = nameof(Audit).Pluralize();
             builder.OwnsMany(x => x.Audits, action =>
             {
                 action.WithOwner().HasForeignKey(x => x.RowId);
+                action.IsMemoryOptimized();
+                action.ToTable($"{tableName}_{pluralizeAudit}");
                 action.HasKey(x => x.Id);
                 action.Property(x => x.Id).ValueGeneratedOnAdd();
                 action.Property(x => x.Culture).HasCultureConversion();

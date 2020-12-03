@@ -43,6 +43,11 @@ namespace R8.AspNetCore.TagBuilders
                 output.Attributes.Insert(0, new TagHelperAttribute("name", bindPropertyAttribute.Name));
         }
 
+        /// <summary>
+        /// Returns a generated instance of <see cref="ITagBuilder"/> by given html string.
+        /// </summary>
+        /// <param name="tag">An specific html string that representing an html tag.</param>
+        /// <returns>An <see cref="ITagBuilder"/> object.</returns>
         public static ITagBuilder GetTagBuilder(this IHtmlContent tag)
         {
             var contentToStr = tag.GetString();
@@ -51,6 +56,11 @@ namespace R8.AspNetCore.TagBuilders
             return result;
         }
 
+        /// <summary>
+        /// Returns a collection of generated instance of <see cref="ITagBuilder"/> by given html string.
+        /// </summary>
+        /// <param name="tag">An specific html string that representing an list of html tags.</param>
+        /// <returns>An <see cref="ITagBuilderCollection"/> object.</returns>
         public static ITagBuilderCollection GetTagBuilders(this IHtmlContent tag)
         {
             var contentToStr = tag.GetString();
@@ -59,21 +69,35 @@ namespace R8.AspNetCore.TagBuilders
             return result;
         }
 
+        /// <summary>
+        /// Returns a generated instance of <see cref="ITagBuilder"/> by given html string.
+        /// </summary>
+        /// <param name="tag">An specific html string that representing an html tag.</param>
+        /// <returns>An <see cref="ITagBuilder"/> object.</returns>
         public static ITagBuilder GetTagBuilder(this Func<string, IHtmlContent> tag)
         {
+            if (tag == null)
+                throw new ArgumentNullException(nameof(tag));
+
             var contentToStr = tag.Invoke("").GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
             var result = GetTagBuilder(decoded);
             return result;
         }
 
+        /// <summary>
+        /// Returns a collection of generated instance of <see cref="ITagBuilder"/> by given html string.
+        /// </summary>
+        /// <param name="html">An specific html string that representing an list of html tags.</param>
+        /// <returns>An <see cref="ITagBuilderCollection"/> object.</returns>
         public static ITagBuilderCollection GetTagBuilders(string html)
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
 
             var result = new TagBuilderCollection();
-            if (doc.DocumentNode?.ChildNodes == null || !doc.DocumentNode.ChildNodes.Any() || doc.DocumentNode.ChildNodes.All(x => x.NodeType != HtmlNodeType.Element))
+            if (doc.DocumentNode?.ChildNodes == null || !doc.DocumentNode.ChildNodes.Any() ||
+                doc.DocumentNode.ChildNodes.All(x => x.NodeType != HtmlNodeType.Element))
                 return result;
 
             foreach (var node in doc.DocumentNode.ChildNodes)
@@ -94,29 +118,32 @@ namespace R8.AspNetCore.TagBuilders
             return result;
         }
 
-        //public static ITagBuilder GetTagBuilder(this HtmlNode node)
-        //{
-        //    if (node.NodeType != HtmlNodeType.Element)
-        //        return null;
-
-        //    var tagBuilder = new TagBuilderWithUnderlying(node.Name);
-        //    tagBuilder.MergeAttributes(node.Attributes.ToDictionary(x => x.Name, x => x.Value));
-        //    tagBuilder.InnerHtml.AppendHtml(node.InnerHtml);
-
-        //    if (tagBuilder.HasInnerHtml)
-        //        tagBuilder.Nodes = GetTagBuilders(tagBuilder.InnerHtml);
-
-        //    return tagBuilder;
-        //}
-
+        /// <summary>
+        /// Returns an <see cref="ITagBuilder"/> object from given html tag.
+        /// </summary>
+        /// <param name="html">A <see cref="string"/> value that representing an html tag.</param>
+        /// <returns>A <see cref="ITagBuilder"/> object.</returns>
         public static ITagBuilder GetTagBuilder(string html)
         {
+            if (html == null)
+                return null;
+
             var node = GetTagBuilders(html);
-            return node?.Nodes?.First();
+            var nodes = node?.Nodes;
+            var firstNode = nodes?.FirstOrDefault();
+            return firstNode;
         }
 
+        /// <summary>
+        /// Returns a rendered html string of given <see cref="IHtmlContent"/> value.
+        /// </summary>
+        /// <param name="content">A <see cref="IHtmlContent"/> value that representing html string.</param>
+        /// <returns>A <see cref="string"/> value.</returns>
         public static string GetString(this IHtmlContent content)
         {
+            if (content == null)
+                return null;
+
             using var writer = new Utf8StringWriter();
             content.WriteTo(writer, HtmlEncoder.Default);
             return writer.ToString();
@@ -175,6 +202,12 @@ namespace R8.AspNetCore.TagBuilders
             return createdTag;
         }
 
+        /// <summary>
+        /// Replaces an html string contents with given dictionary of tags.
+        /// </summary>
+        /// <param name="htmlDecodedText">A <see cref="string"/> value that representing non-encoded html string.</param>
+        /// <param name="tags">A <see cref="Dictionary{TKey,TValue}"/> that representing tags to be replaces with given <see cref="htmlDecodedText"/>.</param>
+        /// <returns>A <see cref="HtmlString"/> object.</returns>
         public static HtmlString ReplaceHtmlByTagName(this string htmlDecodedText, Dictionary<string, Func<string, IHtmlContent>> tags)
         {
             if (string.IsNullOrEmpty(htmlDecodedText))

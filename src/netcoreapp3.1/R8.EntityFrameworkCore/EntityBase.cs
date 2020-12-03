@@ -32,8 +32,6 @@ namespace R8.EntityFrameworkCore
     /// </summary>
     public abstract class EntityBase<TEntity> : EntityBase, IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityBase
     {
-        public static string GetTableName() => typeof(TEntity).Name.Pluralize();
-
         public virtual void Configure(EntityTypeBuilder<TEntity> builder) => builder
             .ApplyConfiguration()
             .ConfigureAuditCollection();
