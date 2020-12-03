@@ -40,12 +40,12 @@ namespace R8.AspNetCore.EntityFrameworkCore
         {
             var httpContextAccessor = dbContext.GetService<IHttpContextAccessor>();
             var httpContext = httpContextAccessor.HttpContext;
-            var removeIpAddress = httpContext?.Connection.RemoteIpAddress ?? IPAddress.None;
+            var remoteIpAddress = httpContext?.Connection.RemoteIpAddress ?? IPAddress.None;
             var localIpAddress = httpContext?.Connection.LocalIpAddress ?? IPAddress.None;
             var userId = httpContext.GetAuthenticatedUser()?.Id;
             var userAgent = httpContext?.Request?.Headers["User-Agent"];
 
-            entry.GenerateAudit(flag, userId, removeIpAddress, localIpAddress, userAgent, frame);
+            entry.GenerateAudit(flag, userId, remoteIpAddress, localIpAddress, userAgent);
         }
 
         public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : IEntityBase
