@@ -1,10 +1,7 @@
-﻿using Newtonsoft.Json;
-
-using R8.Lib.Localization;
+﻿using R8.Lib;
 using R8.Lib.MethodReturn;
-using R8.Lib.Test.Enums;
 
-namespace R8.Lib.Test.MethodTests
+namespace R8.AspNetCore.Test.ILocalizer
 {
     public class FakeResponse : ResponseBase<Flags>
     {
@@ -12,7 +9,7 @@ namespace R8.Lib.Test.MethodTests
         {
         }
 
-        public FakeResponse(ILocalizer localizer) : base(localizer)
+        public FakeResponse(Lib.Localization.ILocalizer localizer) : base(localizer)
         {
         }
 
@@ -31,8 +28,6 @@ namespace R8.Lib.Test.MethodTests
 
         public override bool Success => Status == Flags.Success;
         public override Flags Status { get; set; }
-
-        [JsonIgnore]
         public override ValidatableResultCollection Errors { get; protected set; }
 
         public override void SetStatus(Flags status)
@@ -47,7 +42,7 @@ namespace R8.Lib.Test.MethodTests
         {
         }
 
-        public FakeResponse(ILocalizer localizer) : base(localizer)
+        public FakeResponse(Lib.Localization.ILocalizer localizer) : base(localizer)
         {
         }
 
@@ -65,8 +60,6 @@ namespace R8.Lib.Test.MethodTests
         }
 
         public override Flags Status { get; set; }
-
-        [JsonIgnore]
         public override ValidatableResultCollection Errors { get; protected set; }
 
         public override void SetStatus(Flags status)

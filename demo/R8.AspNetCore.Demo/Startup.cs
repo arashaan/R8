@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 
 using Humanizer.Localisation;
@@ -11,7 +9,6 @@ using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -199,6 +196,7 @@ namespace R8.AspNetCore.Demo
             ServiceActivator.Configure(app.ApplicationServices);
 
             app.UseLocalizer();
+            app.UseResponse();
             app.UseFileHandlers();
 
             app.UseEndpoints(endpoints =>

@@ -67,7 +67,7 @@ namespace R8.EntityFrameworkCore
             return true;
         }
 
-        public virtual bool TryValidate(IResponseTrack response, out ValidatableResultCollection errors)
+        public virtual bool TryValidate(IResponseErrors response, out ValidatableResultCollection errors)
         {
             if (response == null)
                 throw new ArgumentNullException(nameof(response));
@@ -75,10 +75,10 @@ namespace R8.EntityFrameworkCore
             errors = new ValidatableResultCollection();
             switch (response)
             {
-                case ResponseCollection responseGroup when responseGroup.Results?.Any() != true:
+                case ResponseBaseCollection<object> responseGroup when responseGroup.Results?.Any() != true:
                     return !errors.Any();
 
-                case ResponseCollection responseGroup:
+                case ResponseBaseCollection<object> responseGroup:
                     {
                         var results = from childResponse in responseGroup.Results
                                       let childEntity = GetIResponseUnderlyingEntity(childResponse.Value)
@@ -97,7 +97,7 @@ namespace R8.EntityFrameworkCore
 
                         break;
                     }
-                case IResponseBaseDatabase responseDatabase:
+                case IResponseBaseDatabase<object> responseDatabase:
                     {
                         var childEntity = GetIResponseUnderlyingEntity(responseDatabase);
                         if (childEntity != null)
@@ -120,12 +120,12 @@ namespace R8.EntityFrameworkCore
             return !errors.Any();
         }
 
-        private static object? GetIResponseUnderlyingEntity(IResponseBase childResponseBase)
+        private static object? GetIResponseUnderlyingEntity(IResponseBase<object> childResponseBase)
         {
             if (childResponseBase.GetType() != typeof(ResponseBase<>))
                 return null;
 
-            var childEntityProp = childResponseBase.GetType().GetProperty(nameof(ResponseBase<IEntityBase>.Result));
+            var childEntityProp = childResponseBase.GetType().GetProperty(nameof(ResponseBase<IEntityBase, object>.Result));
             return childEntityProp?.GetValue(childResponseBase);
         }
 

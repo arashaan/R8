@@ -3,27 +3,27 @@ using R8.Lib.Localization;
 
 namespace R8.Lib.MethodReturn
 {
-    public abstract class ResponseBaseDatabase : ResponseBase, IResponseBaseDatabase
+    public abstract class ResponseBaseDatabase<TStatus> : ResponseBase<TStatus>, IResponseBaseDatabase<TStatus>
     {
-        protected ResponseBaseDatabase()
+        public ResponseBaseDatabase()
         {
         }
 
-        protected ResponseBaseDatabase(ILocalizer localizer) : base(localizer)
+        public ResponseBaseDatabase(ILocalizer localizer) : base(localizer)
         {
         }
 
-        protected ResponseBaseDatabase(object status) : base(status)
+        public ResponseBaseDatabase(TStatus status) : base(status)
         {
         }
 
-        protected ResponseBaseDatabase(object status, ValidatableResultCollection errors) : base(status, errors)
+        public ResponseBaseDatabase(TStatus status, ValidatableResultCollection errors) : base(status, errors)
         {
         }
 
-        public DatabaseSaveState? Save { get; set; }
+        public virtual DatabaseSaveState? Save { get; set; }
 
-        public bool Success => IsSaveSuccessful(Save);
+        public virtual bool Success => IsSaveSuccessful(Save);
 
         public static bool IsSaveSuccessful(DatabaseSaveState? saveState)
         {

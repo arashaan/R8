@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Collections.Generic;
+
+using Microsoft.AspNetCore.Hosting;
 
 using R8.FileHandlers;
-
-using System.Collections.Generic;
 
 namespace R8.AspNetCore.FileHandlers
 {
@@ -27,10 +27,5 @@ namespace R8.AspNetCore.FileHandlers
         /// Gets or sets configurations.
         /// </summary>
         public List<IMyFileRuntime> Runtimes { get; set; } = new List<IMyFileRuntime>();
-
-        //internal void SetWebHost(IWebHostEnvironment env)
-        //{
-        //    Environment = env;
-        //}
     }
 }

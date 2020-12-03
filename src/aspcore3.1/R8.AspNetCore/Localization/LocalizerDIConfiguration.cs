@@ -1,13 +1,75 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Builder;
 
 using R8.Lib.Localization;
+using R8.Lib.MethodReturn;
 
 namespace R8.AspNetCore.Localization
 {
     public static class LocalizerDiConfiguration
     {
+        public static async Task InitializeLocalizerAsync(this ILocalizer localizer)
+        {
+            var provider = localizer.Configuration.Provider;
+            if (provider is LocalizerCustomProvider customProvider)
+            {
+                if (customProvider.DictionaryAsync != null)
+                {
+                    await localizer.RefreshAsync();
+                }
+                else
+                {
+                    if (customProvider.Dictionary != null)
+                    {
+                        localizer.Refresh();
+                    }
+                    else
+                    {
+                        throw new NullReferenceException($"Either {nameof(LocalizerCustomProvider.Dictionary)} or {nameof(LocalizerCustomProvider.DictionaryAsync)} must be filled.");
+                    }
+                }
+            }
+            else
+            {
+                await localizer.RefreshAsync();
+            }
+        }
+
+        public static void InitializeLocalizer(this ILocalizer localizer)
+        {
+            var provider = localizer.Configuration.Provider;
+            if (provider is LocalizerCustomProvider customProvider)
+            {
+                if (customProvider.DictionaryAsync != null)
+                {
+                    localizer.RefreshAsync().GetAwaiter().GetResult();
+                }
+                else
+                {
+                    if (customProvider.Dictionary != null)
+                    {
+                        localizer.Refresh();
+                    }
+                    else
+                    {
+                        throw new NullReferenceException($"Either {nameof(LocalizerCustomProvider.Dictionary)} or {nameof(LocalizerCustomProvider.DictionaryAsync)} must be filled.");
+                    }
+                }
+            }
+            else
+            {
+                localizer.RefreshAsync().GetAwaiter().GetResult();
+            }
+        }
+
+        public static IApplicationBuilder UseResponse(this IApplicationBuilder app)
+        {
+            ResponseConnection.Services = app.ApplicationServices;
+            return app;
+        }
+
         public static IApplicationBuilder UseLocalizer(this IApplicationBuilder app)
         {
             app.Use(async (context, next) =>
@@ -15,30 +77,7 @@ namespace R8.AspNetCore.Localization
                 if (!(context.RequestServices.GetService(typeof(ILocalizer)) is ILocalizer localizer))
                     throw new NullReferenceException($"{nameof(ILocalizer)} must be registered as a service.");
 
-                var provider = localizer.Configuration.Provider;
-                if (provider is LocalizerCustomProvider customProvider)
-                {
-                    if (customProvider.DictionaryAsync != null)
-                    {
-                        await localizer.RefreshAsync();
-                    }
-                    else
-                    {
-                        if (customProvider.Dictionary != null)
-                        {
-                            localizer.Refresh();
-                        }
-                        else
-                        {
-                            throw new NullReferenceException($"Either {nameof(LocalizerCustomProvider.Dictionary)} or {nameof(LocalizerCustomProvider.DictionaryAsync)} must be filled.");
-                        }
-                    }
-                }
-                else
-                {
-                    await localizer.RefreshAsync();
-                }
-
+                await localizer.InitializeLocalizerAsync();
                 await next();
             });
 

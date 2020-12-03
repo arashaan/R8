@@ -1,6 +1,6 @@
 ﻿namespace R8.Lib.MethodReturn
 {
-    public interface IResponseTrack
+    public interface IResponseErrors
     {
         ValidatableResultCollection Errors { get; }
     }

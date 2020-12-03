@@ -352,3 +352,5 @@ gsdll64.dll
 /test/R8.GoogleAnalytics.Test/google.json
 /demo/R8.AspNetCore.Demo/Services/Database
 /demo/R8.AspNetCore.Demo/wwwroot/uploads/2020/12/02
+*/uploads
+/demo/R8.AspNetCore.Demo/wwwroot/uploads

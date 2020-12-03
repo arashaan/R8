@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Humanizer;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using Newtonsoft.Json;
+
 using R8.Lib;
 
 namespace R8.EntityFrameworkCore

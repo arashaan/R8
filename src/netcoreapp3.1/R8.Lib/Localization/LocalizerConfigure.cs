@@ -26,18 +26,18 @@ namespace R8.Lib.Localization
                 return instance;
             });
 
-            services.AddTransient<IResponseStatus>(serviceProvider =>
-            {
-                using var scope = serviceProvider.CreateScope();
-
-                var localizer = scope.ServiceProvider.GetService<ILocalizer>();
-                if (localizer == null)
-                    throw new NullReferenceException($"Can't find {nameof(ILocalizer)} related service");
-
-                var obj = new ResponseStatus();
-                obj.SetLocalizer(localizer);
-                return obj;
-            });
+            // services.AddTransient<IResponseStatus>(serviceProvider =>
+            // {
+            //     using var scope = serviceProvider.CreateScope();
+            //
+            //     var localizer = scope.ServiceProvider.GetService<ILocalizer>();
+            //     if (localizer == null)
+            //         throw new NullReferenceException($"Can't find {nameof(ILocalizer)} related service");
+            //
+            //     var obj = new ResponseStatus();
+            //     obj.SetLocalizer(localizer);
+            //     return obj;
+            // });
             return services;
         }
     }

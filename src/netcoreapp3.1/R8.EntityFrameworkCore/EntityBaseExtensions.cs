@@ -1,55 +1,22 @@
-﻿using Humanizer;
+﻿using System;
+using System.Globalization;
+
+using Humanizer;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 using Newtonsoft.Json;
 
 using R8.Lib.Localization;
-using R8.Lib.MethodReturn;
-
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace R8.EntityFrameworkCore
 {
     public static class EntityBaseExtensions
     {
-        /// <summary>
-        /// Saves changes that occurred in <see cref="TModel"/> to Database
-        /// </summary>
-        /// <typeparam name="TModel">A generic type of <see cref="IResponseBaseDatabase"/>.</typeparam>
-        /// <typeparam name="TDbContext">A generic type of <see cref="DbContextBase"/>.</typeparam>
-        /// <param name="model">A model that contains trackable data.</param>
-        /// <param name="dbContext">An instance of DbContext</param>
-        public static void SaveDatabase<TModel, TDbContext>(this TModel model, TDbContext dbContext)
-            where TModel : IResponseBaseDatabase where TDbContext : DbContextBase
-        {
-            model.Save = dbContext.SaveChanges();
-        }
-
-        /// <summary>
-        /// Saves changes that occurred in <see cref="TModel"/> to Database
-        /// </summary>
-        /// <typeparam name="TModel">A generic type of <see cref="IResponseBaseDatabase"/>.</typeparam>
-        /// <typeparam name="TDbContext">A generic type of <see cref="DbContextBase"/>.</typeparam>
-        /// <param name="model">A model that contains trackable data.</param>
-        /// <param name="dbContext">An instance of DbContext</param>
-        /// <returns>A <see cref="Task"/> value that representing asynchronous operation.</returns>
-        public static async Task SaveDatabaseAsync<TModel, TDbContext>(this TModel model, TDbContext dbContext, CancellationToken cancellationToken = default)
-            where TModel : IResponseBaseDatabase where TDbContext : DbContextBase
-        {
-            model.Save = await dbContext.SaveChangesAsync(cancellationToken);
-        }
-
         internal static string GetTableName(this EntityEntry entry)
         {
             return entry.Context.GetTableName(entry.Entity.GetType());

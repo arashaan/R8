@@ -2,9 +2,8 @@
 
 namespace R8.Lib.MethodReturn
 {
-    public interface IResponseBaseDatabase : IResponseBase
+    public interface IResponseBaseDatabase<TStatus> : IResponseBase<TStatus>
     {
         DatabaseSaveState? Save { get; set; }
-        bool Success { get; }
     }
 }

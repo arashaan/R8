@@ -5,7 +5,7 @@ using R8.Lib.MethodReturn;
 
 namespace R8.AspNetCore.Demo.Services
 {
-    public class Response : ResponseBase
+    public class Response : ResponseBase<Flags>
     {
         public Response()
         {
@@ -27,12 +27,19 @@ namespace R8.AspNetCore.Demo.Services
         {
         }
 
-        public new Flags Status { get; set; }
+        public Flags Status { get; set; }
 
-        public string Message { get; set; }
+        public string Message
+        {
+            get
+            {
+                var localizer = this.GetLocalizer();
+                return localizer != null ? localizer[Status.ToString()] : Status.ToString();
+            }
+        }
     }
 
-    public class Response<TSource> : ResponseBase<TSource> where TSource : class
+    public class Response<TSource> : ResponseBase<TSource, Flags> where TSource : class
     {
         public Response()
         {
@@ -68,14 +75,21 @@ namespace R8.AspNetCore.Demo.Services
             source = this.Result;
         }
 
-        // [Obsolete("Use '.ToResponse<TSource>()' instead.")]
         public static Response<TSource> FromValidatableObject<T>(T obj) where T : ValidatableObject
         {
             return obj.ToResponse<TSource>();
         }
 
-        public new Flags Status { get; set; }
-        public string Message { get; set; }
+        public Flags Status { get; set; }
+
+        public string Message
+        {
+            get
+            {
+                var localizer = this.GetLocalizer();
+                return localizer != null ? localizer[Status.ToString()] : Status.ToString();
+            }
+        }
     }
 
     public static class ResponseExtensions
