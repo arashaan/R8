@@ -494,6 +494,17 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public void CallGetLocale_HtmlType_Complicated()
+        {
+            // Assets
+            var turkishCulture = CultureInfo.GetCultureInfo("tr");
+            var model = new LocalizerContainer { [turkishCulture] = "<0>Emlak Reklam Kuralları</0><1><2>ECOHOS'un reklam yayınlama sürecini kolaylaştırmak ve hızlandırmak için bazı durumlarda reklam metninizi veya ayrıntılarınızı kurallara göre ayrıntılı olarak değiştirebileceğini İzin veriyorum.</2><2>Reklamın sahibi, kaydettiği reklamın içeriğinin güncel ve doğru bilgiler içermesini ve söz konusu içeriğin reklamın hüküm ve koşulları için geçerli olmasını sağlamalıdır. Reklamın içeriğiyle ilgili tüm sorumluluklar reklamın sahibine aittir. </2><2>Reklam sahibinin, yabancı müşterinin iç ve dış özelliklerini ve mülkün çevresindeki ortamı daha iyi anlamak için diğer ayrıntıları doğru ve eksiksiz olarak kaydetmesi gerekir. Bunu yapmak, reklamın emlak arama sayfasında % 80'e kadar daha iyi görüntülenme olasılığını kesinlikle artıracaktır. </2><2>Reklam fotoğrafları yalnızca en az 600 x 600 piksel boyutunda yuklemeniz gerekmektedir. Logo, telefon numarası, kartvizit resmi, resimlerde gorunmesi kesinlikle yasaktir. Diger web sitesine yüklenen fotoğraflarda ot...nen ve güncellenen www.ecohos.com'a bir reklam gönderilmesiyle takip edileceğini kabul ve beyan edir. </2><2>Satılan veya eski reklamlar, sahibinin tarafından arşivlenmelidir. Ayrıca, reklamın yayınlanmasından 30 gün sonra, söz konusu mülkün satışa hazır olduğunu belirten, web sitesinin mülk bilgilerini güncellemek için reklamın sahibine bir e-posta gönderilecektir. </2><2>Bu kurallara uymayan reklam verenlerin reklam içeriğinin bir kısmı veya tamamı kaldırılmış ve kara listeye alınmış olabilecektir ve üyelik sözleşmelerinin ECOHOS tarafından tek taraflı olarak feshedilmesi mümkündür.</2></1><0>Kara listeye girmemeye dikkat edin:</0><3>Reklam yayınlama kurallarına uymayan kullanıcılar uyarı olarak kara listeye alınabilir. Kara listedeki kullanıcıların reklamları yayınlanmaya devam eder, ancak reklam arama öncelik listesindeki en düşük puanla gösterilir. ECOHOS, kendi takdirine bağlı olarak, ilgili reklamları Web Sitesinden kaldırabilir veya geçici olarak listeden askıya alabilir.</3>" };
+
+            // Arranges
+            Assert.Equal(LocalizerValueType.Html, model.ValueType);
+        }
+
+        [Fact]
         public void CallGetLocale_NullValueWithoutFallback2()
         {
             // Assets

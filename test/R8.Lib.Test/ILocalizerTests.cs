@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 using R8.Lib.Localization;
@@ -53,59 +52,6 @@ namespace R8.Lib.Test
 
             // Arrange
             Assert.NotNull(localized);
-        }
-
-        [Fact]
-        public async Task CallGetter_NullExpressionKey()
-        {
-            // Assets
-            Expression<Func<string>> key = null;
-
-            // Act
-            await _localizer.RefreshAsync();
-            Assert.Throws<ArgumentNullException>(() => _localizer[key]);
-        }
-
-        [Fact]
-        public async Task CallGetter_DefaultCultureKey()
-        {
-            // Assets
-            Expression<Func<string>> key = () => "AppName";
-
-            // Act
-            await _localizer.RefreshAsync();
-            var translation = _localizer[key][DefaultCulture, false];
-
-            // Arrange
-            Assert.Equal("EKOHOS", translation);
-        }
-
-        [Fact]
-        public void CallGetter_EnglishKey_Synchronous()
-        {
-            // Assets
-            Expression<Func<string>> key = () => "AppName";
-
-            // Act
-            _localizer.Refresh();
-            var translation = _localizer[key]["en", false];
-
-            // Arrange
-            Assert.Equal("ECOHOS Holding", translation);
-        }
-
-        [Fact]
-        public async Task CallGetter_EnglishKey()
-        {
-            // Assets
-            Expression<Func<string>> key = () => "AppName";
-
-            // Act
-            await _localizer.RefreshAsync();
-            var translation = _localizer[key]["en", false];
-
-            // Arrange
-            Assert.Equal("ECOHOS Holding", translation);
         }
 
         [Fact]
