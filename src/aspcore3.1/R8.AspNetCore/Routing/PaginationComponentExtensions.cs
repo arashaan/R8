@@ -38,7 +38,7 @@ namespace R8.AspNetCore.Routing
                 throw new NullReferenceException($"Cannot find a property with given name => '{paginationPropertyName}'.");
 
             if (!(paginationListProp.GetValue(viewDataModel) is Pagination pagination))
-                throw new Exception($"Given property type does not respect {typeof(Pagination)} type.");
+                throw new Exception($"Given property type does not respect {typeof(IPagination)} type.");
 
             var currentUrlData = component.ViewContext.RouteData;
             if (currentUrlData?.Values == null

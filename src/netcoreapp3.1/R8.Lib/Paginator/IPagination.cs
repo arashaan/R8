@@ -1,6 +1,6 @@
 ﻿namespace R8.Lib.Paginator
 {
-    internal interface IPagination
+    public interface IPagination
     {
         /// <summary>
         /// An <see cref="int"/> value that representing page number that contains these data
