@@ -1,13 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using R8.Lib.Enums;
 using R8.Lib.JsonExtensions;
-
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 
 namespace R8.Lib.Localization
 {
@@ -82,9 +83,34 @@ namespace R8.Lib.Localization
                 : new LocalizerContainer();
         }
 
-        public bool HasValue()
+        /// <summary>
+        /// Represents an indicator that if container has cultures.
+        /// </summary>
+        public bool HasValue => _cultures.Any(x => !string.IsNullOrEmpty(x.Value));
+
+        /// <summary>
+        /// Represents an enumerator constant that shows container value type.
+        /// </summary>
+        public LocalizerValueType ValueType
         {
-            return _cultures.Any(x => !string.IsNullOrEmpty(x.Value));
+            get
+            {
+                if (Cultures == null || !Cultures.Any())
+                    return LocalizerValueType.Unknown;
+
+                var defaultCulture = Cultures.First();
+                var value = defaultCulture.Value;
+
+                var matchHtml = Regex.Match(value, @"(<[\w\d]{1,2}>)|(<\/[\w\d]{1,2}>)");
+                if (matchHtml.Success)
+                    return LocalizerValueType.Html;
+
+                var matchFormat = Regex.Match(value, @"{[\w\d]{1,2}}");
+                if (matchFormat.Success)
+                    return LocalizerValueType.FormattableText;
+
+                return LocalizerValueType.Text;
+            }
         }
 
         /// <summary>
@@ -96,7 +122,7 @@ namespace R8.Lib.Localization
             var settings = CustomJsonSerializerSettings.Settings;
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.DefaultValueHandling = DefaultValueHandling.Ignore;
-            return !HasValue()
+            return !HasValue
                 ? null
                 : JsonConvert.SerializeObject(this, settings);
         }
