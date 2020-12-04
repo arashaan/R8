@@ -26,7 +26,7 @@ namespace R8.Lib.MethodReturn
         }
 
         public virtual TStatus Status { get; set; }
-        public virtual bool Success { get; set; }
+        public virtual bool Success { get; }
 
         public ILocalizer GetLocalizer() => _localizer;
 

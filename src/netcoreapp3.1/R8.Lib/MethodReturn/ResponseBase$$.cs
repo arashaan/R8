@@ -47,6 +47,12 @@ namespace R8.Lib.MethodReturn
 
         public virtual TSource Result { get; set; }
 
+        public virtual void Deconstruct(out TStatus status, out TSource source)
+        {
+            status = Status;
+            source = this.Result;
+        }
+
         public override string ToString()
         {
             var text = Status.ToString();

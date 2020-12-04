@@ -12,6 +12,7 @@ namespace R8.Lib.MethodReturn
     /// <summary>
     /// Represents a collection of responses with sub-results
     /// </summary>
+    /// <typeparam name="TStatus">A type that representing status type.</typeparam>
     public class ResponseBaseCollection<TStatus> : IDictionary<int, IResponseBaseDatabase<TStatus>>, IResponseErrors
     {
         /// <summary>
