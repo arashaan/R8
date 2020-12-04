@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 
 using R8.Lib.Enums;
@@ -16,7 +17,7 @@ namespace R8.Lib.Test.MethodTests
         private readonly Localizer _localizer;
 
         private static CultureInfo DefaultCulture => CultureInfo.GetCultureInfo("tr");
-        private static string FolderPath => "E:\\Work\\Develope\\Ecohos\\Ecohos.Presentation\\Dictionary";
+        private static string FolderPath => Path.Combine(Directory.GetCurrentDirectory(), "Dictionary");
         private static string JsonFileName => "dic";
 
         private static List<CultureInfo> SupportedCultures => new List<CultureInfo>

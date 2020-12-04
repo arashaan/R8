@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Globalization;
+
+using Newtonsoft.Json;
 
 using R8.Lib.Enums;
 using R8.Lib.Localization;
-
-using System.Globalization;
 
 using Xunit;
 
@@ -427,7 +427,7 @@ namespace R8.Lib.Test
             var container1 = new LocalizerContainer();
 
             // Arranges
-            Assert.False(container1.HasValue());
+            Assert.False(container1.HasValue);
         }
 
         [Fact]
@@ -438,7 +438,7 @@ namespace R8.Lib.Test
             container1.Set("Arash");
 
             // Arranges
-            Assert.True(container1.HasValue());
+            Assert.True(container1.HasValue);
         }
 
         [Fact]
@@ -458,6 +458,39 @@ namespace R8.Lib.Test
 
             // Arranges
             Assert.Equal("arash", locale);
+        }
+
+        [Fact]
+        public void CallGetLocale_Text()
+        {
+            // Assets
+            var turkishCulture = CultureInfo.GetCultureInfo("tr");
+            var model = new LocalizerContainer { [turkishCulture] = "Her türlü kopya siber suçlar Yasası'na tabidir ve yasal kovuşturmaya yol açacaktır. Tüm hakları Saklıdır." };
+
+            // Arranges
+            Assert.Equal(LocalizerValueType.Text, model.ValueType);
+        }
+
+        [Fact]
+        public void CallGetLocale_FormattableType()
+        {
+            // Assets
+            var turkishCulture = CultureInfo.GetCultureInfo("tr");
+            var model = new LocalizerContainer { [turkishCulture] = "Telif Hakkı © {0} EKOHOS Kurumsal" };
+
+            // Arranges
+            Assert.Equal(LocalizerValueType.FormattableText, model.ValueType);
+        }
+
+        [Fact]
+        public void CallGetLocale_HtmlType()
+        {
+            // Assets
+            var turkishCulture = CultureInfo.GetCultureInfo("tr");
+            var model = new LocalizerContainer { [turkishCulture] = "Daha iyi bir kullanıcı deneyimi sağlamak, site trafiğini analiz etmek ve hedefli reklamlar sunmak için çerezleri kullanıyoruz. Bu web sitesini kullanmaya devam ederek, <0></0> uygun olarak çerezlerin kullanılmasına izin vermiş olursunuz." };
+
+            // Arranges
+            Assert.Equal(LocalizerValueType.Html, model.ValueType);
         }
 
         [Fact]

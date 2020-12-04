@@ -1,7 +1,7 @@
-﻿using NodaTime;
-
-using System;
+﻿using System;
 using System.Reflection;
+
+using NodaTime;
 
 using Xunit;
 
@@ -150,6 +150,35 @@ namespace R8.Lib.Test
 
             // Arranges
             Assert.Equal(gregorianDate, persian);
+        }
+
+        [Fact]
+        public void CallGetNodeTimeZones()
+        {
+            // Act
+            var act = Dates.GetNodaTimeZones();
+
+            // Arrange
+            Assert.NotNull(act);
+            Assert.NotEmpty(act);
+        }
+
+        [Fact]
+        public void CallGetNodeTimeZone_Iran2()
+        {
+            // Arrange
+            Assert.Throws<TimeZoneNotFoundException>(() => Dates.GetNodaTimeZone("Iran Daylight Time"));
+        }
+
+        [Fact]
+        public void CallGetNodeTimeZone_Iran()
+        {
+            // Act
+            var act = Dates.GetNodaTimeZone("Iran Standard Time");
+
+            // Arrange
+            Assert.NotNull(act);
+            Assert.Equal("Iran Standard Time", act.SystemTimeZone.Id);
         }
     }
 }

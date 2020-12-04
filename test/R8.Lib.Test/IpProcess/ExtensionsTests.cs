@@ -14,7 +14,7 @@ namespace R8.Lib.Test.IpProcess
             var ipAddress = IPAddress.Parse("109.108.160.241");
 
             // Acts
-            var ip = await IPProcess.Extensions.GetIpAddressAsync(ipAddress).ConfigureAwait(false);
+            var ip = await ipAddress.GetIpAddressAsync().ConfigureAwait(false);
             await ip.Isp.GetInformationAsync().ConfigureAwait(false);
 
             // Assert

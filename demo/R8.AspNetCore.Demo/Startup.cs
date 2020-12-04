@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 using Humanizer.Localisation;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -109,57 +112,57 @@ namespace R8.AspNetCore.Demo
             services.AddScoped<ICulturalizedUrlHelper, CulturalizedUrlHelper>();
             services.AddTransient<ApplicationDbContext>();
 
-            //services.AddLocalizer((serviceProvider, config) =>
-            //{
-            //    using var scope = serviceProvider.CreateScope();
-            //    var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
-
-            //    config.SupportedCultures = request.Value.SupportedCultures.ToList();
-            //    config.UseMemoryCache = true;
-            //    config.Provider = new LocalizerCustomProvider
-            //    {
-            //        DictionaryAsync = async () =>
-            //        {
-            //            var dictionary = new Dictionary<string, LocalizerContainer>();
-            //            await using var connection = new SqlConnection(appDbContextConnectionString);
-            //            const string queryRaw = @"SELECT [Key], [IsDeleted], [Name]
-            //                             FROM [Translations]
-            //                             WHERE [IsDeleted] <> CAST(1 AS bit)
-            //                             ORDER BY [Key]";
-            //            var cmd = new SqlCommand(queryRaw, connection);
-            //            connection.Open();
-            //            var reader = await cmd.ExecuteReaderAsync();
-            //            while (reader.HasRows)
-            //            {
-            //                while (reader.Read())
-            //                {
-            //                    var key = reader.GetString("Key");
-            //                    var containerJson = reader.GetString("Name");
-            //                    var container = LocalizerContainer.Deserialize(containerJson);
-            //                    dictionary.Add(key, container);
-            //                }
-            //                reader.NextResult();
-            //            }
-
-            //            connection.Close();
-            //            return dictionary;
-            //        }
-            //    };
-            //});
             services.AddLocalizer((serviceProvider, config) =>
             {
                 using var scope = serviceProvider.CreateScope();
-                var localizationOptions = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>().Value;
+                var request = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>();
 
-                config.SupportedCultures = localizationOptions.SupportedCultures.ToList();
+                config.SupportedCultures = request.Value.SupportedCultures.ToList();
                 config.UseMemoryCache = true;
-                config.CacheSlidingExpiration = TimeSpan.FromDays(3);
-                config.Provider = new LocalizerJsonProvider
+                config.Provider = new LocalizerCustomProvider
                 {
-                    Folder = "E:/Work/Develope/Ecohos/Ecohos.Presentation/Dictionary",
-                    FileName = "dic",
+                    DictionaryAsync = async () =>
+                    {
+                        var dictionary = new Dictionary<string, LocalizerContainer>();
+                        await using var connection = new SqlConnection(appDbContextConnectionString);
+                        const string queryRaw = @"SELECT [Key], [IsDeleted], [Name]
+                                         FROM [Translations]
+                                         WHERE [IsDeleted] <> CAST(1 AS bit)
+                                         ORDER BY [Key]";
+                        var cmd = new SqlCommand(queryRaw, connection);
+                        connection.Open();
+                        var reader = await cmd.ExecuteReaderAsync();
+                        while (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                var key = reader.GetString("Key");
+                                var containerJson = reader.GetString("Name");
+                                var container = LocalizerContainer.Deserialize(containerJson);
+                                dictionary.Add(key, container);
+                            }
+                            reader.NextResult();
+                        }
+
+                        connection.Close();
+                        return dictionary;
+                    }
                 };
             });
+            //services.AddLocalizer((serviceProvider, config) =>
+            //{
+            //    using var scope = serviceProvider.CreateScope();
+            //    var localizationOptions = scope.ServiceProvider.GetService<IOptions<RequestLocalizationOptions>>().Value;
+
+            //    config.SupportedCultures = localizationOptions.SupportedCultures.ToList();
+            //    config.UseMemoryCache = true;
+            //    config.CacheSlidingExpiration = TimeSpan.FromDays(3);
+            //    config.Provider = new LocalizerJsonProvider
+            //    {
+            //        Folder = "E:/Work/Develope/Ecohos/Ecohos.Presentation/Dictionary",
+            //        FileName = "dic",
+            //    };
+            //});
 
             services.AddFileHandlers((_, options) =>
             {

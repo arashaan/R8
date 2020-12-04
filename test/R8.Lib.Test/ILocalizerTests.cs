@@ -55,34 +55,6 @@ namespace R8.Lib.Test
             Assert.NotNull(localized);
         }
 
-        // [Fact]
-        // public async Task CallTryGetValue()
-        // {
-        //     // Assets
-        //     var key = "AppName";
-        //
-        //     // Act
-        //     await _localizer.RefreshAsync();
-        //     var getter = _localizer.GetValue(key, out var localized);
-        //
-        //     // Arrange
-        //     Assert.True(getter);
-        //     Assert.NotNull(localized);
-        // }
-
-        //[Fact]
-        //public void CallGetter_NullText()
-        //{
-        //    // Assets
-        //    var key = string.Empty;
-
-        //    // Act
-        //    var translation = _localizer[key];
-
-        //    // Arrange
-        //    Assert.Null(translation[DefaultCulture]);
-        //}
-
         [Fact]
         public async Task CallGetter_NullExpressionKey()
         {

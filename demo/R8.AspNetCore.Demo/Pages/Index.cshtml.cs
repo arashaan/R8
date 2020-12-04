@@ -10,8 +10,6 @@ namespace R8.AspNetCore.Demo.Pages
 {
     public class IndexModel : PageModel
     {
-        public const string Assets = "E:\\Work\\Develope\\Libraries\\R8.Lib\\R8.Lib.FileHandlers.Test\\assets";
-
         public IndexModel()
         {
             PageTitle = "Index";
