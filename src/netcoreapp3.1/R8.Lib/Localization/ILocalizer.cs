@@ -65,14 +65,14 @@ namespace R8.Lib.Localization
         /// <param name="key">A key to find in internal dictionary</param>
         LocalizerContainer this[string key] { get; }
 
-        /// <summary>
-        /// Gets value from internal dictionary
-        /// </summary>
-        /// <param name="key">A key to find in internal dictionary</param>
-        /// <returns>A <see cref="LocalizerContainer"/> component.</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        [Obsolete]
-        LocalizerContainer this[Expression<Func<string>> key] { get; }
+        ///// <summary>
+        ///// Gets value from internal dictionary
+        ///// </summary>
+        ///// <param name="key">A key to find in internal dictionary</param>
+        ///// <returns>A <see cref="LocalizerContainer"/> component.</returns>
+        ///// <exception cref="ArgumentNullException"></exception>
+        //[Obsolete]
+        //LocalizerContainer this[Expression<Func<string>> key] { get; }
     }
 
     /// <summary>
@@ -189,24 +189,24 @@ namespace R8.Lib.Localization
             return dic;
         }
 
-        /// <summary>
-        /// Retrieves <see cref="string"/> key from given expression.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <returns>A <see cref="string"/> value.</returns>
-        [Obsolete]
-        public static string GetKey(Expression<Func<string>> key)
-        {
-            return key.Body switch
-            {
-                MethodCallExpression call => key.Compile().Invoke(),
-                MemberExpression member => member.Member.Name,
-                ConstantExpression constant => constant.Value.ToString(),
-                _ => throw new ArgumentException(
-                    $"{nameof(key)} must be an '{nameof(MemberExpression)}' type expression")
-            };
-        }
+        ///// <summary>
+        ///// Retrieves <see cref="string"/> key from given expression.
+        ///// </summary>
+        ///// <param name="key"></param>
+        ///// <exception cref="ArgumentException"></exception>
+        ///// <returns>A <see cref="string"/> value.</returns>
+        //[Obsolete]
+        //public static string GetKey(Expression<Func<string>> key)
+        //{
+        //    return key.Body switch
+        //    {
+        //        MethodCallExpression call => key.Compile().Invoke(),
+        //        MemberExpression member => member.Member.Name,
+        //        ConstantExpression constant => constant.Value.ToString(),
+        //        _ => throw new ArgumentException(
+        //            $"{nameof(key)} must be an '{nameof(MemberExpression)}' type expression")
+        //    };
+        //}
 
         public string this[string key, CultureInfo culture] =>
             string.IsNullOrEmpty(key) ? null : GetValue(culture, key).Get(culture, false);
@@ -214,17 +214,17 @@ namespace R8.Lib.Localization
         public LocalizerContainer this[string key] =>
             string.IsNullOrEmpty(key) ? null : GetValue(CultureInfo.CurrentCulture, key);
 
-        public LocalizerContainer this[Expression<Func<string>> key]
-        {
-            get
-            {
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
+        //public LocalizerContainer this[Expression<Func<string>> key]
+        //{
+        //    get
+        //    {
+        //        if (key == null)
+        //            throw new ArgumentNullException(nameof(key));
 
-                var myKey = GetKey(key);
-                return this[myKey];
-            }
-        }
+        //        var myKey = GetKey(key);
+        //        return this[myKey];
+        //    }
+        //}
 
         /// <summary>
         /// Returns an equivalent translation for given key.
