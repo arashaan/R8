@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Routing;
@@ -7,13 +8,18 @@ namespace R8.AspNetCore.Routing
 {
     public static class PageModelExtensions
     {
+        /// <summary>
+        /// Returns an <see cref="IAuthenticatedUser"/> object according to current authenticated <see cref="HttpContext"/> user.
+        /// </summary>
+        /// <typeparam name="T">A type of specific <see cref="RazorPage"/>.</typeparam>
+        /// <param name="page">A derived class that representing specific razor page model.</param>
+        /// <returns>A <see cref="IAuthenticatedUser"/> object.</returns>
         public static IAuthenticatedUser GetAuthenticatedUser<T>(this T page) where T : RazorPage
         {
             if (page == null)
                 throw new ArgumentNullException(nameof(page));
 
-            var connectedUser = page.User.GetAuthenticatedUser();
-            return connectedUser;
+            return page.User.GetAuthenticatedUser();
         }
 
         /// <summary>

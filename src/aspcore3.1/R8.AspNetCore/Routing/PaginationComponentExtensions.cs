@@ -22,7 +22,7 @@ namespace R8.AspNetCore.Routing
         /// <param name="paginationPropertyName"></param>
         /// <param name="pageNoIdentifier"></param>
         /// <remarks>Output model is a collection of type <see cref="PaginationPageModel"/>.</remarks>
-        public static IViewComponentResult InvokePagination<TComponent>(this TComponent component, string viewUrl, string paginationPropertyName, string pageNoIdentifier = "pageNo") where TComponent : ViewComponent
+        public static IViewComponentResult InvokePagination<TComponent>(this TComponent component, string viewUrl, string paginationPropertyName = "List", string pageNoIdentifier = "pageNo") where TComponent : ViewComponent
         {
             var viewDataModel = component.ViewContext.ViewData.Model;
             if (viewDataModel == null)
@@ -37,8 +37,8 @@ namespace R8.AspNetCore.Routing
             if (paginationListProp == null)
                 throw new NullReferenceException($"Cannot find a property with given name => '{paginationPropertyName}'.");
 
-            if (!(paginationListProp.GetValue(viewDataModel) is IPagination pagination))
-                throw new Exception($"Given property type does not respect {typeof(IPagination)} type.");
+            if (!(paginationListProp.GetValue(viewDataModel) is Pagination pagination))
+                throw new Exception($"Given property type does not respect {typeof(Pagination)} type.");
 
             var currentUrlData = component.ViewContext.RouteData;
             if (currentUrlData?.Values == null
@@ -69,16 +69,11 @@ namespace R8.AspNetCore.Routing
                     currentUrl = component.Url.Action(action, controller, routes);
                 }
 
-                model.Add(new PaginationPageModel
-                {
-                    Num = pageNo,
-                    IsCurrent = pageNo == pagination.CurrentPage,
-                    Link = currentUrl,
-                });
+                model.Add(new PaginationPageModel(pageNo, pageNo == pagination.CurrentPage, currentUrl));
             }
 
             var viewData = new ViewDataDictionary<List<PaginationPageModel>>(component.ViewData, model);
-            return new ViewViewComponentResult()
+            return new ViewViewComponentResult
             {
                 ViewData = viewData,
                 TempData = component.TempData,
