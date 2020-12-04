@@ -2,6 +2,9 @@
 
 namespace R8.AspNetCore.Routing
 {
+    /// <summary>
+    /// Defined the contract for the helper to build URLs for ASP.NET MVC within an application based on <see cref="IUrlHelper"/> interface with respect to <c>culture</c> route.
+    /// </summary>
     public interface ICulturalizedUrlHelper : IUrlHelper
     {
         /// <summary>
