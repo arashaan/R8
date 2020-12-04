@@ -82,14 +82,39 @@ namespace R8.Lib
         /// <summary>
         /// Returns a collection of <see cref="DateTimeZoneMore"/> objects.
         /// </summary>
-        /// <returns>An <see cref="IEnumerable{T}"/> object that contains timezone objects.</returns>
-        public static IEnumerable<DateTimeZoneMore> GetNodaTimeZones()
+        /// <returns>An <see cref="List{T}"/> object that contains timezone objects.</returns>
+        public static List<DateTimeZoneMore> GetNodaTimeZones()
         {
-            var systemTimeZones = TimeZoneInfo.GetSystemTimeZones();
-            return from timeZone in systemTimeZones
-                   let more = GetNodaTimeZone(timeZone.Id)
-                   orderby more.Offset
-                   select more;
+            var source = TzdbDateTimeZoneSource.Default;
+            var timeZoneIds = source.TzdbToWindowsIds;
+
+            var result = new List<DateTimeZoneMore>();
+            foreach (var (nodaId, systemId) in timeZoneIds)
+            {
+                try
+                {
+                    var zone = DateTimeZoneProviders.Tzdb[nodaId];
+                    var offset = zone.GetUtcOffset(SystemClock.Instance.GetCurrentInstant());
+                    var timeZone = TimeZoneInfo.FindSystemTimeZoneById(systemId);
+
+                    var duplicate = result.Any(x => x.SystemTimeZone.Equals(timeZone));
+                    if (duplicate)
+                        continue;
+
+                    var more = new DateTimeZoneMore
+                    {
+                        NodaTimeZone = zone,
+                        Offset = offset,
+                        SystemTimeZone = timeZone
+                    };
+                    result.Add(more);
+                }
+                catch (Exception e)
+                {
+                }
+            }
+
+            return result.OrderBy(x => x.Offset).ToList();
         }
     }
 }
