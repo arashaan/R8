@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-
+using System.Web;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -95,12 +95,14 @@ namespace R8.Lib.Localization
         {
             get
             {
-                if (Cultures == null || !Cultures.Any())
+                if (Cultures == null || Cultures.Count == 0)
                     return LocalizerValueType.Unknown;
 
-                var defaultCulture = Cultures.First();
-                var value = defaultCulture.Value;
+                var node = this.Cultures.FirstOrDefault(x=>!string.IsNullOrEmpty(x.Value));
+                if (node == null)
+                    return LocalizerValueType.Unknown;
 
+                var value = HttpUtility.HtmlDecode(node.Value);
                 var matchHtml = Regex.Match(value, @"(<[\w\d]{1,2}>)|(<\/[\w\d]{1,2}>)");
                 if (matchHtml.Success)
                     return LocalizerValueType.Html;
