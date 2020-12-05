@@ -35,10 +35,10 @@ namespace R8.Lib.MethodReturn
             Result = result;
         }
 
-        public static implicit operator ResponseBaseCollection<TStatus>(ResponseBase<TSource, TStatus> responseBase)
-        {
-            return new ResponseBaseCollection<TStatus> { responseBase };
-        }
+        //public static implicit operator ResponseBaseCollection<TStatus>(ResponseBase<TSource, TStatus> responseBase)
+        //{
+        //    return new ResponseBaseCollection<TStatus>(responseBase);
+        //}
 
         public static implicit operator bool(ResponseBase<TSource, TStatus> responseBase)
         {

@@ -1,5 +1,7 @@
 ﻿using System;
 
+using R8.Lib;
+
 namespace R8.EntityFrameworkCore
 {
     /// <summary>
@@ -26,5 +28,7 @@ namespace R8.EntityFrameworkCore
         /// Gets or sets a collection of <see cref="IAudit"/> to track entity changes.
         /// </summary>
         public AuditCollection Audits { get; set; }
+
+        bool TryValidate(out ValidatableResultCollection errors);
     }
 }

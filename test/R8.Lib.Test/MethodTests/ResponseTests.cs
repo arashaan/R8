@@ -85,17 +85,17 @@ namespace R8.Lib.Test.MethodTests
             Assert.True(response);
         }
 
-        [Fact]
-        public void CallResponseGeneric_DirectCast4()
-        {
-            // Act
-            var response = new FakeResponse<object>();
-            var expected = new ResponseBaseCollection<Flags>();
-            expected.Add(response);
+        //[Fact]
+        //public void CallResponseGeneric_DirectCast4()
+        //{
+        //    // Act
+        //    var response = new FakeResponse<object>();
+        //    var expected = new ResponseBaseCollection<Flags>();
+        //    expected.Add(response);
 
-            // Arrange
-            Assert.Equal(expected, response);
-        }
+        //    // Arrange
+        //    Assert.Equal(expected, response);
+        //}
 
         [Fact]
         public void CallResponse_CheckSuccess2()

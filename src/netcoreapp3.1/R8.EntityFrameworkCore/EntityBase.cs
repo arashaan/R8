@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -27,6 +28,27 @@ namespace R8.EntityFrameworkCore
 
         [JsonIgnore]
         public AuditCollection Audits { get; set; }
+
+        public bool TryValidate(out ValidatableResultCollection errors)
+        {
+            errors = new ValidatableResultCollection();
+            TryValidate(this, out var tempErrors);
+            if (tempErrors?.Any() == true)
+                errors.AddRange(tempErrors);
+
+            if (errors?.Any() != true)
+                return errors?.Count == 0;
+
+            var ignoredNames = this.GetType().GetPublicProperties().ConvertAll(x => x.Name);
+            var ignored = errors.Where(x => ignoredNames.Contains(x.Name)).ToList();
+            if (ignored?.Any() != true)
+                return errors?.Count == 0;
+
+            foreach (var result in ignored)
+                errors.Remove(result);
+
+            return errors.Count == 0;
+        }
     }
 
     /// <summary>

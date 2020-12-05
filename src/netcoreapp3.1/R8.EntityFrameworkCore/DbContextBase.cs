@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -38,7 +39,7 @@ namespace R8.EntityFrameworkCore
 
         public bool Add<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : IEntityBase
         {
-            var isValid = TryValidate(entity, out errors);
+            var isValid = entity.TryValidate(out errors);
             if (!isValid)
                 return false;
 
@@ -67,71 +68,9 @@ namespace R8.EntityFrameworkCore
             return true;
         }
 
-        public virtual bool TryValidate(IResponseErrors response, out ValidatableResultCollection errors)
-        {
-            if (response == null)
-                throw new ArgumentNullException(nameof(response));
-
-            errors = new ValidatableResultCollection();
-            switch (response)
-            {
-                case ResponseBaseCollection<object> responseGroup when responseGroup.Results?.Any() != true:
-                    return !errors.Any();
-
-                case ResponseBaseCollection<object> responseGroup:
-                    {
-                        var results = from childResponse in responseGroup.Results
-                                      let childEntity = GetIResponseUnderlyingEntity(childResponse.Value)
-                                      where childEntity != null
-                                      select childEntity;
-                        var resultEntities = results.ToList();
-                        if (resultEntities?.Any() != true)
-                            return !errors.Any();
-
-                        foreach (var resultEntity in resultEntities)
-                        {
-                            var isChildValid = TryValidate(resultEntity, out var tempChildErrors);
-                            if (!isChildValid)
-                                errors.AddRange(tempChildErrors);
-                        }
-
-                        break;
-                    }
-                case IResponseBaseDatabase<object> responseDatabase:
-                    {
-                        var childEntity = GetIResponseUnderlyingEntity(responseDatabase);
-                        if (childEntity != null)
-                        {
-                            var isChildValid = TryValidate(childEntity, out var tempChildErrors);
-                            if (!isChildValid)
-                                errors.AddRange(tempChildErrors);
-                        }
-                        else
-                        {
-                            return !errors.Any();
-                        }
-
-                        break;
-                    }
-                default:
-                    throw new Exception("Unable to determine type");
-            }
-
-            return !errors.Any();
-        }
-
-        private static object? GetIResponseUnderlyingEntity(IResponseBase<object> childResponseBase)
-        {
-            if (childResponseBase.GetType() != typeof(ResponseBase<>))
-                return null;
-
-            var childEntityProp = childResponseBase.GetType().GetProperty(nameof(ResponseBase<IEntityBase, object>.Result));
-            return childEntityProp?.GetValue(childResponseBase);
-        }
-
         public bool Update<TSource>(TSource entity, Guid userId, out ValidatableResultCollection errors) where TSource : IEntityBase
         {
-            var isValid = TryValidate(entity, out errors);
+            var isValid = entity.TryValidate(out errors);
             if (!isValid)
                 return false;
 
@@ -248,53 +187,35 @@ namespace R8.EntityFrameworkCore
             return result;
         }
 
-        public static bool TryValidate<TEntity>(TEntity entity, out ValidatableResultCollection errors)
-          where TEntity : EntityBase
-        {
-            entity.Validate();
-            errors = entity.ValidationErrors;
-
-            if (errors?.Any() != true)
-                return errors?.Count == 0;
-
-            var ignoredNames = new[]
-            {
-                nameof(entity.Id),
-                nameof(entity.Audits),
-            };
-            var ignored = errors.Where(x => ignoredNames.Contains(x.Name)).ToList();
-            if (ignored?.Any() != true)
-                return errors?.Count == 0;
-
-            foreach (var result in ignored)
-                errors.Remove(result);
-
-            return errors?.Count == 0;
-        }
-
-        public static bool TryValidate(object entity, out ValidatableResultCollection errors)
+        public static bool TryValidate<T>(List<T> responses, out ValidatableResultCollection errors) where T : IResponseBaseDatabase
         {
             errors = new ValidatableResultCollection();
-            if (!(entity is EntityBase vEntity))
+            if (responses == null || responses.Count == 0)
                 return false;
 
-            vEntity.Validate();
-            errors = vEntity.ValidationErrors;
+            var newList = responses
+                .Cast<IResponseBaseDatabase>()
+                .Where(responseBaseDatabase => responseBaseDatabase.GetType()
+                    .GetPublicProperties()
+                    .Any(propertyInfo => propertyInfo.Name == nameof(ResponseBase<object, string>.Result) &&
+                                         propertyInfo.GetValue(responseBaseDatabase) is IEntityBase))
+                .ToList();
+            if (newList.Count == 0)
+                return false;
 
-            if (errors?.Any() != true)
-                return errors?.Count == 0;
-
-            var ignoredNames = new[]
+            foreach (var value in from response in newList
+                                  let prop = response.GetType()
+                                      .GetPublicProperties()
+                                      .Find(propertyInfo => propertyInfo.Name == nameof(ResponseBase<object, string>.Result) &&
+                                                            propertyInfo.GetValue(response) is IEntityBase)
+                                  select (IEntityBase)prop.GetValue(response)
+                into value
+                                  where value != null
+                                  select value)
             {
-                nameof(IEntityBase.Id),
-                nameof(IEntityBase.Audits),
-            };
-            var ignored = errors.Where(x => ignoredNames.Contains(x.Name)).ToList();
-            if (ignored?.Any() != true)
-                return errors?.Count == 0;
-
-            foreach (var result in ignored)
-                errors.Remove(result);
+                value.TryValidate(out var tempErrors);
+                errors.AddRange(tempErrors);
+            }
 
             return errors?.Count == 0;
         }

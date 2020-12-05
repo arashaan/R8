@@ -224,7 +224,7 @@ namespace R8.Lib
         /// </summary>
         /// <typeparam name="TModel">An object type that need to be validated.</typeparam>
         /// <param name="context">A <see cref="ValidationContext"/></param>
-        /// <param name="model">A <see cref="TModel"/> object to be validated.</param>
+        /// <param name="model">An object to be validated.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>If true object has been validated, and not validated otherwise.</returns>
         public static ValidatableResultCollection Validate<TModel>(ValidationContext context, TModel model) where TModel : class
@@ -315,7 +315,7 @@ namespace R8.Lib
         /// Determines whether the specified object is valid.
         /// </summary>
         /// <returns>If true, object is valid, not valid otherwise.</returns>
-        public bool Validate()
+        public virtual bool Validate()
         {
             var check = TryValidate(this, out var validationResults);
             ValidationErrors = validationResults;

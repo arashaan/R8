@@ -50,7 +50,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
         public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : IEntityBase
         {
-            var isValid = DbContextBase.TryValidate(entity, out errors);
+            var isValid = entity.TryValidate(out errors);
             if (!isValid)
                 return false;
 
@@ -75,7 +75,7 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
         public static bool Add<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContextBase where TSource : IEntityBase
         {
-            var isValid = DbContextBase.TryValidate(entity, out errors);
+            var isValid = entity.TryValidate(out errors);
             if (!isValid)
                 return false;
 
