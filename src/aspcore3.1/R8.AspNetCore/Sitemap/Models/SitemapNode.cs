@@ -10,7 +10,7 @@ namespace R8.AspNetCore.Sitemap.Models
         public string Url { get; set; }
 
         /// <summary>
-        /// How frequently the page is likely to change. This value provides general information to search engines and may not correlate exactly to how often they crawl the page. Valid values are:
+        /// How frequently the page is likely to change. This value provides general information to search engines and may not correlate exactly to how often they crawl the page.
         /// </summary>
         public SitemapChangeFrequency? ChangeFrequency { get; set; }
 
@@ -20,11 +20,12 @@ namespace R8.AspNetCore.Sitemap.Models
         /// Please note that the priority you assign to a page is not likely to influence the position of your URLs in a search engine's result pages. Search engines may use this information when selecting between URLs on the same site, so you can use this tag to increase the likelihood that your most important pages are present in a search index.
         /// Also, please note that assigning a high priority to all of the URLs on your site is not likely to help you. Since the priority is relative, it is only used to select between URLs on your site.
         /// </summary>
+        /// <remarks>For the main page, it's recommended using the “1.0” priority.</remarks>
         public double? Priority { get; set; }
 
         /// <summary>
         /// The date of last modification of the file. This date should be in W3C Datetime format. This format allows you to omit the time portion, if desired, and use YYYY-MM-DD.
         /// </summary>
-        public DateTime? LastModificationDate { get; set; }
+        public DateTime LastModificationDate { get; set; }
     }
 }

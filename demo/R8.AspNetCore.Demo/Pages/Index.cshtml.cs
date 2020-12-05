@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 using R8.AspNetCore.Demo.Services.Routing;
 using R8.AspNetCore.FileHandlers;
+using R8.AspNetCore.Sitemap;
 
 namespace R8.AspNetCore.Demo.Pages
 {
+    [SitemapSettings]
     public class IndexModel : PageModel
     {
         public IndexModel()

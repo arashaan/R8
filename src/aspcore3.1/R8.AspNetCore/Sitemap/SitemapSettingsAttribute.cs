@@ -2,17 +2,14 @@
 
 namespace R8.AspNetCore.Sitemap
 {
+    /// <summary>
+    /// An attribute to let Sitemap scan for this page.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class SitemapSettingsAttribute : Attribute
     {
-        public SitemapSettingsAttribute(SitemapChangeFrequency changeFrequency, double priority)
-        {
-            ChangeFrequency = changeFrequency;
-            Priority = priority;
-        }
+        public SitemapChangeFrequency ChangeFrequency { get; set; } = SitemapResult.FrequencyDefault;
 
-        public SitemapChangeFrequency ChangeFrequency { get; }
-
-        public double? Priority { get; }
+        public double Priority { get; set; } = SitemapResult.PriorityDefault;
     }
 }

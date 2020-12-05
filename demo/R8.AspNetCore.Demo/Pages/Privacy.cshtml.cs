@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using R8.AspNetCore.Sitemap;
 
 namespace R8.AspNetCore.Demo.Pages
 {
+    [SitemapSettings]
     public class PrivacyModel : PageModel
     {
         private readonly ILogger<PrivacyModel> _logger;
