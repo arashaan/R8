@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.AspNetCore.Demo", "demo\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.GoogleAnalytics", "src\netcoreapp3.1\R8.GoogleAnalytics\R8.GoogleAnalytics.csproj", "{ACC98457-9CA5-472B-8E7E-681C009B38FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "R8.GoogleAnalytics.Test", "test\R8.GoogleAnalytics.Test\R8.GoogleAnalytics.Test.csproj", "{81EC750B-BD43-4D8B-B451-9DC545B73A52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.GoogleAnalytics.Test", "test\R8.GoogleAnalytics.Test\R8.GoogleAnalytics.Test.csproj", "{81EC750B-BD43-4D8B-B451-9DC545B73A52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
