@@ -21,24 +21,19 @@ namespace R8.AspNetCore.Routing
         /// <param name="viewUrl"></param>
         /// <param name="paginationPropertyName"></param>
         /// <param name="pageNoIdentifier"></param>
+        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
         /// <remarks>Output model is a collection of type <see cref="PaginationPageModel"/>.</remarks>
         public static IViewComponentResult InvokePagination<TComponent>(this TComponent component, string viewUrl, string paginationPropertyName = "List", string pageNoIdentifier = "pageNo") where TComponent : ViewComponent
         {
-            var viewDataModel = component.ViewContext.ViewData.Model;
-            if (viewDataModel == null)
-                throw new NullReferenceException($"Cannot find a working {nameof(component.ViewData)} model from {nameof(component.ViewContext)}.");
-
-            if (!(viewDataModel is PageModel pageModel))
-                throw new NullReferenceException($"Cannot recognize {nameof(component.ViewData)} model type. Given type should be a derived class of {nameof(PageModel)}. and/or {nameof(PageModel)} itself.");
-
-            var paginationListProp = pageModel
-                .GetType()
-                .GetProperty(paginationPropertyName);
+            var pageModel = (PageModel)component.ViewContext.ViewData.Model;
+            var paginationListProp = pageModel.GetType().GetProperty(paginationPropertyName);
             if (paginationListProp == null)
                 throw new NullReferenceException($"Cannot find a property with given name => '{paginationPropertyName}'.");
 
-            if (!(paginationListProp.GetValue(viewDataModel) is Pagination pagination))
-                throw new Exception($"Given property type does not respect {typeof(IPagination)} type.");
+            var paginationList = paginationListProp.GetValue(pageModel);
+            if (!(paginationList is IPagination pagination))
+                throw new NotSupportedException($"Given property type does not respect {typeof(IPagination)} type.");
 
             var currentUrlData = component.ViewContext.RouteData;
             if (currentUrlData?.Values == null
