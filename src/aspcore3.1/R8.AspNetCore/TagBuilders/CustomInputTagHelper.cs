@@ -1,24 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 using R8.AspNetCore.Attributes;
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace R8.AspNetCore.TagBuilders
 {
     [HtmlTargetElement("input", Attributes = "asp-for")]
     public class CustomInputTagHelper : InputTagHelper
     {
-        //private readonly IHtmlHelper _htmlHelper;
+        private readonly IHtmlHelper _htmlHelper;
 
         public CustomInputTagHelper(IHtmlGenerator generator, IHtmlHelper htmlHelper) : base(generator)
         {
-            //_htmlHelper = htmlHelper;
+            _htmlHelper = htmlHelper;
         }
 
         [HtmlAttributeName("asp-disabled")]
@@ -66,13 +66,6 @@ namespace R8.AspNetCore.TagBuilders
             if (Attributes?.Any() == true)
                 foreach (var (key, value) in Attributes)
                     output.Attributes.Add(key, value);
-
-            //(_htmlHelper as IViewContextAware).Contextualize(ViewContext);
-            //if (!string.IsNullOrEmpty(Name))
-            //{
-            //    output.Attributes.Add("name", Name);
-            //    output.Attributes.Add("Id", _htmlHelper.GenerateIdFromName(Name));
-            //}
         }
     }
 }
