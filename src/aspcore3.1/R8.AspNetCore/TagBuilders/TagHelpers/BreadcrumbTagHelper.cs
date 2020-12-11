@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,10 +10,9 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
-
 using R8.AspNetCore.Routing;
 
-namespace R8.AspNetCore.TagBuilders
+namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
     [HtmlTargetElement("breadcrumb", Attributes = ActionAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
     [HtmlTargetElement("breadcrumb", Attributes = ControllerAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]

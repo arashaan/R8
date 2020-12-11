@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using R8.AspNetCore.Enums;
 
-namespace R8.AspNetCore.TagBuilders
+namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
     [HtmlTargetElement("submit", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class SubmitTagHelper : TagHelper

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
 
-namespace R8.AspNetCore.TagBuilders
+namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
     [HtmlTargetElement("a", Attributes = ActionAttributeName)]
     [HtmlTargetElement("a", Attributes = ControllerAttributeName)]
@@ -17,14 +17,11 @@ namespace R8.AspNetCore.TagBuilders
     [HtmlTargetElement("a", Attributes = RouteAttributeName)]
     [HtmlTargetElement("a", Attributes = RouteValuesDictionaryName)]
     [HtmlTargetElement("a", Attributes = RouteValuesPrefix + "*")]
-    public class CustomAnchorTagHelper : AnchorTagHelper
+    public class CulturizedAnchorTagHelper : AnchorTagHelper
     {
         private readonly IOptions<RequestLocalizationOptions> _options;
 
-        [HtmlAttributeName("asp-disabled")]
-        public bool Disabled { get; set; }
-
-        public CustomAnchorTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
+        public CulturizedAnchorTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
         {
             _options = options;
         }
@@ -46,9 +43,6 @@ namespace R8.AspNetCore.TagBuilders
             var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
             if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
                 RouteValues[LanguageRouteConstraint.Key] = culture;
-
-            if (Disabled)
-                output.Attributes.Add("disabled", "");
 
             base.Process(context, output);
         }

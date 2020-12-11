@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace R8.AspNetCore.TagBuilders
+namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
     [HtmlTargetElement("breadcrumb-list", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class BreadcrumbListTagHelper : TagHelper

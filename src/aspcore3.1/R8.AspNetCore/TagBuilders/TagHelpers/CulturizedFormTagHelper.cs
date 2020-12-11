@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
 
-namespace R8.AspNetCore.TagBuilders
+namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
     [HtmlTargetElement("form", Attributes = ActionAttributeName)]
     [HtmlTargetElement("form", Attributes = ControllerAttributeName)]
@@ -17,11 +17,11 @@ namespace R8.AspNetCore.TagBuilders
     [HtmlTargetElement("form", Attributes = RouteAttributeName)]
     [HtmlTargetElement("form", Attributes = RouteValuesDictionaryName)]
     [HtmlTargetElement("form", Attributes = RouteValuesPrefix + "*")]
-    public class CustomFormTagHelper : FormTagHelper
+    public class CulturizedFormTagHelper : FormTagHelper
     {
         private readonly IOptions<RequestLocalizationOptions> _options;
 
-        public CustomFormTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
+        public CulturizedFormTagHelper(IHtmlGenerator generator, IOptions<RequestLocalizationOptions> options) : base(generator)
         {
             _options = options;
         }

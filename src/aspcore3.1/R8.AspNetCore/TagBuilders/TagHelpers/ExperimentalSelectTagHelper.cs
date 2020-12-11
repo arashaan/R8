@@ -1,36 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-
 using R8.AspNetCore.Attributes;
 using R8.Lib;
 using R8.Lib.Localization;
 
-using System;
-using System.Linq;
-using System.Reflection;
-
-namespace R8.AspNetCore.TagBuilders
+namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
     [HtmlTargetElement("select", Attributes = "asp-for")]
-    public class CustomSelectTagHelper : SelectTagHelper
+    public class ExperimentalSelectTagHelper : SelectTagHelper
     {
         private readonly ILocalizer _localizer;
 
-        [HtmlAttributeName("asp-disabled")]
-        public bool Disabled { get; set; }
-
-        public CustomSelectTagHelper(IHtmlGenerator generator, ILocalizer localizer) : base(generator)
+        public ExperimentalSelectTagHelper(IHtmlGenerator generator, ILocalizer localizer) : base(generator)
         {
             _localizer = localizer;
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if (Disabled)
-                output.Attributes.Add("disabled", "");
-
             var metadata = this.For.Metadata;
             var propName = metadata.PropertyName;
 

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace R8.AspNetCore.TagBuilders
+namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
-    [HtmlTargetElement("button")]
-    public class CustomButtonTagHelper : TagHelper
+    [HtmlTargetElement("select")]
+    public class CustomSelectTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-disabled")]
         public bool Disabled { get; set; }
@@ -12,8 +12,6 @@ namespace R8.AspNetCore.TagBuilders
         {
             if (Disabled)
                 output.Attributes.Add("disabled", "");
-
-            base.Process(context, output);
         }
     }
 }
