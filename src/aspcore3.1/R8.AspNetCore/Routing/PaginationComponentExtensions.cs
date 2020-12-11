@@ -29,11 +29,11 @@ namespace R8.AspNetCore.Routing
             var pageModel = (PageModel)component.ViewContext.ViewData.Model;
             var paginationListProp = pageModel.GetType().GetProperty(paginationPropertyName);
             if (paginationListProp == null)
-                throw new NullReferenceException($"Cannot find a property with given name => '{paginationPropertyName}'.");
+                return new ContentViewComponentResult(string.Empty);
 
             var paginationList = paginationListProp.GetValue(pageModel);
             if (!(paginationList is IPagination pagination))
-                throw new NotSupportedException($"Given property type does not respect {typeof(IPagination)} type.");
+                return new ContentViewComponentResult(string.Empty);
 
             var currentUrlData = component.ViewContext.RouteData;
             if (currentUrlData?.Values == null
