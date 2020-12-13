@@ -46,8 +46,7 @@ namespace R8.AspNetCore
             DateTimeZone finalZone;
             if (context.User.Identity.IsAuthenticated)
             {
-                var user = context.User.GetAuthenticatedUser();
-                finalZone = user.GetClaim<DateTimeZone>("TimeZone");
+                finalZone = context.User.GetAuthenticatedUser().TimeZone;
             }
             else
             {
