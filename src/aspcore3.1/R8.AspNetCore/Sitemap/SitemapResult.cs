@@ -133,8 +133,9 @@ namespace R8.AspNetCore.Sitemap
                             url += "index";
                     }
 
-                    var uri = new Uri(url);
-                    element.SetElementValue("loc", HttpUtility.UrlDecode(uri.AbsolutePath));
+                    // var uri = new Uri(url);
+                    // element.SetElementValue("loc", HttpUtility.UrlDecode(uri.AbsolutePath));
+                    element.SetElementValue("loc", HttpUtility.UrlDecode(url));
                     element.SetElementValue("lastmod", node.LastModificationDate.ToString("yyyy-MM-ddThh:mm:ss") + "+00:00");
 
                     if (sitemapSettings.Priority != PriorityDefault)
@@ -193,8 +194,9 @@ namespace R8.AspNetCore.Sitemap
                             url += "Index";
                     }
 
-                    var uri = new Uri(url);
-                    element.SetElementValue("loc", HttpUtility.UrlDecode(uri.AbsolutePath));
+                    // var uri = new Uri(url);
+                    element.SetElementValue("loc", HttpUtility.UrlDecode(url));
+                    // element.SetElementValue("loc", HttpUtility.UrlDecode(uri.AbsolutePath));
                     element.SetElementValue("lastmod", node.LastModificationDate.ToString("yyyy-MM-ddThh:mm:ss") + "+00:00");
 
                     if (node.Priority != null && node.Priority.Value != PriorityDefault)
