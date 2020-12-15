@@ -6,10 +6,10 @@ Some of the useful features, packed in **Separated Useful Packages**
 ## Packages
 | Package Name                             | Version | Status      |
 |------------------------------------------|---------|-------------|
-| [R8.Lib](https://github.com/iamr8/R8/packages/457669)                                   | **1.10.9**   | :white_check_mark: In progress |
-| [R8.FileHandlers](https://github.com/iamr8/R8/packages/494825)                          | **1.10.9**   | :white_check_mark: In progress |
-| [R8.EntityFrameworkCore](https://github.com/iamr8/R8/packages/494829)                   | **1.10.9**   | :white_check_mark: In progress |
-| [R8.AspNetCore](https://github.com/iamr8/R8/packages/494830)                            | **1.10.9**   | :white_check_mark: In progress |
+| [R8.Lib](https://github.com/iamr8/R8/packages/457669)                                   | **1.10.31**   | :white_check_mark: In progress |
+| [R8.FileHandlers](https://github.com/iamr8/R8/packages/494825)                          | **1.10.31**   | :white_check_mark: In progress |
+| [R8.EntityFrameworkCore](https://github.com/iamr8/R8/packages/494829)                   | **1.10.33**   | :white_check_mark: In progress |
+| [R8.AspNetCore](https://github.com/iamr8/R8/packages/494830)                            | **1.10.40**   | :white_check_mark: In progress |
 | [R8.GoogleAnalytics](https://github.com/iamr8/R8/packages/521005)                       | **1.10.0**   | :white_check_mark: In progress |
 | ~~R8.Encryption~~  | 1.9.0   | :x: Deprecated  |
 | ~~R8.Lib.Encryption~~                    | 1.0.2   | :x: Deprecated  |
