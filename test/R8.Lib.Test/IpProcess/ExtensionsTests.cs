@@ -26,10 +26,10 @@ namespace R8.Lib.Test.IpProcess
         public async Task CallGetIpAddressAsync()
         {
             // Assets
-            var ipAddress = IPAddress.Parse("109.108.160.241");
+            var ipAddress = IPAddress.Parse("162.158.93.83");
 
             // Acts
-            var ip = await IPProcess.Extensions.GetIpAddressAsync(ipAddress);
+            var ip = await ipAddress.GetIpAddressAsync();
 
             // Assert
             Assert.NotNull(ip);

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NodaTime;
+using NodaTime.TimeZones;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
-using NodaTime;
-using NodaTime.TimeZones;
 
 namespace R8.Lib
 {
@@ -54,22 +54,35 @@ namespace R8.Lib
         /// <summary>
         /// Returns an <see cref="object"/> that representing information about given timezone.
         /// </summary>
-        /// <param name="nativeTimeZoneName">An <see cref="string"/> that representing timezone's id.</param>
+        /// <param name="timeZoneId">An <see cref="string"/> that representing timezone's id.</param>
+        /// <param name="isSystemTimeZone">Checks whether given parameter is known id for System's native timezones or Noda timezones.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="TimeZoneNotFoundException"></exception>
         /// <returns>An <see cref="DateTimeZoneMore"/> object.</returns>
         /// <remarks>parameter should be like <c>Iran Standard Time</c></remarks>
-        public static DateTimeZoneMore GetNodaTimeZone(string nativeTimeZoneName)
+        public static DateTimeZoneMore GetNodaTimeZone(string timeZoneId, bool isSystemTimeZone = true)
         {
-            if (nativeTimeZoneName == null)
-                throw new ArgumentNullException(nameof(nativeTimeZoneName));
+            if (timeZoneId == null)
+                throw new ArgumentNullException(nameof(timeZoneId));
 
             var source = TzdbDateTimeZoneSource.Default;
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById(nativeTimeZoneName);
-
-            var id = source.TzdbToWindowsIds.FirstOrDefault(x => x.Value.Equals(timeZone.Id)).Key;
-
-            var zone = DateTimeZoneProviders.Tzdb[id];
+            var tzdbWindows = isSystemTimeZone
+                ? source.TzdbToWindowsIds.FirstOrDefault(x => x.Value.Equals(timeZoneId))
+                : source.TzdbToWindowsIds.FirstOrDefault(x => x.Key.Equals(timeZoneId));
+            if (string.IsNullOrEmpty(tzdbWindows.Value))
+                throw new ArgumentOutOfRangeException(nameof(timeZoneId));
+            
+            TimeZoneInfo timeZone;
+            try
+            {
+                timeZone = TimeZoneInfo.FindSystemTimeZoneById(tzdbWindows.Value);
+            }
+            catch (Exception e)
+            {
+                timeZone = null;
+            }
+            
+            var zone = DateTimeZoneProviders.Tzdb[tzdbWindows.Key];
             var offset = zone.GetUtcOffset(SystemClock.Instance.GetCurrentInstant());
             return new DateTimeZoneMore
             {

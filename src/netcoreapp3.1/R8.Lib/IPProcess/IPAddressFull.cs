@@ -43,7 +43,7 @@ namespace R8.Lib.IPProcess
             Neighbours = !string.IsNullOrEmpty(countryNeighbours) ? countryNeighbours.Split(",")?.ToList() : new List<string>();
             Region = region;
             City = city;
-            TimeZone = Dates.GetNodaTimeZone(timezoneName);
+            TimeZone = Dates.GetNodaTimeZone(timezone, false);
             Currency = ipCurrency;
             Coordinates = coordinates;
             Continent = continent;
