@@ -2,7 +2,7 @@
 {
     public class IPCountryCurrency
     {
-        public IPCountryCurrency(string name, string code, string symbol, int? rates, string plural)
+        public IPCountryCurrency(string name, string code, string symbol, double? rates, string plural)
         {
             Name = name;
             Code = code;
@@ -22,7 +22,7 @@
 
         public string Symbol { get; }
 
-        public int? Rates { get; }
+        public double? Rates { get; }
 
         public string Plural { get; }
     }

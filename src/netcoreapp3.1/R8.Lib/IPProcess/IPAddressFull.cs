@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace R8.Lib.IPProcess
 {
@@ -21,7 +22,7 @@ namespace R8.Lib.IPProcess
           [JsonProperty("country_capital")] string countryCapital, [JsonProperty("country_phone")] string countryPhone,
           [JsonProperty("country_neighbours")] string countryNeighbours, [JsonProperty("region")] string region, [JsonProperty("city")] string city,
           [JsonProperty("currency")] string currency, [JsonProperty("currency_code")] string currencyCode, [JsonProperty("currency_symbol")] string currencySymbol,
-          [JsonProperty("currency_rates")] int? currencyRates, [JsonProperty("currency_plural")] string currencyPlural, [JsonProperty("timezone")] string timezone,
+          [JsonProperty("currency_rates")] double? currencyRates, [JsonProperty("currency_plural")] string currencyPlural, [JsonProperty("timezone")] string timezone,
           [JsonProperty("timezone_name")] string timezoneName, [JsonProperty("timezone_dstoffset")] int? timezoneDstOffset, [JsonProperty("timezone_gmtoffset")] int? timezoneGmtOffset,
           [JsonProperty("timezone_gmt")] string timezoneGmt, [JsonProperty("asn")] string asn, [JsonProperty("org")] string origin, [JsonProperty("isp")] string isp,
           [JsonProperty("latitude")] double? latitude, [JsonProperty("longitude")] double? longitude)
@@ -33,10 +34,10 @@ namespace R8.Lib.IPProcess
             if (latitude != null && longitude != null)
                 coordinates = new IPCoordinates(latitude.Value, longitude.Value);
 
-            Isp = new ISPFull(asn);
+            Isp = new ISPFull(asn, isp);
             Name = country;
             Code = int.TryParse(countryCode, out var countryCodeInt) ? countryCodeInt : (int?)null;
-            _flag = countryFlag;
+            Flag = countryFlag;
             Capital = countryCapital;
             CountryPhoneCode = countryPhone;
             Neighbours = !string.IsNullOrEmpty(countryNeighbours) ? countryNeighbours.Split(",")?.ToList() : new List<string>();
@@ -51,11 +52,12 @@ namespace R8.Lib.IPProcess
         /// <summary>
         /// Represents an <see cref="System.Net.IPAddress"/> object
         /// </summary>
+        [JsonIgnore]
         public IPAddress IPAddress { get; }
 
         public ISPFull Isp { get; }
 
-        private readonly string _flag;
+        public string Flag { get; }
         public string Continent { get; }
         public string Capital { get; }
         public string Name { get; }
@@ -70,7 +72,9 @@ namespace R8.Lib.IPProcess
 
         public string City { get; }
 
+        [JsonIgnore]
         public DateTimeZoneMore TimeZone { get; }
+
         public IPCountryCurrency Currency { get; }
 
         /// <summary>
@@ -80,11 +84,11 @@ namespace R8.Lib.IPProcess
         /// <returns>An <see cref="Task"/> object representing asynchronous operation.</returns>
         public async Task<Stream> GetFlagAsync()
         {
-            if (string.IsNullOrEmpty(_flag))
-                throw new NullReferenceException($"{_flag} expected to filled with flag icon url.");
+            if (string.IsNullOrEmpty(Flag))
+                throw new NullReferenceException($"{Flag} expected to filled with flag icon url.");
 
             using var clientHandler = new HttpClientHandler();
-            var responseMessage = await clientHandler.GetAsync(_flag).ConfigureAwait(false);
+            var responseMessage = await clientHandler.GetAsync(Flag).ConfigureAwait(false);
             if (responseMessage == null)
                 return null;
 

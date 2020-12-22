@@ -12,9 +12,10 @@ namespace R8.Lib.IPProcess
         {
         }
 
-        public ISPFull(string asn)
+        public ISPFull(string asn, string isp)
         {
             Asn = asn;
+            Name = isp;
         }
 
         [JsonProperty("asn")]
@@ -74,7 +75,7 @@ namespace R8.Lib.IPProcess
                 throw new NullReferenceException($"{Asn} expected to be entered to gathering data.");
 
             const string url = "https://ipinfo.io/asn-api";
-            var dic = new Dictionary<string, string> { { "input", "AS50810" } };
+            var dic = new Dictionary<string, string> { { "input", Asn } };
             var payload = new FormUrlEncodedContent(dic);
             using var clientHandler = new HttpClientHandler();
             var httpContent = await clientHandler.PostAsync(url, payload).ConfigureAwait(false);
@@ -103,8 +104,7 @@ namespace R8.Lib.IPProcess
         public string Country { get; set; }
 
         [JsonProperty("size")]
-        // [JsonConverter(typeof(ParseStringConverter))]
-        public long Size { get; set; }
+        public string Size { get; set; }
 
         [JsonProperty("status")]
         public string Status { get; set; }
