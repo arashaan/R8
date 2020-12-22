@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-
 using Humanizer.Localisation;
 
 using Microsoft.AspNetCore.Builder;
@@ -19,17 +14,19 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using R8.AspNetCore.Demo.Pages;
-using R8.AspNetCore.Demo.Services.Database;
 using R8.AspNetCore.Demo.Services.Globalization;
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.ModelBinders;
 using R8.AspNetCore.Routing;
-using R8.EntityFrameworkCore;
 using R8.Lib;
 using R8.Lib.Localization;
 
 using SixLabors.ImageSharp.Formats.Png;
+
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace R8.AspNetCore.Demo
 {
@@ -50,8 +47,8 @@ namespace R8.AspNetCore.Demo
             var appDbContextConnectionString = Configuration
                 .GetConnectionString("ApplicationDbContextConnection");
 
-            services.AddCustomPooledDbContextFactory<ApplicationDbContext>(options =>
-                options.ConnectionString = appDbContextConnectionString);
+            // services.AddCustomPooledDbContextFactory<ApplicationDbContext>(options =>
+            //     options.ConnectionString = appDbContextConnectionString);
 
             services.AddLocalization(options => options.ResourcesPath = nameof(Resources))
                 .Configure<RequestLocalizationOptions>(options =>
@@ -110,7 +107,7 @@ namespace R8.AspNetCore.Demo
             });
 
             services.AddScoped<ICulturalizedUrlHelper, CulturalizedUrlHelper>();
-            services.AddTransient<ApplicationDbContext>();
+            // services.AddTransient<ApplicationDbContext>();
 
             services.AddLocalizer((serviceProvider, config) =>
             {
