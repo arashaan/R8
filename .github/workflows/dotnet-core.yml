@@ -1,10 +1,6 @@
 name: .NET Core
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -16,22 +12,6 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.404
-
-    - name: Setup NuGet.exe for use with actions
-      uses: NuGet/setup-nuget@v1.0.5
-      with:
-        nuget-version: '5.x'    
-
-    - name: Add private GitHub registry to NuGet
-      run: |
-          nuget sources add -name "github" -Source https://nuget.pkg.github.com/iamr8/index.json -Username arash.shabbeh@gmail.com -Password ${{ secrets.GITHUB_TOKEN }}
-
-    - run: nuget restore R8.sln
-
-    - name: Install dependencies
-      run: dotnet restore
+        dotnet-version: 5.0.101
     - name: Build
-      run: dotnet build --configuration Release --no-restore
-   # - name: Test
-   #   run: dotnet test --no-restore --verbosity normal
+      run: dotnet build --configuration Release
