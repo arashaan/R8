@@ -1,7 +1,4 @@
-﻿using Ghostscript.NET;
-using Ghostscript.NET.Rasterizer;
-
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
@@ -12,6 +9,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Ghostscript.NET;
+using Ghostscript.NET.Rasterizer;
 
 namespace R8.FileHandlers
 {

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace R8.FileHandlers
 {
-    public static class FileHandlers
+    public static class Handlers
     {
         /// <summary>
         /// Represents a <see cref="IMyFile"/> instance that contains saved file absolute path

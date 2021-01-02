@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Moq;
 
-namespace R8.Test.Constants
+namespace R8.AspNetCore.Test
 {
     public class FakeCore
     {

@@ -1,22 +1,64 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<PackageId>R8.GoogleAnalytics</PackageId>
-		<Version>1.10.0</Version>
+		<Description>An easy way to catch google analytics data.</Description>
+		<VersionPrefix>1.10.63</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
-		<Company>iamr8</Company>
-		<PackageDescription>Handle files easily</PackageDescription>
-		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<TargetFrameworks>netcoreapp3.1;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<AssemblyName>R8.GoogleAnalytics</AssemblyName>
+		<PackageId>R8.GoogleAnalytics</PackageId>
+		<PackageTags>GoogleApis;GoogleAnalytics</PackageTags>
+		<PackageProjectUrl>https://github.com/iamr8/R8</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<DebugType>embedded</DebugType>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<Optimize>false</Optimize>
+	<ItemGroup Condition="('$(TargetFramework)' == 'netstandard2.1')">
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	</ItemGroup>
+	<PropertyGroup Condition="('$(TargetFramework)' == 'netstandard2.1')">
+		<DefineConstants>NETSTANDARD2_1</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup Condition="('$(TargetFramework)' == 'netcoreapp3.1')">
+		<PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.49.0" />
+	</ItemGroup>
+	<PropertyGroup Condition="('$(TargetFramework)' == 'netcoreapp3.1')">
+		<DefineConstants>NETCORE3_1</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.49.0.2128" />
-		<PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.49.0" />
+		<PackageReference Include="AsyncFixer" Version="1.3.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Meziantou.Analyzer" Version="1.0.644">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.8.55">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.16.0.25740">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PlatformTarget>anycpu</PlatformTarget>
+	</PropertyGroup>
 </Project>

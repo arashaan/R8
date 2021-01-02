@@ -1,28 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
-		<PackageId>R8.FileHandlers</PackageId>
-		<Version>1.10.60</Version>
+		<Description>Easily save and manipulate files.</Description>
+		<VersionPrefix>1.10.63</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
-		<Company>iamr8</Company>
-		<PackageDescription>Handle files easily</PackageDescription>
-		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<AssemblyName>R8.FileHandlers</AssemblyName>
+		<PackageId>R8.FileHandlers</PackageId>
+		<PackageTags>GhostScript;SharpZipLib;SixLabors;Humanizer</PackageTags>
+		<PackageProjectUrl>https://github.com/iamr8/R8</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<DebugType>embedded</DebugType>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<Optimize>false</Optimize>
-	</PropertyGroup>
+
 	<ItemGroup>
-		<PackageReference Include="GhostScript.NET.dll" Version="1.0.0" />
-		<PackageReference Include="SharpZipLib" Version="1.3.1" />
-		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />
+		<PackageReference Include="GhostScript.NetCore" Version="1.0.1" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />
+		<PackageReference Include="SharpZipLib" Version="1.3.1" />
 		<PackageReference Include="Humanizer.Core" Version="2.8.26" />
+		<PackageReference Include="AsyncFixer" Version="1.3.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Meziantou.Analyzer" Version="1.0.644">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.8.55">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.16.0.25740">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
-	<!--<ItemGroup>
-    <ProjectReference Include="..\R8.Lib\R8.Lib.csproj" />
-  </ItemGroup>-->
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PlatformTarget>anycpu</PlatformTarget>
+	</PropertyGroup>
 </Project>
