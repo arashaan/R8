@@ -2,12 +2,13 @@
 
 	<PropertyGroup>
 		<Description>Many many many useful features for Asp.NET Core</Description>
-		<VersionPrefix>1.10.63</VersionPrefix>
+		<VersionPrefix>1.10.64</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AssemblyName>R8.AspNetCore</AssemblyName>
 		<PackageId>R8.AspNetCore</PackageId>
+		<PackageTags>AspNetCore</PackageTags>
 		<PackageProjectUrl>https://github.com/iamr8/R8</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -29,7 +30,7 @@
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
 		<PackageReference Include="MailKit" Version="2.10.0" />
-		<PackageReference Include="R8.EntityFrameworkCore" Version="1.10.63" />
+		<PackageReference Include="R8.EntityFrameworkCore" Version="1.10.64" />
 		<PackageReference Include="R8.FileHandlers" Version="1.10.63" />
 		<PackageReference Include="AsyncFixer" Version="1.3.0">
 			<PrivateAssets>all</PrivateAssets>

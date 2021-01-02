@@ -1,7 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+
 using Microsoft.AspNetCore.Http;
+
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace R8.AspNetCore.FileHandlers
 {
@@ -11,21 +14,20 @@ namespace R8.AspNetCore.FileHandlers
         public int Height;
         public int Width;
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
+            if (value == null)
+                return ValidationResult.Success;
+
             if (!(value is IFormFile file))
-                return base.IsValid(value, validationContext);
+                return new ValidationResult(ErrorMessageString);
 
             var stream = file.OpenReadStream();
-            bool result;
             using var image = Image.Load(stream);
-            {
-                result = Width <= image.Width && Height <= image.Height;
-            }
-
+            var result = Width <= image.Width && Height <= image.Height;
             return result
-            ? ValidationResult.Success
-            : new ValidationResult(ErrorMessageString);
+                ? ValidationResult.Success
+                : new ValidationResult(ErrorMessageString);
         }
     }
 }

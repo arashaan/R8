@@ -62,9 +62,6 @@ namespace R8.AspNetCore.FileHandlers
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            //context.Attributes.Add("data-val", "true");
-            //context.Attributes.Add("data-val-filetype", ErrorMessageString);
-            //context.Attributes.Add("data-val-validtypes", string.Join(",", _extensions));
             context.Attributes.Add("accept", string.Join(",", _extensions.Select(x => $".{x}")));
         }
     }
