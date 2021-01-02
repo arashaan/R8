@@ -210,13 +210,13 @@ namespace R8.AspNetCore.FileHandlers
 
             file.FilePath = file.FilePath.Replace(baseUrl.Replace("\\", "/"), null);
             file.FilePath = file.FilePath.StartsWith("/") ? file.FilePath : $"/{file.FilePath}";
+            file.FileSize = fileSize;
 
             if (string.IsNullOrEmpty(file.ThumbnailPath))
                 return file;
 
             file.ThumbnailPath = file.ThumbnailPath.Replace(baseUrl.Replace("\\", "/"), null);
             file.ThumbnailPath = file.ThumbnailPath.StartsWith("/") ? file.ThumbnailPath : $"/{file.ThumbnailPath}";
-            file.FileSize = fileSize;
             return file;
         }
 

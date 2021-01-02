@@ -8,7 +8,7 @@ using Xunit;
 
 namespace R8.FileHandlers.Test
 {
-    [TestCaseOrderer("Tests.Orderers.PriorityOrderer", "Tests.Orderers")]
+    [TestCaseOrderer("R8.Test.Constants.TestOrderers.PriorityOrderer", "R8.Test.Constants")]
     public class TestersTests
     {
         [Fact, TestPriority(0)]

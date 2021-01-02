@@ -6,12 +6,10 @@
 		<Version>1.10.60</Version>
 		<Authors>Arash Shabbeh</Authors>
 		<Company>iamr8</Company>
-		<LangVersion>8.0</LangVersion>
 		<PackageDescription>Core package for all R8.* packages</PackageDescription>
 		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
