@@ -6,6 +6,11 @@ namespace R8.Lib
     public static class RegexPatterns
     {
         /// <summary>
+        /// Only lowercase english letters and digits, plus DASH
+        /// </summary>
+        public const string Key = @"^([a-z0-9-]+)$";
+
+        /// <summary>
         /// Only persian and english digits in following pattern: +9XXXXXXXXX
         /// </summary>
         public const string Mobile = @"\+([0-9]|[۰-۹]){9,}";
