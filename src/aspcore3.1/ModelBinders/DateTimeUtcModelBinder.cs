@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace R8.AspNetCore.ModelBinders
 {
-    public class DateTimeUtcModelBinderProvider : IModelBinderProvider
-    {
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
-        {
-            return context.Metadata.ModelType == typeof(DateTime) || context.Metadata.ModelType == typeof(DateTime?)
-              ? new DateTimeUtcModelBinder()
-              : null;
-        }
-    }
-
     public class DateTimeUtcModelBinder : IModelBinder
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)

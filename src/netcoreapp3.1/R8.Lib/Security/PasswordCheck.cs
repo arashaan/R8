@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace R8.AspNetCore.Security
+namespace R8.Lib.Security
 {
     public static class PasswordCheck
     {

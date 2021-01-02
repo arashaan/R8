@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib", "src\netcoreapp3.1\R8.Lib\R8.Lib.csproj", "{3157B0A8-1ACA-4AB0-A757-42F2C2852C18}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.AspNetCore", "src\aspcore3.1\R8.AspNetCore\R8.AspNetCore.csproj", "{897ED8D2-D1F4-4844-A570-9927C2016A60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.AspNetCore", "src\aspcore3.1\R8.AspNetCore.csproj", "{897ED8D2-D1F4-4844-A570-9927C2016A60}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.FileHandlers", "src\netcoreapp3.1\R8.FileHandlers\R8.FileHandlers.csproj", "{9A55C3EB-BE04-40B5-B95F-3FC6076A26D7}"
 EndProject

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
+using MimeKit;
+
 using Moq;
 
 namespace R8.AspNetCore.Test
@@ -67,18 +69,18 @@ namespace R8.AspNetCore.Test
             MemoryCache = memoryCache;
         }
 
-        public static IFormFile MockFile(string fileName)
+        public static IFormFile GetFormFile(string fileName)
         {
-            var fileMock = new Mock<IFormFile>();
             var memoryStream = new MemoryStream();
             using var fileStream = new FileStream(fileName, FileMode.Open);
             fileStream.CopyTo(memoryStream);
 
-            fileMock.Setup(_ => _.OpenReadStream()).Returns(memoryStream);
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
-            fileMock.Setup(_ => _.Length).Returns(memoryStream.Length);
-
-            return fileMock.Object;
+            var formFile = new FormFile(memoryStream, 0, memoryStream.Length, null, Path.GetFileName(fileName))
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = MimeTypes.GetMimeType(Path.GetFileName(fileName))
+            };
+            return formFile;
         }
     }
 }

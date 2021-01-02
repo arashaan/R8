@@ -36,7 +36,7 @@ namespace R8.AspNetCore.Test.TestServerSimulation
         {
             Fixture = fixture.WithWebHostBuilder(builder => builder.UseStartup<Startup>().UseEnvironment("Test"));
             fixture.Output = output;
-            Client = fixture.CreateDefaultClient();
+            Client = fixture.CreateClient();
             Server = fixture.Server;
         }
     }

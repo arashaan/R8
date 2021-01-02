@@ -15,6 +15,6 @@
 		<Optimize>false</Optimize>
 	</PropertyGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\src\aspcore3.1\R8.AspNetCore\R8.AspNetCore.csproj" />
+		<ProjectReference Include="..\src\aspcore3.1\R8.AspNetCore.csproj" />
 	</ItemGroup>
 </Project>

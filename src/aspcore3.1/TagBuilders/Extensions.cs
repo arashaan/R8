@@ -190,15 +190,6 @@ namespace R8.AspNetCore.TagBuilders
         {
             var createdTag = new TagBuilder(output.TagName);
             createdTag.MergeAttributes(output.Attributes.ToDictionary(c => c.Name, c => c.Value));
-
-            // var renderedContent = output.RenderContent();
-            // if (renderedContent == null)
-            //     throw new NullReferenceException(nameof(renderedContent));
-            //
-            // var content = renderedContent.GetContent();
-            // if (!string.IsNullOrEmpty(content))
-            //     createdTag.InnerHtml.SetContent(content);
-
             return createdTag;
         }
 

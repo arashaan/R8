@@ -1,4 +1,4 @@
-﻿namespace R8.AspNetCore.Security
+﻿namespace R8.Lib.Security
 {
     public enum PasswordStrength
     {

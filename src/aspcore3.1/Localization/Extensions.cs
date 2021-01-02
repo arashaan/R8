@@ -13,7 +13,7 @@ namespace R8.AspNetCore.Localization
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            var features = context.Features ?? throw new ArgumentNullException("context.Features");
+            var features = context.Features ?? throw new ArgumentNullException(nameof(context.Features));
             var requestCulture = features.Get<IRequestCultureFeature>() ?? throw new ArgumentNullException("features.Get<IRequestCultureFeature>()");
             return requestCulture.RequestCulture.Culture;
         }

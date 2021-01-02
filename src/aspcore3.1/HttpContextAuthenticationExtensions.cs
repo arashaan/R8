@@ -24,8 +24,10 @@ namespace R8.AspNetCore
         public static async Task<bool> SignInAsync(this HttpContext httpContext, List<Claim> claims, bool isPersistent,
             AuthenticateResult authResult = null)
         {
-            if (httpContext == null) throw new ArgumentNullException(nameof(httpContext));
-            if (claims == null) throw new ArgumentNullException(nameof(claims));
+            if (httpContext == null)
+                throw new ArgumentNullException(nameof(httpContext));
+            if (claims == null)
+                throw new ArgumentNullException(nameof(claims));
 
             var claimsIdentity = new ClaimsIdentity(claims, AuthDefaults.AuthenticationScheme);
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -37,7 +39,6 @@ namespace R8.AspNetCore
             };
 
             await httpContext.SignInAsync(AuthDefaults.AuthenticationScheme, claimsPrincipal, authProperties).ConfigureAwait(false);
-
             httpContext.User.AddIdentity(claimsIdentity);
             return httpContext.User.Identities?.Any(x =>
                 x.IsAuthenticated &&

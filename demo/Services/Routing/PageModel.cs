@@ -109,7 +109,7 @@ namespace R8.AspNetCore.Demo.Services.Routing
         // /// An automated API to handle OnPost requests asynchronously
         // /// </summary>
         // /// <typeparam name="TEntity">Type of Entity that will returns after running <paramref name="action"/> —Based on <see cref="EntityBase"/></typeparam>
-        // /// <typeparam name="TInputModel">Type of Input model based on <see cref="BaseInputModel"/></typeparam>
+        // /// <typeparam name="TInputModel">Type of Input model based on <see cref="BaseInput"/></typeparam>
         // /// <param name="model">Input model that supposed to push to API</param>
         // /// <param name="action">API action that returns <see cref="Response{TSource}"/></param>
         // /// <param name="redirectOnSuccess">Page url to go after success</param>
@@ -137,7 +137,7 @@ namespace R8.AspNetCore.Demo.Services.Routing
         //     return result;
         // }
         //
-        // public static Dictionary<string, object> FixRoute<TInput>(Response response, TInput model) where TInput : BaseInputModel<TInput>
+        // public static Dictionary<string, object> FixRoute<TInput>(Response response, TInput model) where TInput : BaseInput<TInput>
         // {
         //     var isValid = model.Validate();
         //     string message;
@@ -166,7 +166,7 @@ namespace R8.AspNetCore.Demo.Services.Routing
         // /// An internal API to handle OnPost request
         // /// </summary>
         // /// <typeparam name="TEntity">Type of Entity that will returns after running <paramref name="action"/> —Based on <see cref="EntityBase"/></typeparam>
-        // /// <typeparam name="TInputModel">Type of Input model based on <see cref="BaseInputModel"/></typeparam>
+        // /// <typeparam name="TInputModel">Type of Input model based on <see cref="BaseInput"/></typeparam>
         // /// <param name="model">Input model that supposed to push to API</param>
         // /// <param name="responseWrapper">API action that returns <see cref="Response{TSource}"/></param>
         // private HandlerResponse RedirectCore<TEntity, TInputModel>(TInputModel model,
@@ -177,7 +177,7 @@ namespace R8.AspNetCore.Demo.Services.Routing
         //                                  ?? throw new ArgumentNullException($"{nameof(responseWrapper)} must be filled");
         //     var isValid = model.Validate();
         //
-        //     BaseInputModel<TInputModel> baseInputModel;
+        //     BaseInput<TInputModel> baseInputModel;
         //     var isNewProp = model.GetType().GetPublicProperties()
         //       .Find(x => x.Name.Equals(nameof(baseInputModel.IsNew), StringComparison.Ordinal));
         //     var isNew = isNewProp != null && (bool)isNewProp.GetValue(model);

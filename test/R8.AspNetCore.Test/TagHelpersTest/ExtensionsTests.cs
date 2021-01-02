@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Html;
+
 using R8.AspNetCore.TagBuilders;
+using R8.AspNetCore.TagBuilders.TagHelpers;
+
 using Xunit;
 
-namespace R8.AspNetCore.Test
+namespace R8.AspNetCore.Test.TagHelpersTest
 {
     public class ExtensionsTests
     {
@@ -190,6 +196,57 @@ namespace R8.AspNetCore.Test
 
             // Arrange
             Assert.Equal(decodedHtml, html);
+        }
+
+        [Fact]
+        public async Task CallRenderAsync()
+        {
+            // Assets
+            var tag = new CustomSpanTagHelper();
+
+            // Act
+            var rendered = await tag.RenderAsync();
+            var html = rendered.GetString();
+
+            // Arrange
+            Assert.NotNull(html);
+        }
+
+        [Fact]
+        public async Task CallRenderAsync2()
+        {
+            // Assets
+            var tag = new CustomSpanTagHelper();
+
+            // Act
+            var rendered = await tag.RenderAsync();
+            var html = rendered.GetString();
+            var parsedTag = TagBuilders.Extensions.GetTagBuilder(html);
+
+            // Arrange
+            Assert.NotNull(parsedTag);
+            Assert.Equal("span", parsedTag.TagName);
+        }
+
+        [Fact]
+        public async Task CallRenderAsync3()
+        {
+            // Assets
+            var tag = new CustomSpanTagHelper()
+            {
+                Disabled = false,
+                Name = "Input.Fake"
+            };
+
+            // Act
+            var rendered = await tag.RenderAsync();
+            var html = rendered.GetString();
+            var parsedTag = TagBuilders.Extensions.GetTagBuilder(html);
+            var attributes = parsedTag.Attributes.ToList();
+            // Arrange
+            Assert.NotNull(parsedTag);
+            Assert.Equal("span", parsedTag.TagName);
+            Assert.Contains(attributes, x => x.Key == "data-valmsg-for");
         }
     }
 }

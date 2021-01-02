@@ -24,7 +24,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\demo\R8.AspNetCore.Demo.csproj" />
-		<ProjectReference Include="..\..\src\aspcore3.1\R8.AspNetCore\R8.AspNetCore.csproj" />
+		<ProjectReference Include="..\..\src\aspcore3.1\R8.AspNetCore.csproj" />
 		<ProjectReference Include="..\R8.Test.Constants\R8.Test.Constants.csproj" />
 	</ItemGroup>
 </Project>

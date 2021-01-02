@@ -8,9 +8,18 @@ using System.Security.Claims;
 
 namespace R8.AspNetCore
 {
-    internal class AuthenticatedUser : IAuthenticatedUser
+    public class AuthenticatedUser : IAuthenticatedUser
     {
         private List<Claim> _claims = new List<Claim>();
+
+        public AuthenticatedUser()
+        {
+        }
+
+        public AuthenticatedUser(IEnumerable<Claim> claims) : this()
+        {
+            AddClaims(claims);
+        }
 
         internal void AddClaims(IEnumerable<Claim> claims)
         {
@@ -83,6 +92,9 @@ namespace R8.AspNetCore
             var roleString = GetRole();
             try
             {
+                if (typeof(T) == typeof(string))
+                    return (T)roleString;
+
                 var converter = TypeDescriptor.GetConverter(typeof(T));
                 if (converter != null)
                     return (T)converter.ConvertFromString(roleString.ToString());

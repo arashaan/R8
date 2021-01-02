@@ -4,21 +4,21 @@ using R8.Lib;
 
 namespace R8.AspNetCore
 {
-    public interface IBaseInputModel
+    public interface IBaseInput
     {
         bool IsNew { get; }
     }
 
-    public interface IBaseInputModel<TId> : IBaseInputModel
+    public interface IBaseInput<TId> : IBaseInput
     {
         TId Id { get; set; }
     }
 
-    public abstract class BaseInputModel<TModel> : BaseInputModel<TModel, string> where TModel : class
+    public abstract class BaseInput<TModel> : BaseInput<TModel, string> where TModel : class
     {
     }
 
-    public abstract class BaseInputModel<TModel, TId> : ValidatableObject<TModel>, IBaseInputModel<TId> where TModel : class
+    public abstract class BaseInput<TModel, TId> : ValidatableObject<TModel>, IBaseInput<TId> where TModel : class
     {
         public bool IsNew => Id == null;
 

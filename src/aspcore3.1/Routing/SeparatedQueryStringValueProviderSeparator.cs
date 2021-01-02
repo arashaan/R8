@@ -1,4 +1,4 @@
-﻿namespace R8.AspNetCore
+﻿namespace R8.AspNetCore.Routing
 {
     public class SeparatedQueryStringValueProviderSeparator
     {
