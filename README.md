@@ -6,13 +6,13 @@ Some of the useful features, packed in **Separated Useful Packages**
 
 ## Packages
 
-| Package Name                                                          | Version     | Status                         |
-| --------------------------------------------------------------------- | ----------- | ------------------------------ |
-| [R8.Lib](https://www.nuget.org/packages/R8.Lib/)                 | ![R8LibVersion](https://img.shields.io/nuget/vpre/R8.Lib) | ![R8LibDownloads](https://img.shields.io/nuget/dt/R8.Lib) |
-| [R8.FileHandlers](https://www.nuget.org/packages/R8.FileHandlers/)        | ![R8FileHandlersVersion](https://img.shields.io/nuget/vpre/R8.FileHandlers) | ![R8FileHandlersDownloads](https://img.shields.io/nuget/dt/R8.FileHandlers) |
-| [R8.EntityFrameworkCore](https://www.nuget.org/packages/R8.EntityFrameworkCore/) | ![R8EntityFramworkCoreVersion](https://img.shields.io/nuget/vpre/R8.EntityFrameworkCore) | ![R8EntityFrameworkCoreDownloads](https://img.shields.io/nuget/dt/R8.EntityFrameworkCore) |
-| [R8.AspNetCore](https://www.nuget.org/packages/R8.AspNetCore/)          | ![R8AspNetCoreVersion](https://img.shields.io/nuget/vpre/R8.AspNetCore) | ![R8AspNetCoreDownloads](https://img.shields.io/nuget/dt/R8.AspNetCore) |
-| [R8.GoogleAnalytics](https://www.nuget.org/packages/R8.GoogleAnalytics/)     | ![R8GoogleAnalyticsVersion](https://img.shields.io/nuget/vpre/R8.GoogleAnalytics)  | ![R8GoogleAnalyticsDownloads](https://img.shields.io/nuget/dt/R8.GoogleAnalytics) |
+| Package Name                                                          | Version     |
+| --------------------------------------------------------------------- | ----------- |
+| [Lib](https://www.nuget.org/packages/R8.Lib/)                 | ![R8LibVersion](https://img.shields.io/nuget/vpre/R8.Lib) | ![R8LibDownloads](https://img.shields.io/nuget/dt/R8.Lib) |
+| [FileHandlers](https://www.nuget.org/packages/R8.FileHandlers/)        | ![R8FileHandlersVersion](https://img.shields.io/nuget/vpre/R8.FileHandlers) |
+| [EntityFrameworkCore](https://www.nuget.org/packages/R8.EntityFrameworkCore/) | ![R8EntityFramworkCoreVersion](https://img.shields.io/nuget/vpre/R8.EntityFrameworkCore) |
+| [AspNetCore](https://www.nuget.org/packages/R8.AspNetCore/)          | ![R8AspNetCoreVersion](https://img.shields.io/nuget/vpre/R8.AspNetCore) |
+| [GoogleAnalytics](https://www.nuget.org/packages/R8.GoogleAnalytics/)     | ![R8GoogleAnalyticsVersion](https://img.shields.io/nuget/vpre/R8.GoogleAnalytics)  |
 
 ### All other packages in this repo, that they ain't included in above list, are deprecated.
 
