@@ -1,18 +1,23 @@
-﻿using System;
+﻿using R8.Test.Constants;
+using R8.Test.Constants.TestOrderers;
+
+using System;
 using System.IO;
+
 using Xunit;
 
 namespace R8.FileHandlers.Test
 {
+    [TestCaseOrderer("Tests.Orderers.PriorityOrderer", "Tests.Orderers")]
     public class TestersTests
     {
-        [Fact]
+        [Fact, TestPriority(0)]
         public void CallIsArchive_StreamNull()
         {
             Assert.Throws<ArgumentNullException>(() => ((Stream)null).IsArchive(false));
         }
 
-        [Fact]
+        [Fact, TestPriority(1)]
         public void CallIsArchive()
         {
             // Act
@@ -25,7 +30,7 @@ namespace R8.FileHandlers.Test
             Assert.True(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(2)]
         public void CallIsArchive_EmptyFile()
         {
             // Act
@@ -38,7 +43,7 @@ namespace R8.FileHandlers.Test
             Assert.False(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(3)]
         public void CallIsArchive_InvalidFile()
         {
             // Act
@@ -51,7 +56,7 @@ namespace R8.FileHandlers.Test
             Assert.False(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(4)]
         public void CallIsImage_InvalidFormat()
         {
             // Act
@@ -64,7 +69,7 @@ namespace R8.FileHandlers.Test
             Assert.False(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(5)]
         public void CallIsImage_StreamEmpty()
         {
             // Act
@@ -75,13 +80,13 @@ namespace R8.FileHandlers.Test
             Assert.False(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(6)]
         public void CallIsImage_StreamNull()
         {
             Assert.Throws<ArgumentNullException>(() => ((Stream)null).IsImage());
         }
 
-        [Fact]
+        [Fact, TestPriority(7)]
         public void CallIsImage()
         {
             // Act
@@ -94,14 +99,14 @@ namespace R8.FileHandlers.Test
             Assert.True(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(8)]
         public void CallIsPdf_StreamNull()
         {
             // Act
             Assert.Throws<ArgumentNullException>(() => ((Stream)null).IsPdf());
         }
 
-        [Fact]
+        [Fact, TestPriority(9)]
         public void CallIsPdf_InvalidFormat2()
         {
             // Act
@@ -114,7 +119,7 @@ namespace R8.FileHandlers.Test
             Assert.False(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(10)]
         public void CallIsSvg()
         {
             // Act
@@ -127,14 +132,14 @@ namespace R8.FileHandlers.Test
             Assert.True(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(11)]
         public void CallIsSvg_StreamNull()
         {
             // Act
             Assert.Throws<ArgumentNullException>(() => ((Stream)null).IsSvg());
         }
 
-        [Fact]
+        [Fact, TestPriority(12)]
         public void CallIsSvg_InvalidFormat()
         {
             // Act
@@ -147,7 +152,7 @@ namespace R8.FileHandlers.Test
             Assert.False(act);
         }
 
-        [Fact]
+        [Fact, TestPriority(13)]
         public void CallIsPdf()
         {
             // Act

@@ -1,5 +1,4 @@
 ﻿using R8.Lib.Enums;
-
 using Xunit;
 
 namespace R8.Lib.Test

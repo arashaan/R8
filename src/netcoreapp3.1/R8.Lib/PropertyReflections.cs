@@ -10,20 +10,6 @@ namespace R8.Lib
 {
     public static class PropertyReflections
     {
-        //public static object GetMemberValue(this MemberExpression expression)
-        //{
-        //    if (expression == null)
-        //        throw new ArgumentNullException(nameof(expression));
-
-        //    return expression.Expression switch
-        //    {
-        //        ConstantExpression constantExpression => (constantExpression.Value).GetType()
-        //            .GetField(expression.Member.Name).GetValue(constantExpression.Value),
-        //        MemberExpression memberExpression => GetMemberValue(memberExpression),
-        //        _ => throw new NotImplementedException()
-        //    };
-        //}
-
         public static object GetExpressionValue(this Expression expression)
         {
             var objectMember = Expression.Convert(expression, typeof(object));
@@ -38,11 +24,6 @@ namespace R8.Lib
               ? (MemberExpression)unaryExpression.Operand
               : (MemberExpression)lambdaExpression.Body;
         }
-
-        // public static DisplayAttribute GetDisplayAttribute(this PropertyInfo propertyInfo)
-        // {
-        //     return propertyInfo.GetCustomAttribute<DisplayAttribute>();
-        // }
 
         /// <summary>
         /// Returns a <see cref="Dictionary{TKey,TValue}"/> from properties in given source.
@@ -102,62 +83,6 @@ namespace R8.Lib
             return nestedTypes;
         }
 
-        //public static List<PropertyInfo> SortByOrder(this Type type)
-        //{
-        //    if (type == null)
-        //        return default;
-
-        //    var types = type.GetTypesToRoot();
-        //    types.Reverse();
-
-        //    if (types?.Any() != true)
-        //        return default;
-
-        //    var result = new List<PropertyInfo>();
-        //    var sortedProperties = from _type in types
-        //                           select _type.GetTypeInfo().DeclaredProperties.ToList()
-        //        into properties
-        //                           where properties?.Any() == true
-        //                           select properties.ToDictionary(x => x, x => x.GetCustomAttribute<OrderAttribute>()?.X ?? 100)
-        //        into sortDic
-        //                           select sortDic.OrderBy(x => x.Value).Select(x => x.Key).ToList();
-        //    foreach (var sortedProperty in sortedProperties)
-        //    {
-        //        result.AddRange(sortedProperty);
-        //    }
-
-        //    return result;
-        //}
-
-        //public static Dictionary<string, string> Sort(this Dictionary<string, string> propertiesDictionary, Type modelType)
-        //{
-        //    if (!propertiesDictionary.Any())
-        //        return propertiesDictionary;
-
-        //    if (modelType == null)
-        //        return propertiesDictionary;
-
-        //    var sorted = modelType.SortByOrder();
-        //    if (sorted?.Any() != true)
-        //        return propertiesDictionary;
-
-        //    var properties = modelType.GetPublicProperties();
-        //    if (properties?.Any() != true)
-        //        return propertiesDictionary;
-
-        //    var result = sorted
-        //        .Where(x => propertiesDictionary.Any(c => c.Key == x.GetDisplayName()))
-        //        .ToDictionary(x => x.GetDisplayName(), x => propertiesDictionary.FirstOrDefault(c => c.Key == x.GetDisplayName()).Value);
-        //    return result;
-        //}
-
-        // public static object[] GetPropertyAttributes<TModel>(
-        //     this Expression<Func<TModel, object>> expression)
-        // {
-        //     var propertyInfo = expression.GetPropertyInfo();
-        //     return propertyInfo?.GetCustomAttributes(false);
-        // }
-
         /// <summary>
         /// Returns a list of public <see cref="PropertyInfo"/> from given model type.
         /// </summary>
@@ -168,26 +93,6 @@ namespace R8.Lib
             return modelType.GetProperties(BindingFlags.Instance | BindingFlags.Public).ToList();
         }
 
-        //
-        // public static PropertyInfo GetPropertyInfo<TSource, TModel>(this Expression<Func<TSource, List<TModel>>> expression)
-        // {
-        //     var lambdaExpression = expression as LambdaExpression;
-        //     var memberExpression = lambdaExpression.GetMemberExpression();
-        //
-        //     return memberExpression.Member as PropertyInfo;
-        // }
-
-        // /// <summary>
-        // /// Returns <see cref="PropertyInfo"/> from expression.
-        // /// </summary>
-        // /// <typeparam name="TModel">A object generic type that containing specific property.</typeparam>
-        // /// <typeparam name="TProperty">A property generic type that expected to get <see cref="PropertyInfo"/>.</typeparam>
-        // /// <param name="expression">An <see cref="Expression{TDelegate}"/> to get given property from given model</param>
-        // /// <returns>An <see cref="PropertyInfo"/> object</returns>
-        // public static PropertyInfo GetPropertyInfo<TModel, TProperty>(this Expression<Func<TModel, TProperty>> expression)
-        // {
-        //     return expression.GetMember();
-        // }
         /// <summary>
         /// Returns <see cref="PropertyInfo"/> from expression.
         /// </summary>
@@ -200,18 +105,6 @@ namespace R8.Lib
 
             return memberExpression.Member as PropertyInfo;
         }
-
-        //
-        // /// <summary>
-        // /// Returns <see cref="PropertyInfo"/> from expression.
-        // /// </summary>
-        // /// <typeparam name="TModel">A object generic type that containing specific property.</typeparam>
-        // /// <param name="expression">An <see cref="Expression{TDelegate}"/> to get given property from given model</param>
-        // /// <returns>An <see cref="PropertyInfo"/> object</returns>
-        // public static PropertyInfo GetPropertyInfo<TModel>(this Expression<TModel> expression)
-        // {
-        //     return expression.GetMember();
-        // }
 
         /// <summary>
         /// Returns <see cref="PropertyInfo"/> from expression.

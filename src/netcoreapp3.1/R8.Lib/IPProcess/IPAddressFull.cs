@@ -35,7 +35,7 @@ namespace R8.Lib.IPProcess
                 coordinates = new IPCoordinates(latitude.Value, longitude.Value);
 
             Isp = new ISPFull(asn, isp);
-            Name = country;
+            Country = country;
             Code = int.TryParse(countryCode, out var countryCodeInt) ? countryCodeInt : (int?)null;
             Flag = countryFlag;
             Capital = countryCapital;
@@ -60,7 +60,7 @@ namespace R8.Lib.IPProcess
         public string Flag { get; }
         public string Continent { get; }
         public string Capital { get; }
-        public string Name { get; }
+        public string Country { get; }
         public IPCoordinates Coordinates { get; }
 
         public int? Code { get; }

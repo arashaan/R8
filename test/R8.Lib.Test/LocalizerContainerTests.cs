@@ -1,10 +1,7 @@
 ﻿using System.Globalization;
-
 using Newtonsoft.Json;
-
 using R8.Lib.Enums;
 using R8.Lib.Localization;
-
 using Xunit;
 
 namespace R8.Lib.Test

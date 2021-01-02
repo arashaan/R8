@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-
 using R8.GoogleAnalytics.Models;
-
+using R8.Test.Constants;
 using Xunit;
 
 namespace R8.GoogleAnalytics.Test
@@ -14,7 +12,6 @@ namespace R8.GoogleAnalytics.Test
         public async System.Threading.Tasks.Task CallProviderAsync()
         {
             // Assets
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "google.json");
             var startDate = new DateTime(2018, 01, 01);
             var endDate = DateTime.Now;
             var serviceRequests = new List<GoogleAnalyticsRequest>
@@ -39,7 +36,7 @@ namespace R8.GoogleAnalytics.Test
             };
 
             // Act
-            var instance = new GoogleAnalyticsProvider(path, "187208166");
+            var instance = new GoogleAnalyticsProvider(Constants.GoogleJson, "187208166");
             await instance.ExecuteAsync(startDate, endDate, serviceRequests);
 
             // Arrange

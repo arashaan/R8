@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-
 using R8.Lib.Localization;
 using R8.Lib.MethodReturn;
 using R8.Lib.Test.Enums;

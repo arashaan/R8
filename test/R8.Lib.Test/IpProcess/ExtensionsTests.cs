@@ -1,12 +1,23 @@
 ﻿using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+
 using R8.Lib.IPProcess;
+
 using Xunit;
+using Xunit.Abstractions;
 
 namespace R8.Lib.Test.IpProcess
 {
     public class ExtensionsTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public ExtensionsTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public async Task CallGetAsn()
         {
@@ -20,6 +31,7 @@ namespace R8.Lib.Test.IpProcess
             // Assert
             Assert.NotNull(ip);
             Assert.NotNull(ip.Isp.Name);
+            Assert.StartsWith("Mobin Net", ip.Isp.Name);
         }
 
         [Fact]
@@ -33,16 +45,19 @@ namespace R8.Lib.Test.IpProcess
 
             // Assert
             Assert.NotNull(ip);
+            Assert.Equal("Germany", ip.Country);
+            Assert.Equal("Euro", ip.Currency.Name);
         }
 
-        [Fact]
-        public async Task CallGetIpAddressAsyncString()
+        [Theory]
+        [InlineData("109.108.160.241")]
+        [InlineData("162.158.93.83")]
+        public async Task CallGetIpAddressAsyncString(string ipAddress)
         {
             // Assets
-            const string ipAddress = "109.108.160.241";
 
             // Acts
-            var ip = await IPProcess.Extensions.GetIpAddressAsync(ipAddress);
+            var ip = await R8.Lib.IPProcess.Extensions.GetIpAddressAsync(ipAddress);
 
             // Assert
             Assert.NotNull(ip);

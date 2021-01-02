@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-
 using R8.Lib.JsonExtensions;
-
+using R8.Test.Constants.FakeObjects;
 using Xunit;
 
 namespace R8.Lib.Test

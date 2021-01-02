@@ -5,7 +5,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Resources;
+
 using Microsoft.AspNetCore.Html;
+
 using R8.AspNetCore.Attributes;
 using R8.Lib;
 
@@ -81,8 +83,8 @@ namespace R8.AspNetCore
                 return new ValueTuple<IHtmlContent, IHtmlContent>
                 {
                     Item1 = requireTag
-                        ? new HtmlString($"data-val-regex-pattern=\"{validator.Pattern.GetDisplayName()}\"")
-                        : new HtmlString(validator.Pattern.GetDisplayName()),
+                        ? new HtmlString($"data-val-regex-pattern=\"{validator.Pattern}\"")
+                        : new HtmlString(validator.Pattern),
                     Item2 = requireTag
                         ? new HtmlString($"data-val-regex=\"{validator.ErrorMessage}\"")
                         : new HtmlString(validator.ErrorMessage)

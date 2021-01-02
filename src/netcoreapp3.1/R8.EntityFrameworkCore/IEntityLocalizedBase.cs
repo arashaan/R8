@@ -15,10 +15,6 @@ namespace R8.EntityFrameworkCore
         /// <summary>
         /// Gets or sets a <see cref="LocalizerContainer"/> that stores globalized values and specified cultures.
         /// </summary>
-        public LocalizerContainer Name
-        {
-            get => LocalizerContainer.Deserialize(NameJson);
-            set => NameJson = value.Serialize();
-        }
+        public LocalizerContainer Name { get; set; }
     }
 }

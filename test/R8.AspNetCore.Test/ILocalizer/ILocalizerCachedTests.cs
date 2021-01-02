@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
 
-using R8.AspNetCore.Test.FakeBack;
 using R8.Lib.Localization;
+using R8.Test.Constants;
 
 using Xunit;
 
@@ -14,10 +13,6 @@ namespace R8.AspNetCore.Test.ILocalizer
     public class ILocalizerCachedTests : FakeCore
     {
         private readonly Localizer _localizer;
-
-        private static CultureInfo DefaultCulture => CultureInfo.GetCultureInfo("tr");
-        private static string FolderPath => Path.Combine(Directory.GetCurrentDirectory(), "Dictionary");
-        private static string JsonFileName => "dic";
 
         private static List<CultureInfo> SupportedCultures => new List<CultureInfo>
         {
@@ -34,8 +29,8 @@ namespace R8.AspNetCore.Test.ILocalizer
                 UseMemoryCache = true,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = FolderPath,
-                    FileName = JsonFileName,
+                    Folder = Constants.FolderPath,
+                    FileName = Constants.JsonFileName,
                 }
             };
             _localizer = new Localizer(configuration, MemoryCache);
@@ -51,8 +46,8 @@ namespace R8.AspNetCore.Test.ILocalizer
                 UseMemoryCache = true,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = FolderPath,
-                    FileName = JsonFileName,
+                    Folder = Constants.FolderPath,
+                    FileName = Constants.JsonFileName,
                 }
             };
 
@@ -79,17 +74,31 @@ namespace R8.AspNetCore.Test.ILocalizer
         }
 
         [Fact]
-        public async Task CallGetter_WithCulture()
+        public async Task CallGetter_WithDefaultCulture()
         {
             // Assets
             var key = "AppName";
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key, DefaultCulture];
+            var translation = _localizer[key, Constants.DefaultCulture];
 
             // Arrange
             Assert.Equal("EKOHOS", translation);
+        }
+
+        [Fact]
+        public async Task CallGetter_SpecificCultureEnglish()
+        {
+            // Assets
+            var key = "AppName";
+
+            // Act
+            await _localizer.RefreshAsync();
+            var translation = _localizer[key, CultureInfo.GetCultureInfo("en")];
+
+            // Arrange
+            Assert.Equal("ECOHOS Holding", translation);
         }
 
         [Fact]
@@ -100,7 +109,7 @@ namespace R8.AspNetCore.Test.ILocalizer
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key, DefaultCulture];
+            var translation = _localizer[key, Constants.DefaultCulture];
 
             // Arrange
             Assert.Null(translation);
@@ -117,15 +126,63 @@ namespace R8.AspNetCore.Test.ILocalizer
             Assert.Null(translation);
         }
 
+        [Theory]
+        [InlineData("fa")]
+        [InlineData("en")]
+        [InlineData("tr")]
+        public async Task CallGetter(string lang)
+        {
+            // Assets
+            var key = "AppName";
+            var culture = CultureInfo.GetCultureInfo(lang);
+
+            // Act
+            await _localizer.RefreshAsync();
+            var translation = _localizer[key][culture, false];
+
+            // Arrange
+            Assert.NotNull(translation);
+        }
+
         [Fact]
-        public async Task CallGetter_SpecificCulture()
+        public async Task CallGetter_SpecificCultureFarsi()
+        {
+            // Assets
+            var key = "AppName";
+            var culture = CultureInfo.GetCultureInfo("fa");
+
+            // Act
+            await _localizer.RefreshAsync();
+            var translation = _localizer[key][culture, false];
+
+            // Arrange
+            Assert.Equal("هلدینگ اکوهوس", translation);
+        }
+
+        [Fact]
+        public async Task CallGetter_SpecificCultureFarsi2()
+        {
+            // Assets
+            var key = "AppName";
+            var culture = CultureInfo.GetCultureInfo("fa");
+
+            // Act
+            await _localizer.RefreshAsync();
+            var translation = _localizer[key, culture];
+
+            // Arrange
+            Assert.Equal("هلدینگ اکوهوس", translation);
+        }
+
+        [Fact]
+        public async Task CallGetter_SpecificCultureDefault()
         {
             // Assets
             var key = "AppName";
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key][DefaultCulture, false];
+            var translation = _localizer[key][Constants.DefaultCulture, false];
 
             // Arrange
             Assert.Equal("EKOHOS", translation);
@@ -139,7 +196,7 @@ namespace R8.AspNetCore.Test.ILocalizer
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key][DefaultCulture, false];
+            var translation = _localizer[key][Constants.DefaultCulture, false];
 
             // Arrange
             Assert.NotEqual(translation, key);
@@ -176,7 +233,7 @@ namespace R8.AspNetCore.Test.ILocalizer
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = FolderPath,
+                    Folder = Constants.FolderPath,
                 }
             };
 

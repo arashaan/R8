@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
+
 using R8.AspNetCore.Routing;
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
@@ -171,8 +173,9 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                 }.RenderAsync();
 
                 // get final page Url
-                var pageUrl =
-                    anchor.Attributes.First(x => x.Key.Equals("href", StringComparison.InvariantCultureIgnoreCase)).Value;
+                var href = anchor.Attributes.First(x =>
+                    x.Key.Equals("href", StringComparison.InvariantCultureIgnoreCase));
+                var pageUrl = href.Value;
                 var pageFinalUrl = _httpContextAccessor.HttpContext.GetBaseUrl() + pageUrl.Substring(1);
 
                 anchor.Attributes.Add("itemprop", "item");

@@ -1,34 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageId>R8.EntityFrameworkCore</PackageId>
-    <Version>1.10.50</Version>
-    <Authors>Arash Shabbeh</Authors>
-    <Company>iamr8</Company>
-    <LangVersion>8.0</LangVersion>
-    <PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
-    <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
-    <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<PackageId>R8.EntityFrameworkCore</PackageId>
+		<Version>1.10.60</Version>
+		<Authors>Arash Shabbeh</Authors>
+		<Company>iamr8</Company>
+		<LangVersion>8.0</LangVersion>
+		<PackageDescription>Exclusive EntityFrameworkCore DbContext</PackageDescription>
+		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
+		<DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <Optimize>false</Optimize>
-  </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
-    <PackageReference Include="EasyCaching.InMemory" Version="1.1.0" />
-    <PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.2.0" />
-    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
-    <PackageReference Include="R8.Lib" Version="1.10.50" />
-  </ItemGroup>
-  <!--<ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<Optimize>false</Optimize>
+	</PropertyGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+		<PackageReference Include="EasyCaching.InMemory" Version="1.1.0" />
+		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.3.0" />
+		<PackageReference Include="Humanizer.Core" Version="2.8.26" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
+		<PackageReference Include="R8.Lib" Version="1.10.60" />
+	</ItemGroup>
+	<!--<ItemGroup>
     <ProjectReference Include="..\R8.Lib\R8.Lib.csproj" />
   </ItemGroup>-->
 </Project>

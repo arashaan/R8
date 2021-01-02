@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Memory;
+
+using Newtonsoft.Json;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-
-using Microsoft.Extensions.Caching.Memory;
-
-using Newtonsoft.Json;
 
 namespace R8.Lib.Localization
 {
@@ -180,10 +180,14 @@ namespace R8.Lib.Localization
         }
 
         public string this[string key, CultureInfo culture] =>
-            string.IsNullOrEmpty(key) ? null : GetValue(culture, key).Get(culture, false);
+            !string.IsNullOrEmpty(key)
+                ? GetValue(culture, key).Get(culture, false)
+                : null;
 
         public LocalizerContainer this[string key] =>
-            string.IsNullOrEmpty(key) ? null : GetValue(CultureInfo.CurrentCulture, key);
+            !string.IsNullOrEmpty(key)
+                ? GetValue(CultureInfo.CurrentCulture, key)
+                : null;
 
         /// <summary>
         /// Returns an equivalent translation for given key.

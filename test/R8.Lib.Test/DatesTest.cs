@@ -164,14 +164,25 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallGetNodeTimeZone_Iran2()
+        public void CallGetNodeTimeZone_IranNoda()
         {
+            // Act
+            var act = Dates.GetNodaTimeZone("Asia/Tehran", false);
+
             // Arrange
-            Assert.Throws<TimeZoneNotFoundException>(() => Dates.GetNodaTimeZone("Iran Daylight Time"));
+            Assert.NotNull(act);
+            Assert.Equal("Iran Standard Time", act.SystemTimeZone.Id);
         }
 
         [Fact]
-        public void CallGetNodeTimeZone_Iran()
+        public void CallGetNodeTimeZone_IranError()
+        {
+            // Arrange
+            Assert.Throws<TimeZoneNotFoundException>(() => Dates.GetNodaTimeZone("MyTimeZone"));
+        }
+
+        [Fact]
+        public void CallGetNodeTimeZone_IranSystem()
         {
             // Act
             var act = Dates.GetNodaTimeZone("Iran Standard Time");
@@ -179,6 +190,17 @@ namespace R8.Lib.Test
             // Arrange
             Assert.NotNull(act);
             Assert.Equal("Iran Standard Time", act.SystemTimeZone.Id);
+        }
+
+        [Fact]
+        public void CallGetNodeTimeZone_ToString()
+        {
+            // Act
+            var act = Dates.GetNodaTimeZone("Iran Standard Time").ToString();
+
+            // Arrange
+            Assert.NotNull(act);
+            Assert.Equal("(UTC+03:30) Tehran", act);
         }
     }
 }

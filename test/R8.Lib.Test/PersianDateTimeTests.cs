@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Xunit;
 
 namespace R8.Lib.Test

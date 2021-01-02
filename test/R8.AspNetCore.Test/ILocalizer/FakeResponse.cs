@@ -9,7 +9,7 @@ namespace R8.AspNetCore.Test.ILocalizer
         {
         }
 
-        public FakeResponse(Lib.Localization.ILocalizer localizer) : base(localizer)
+        public FakeResponse(R8.Lib.Localization.ILocalizer localizer) : base(localizer)
         {
         }
 
@@ -22,7 +22,9 @@ namespace R8.AspNetCore.Test.ILocalizer
             get
             {
                 var localizer = this.GetLocalizer();
-                return localizer != null ? localizer[Status.ToString()] : Status.ToString();
+                return localizer != null
+                    ? localizer[Status.ToString()]
+                    : Status.ToString();
             }
         }
 
@@ -42,7 +44,7 @@ namespace R8.AspNetCore.Test.ILocalizer
         {
         }
 
-        public FakeResponse(Lib.Localization.ILocalizer localizer) : base(localizer)
+        public FakeResponse(R8.Lib.Localization.ILocalizer localizer) : base(localizer)
         {
         }
 

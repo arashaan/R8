@@ -75,10 +75,13 @@ namespace R8.Lib.Localization
             {
                 if (dic.Count > 0)
                 {
-                    var findKey = dictionary.FirstOrDefault(x => x.Key.Equals(key));
-                    if (findKey.Value != null)
+                    var (_, localizerContainer) = dictionary.FirstOrDefault(pair => pair.Key.Equals(key, StringComparison.InvariantCulture));
+                    if (localizerContainer != null)
                     {
-                        dictionary[key].Set(culture, value);
+                        var check = localizerContainer[culture];
+                        if (string.IsNullOrEmpty(check) || !check.Equals(value, StringComparison.InvariantCulture))
+                            dictionary[key].Set(culture, value);
+
                         continue;
                     }
                 }

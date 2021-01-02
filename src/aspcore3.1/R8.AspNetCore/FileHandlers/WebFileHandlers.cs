@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 
 using R8.FileHandlers;
@@ -30,7 +31,7 @@ namespace R8.AspNetCore.FileHandlers
         /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
         public static Task<IMyFile> UploadAsync(this Stream stream, string filename) =>
-            stream.UploadAsync(filename, Activator.CreateInstance<MyFileConfiguration>());
+            stream.UploadAsync(filename, stream.Length, Activator.CreateInstance<MyFileConfiguration>());
 
         /// <summary>
         /// Saves and uploads given image file into the host.
@@ -81,7 +82,7 @@ namespace R8.AspNetCore.FileHandlers
         {
             var configuration = Activator.CreateInstance<TConfiguration>();
             config(configuration);
-            return stream.UploadAsync(filename, configuration);
+            return stream.UploadAsync(filename, stream.Length, configuration);
         }
 
         /// <summary>
@@ -93,8 +94,11 @@ namespace R8.AspNetCore.FileHandlers
         /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
         internal static Task<IMyFile> UploadAsync<TConfiguration>(this IFormFile file, TConfiguration configuration)
-            where TConfiguration : MyFileConfiguration =>
-            file.OpenReadStream().UploadAsync(file.FileName, configuration);
+            where TConfiguration : MyFileConfiguration
+        {
+            var stream = file.OpenReadStream();
+            return stream.UploadAsync(file.FileName, stream.Length, configuration);
+        }
 
         /// <summary>
         /// Saves and uploads given file into the host.
@@ -102,10 +106,11 @@ namespace R8.AspNetCore.FileHandlers
         /// <typeparam name="TConfiguration">An generic type <see cref="MyFileConfiguration"/>.</typeparam>
         /// <param name="stream">An <see cref="Stream"/> object that representing input file stream to save.</param>
         /// <param name="filename">An  <see cref="string"/> value that representing file's name.</param>
+        /// <param name="fileSize"></param>
         /// <param name="configuration"></param>
         /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
-        internal static async Task<IMyFile> UploadAsync<TConfiguration>(this Stream stream, string filename, TConfiguration configuration) where TConfiguration : MyFileConfiguration
+        internal static async Task<IMyFile> UploadAsync<TConfiguration>(this Stream stream, string filename, long fileSize, TConfiguration configuration) where TConfiguration : MyFileConfiguration
         {
             if (stream == null)
                 return null;
@@ -120,6 +125,9 @@ namespace R8.AspNetCore.FileHandlers
                 throw new NullReferenceException($"{nameof(AddFileHandlersExtensions.AddFileHandlers)} must be registered in dependencies injection.");
 
             var baseUrl = environment.WebRootPath;
+            if (string.IsNullOrEmpty(baseUrl))
+                throw new NullReferenceException($"{nameof(IWebHostEnvironment.WebRootPath)} must be filled.");
+
             if (baseUrl.EndsWith("/"))
                 baseUrl = baseUrl[..^1];
 
@@ -179,7 +187,7 @@ namespace R8.AspNetCore.FileHandlers
                         {
                             var pdf = new MyFileConfigurationPdf();
                             configuration.CopyTo(pdf);
-                            return await stream.UploadAsync(filename, pdf);
+                            return await stream.UploadAsync(filename, fileSize, pdf);
                         }
 
                         if (fileType.Equals("jpg", StringComparison.InvariantCultureIgnoreCase) ||
@@ -189,7 +197,7 @@ namespace R8.AspNetCore.FileHandlers
                         {
                             var image = new MyFileConfigurationImage();
                             configuration.CopyTo(image);
-                            return await stream.UploadAsync(filename, image);
+                            return await stream.UploadAsync(filename, fileSize, image);
                         }
 
                         file = await stream.SaveAsync(filename, configuration).ConfigureAwait(false);
@@ -208,7 +216,7 @@ namespace R8.AspNetCore.FileHandlers
 
             file.ThumbnailPath = file.ThumbnailPath.Replace(baseUrl.Replace("\\", "/"), null);
             file.ThumbnailPath = file.ThumbnailPath.StartsWith("/") ? file.ThumbnailPath : $"/{file.ThumbnailPath}";
-
+            file.FileSize = fileSize;
             return file;
         }
 
@@ -231,7 +239,7 @@ namespace R8.AspNetCore.FileHandlers
         /// <exception cref="NullReferenceException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object thar representing asynchronous operation.</returns>
         public static Task<IMyFile> UploadAsync<TConfiguration>(this Stream stream, string filename)
-            where TConfiguration : MyFileConfiguration => stream.UploadAsync(filename, Activator.CreateInstance<TConfiguration>());
+            where TConfiguration : MyFileConfiguration => stream.UploadAsync(filename, stream.Length, Activator.CreateInstance<TConfiguration>());
 
         /// <summary>
         /// Saves and uploads given file into the host.

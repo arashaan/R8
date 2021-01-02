@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
@@ -36,6 +37,15 @@ namespace R8.AspNetCore.Routing
             }
         }
 
+        public IAntiforgery Antiforgery
+        {
+            get
+            {
+                var service = HttpContext.RequestServices.GetService(typeof(IAntiforgery));
+                return service as IAntiforgery;
+            }
+        }
+
         /// <summary>
         /// A <see cref="RequestLocalizationOptions"/> object.
         /// </summary>
@@ -46,6 +56,15 @@ namespace R8.AspNetCore.Routing
                 var service = this.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>));
                 return ((IOptions<RequestLocalizationOptions>)service)?.Value;
             }
+        }
+
+        /// <summary>
+        /// Generates and stores anti-forgery token for ajax requests.
+        /// </summary>
+        /// <returns></returns>
+        public string GetAntiforgeryToken()
+        {
+            return Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
         }
 
         /// <summary>

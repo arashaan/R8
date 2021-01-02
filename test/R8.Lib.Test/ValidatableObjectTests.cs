@@ -1,21 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using R8.Test.Constants.FakeObjects;
+
 using Xunit;
 
 namespace R8.Lib.Test
 {
-    public class FakeValidatableObjectTest : ValidatableObject
-    {
-        [Required]
-        public string Name { get; set; }
-
-        public string this[string key] => string.Empty;
-    }
-
-    public class FakeValidatableObjectTest2 : ValidatableObject
-    {
-    }
-
     public class ValidatableObjectTests
     {
         [Fact]
@@ -62,6 +52,61 @@ namespace R8.Lib.Test
             // Arrange
             Assert.False(act);
             Assert.NotEmpty(obj.ValidationErrors);
+        }
+
+        [Fact]
+        public void CallValidatableObject66()
+        {
+            // Assets
+            var obj = new FakeValidatableObjectTest
+            {
+                Name = "Arash"
+            };
+            var context = new ValidationContext(obj);
+
+            // Act
+            var act = ValidatableObject.TryValidateProperty(context, obj, "Name", out _);
+
+            // Arrange
+            Assert.True(act);
+        }
+
+        [Fact]
+        public void CallValidatableObject662()
+        {
+            // Assets
+            var obj = new FakeValidatableObjectTest
+            {
+                Name = string.Empty
+            };
+            var context = new ValidationContext(obj);
+
+            // Act
+            var act = ValidatableObject.TryValidateProperty(context, obj, "Name", out var errors);
+
+            // Arrange
+            Assert.False(act);
+            Assert.NotNull(errors);
+            Assert.NotEmpty(errors.Errors);
+        }
+
+        [Fact]
+        public void CallValidatableObject10()
+        {
+            // Assets
+            var obj = new FakeValidatableObjectTest
+            {
+                Name = string.Empty
+            };
+            var context = new ValidationContext(obj);
+
+            // Act
+            var act = ValidatableObject.TryValidateProperty<FakeValidatableObjectTest>(x => x.Name, out var errors);
+
+            // Arrange
+            Assert.False(act);
+            Assert.NotNull(errors);
+            Assert.NotEmpty(errors.Errors);
         }
 
         [Fact]

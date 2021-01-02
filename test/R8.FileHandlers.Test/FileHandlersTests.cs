@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 
+using R8.Test.Constants;
+using R8.Test.Constants.TestOrderers;
+
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
@@ -8,11 +11,15 @@ using SixLabors.ImageSharp.Formats.Png;
 
 using Xunit;
 
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+[assembly: TestCollectionOrderer("Tests.Orderers.DisplayNameOrderer", "Tests.Orderers")]
+
 namespace R8.FileHandlers.Test
 {
+    [TestCaseOrderer("Tests.Orderers.PriorityOrderer", "Tests.Orderers")]
     public class FileHandlersTests
     {
-        [Fact]
+        [Fact, TestPriority(0)]
         public void CallSaveImage()
         {
             // Act
@@ -29,10 +36,10 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(1)]
         public void CallSaveImage_WithWatermark_Png()
         {
             // Act
@@ -49,10 +56,10 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.png", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test.png", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(2)]
         public void CallSaveImage_WithWatermark_Bmp()
         {
             // Act
@@ -69,17 +76,17 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.bmp", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test.bmp", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(3)]
         public void CallSave_StreamNull()
         {
             // Act
             Assert.Throws<ArgumentNullException>(() => ((FileStream)null).Save(null, null));
         }
 
-        [Fact]
+        [Fact, TestPriority(4)]
         public void CallSave_NameNull()
         {
             // Act
@@ -87,7 +94,7 @@ namespace R8.FileHandlers.Test
             Assert.Throws<ArgumentNullException>(() => fileStream.Save(null, null));
         }
 
-        [Fact]
+        [Fact, TestPriority(5)]
         public void CallSaveImage_WithWatermark_Gif()
         {
             // Act
@@ -104,10 +111,10 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.gif", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test.gif", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(6)]
         public void CallSave_WithoutExtension()
         {
             // Act
@@ -115,7 +122,7 @@ namespace R8.FileHandlers.Test
             Assert.Throws<NullReferenceException>(() => fileStream.Save("test", null));
         }
 
-        [Fact]
+        [Fact, TestPriority(7)]
         public void CallSave_Zip()
         {
             // Act
@@ -130,10 +137,10 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\valid.zip", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\valid.zip", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(8)]
         public void CallSave_Pdf()
         {
             // Act
@@ -149,11 +156,11 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.pdf", file.FilePath);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test_thumbnail.jpg", file.ThumbnailPath);
+            Assert.Equal(Constants.Assets + "\\test.pdf", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test_thumbnail.jpg", file.ThumbnailPath);
         }
 
-        [Fact]
+        [Fact, TestPriority(9)]
         public void CallSave_Image()
         {
             // Act
@@ -170,10 +177,10 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(10)]
         public void CallSave_ImageHierarchically()
         {
             // Assets
@@ -195,10 +202,10 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal($"E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\{year}\\{month}\\{day}\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.Assets + $"\\{year}\\{month}\\{day}\\test.jpg", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(11)]
         public void CallSaveImage_WithWatermark_Jpg()
         {
             // Act
@@ -215,17 +222,17 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
         }
 
-        [Fact]
+        [Fact, TestPriority(12)]
         public void CallSaveImage_NullStream()
         {
             // Act
             Assert.Throws<ArgumentNullException>(() => ((Stream)null).SaveImage(null, null));
         }
 
-        [Fact]
+        [Fact, TestPriority(13)]
         public void CallSaveImage_NullName()
         {
             // Act
@@ -233,7 +240,7 @@ namespace R8.FileHandlers.Test
             Assert.Throws<ArgumentNullException>(() => fileStream.SaveImage(null, null));
         }
 
-        [Fact]
+        [Fact, TestPriority(14)]
         public void CallSaveImage_Resize()
         {
             // Act
@@ -251,7 +258,7 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal("E:\\Work\\Develope\\R8\\test\\R8.FileHandlers.Test\\assets\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
         }
     }
 }

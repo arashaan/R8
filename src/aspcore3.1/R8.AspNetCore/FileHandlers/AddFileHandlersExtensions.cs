@@ -22,6 +22,11 @@ namespace R8.AspNetCore.FileHandlers
             return services;
         }
 
+        public static void UseFileHandlers(this IServiceProvider serviceProvider)
+        {
+            FileHandlersConnection.Services = serviceProvider;
+        }
+
         public static IApplicationBuilder UseFileHandlers(this IApplicationBuilder app)
         {
             FileHandlersConnection.Services = app.ApplicationServices;

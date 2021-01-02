@@ -70,7 +70,7 @@ namespace R8.Lib
                 ? source.TzdbToWindowsIds.FirstOrDefault(x => x.Value.Equals(timeZoneId))
                 : source.TzdbToWindowsIds.FirstOrDefault(x => x.Key.Equals(timeZoneId));
             if (string.IsNullOrEmpty(tzdbWindows.Value))
-                throw new ArgumentOutOfRangeException(nameof(timeZoneId));
+                throw new TimeZoneNotFoundException(nameof(timeZoneId));
             
             TimeZoneInfo timeZone;
             try

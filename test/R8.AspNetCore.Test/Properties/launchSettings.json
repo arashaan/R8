@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "R8.AspNetCore.Test": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

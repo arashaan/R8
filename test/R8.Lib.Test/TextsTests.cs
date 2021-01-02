@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-
 using Xunit;
 
 namespace R8.Lib.Test

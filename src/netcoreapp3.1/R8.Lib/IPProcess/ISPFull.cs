@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+
 using Newtonsoft.Json;
 
 namespace R8.Lib.IPProcess
@@ -42,21 +43,6 @@ namespace R8.Lib.IPProcess
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("prefixes")]
-        public IspPrefix[] Prefixes { get; set; }
-
-        [JsonProperty("prefixes6")]
-        public IspPrefix[] Prefixes6 { get; set; }
-
-        [JsonProperty("peers")]
-        public long[] Peers { get; set; }
-
-        [JsonProperty("upstreams")]
-        public long[] Upstreams { get; set; }
-
-        [JsonProperty("downstreams")]
-        public long[] Downstreams { get; set; }
-
         public override string ToString()
         {
             return string.IsNullOrEmpty(Name)
@@ -86,35 +72,6 @@ namespace R8.Lib.IPProcess
             var jsonObj = JsonConvert.DeserializeObject<ISPFull>(json);
 
             jsonObj.CopyTo(this);
-        }
-    }
-
-    public class IspPrefix
-    {
-        [JsonProperty("netblock")]
-        public string Netblock { get; set; }
-
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("country")]
-        public string Country { get; set; }
-
-        [JsonProperty("size")]
-        public string Size { get; set; }
-
-        [JsonProperty("status")]
-        public string Status { get; set; }
-
-        [JsonProperty("domain")]
-        public string Domain { get; set; }
-
-        public override string ToString()
-        {
-            return Name;
         }
     }
 }

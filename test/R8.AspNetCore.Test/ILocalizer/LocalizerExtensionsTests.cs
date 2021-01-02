@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Html;
-
 using R8.AspNetCore.TagBuilders;
 using R8.Lib.Localization;
-
+using R8.Test.Constants;
 using Xunit;
 
 namespace R8.AspNetCore.Test.ILocalizer
@@ -16,10 +13,6 @@ namespace R8.AspNetCore.Test.ILocalizer
     public class LocalizerExtensionsTests
     {
         private readonly Localizer _localizer;
-
-        private static CultureInfo DefaultCulture => CultureInfo.GetCultureInfo("tr");
-        private static string FolderPath => Path.Combine(Directory.GetCurrentDirectory(), "Dictionary");
-        private static string JsonFileName => "dic";
 
         private static List<CultureInfo> SupportedCultures => new List<CultureInfo>
         {
@@ -35,8 +28,8 @@ namespace R8.AspNetCore.Test.ILocalizer
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = FolderPath,
-                    FileName = JsonFileName,
+                    Folder = Constants.FolderPath,
+                    FileName = Constants.JsonFileName,
                 }
             };
             _localizer = new Localizer(configuration, null);
@@ -52,7 +45,7 @@ namespace R8.AspNetCore.Test.ILocalizer
                                            _localizer["PrivacyPolicy"] + "</a>"));
 
             // Acts
-            CultureInfo.CurrentCulture = DefaultCulture;
+            CultureInfo.CurrentCulture = Constants.DefaultCulture;
             await _localizer.RefreshAsync();
             var act = _localizer.Html(key, tags.ToArray());
             var html = act.GetString();
@@ -71,7 +64,7 @@ namespace R8.AspNetCore.Test.ILocalizer
             var key = "Copyright";
 
             // Acts
-            CultureInfo.CurrentCulture = DefaultCulture;
+            CultureInfo.CurrentCulture = Constants.DefaultCulture;
             await _localizer.RefreshAsync();
 
             // Arrange
@@ -88,7 +81,7 @@ namespace R8.AspNetCore.Test.ILocalizer
             tags.Add(year);
 
             // Acts
-            CultureInfo.CurrentCulture = DefaultCulture;
+            CultureInfo.CurrentCulture = Constants.DefaultCulture;
             await _localizer.RefreshAsync();
 
             // Arrange
@@ -112,12 +105,12 @@ namespace R8.AspNetCore.Test.ILocalizer
             tags.Add(year);
 
             // Acts
-            CultureInfo.CurrentCulture = DefaultCulture;
+            CultureInfo.CurrentCulture = Constants.DefaultCulture;
             await _localizer.RefreshAsync();
             var act = _localizer.Format(key, tags.ToArray());
             var html = act.GetString();
 
-            var expected = "Telif Hakkı © 2020 EKOHOS Kurumsal";
+            var expected = $"Telif Hakkı © {DateTime.Now.Year} EKOHOS Kurumsal";
 
             // Arrange
             Assert.Equal(expected, html);
@@ -159,11 +152,11 @@ namespace R8.AspNetCore.Test.ILocalizer
             tags.Add(str => new HtmlString(year));
 
             // Acts
-            CultureInfo.CurrentCulture = DefaultCulture;
+            CultureInfo.CurrentCulture = Constants.DefaultCulture;
             await _localizer.RefreshAsync();
             var act = _localizer.Format(key, tags.ToArray()).GetString();
 
-            var expected = "Telif Hakkı © 2020 EKOHOS Kurumsal";
+            var expected = $"Telif Hakkı © {DateTime.Now.Year} EKOHOS Kurumsal";
 
             // Arrange
             Assert.Equal(expected, act);

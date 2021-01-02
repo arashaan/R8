@@ -60,8 +60,13 @@ namespace R8.AspNetCore.Localization
             }
             else
             {
-                localizer.RefreshAsync().GetAwaiter().GetResult();
+                localizer.Refresh();
             }
+        }
+
+        public static void UseResponse(this IServiceProvider serviceProvider)
+        {
+            ResponseConnection.Services = serviceProvider;
         }
 
         public static IApplicationBuilder UseResponse(this IApplicationBuilder app)

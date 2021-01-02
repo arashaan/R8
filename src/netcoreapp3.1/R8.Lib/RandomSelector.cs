@@ -19,7 +19,7 @@ namespace R8.Lib
 
             var strMin = "";
             var strMax = "";
-            for (var i = 0; i < length - 1; i++)
+            for (var i = 0; i < length; i++)
             {
                 strMin += "1";
                 strMax += "9";
@@ -93,31 +93,12 @@ namespace R8.Lib
                 : null;
         }
 
-        //
-        // public static int Next(this RandomNumberGenerator generator, int min, int max)
-        // {
-        //     // match Next of Random
-        //     // where max is exclusive
-        //     max--;
-        //
-        //     var bytes = new byte[sizeof(int)]; // 4 bytes
-        //     generator.GetNonZeroBytes(bytes);
-        //     var val = BitConverter.ToInt32(bytes);
-        //     // constrain our values to between our min and max
-        //     // https://stackoverflow.com/a/3057867/86411
-        //     var result = ((val - min) % (max - min + 1) + (max - min + 1)) % (max - min + 1) + min;
-        //     return result;
-        // }
-
         /// <summary>
         /// Generates a random index between <c>min</c> and <c>max</c>
         /// </summary>
         /// <param name="min">An <see cref="int"/> value that representing minimum index</param>
         /// <param name="max">An <see cref="int"/> value that representing maximum index</param>
         /// <returns>An <see cref="int"/> value</returns>
-        public static int Generate(int min, int max)
-        {
-            return RandomNumberGenerator.GetInt32(min, max);
-        }
+        public static int Generate(int min, int max) => RandomNumberGenerator.GetInt32(min, max);
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
-
 using R8.Lib.Localization;
-
+using R8.Test.Constants;
 using Xunit;
 
 namespace R8.Lib.Test
@@ -13,10 +11,6 @@ namespace R8.Lib.Test
     public class ILocalizerTests
     {
         private readonly Localizer _localizer;
-
-        private static CultureInfo DefaultCulture => CultureInfo.GetCultureInfo("tr");
-        private static string FolderPath => Path.Combine(Directory.GetCurrentDirectory(), "Dictionary");
-        private static string JsonFileName => "dic";
 
         private static List<CultureInfo> SupportedCultures => new List<CultureInfo>
         {
@@ -32,8 +26,8 @@ namespace R8.Lib.Test
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = FolderPath,
-                    FileName = JsonFileName,
+                    Folder = Constants.FolderPath,
+                    FileName = Constants.JsonFileName,
                 }
             };
             _localizer = new Localizer(configuration, null);
@@ -55,6 +49,21 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public async Task CallGetter_WithCulture2()
+        {
+            // Assets
+            var key = "AppName";
+            var culture = CultureInfo.GetCultureInfo("fa");
+
+            // Act
+            await _localizer.RefreshAsync();
+            var translation = _localizer[key, culture];
+
+            // Arrange
+            Assert.Equal("هلدینگ اکوهوس", translation);
+        }
+
+        [Fact]
         public async Task CallGetter_WithCulture()
         {
             // Assets
@@ -62,7 +71,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key, DefaultCulture];
+            var translation = _localizer[key, Constants.DefaultCulture];
 
             // Arrange
             Assert.Equal("EKOHOS", translation);
@@ -76,7 +85,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key, DefaultCulture];
+            var translation = _localizer[key, Constants.DefaultCulture];
 
             // Arrange
             Assert.Null(translation);
@@ -101,7 +110,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key][DefaultCulture, false];
+            var translation = _localizer[key][Constants.DefaultCulture, false];
 
             // Arrange
             Assert.Equal("EKOHOS", translation);
@@ -115,7 +124,7 @@ namespace R8.Lib.Test
 
             // Act
             await _localizer.RefreshAsync();
-            var translation = _localizer[key][DefaultCulture, false];
+            var translation = _localizer[key][Constants.DefaultCulture, false];
 
             // Arrange
             Assert.NotEqual(translation, key);
@@ -152,7 +161,7 @@ namespace R8.Lib.Test
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = FolderPath,
+                    Folder = Constants.FolderPath,
                 }
             };
 
