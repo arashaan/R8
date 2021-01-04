@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using R8.Test.Shared.FakeObjects;
 
-using R8.Test.Constants.FakeObjects;
+using System.ComponentModel.DataAnnotations;
 
 using Xunit;
 

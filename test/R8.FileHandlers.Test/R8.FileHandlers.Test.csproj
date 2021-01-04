@@ -20,6 +20,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.FileHandlers\R8.FileHandlers.csproj" />
-		<ProjectReference Include="..\R8.Test.Constants\R8.Test.Constants.csproj" />
+		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.Lib\R8.Lib.csproj" />
 	</ItemGroup>
+	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
 </Project>

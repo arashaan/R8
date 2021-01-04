@@ -1,6 +1,8 @@
-﻿using System;
+﻿using R8.Test.Shared.FakeObjects;
+
+using System;
 using System.Linq.Expressions;
-using R8.Test.Constants.FakeObjects;
+
 using Xunit;
 
 namespace R8.Lib.Test

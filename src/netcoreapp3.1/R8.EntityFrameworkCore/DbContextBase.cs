@@ -44,7 +44,6 @@ namespace R8.EntityFrameworkCore
                 return false;
 
             var entry = base.Add(entity);
-            var frame = new StackTrace().GetFrame(1);
             GenerateAudit(entry, AuditFlags.Created, userId);
             return true;
         }
@@ -63,7 +62,6 @@ namespace R8.EntityFrameworkCore
 
             entity.IsDeleted = false;
             var entry = base.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             GenerateAudit(entry, AuditFlags.UnDeleted, userId);
             return true;
         }
@@ -75,7 +73,6 @@ namespace R8.EntityFrameworkCore
                 return false;
 
             var entry = base.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             GenerateAudit(entry, AuditFlags.Changed, userId);
             return true;
         }
@@ -87,7 +84,6 @@ namespace R8.EntityFrameworkCore
                 : AuditFlags.Deleted;
             entity.IsDeleted = !entity.IsDeleted;
             var entry = base.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             GenerateAudit(entry, flag, userId);
             return true;
         }
@@ -99,13 +95,13 @@ namespace R8.EntityFrameworkCore
 
             entity.IsDeleted = true;
             var entry = base.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             GenerateAudit(entry, AuditFlags.Deleted, userId);
             return true;
         }
 
         public new async Task<DatabaseSaveState> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            // TODO looking for a way to show possible exception for async method
             var canSave = CanSave(out var changesCount);
             if (!canSave)
                 return DatabaseSaveState.NoNeedToSave;
@@ -151,8 +147,9 @@ namespace R8.EntityFrameworkCore
             return changesCount != 0;
         }
 
-        public new DatabaseSaveState SaveChanges()
+        public new DatabaseSaveState SaveChanges(out Exception? saveException)
         {
+            saveException = null;
             var canSave = CanSave(out var changesCount);
             if (!canSave)
                 return DatabaseSaveState.NoNeedToSave;
@@ -176,7 +173,7 @@ namespace R8.EntityFrameworkCore
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                saveException = ex;
                 result = DatabaseSaveState.SaveFailure;
             }
             finally

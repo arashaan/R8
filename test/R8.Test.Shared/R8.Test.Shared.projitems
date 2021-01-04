@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>4f966da3-afbf-4736-8b54-26a69970b6dc</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>R8.Test.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FakeObjects\FakeObj.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FakeObjects\FakeValidatableObjectTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FakeObjects\FakeValidatableObjectTest2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestOrderers\AlphabeticalOrderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestOrderers\DisplayNameOrderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestOrderers\PriorityOrderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestOrderers\TestPriorityAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Assets\Dictionary\dic.en.json" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\Dictionary\dic.fa.json" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\Dictionary\dic.tr.json" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\empty.zip" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\google.json" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\gsdll64.dll" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\invalid.zip" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\test.jpg" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\test.pdf" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\test.png" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\test_thumbnail.jpg" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\valid.pdf" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\valid.png" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\valid.svg" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\valid.zip" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\valid2.zip" />
+    <None Include="$(MSBuildThisFileDirectory)Assets\wm.png" />
+  </ItemGroup>
+</Project>

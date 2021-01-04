@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-
-using NodaTime;
 
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.Test.FakeObjects;
 using R8.AspNetCore.Test.ILocalizer;
 using R8.AspNetCore.Test.TestServerSimulation;
-using R8.Test.Constants;
+using R8.Test.Shared;
+
+using System;
+using System.Globalization;
+using System.Threading.Tasks;
 
 using Xunit;
 using Xunit.Abstractions;

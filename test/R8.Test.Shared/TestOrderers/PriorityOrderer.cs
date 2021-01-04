@@ -4,7 +4,7 @@ using System.Linq;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace R8.Test.Constants.TestOrderers
+namespace R8.Test.Shared.TestOrderers
 {
     public class PriorityOrderer : ITestCaseOrderer
     {

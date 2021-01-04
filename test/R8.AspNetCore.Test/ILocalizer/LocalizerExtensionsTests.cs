@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Html;
+
+using R8.AspNetCore.TagBuilders;
+using R8.Lib.Localization;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Html;
-using R8.AspNetCore.TagBuilders;
-using R8.Lib.Localization;
-using R8.Test.Constants;
+using R8.Test.Shared;
 using Xunit;
 
 namespace R8.AspNetCore.Test.ILocalizer

@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using R8.Lib;
 
-using R8.Lib;
+using System.ComponentModel.DataAnnotations;
 
-namespace R8.Test.Constants.FakeObjects
+namespace R8.Test.Shared.FakeObjects
 {
     public class FakeValidatableObjectTest : ValidatableObject
     {

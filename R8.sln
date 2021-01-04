@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.AspNetCore.Demo", "demo\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.GoogleAnalytics", "src\netcoreapp3.1\R8.GoogleAnalytics\R8.GoogleAnalytics.csproj", "{ACC98457-9CA5-472B-8E7E-681C009B38FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Test.Constants", "test\R8.Test.Constants\R8.Test.Constants.csproj", "{AD22292D-2878-45C8-87C0-056D6C8FBDAB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.Lib.Test", "test\R8.Lib.Test\R8.Lib.Test.csproj", "{C624C39A-1C05-4F0F-8FFC-E0FEA58B1598}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.GoogleAnalytics.Test", "test\R8.GoogleAnalytics.Test\R8.GoogleAnalytics.Test.csproj", "{4A2983DD-4DAB-4A2C-9D55-B9B7593B58CF}"
@@ -35,7 +33,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.FileHandlers.Test", "tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.AspNetCore.Test", "test\R8.AspNetCore.Test\R8.AspNetCore.Test.csproj", "{EB6CE609-3AC4-44D8-ACC2-50F3C1066648}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.EntityFrameworkCore.Test", "test\R8.EntityFrameworkCore.Test\R8.EntityFrameworkCore.Test.csproj", "{DC5334A7-40F1-4297-B0BF-199DC05C1B41}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "R8.Test.Shared", "test\R8.Test.Shared\R8.Test.Shared.shproj", "{4F966DA3-AFBF-4736-8B54-26A69970B6DC}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{36821a46-3477-4908-9c04-a0c173963ba4}*SharedItemsImports = 5
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{4a2983dd-4dab-4a2c-9d55-b9b7593b58cf}*SharedItemsImports = 5
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{4f966da3-afbf-4736-8b54-26a69970b6dc}*SharedItemsImports = 13
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{c624c39a-1c05-4f0f-8ffc-e0fea58b1598}*SharedItemsImports = 5
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{dc5334a7-40f1-4297-b0bf-199dc05c1b41}*SharedItemsImports = 5
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{eb6ce609-3ac4-44d8-acc2-50f3c1066648}*SharedItemsImports = 5
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -65,10 +75,6 @@ Global
 		{ACC98457-9CA5-472B-8E7E-681C009B38FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACC98457-9CA5-472B-8E7E-681C009B38FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACC98457-9CA5-472B-8E7E-681C009B38FD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD22292D-2878-45C8-87C0-056D6C8FBDAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD22292D-2878-45C8-87C0-056D6C8FBDAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD22292D-2878-45C8-87C0-056D6C8FBDAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD22292D-2878-45C8-87C0-056D6C8FBDAB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C624C39A-1C05-4F0F-8FFC-E0FEA58B1598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C624C39A-1C05-4F0F-8FFC-E0FEA58B1598}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C624C39A-1C05-4F0F-8FFC-E0FEA58B1598}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,6 +91,10 @@ Global
 		{EB6CE609-3AC4-44D8-ACC2-50F3C1066648}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB6CE609-3AC4-44D8-ACC2-50F3C1066648}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB6CE609-3AC4-44D8-ACC2-50F3C1066648}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC5334A7-40F1-4297-B0BF-199DC05C1B41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC5334A7-40F1-4297-B0BF-199DC05C1B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC5334A7-40F1-4297-B0BF-199DC05C1B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC5334A7-40F1-4297-B0BF-199DC05C1B41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,11 +108,12 @@ Global
 		{C7D40290-B2BE-45CB-A3B9-C4E130587BA7} = {9C6EA3D5-AF4B-40BD-A0CD-A718C5344DAE}
 		{C973A60D-82F8-4C43-8D02-7BEA79924405} = {B5B17967-1E08-4CE3-9720-BDC021DFEC6C}
 		{ACC98457-9CA5-472B-8E7E-681C009B38FD} = {2DE432C9-139B-40E8-9F80-0FBE4D414271}
-		{AD22292D-2878-45C8-87C0-056D6C8FBDAB} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 		{C624C39A-1C05-4F0F-8FFC-E0FEA58B1598} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 		{4A2983DD-4DAB-4A2C-9D55-B9B7593B58CF} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 		{36821A46-3477-4908-9C04-A0C173963BA4} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 		{EB6CE609-3AC4-44D8-ACC2-50F3C1066648} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
+		{DC5334A7-40F1-4297-B0BF-199DC05C1B41} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
+		{4F966DA3-AFBF-4736-8B54-26A69970B6DC} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {335BA588-BA31-47FF-A0BE-3C61EA63F88D}

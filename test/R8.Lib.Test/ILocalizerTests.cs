@@ -1,9 +1,11 @@
-﻿using System;
+﻿using R8.Lib.Localization;
+using R8.Test.Shared;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-using R8.Lib.Localization;
-using R8.Test.Constants;
+
 using Xunit;
 
 namespace R8.Lib.Test

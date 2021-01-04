@@ -1,14 +1,14 @@
-﻿using R8.Test.Constants;
-using R8.Test.Constants.TestOrderers;
-
-using System;
+﻿using System;
 using System.IO;
+
+using R8.Test.Shared;
+using R8.Test.Shared.TestOrderers;
 
 using Xunit;
 
 namespace R8.FileHandlers.Test
 {
-    [TestCaseOrderer("R8.Test.Constants.TestOrderers.PriorityOrderer", "R8.Test.Constants")]
+    [TestCaseOrderer("R8.Test.Shared.TestOrderers.PriorityOrderer", "R8.Test.Shared")]
     public class TestersTests
     {
         [Fact, TestPriority(0)]

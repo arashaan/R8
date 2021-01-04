@@ -5,6 +5,7 @@
 		<IsTestProject>true</IsTestProject>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="coverlet.collector" Version="1.3.0">
 			<PrivateAssets>all</PrivateAssets>
@@ -19,7 +20,7 @@
 		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.Lib\R8.Lib.csproj" />
+		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj" />
 	</ItemGroup>
 	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
 </Project>

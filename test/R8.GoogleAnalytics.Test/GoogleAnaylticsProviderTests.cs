@@ -1,7 +1,8 @@
+using R8.GoogleAnalytics.Models;
+
 using System;
 using System.Collections.Generic;
-using R8.GoogleAnalytics.Models;
-using R8.Test.Constants;
+using R8.Test.Shared;
 using Xunit;
 
 namespace R8.GoogleAnalytics.Test

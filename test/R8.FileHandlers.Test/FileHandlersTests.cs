@@ -1,22 +1,20 @@
-﻿using System;
-using System.IO;
-
-using R8.Test.Constants;
-using R8.Test.Constants.TestOrderers;
-
-using SixLabors.ImageSharp.Formats.Bmp;
+﻿using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 
+using System;
+using System.IO;
+using R8.Test.Shared;
+using R8.Test.Shared.TestOrderers;
 using Xunit;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
-[assembly: TestCollectionOrderer("R8.Test.Constants.TestOrderers.DisplayNameOrderer", "R8.Test.Constants")]
+[assembly: TestCollectionOrderer("R8.Test.Shared.TestOrderers.DisplayNameOrderer", "R8.Test.Shared")]
 
 namespace R8.FileHandlers.Test
 {
-    [TestCaseOrderer("R8.Test.Constants.TestOrderers.PriorityOrderer", "R8.Test.Constants")]
+    [TestCaseOrderer("R8.Test.Shared.TestOrderers.PriorityOrderer", "R8.Test.Shared")]
     public class FileHandlersTests
     {
         [Fact, TestPriority(0)]

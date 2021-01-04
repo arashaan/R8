@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Threading.Tasks;
-using R8.Lib.Enums;
+﻿using R8.Lib.Enums;
 using R8.Lib.Localization;
 using R8.Lib.Test.Enums;
-using R8.Test.Constants;
+using R8.Test.Shared;
+
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading.Tasks;
+
 using Xunit;
 
 namespace R8.Lib.Test.MethodTests

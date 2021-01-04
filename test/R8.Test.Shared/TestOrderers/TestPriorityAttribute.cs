@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace R8.Test.Constants.TestOrderers
+namespace R8.Test.Shared.TestOrderers
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class TestPriorityAttribute : Attribute

@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.IO;
 
-namespace R8.Test.Constants
+namespace R8.Test.Shared
 {
     public static class Constants
     {
