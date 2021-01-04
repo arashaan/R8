@@ -41,13 +41,14 @@ namespace R8.EntityFrameworkCore
 
             var ignoredNames = this.GetType().GetPublicProperties().ConvertAll(x => x.Name);
             var ignored = errors.Where(x => ignoredNames.Contains(x.Name)).ToList();
-            if (ignored?.Any() != true)
+            if (!ignored.Any())
                 return errors?.Count == 0;
 
             foreach (var result in ignored)
                 errors.Remove(result);
 
-            return errors.Count == 0;
+            var finalValidation = this.Validate();
+            return errors.Count == 0 && finalValidation;
         }
     }
 

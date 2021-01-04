@@ -6,7 +6,7 @@ namespace R8.Test.Shared
 {
     public static class Constants
     {
-        public const string Assets = "E:\\Work\\Develope\\R8\\test\\R8.Test.Constants\\Assets";
+        public const string Assets = "E:\\Work\\Develope\\R8\\test\\R8.Test.Shared\\Assets";
         public static string FolderPath => Path.Combine(Assets, "Dictionary");
         public static string GhostScriptFile => Path.Combine(Assets, "gsdll64.dll");
         public static string WatermarkFile => Path.Combine(Assets, "wm.png");

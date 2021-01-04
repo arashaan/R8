@@ -102,11 +102,11 @@ namespace R8.EntityFrameworkCore
         public new async Task<DatabaseSaveState> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             // TODO looking for a way to show possible exception for async method
-            var canSave = CanSave(out var changesCount);
+            base.ChangeTracker.DetectChanges();
+            var canSave = CanSave(out var changesCount, out var entries);
             if (!canSave)
                 return DatabaseSaveState.NoNeedToSave;
 
-            base.ChangeTracker.DetectChanges();
             DatabaseSaveState result;
             try
             {
@@ -136,11 +136,15 @@ namespace R8.EntityFrameworkCore
             return result;
         }
 
-        private bool CanSave(out int changesCount)
+        private bool CanSave(out int changesCount, out List<EntityEntry> entries)
         {
-            var entries = base
-                .ChangeTracker
-                .Entries()?
+            entries = null;
+            changesCount = 0;
+            var allEntries = base.ChangeTracker.Entries().ToList();
+            if (!allEntries.Any())
+                return false;
+
+            entries = allEntries
                 .Where(x => x.State != EntityState.Detached && x.State != EntityState.Unchanged)
                 .ToList();
             changesCount = entries?.Count ?? 0;
@@ -150,7 +154,7 @@ namespace R8.EntityFrameworkCore
         public new DatabaseSaveState SaveChanges(out Exception? saveException)
         {
             saveException = null;
-            var canSave = CanSave(out var changesCount);
+            var canSave = CanSave(out var changesCount, out var entries);
             if (!canSave)
                 return DatabaseSaveState.NoNeedToSave;
 
