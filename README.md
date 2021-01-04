@@ -9,11 +9,11 @@ Some useful packages to be used in >= .Net Core 3.1 & .Net Standard 2.1
 ## Packages
 | Package Name                                                          | Impressions                         |
 | --------------------------------------------------------------------- | ------------------------------ |
-| [R8.Lib](#r8_lib)                 | ![R8LibDownloads](https://img.shields.io/nuget/dt/R8.Lib) |
-| [R8.FileHandlers](#r8_filehandlers)        | ![R8FileHandlersDownloads](https://img.shields.io/nuget/dt/R8.FileHandlers) |
-| [R8.EntityFrameworkCore](#r8_entityframeworkcore) | ![R8EntityFrameworkCoreDownloads](https://img.shields.io/nuget/dt/R8.EntityFrameworkCore) |
-| [R8.AspNetCore](#r8_aspnetcore)          | ![R8AspNetCoreDownloads](https://img.shields.io/nuget/dt/R8.AspNetCore) |
-| [R8.GoogleAnalytics](#r8_googleanalytics)     | ![R8GoogleAnalyticsDownloads](https://img.shields.io/nuget/dt/R8.GoogleAnalytics) |
+| [R8.Lib](#r8lib)                 | ![R8LibDownloads](https://img.shields.io/nuget/dt/R8.Lib) |
+| [R8.FileHandlers](#r8filehandlers)        | ![R8FileHandlersDownloads](https://img.shields.io/nuget/dt/R8.FileHandlers) |
+| [R8.EntityFrameworkCore](#r8entityframeworkcore) | ![R8EntityFrameworkCoreDownloads](https://img.shields.io/nuget/dt/R8.EntityFrameworkCore) |
+| [R8.AspNetCore](#r8aspnetcore)          | ![R8AspNetCoreDownloads](https://img.shields.io/nuget/dt/R8.AspNetCore) |
+| [R8.GoogleAnalytics](#r8googleanalytics)     | ![R8GoogleAnalyticsDownloads](https://img.shields.io/nuget/dt/R8.GoogleAnalytics) |
 
 **All other packages in this repo, that they ain't included in above list, are deprecated.**
 
