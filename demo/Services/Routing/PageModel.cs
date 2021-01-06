@@ -6,6 +6,7 @@ using R8.AspNetCore.Demo.Services.Enums;
 using R8.AspNetCore.Routing;
 using R8.EntityFrameworkCore;
 using R8.Lib;
+using R8.Lib.Search;
 
 using System;
 using System.Collections.Generic;
@@ -15,17 +16,18 @@ using System.Threading.Tasks;
 
 namespace R8.AspNetCore.Demo.Services.Routing
 {
-    public class PageModel<TSearch, TModel> : PageModelBase<TSearch, TModel> where TSearch : BaseSearch where TModel : class
+    public class PageModel<TSearch, TModel> : PageModelBase<TSearch, TModel> where TSearch : SearchBase where TModel : class
     {
     }
 
-    public class PageModel<TSearch> : PageModelBase<TSearch> where TSearch : BaseSearch
+    public class PageModel<TSearch> : PageModelBase<TSearch> where TSearch : SearchBase
     {
     }
 
     public class PageModel : PageModelBase
     {
         public const string Query_STATUS = "status";
+
         // public const string Query_CALLBACK = "callback";
         public const string Query_MESSAGE = "message";
 

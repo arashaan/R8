@@ -339,17 +339,17 @@ namespace R8.EntityFrameworkCore
         /// Paginates results according to given page number and page size.
         /// </summary>
         /// <typeparam name="TSource">A generic type of <see cref="EntityBase"/>.</typeparam>
-        /// <typeparam name="TSearch">A generic type of <see cref="IBaseSearch"/></typeparam>
+        /// <typeparam name="TSearch">A generic type of <see cref="R8.Lib.ISearchBase"/></typeparam>
         /// <typeparam name="TResult">A generic type for result.</typeparam>
         /// <param name="query">A <see cref="IQueryable{T}"/> that representing source query.</param>
         /// <param name="selector">An <see cref="Expression{TResult}"/> that projecting results.</param>
-        /// <param name="searchModel">An object of type <see cref="IBaseSearch"/> that representing page number and page size.</param>
+        /// <param name="searchModel">An object of type <see cref="R8.Lib.ISearchBase"/> that representing page number and page size.</param>
         /// <param name="sortByCreation">A <see cref="bool"/> value that asking for sorting data by creation date time.</param>
         /// <param name="cacheData">A <see cref="bool"/> value that asking for caching of data.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
         public static async Task<Pagination<TResult>> ToPaginatedListAsync<TSource, TSearch, TResult>(this IQueryable<TSource> query, Expression<Func<TSource, TResult>> selector, TSearch searchModel, bool sortByCreation = true, bool cacheData = true)
-            where TSource : class, IEntityBase where TSearch : IBaseSearch where TResult : class
+            where TSource : class, IEntityBase where TSearch : ISearchBase where TResult : class
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -368,13 +368,13 @@ namespace R8.EntityFrameworkCore
         /// Paginates results according to given page number and page size.
         /// </summary>
         /// <typeparam name="TSource">A generic type of <see cref="EntityBase"/>.</typeparam>
-        /// <typeparam name="TSearch">A generic type of <see cref="IBaseSearch"/></typeparam>
+        /// <typeparam name="TSearch">A generic type of <see cref="R8.Lib.ISearchBase"/></typeparam>
         /// <param name="query">A <see cref="IQueryable{T}"/> that representing source query.</param>
-        /// <param name="searchModel">An object of type <see cref="IBaseSearch"/> that representing page number and page size.</param>
+        /// <param name="searchModel">An object of type <see cref="R8.Lib.ISearchBase"/> that representing page number and page size.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
         public static Task<Pagination<TSource>> ToPaginatedListAsync<TSource, TSearch>(this IQueryable<TSource> query, TSearch searchModel)
-            where TSource : class, IEntityBase where TSearch : IBaseSearch
+            where TSource : class, IEntityBase where TSearch : ISearchBase
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -391,9 +391,9 @@ namespace R8.EntityFrameworkCore
         /// Paginates results according to given page number and page size.
         /// </summary>
         /// <typeparam name="TSource">A generic type of <see cref="EntityBase"/>.</typeparam>
-        /// <typeparam name="TSearch">A generic type of <see cref="IBaseSearch"/></typeparam>
+        /// <typeparam name="TSearch">A generic type of <see cref="R8.Lib.ISearchBase"/></typeparam>
         /// <param name="query">A <see cref="IQueryable{T}"/> that representing source query.</param>
-        /// <param name="searchModel">An object of type <see cref="IBaseSearch"/> that representing page number and page size.</param>
+        /// <param name="searchModel">An object of type <see cref="R8.Lib.ISearchBase"/> that representing page number and page size.</param>
         /// <param name="paginate">A <see cref="bool"/> value that asking for paginating data.</param>
         /// <param name="loadData">A <see cref="bool"/> value that asking for loading of related data.</param>
         /// <param name="cacheData">A <see cref="bool"/> value that asking for caching of data.</param>
@@ -401,7 +401,7 @@ namespace R8.EntityFrameworkCore
         /// <returns>A <see cref="Pagination{TModel}"/> instance that representing query results divided in each pages.</returns>
         public static Task<Pagination<TSource>> ToPaginatedListAsync<TSource, TSearch>(this IQueryable<TSource> query,
             TSearch searchModel, bool paginate, bool loadData, bool cacheData)
-            where TSource : class, IEntityBase where TSearch : IBaseSearch
+            where TSource : class, IEntityBase where TSearch : ISearchBase
         {
             var page = searchModel?.PageNo ?? 1;
             var pageSize = searchModel?.PageSize ?? 10;
