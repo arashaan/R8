@@ -10,7 +10,7 @@ namespace R8.Lib.Search
     {
         private string _pageNo;
 
-        public object this[string key]
+        public virtual object this[string key]
         {
             get
             {
@@ -30,13 +30,13 @@ namespace R8.Lib.Search
             }
         }
 
-        public int PageNo
+        public virtual int PageNo
         {
             get => string.IsNullOrEmpty(_pageNo) ? 1 : int.TryParse(_pageNo, out var page) ? page : 1;
             set => _pageNo = (value <= 0 ? 1 : value).ToString();
         }
 
         [JsonIgnore]
-        public int PageSize { get; set; } = 10;
+        public virtual int PageSize { get; set; } = 10;
     }
 }
