@@ -168,7 +168,7 @@ namespace R8.AspNetCore.Demo
                 config.CacheSlidingExpiration = TimeSpan.FromDays(3);
                 config.Provider = new LocalizerJsonProvider
                 {
-                    Folder = "E:/Work/Develope/R8/test/R8.Test.Constants/Assets/Dictionary",
+                    Folder = "E:/Work/Develope/R8/test/R8.Test.Shared/Assets/Dictionary",
                     FileName = "dic",
                 };
             });
