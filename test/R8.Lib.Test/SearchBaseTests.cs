@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-using R8.Test.Shared.FakeObjects;
+using R8.Lib.Test.FakeObjects;
 
 using Xunit;
 

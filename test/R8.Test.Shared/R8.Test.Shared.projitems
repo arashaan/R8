@@ -10,10 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FakeObjects\FakeObj.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FakeObjects\FakeSearchModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FakeObjects\FakeValidatableObjectTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)FakeObjects\FakeValidatableObjectTest2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestOrderers\AlphabeticalOrderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestOrderers\DisplayNameOrderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestOrderers\PriorityOrderer.cs" />

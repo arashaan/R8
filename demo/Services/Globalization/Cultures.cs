@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 
-namespace R8.AspNetCore.Demo.Services.Globalization
+namespace R8.AspNetCore3_1.Demo.Services.Globalization
 {
     public static class Cultures
     {

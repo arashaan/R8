@@ -1,7 +1,7 @@
-﻿using R8.Test.Shared.FakeObjects;
+﻿using System.ComponentModel.DataAnnotations;
 
-using System.ComponentModel.DataAnnotations;
-
+using R8.Lib.Test.FakeObjects;
+using R8.Lib.Validatable;
 using Xunit;
 
 namespace R8.Lib.Test

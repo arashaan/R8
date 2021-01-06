@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using NodaTime;
-
+using R8.AspNetCore.HttpContextExtensions;
 using Xunit;
 
 namespace R8.AspNetCore.Test

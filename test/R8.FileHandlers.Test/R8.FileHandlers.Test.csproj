@@ -19,8 +19,7 @@
 		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.FileHandlers\R8.FileHandlers.csproj" />
-		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.Lib\R8.Lib.csproj" />
+		<ProjectReference Include="..\..\src\R8.FileHandlers\R8.FileHandlers.csproj" />
 	</ItemGroup>
 	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
 </Project>

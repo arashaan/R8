@@ -1,35 +1,26 @@
 using System;
+using System.Linq;
 using Humanizer.Localisation;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-
-using R8.AspNetCore.Demo.Pages;
-using R8.AspNetCore.Demo.Services.Globalization;
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.ModelBinders;
 using R8.AspNetCore.Routing;
+using R8.AspNetCore3_1.Demo.Pages;
+using R8.AspNetCore3_1.Demo.Services.Globalization;
 using R8.Lib;
 using R8.Lib.Localization;
-
 using SixLabors.ImageSharp.Formats.Png;
 
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-
-namespace R8.AspNetCore.Demo
+namespace R8.AspNetCore3_1.Demo
 {
     public class Startup
     {

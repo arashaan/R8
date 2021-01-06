@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Description>A predefined pattern for EntityFramework Core to easily store Audits</Description>
+		<VersionPrefix>1.10.66</VersionPrefix>
+		<Authors>Arash Shabbeh</Authors>
+		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<AssemblyName>R8.EntityFrameworkCore</AssemblyName>
+		<PackageId>R8.EntityFrameworkCore</PackageId>
+		<PackageTags>EntityFrameworkCore;EFCoreSecondLevelCacheInterceptor;Cache;Humanizer</PackageTags>
+		<PackageProjectUrl>https://github.com/iamr8/R8</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<DebugType>embedded</DebugType>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Humanizer.Core" Version="2.8.26" />
+		<PackageReference Include="EasyCaching.InMemory" Version="1.1.0" />
+		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.3.0" />
+		<PackageReference Include="R8.Lib" Version="1.10.66" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PlatformTarget>anycpu</PlatformTarget>
+	</PropertyGroup>
+</Project>

@@ -1,10 +1,4 @@
-﻿using R8.AspNetCore.Demo.Services.Enums;
-
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-
-namespace R8.AspNetCore.Demo.Services.Routing
+﻿namespace R8.AspNetCore3_1.Demo.Services.Routing
 {
     // internal class HandlerResponse
     // {

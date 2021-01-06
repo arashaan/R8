@@ -1,5 +1,5 @@
-﻿using R8.Lib;
-using R8.Lib.MethodReturn;
+﻿using R8.Lib.MethodReturn;
+using R8.Lib.Validatable;
 
 namespace R8.AspNetCore.Test.ILocalizer
 {

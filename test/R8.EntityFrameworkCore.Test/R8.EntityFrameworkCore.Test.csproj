@@ -12,6 +12,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.1" />
 		<PackageReference Include="xunit" Version="2.4.1" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
 			<PrivateAssets>all</PrivateAssets>
@@ -20,8 +21,6 @@
 		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj" />
-		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.Lib\R8.Lib.csproj" />
+		<ProjectReference Include="..\..\src\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj" />
 	</ItemGroup>
-	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
 </Project>

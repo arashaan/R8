@@ -23,9 +23,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\demo\R8.AspNetCore.Demo.csproj" />
-		<ProjectReference Include="..\..\src\aspcore3.1\R8.AspNetCore.csproj" />
-		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.Lib\R8.Lib.csproj" />
+		<ProjectReference Include="..\..\demo\R8.AspNetCore3_1.Demo.csproj" />
+		<ProjectReference Include="..\..\src\R8.AspNetCore\R8.AspNetCore.csproj" />
 	</ItemGroup>
 	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
 </Project>

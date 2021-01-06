@@ -1,9 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Net.Http;
-using System.Reflection;
-
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +6,11 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using R8.AspNetCore.Demo;
+using R8.AspNetCore3_1.Demo;
+
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Net.Http;
 
 using Xunit.Abstractions;
 

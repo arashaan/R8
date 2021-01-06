@@ -1,23 +1,13 @@
 ﻿using Newtonsoft.Json;
 
 using R8.Lib.JsonExtensions;
-using R8.Test.Shared.FakeObjects;
+using R8.Lib.Test.FakeObjects;
+using R8.Lib.Test.MethodTests;
 
 using Xunit;
 
 namespace R8.Lib.Test
 {
-    public class FakeJsonTest
-    {
-        [JsonProperty("nm")]
-        public string Name { get; set; }
-    }
-
-    public class FakeJsonTest2
-    {
-        public string Name { get; set; }
-    }
-
     public class JsonReflectionsTests
     {
         [Fact]
@@ -35,6 +25,16 @@ namespace R8.Lib.Test
 
             // Arrange
             Assert.Equal("nm", jsonName);
+        }
+
+        [Fact]
+        public void CallGetJsonProperty10()
+        {
+            // Act
+            var property = JsonHandler<FakeResponse>.GetProperty(x => x.Status);
+
+            // Arrange
+            Assert.Equal("sts", property);
         }
 
         [Fact]

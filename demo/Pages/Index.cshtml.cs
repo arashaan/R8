@@ -1,13 +1,11 @@
 ﻿using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
-using R8.AspNetCore.Demo.Services.Routing;
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Sitemap;
+using R8.AspNetCore3_1.Demo.Services.Routing;
 
-namespace R8.AspNetCore.Demo.Pages
+namespace R8.AspNetCore3_1.Demo.Pages
 {
     [SitemapSettings]
     public class IndexModel : PageModel

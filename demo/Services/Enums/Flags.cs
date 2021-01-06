@@ -1,6 +1,6 @@
 ﻿using R8.Lib.Attributes;
 
-namespace R8.AspNetCore.Demo.Services.Enums
+namespace R8.AspNetCore3_1.Demo.Services.Enums
 {
     public enum Flags
     {

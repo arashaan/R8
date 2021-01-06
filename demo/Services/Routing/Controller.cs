@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.Net.Http.Headers;
-using R8.AspNetCore.Routing;
-using R8.Lib;
-
-namespace R8.AspNetCore.Demo.Services.Routing
+﻿namespace R8.AspNetCore3_1.Demo.Services.Routing
 {
     //public class Controller : Microsoft.AspNetCore.Mvc.Controller
     //{

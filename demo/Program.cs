@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace R8.AspNetCore.Demo
+namespace R8.AspNetCore3_1.Demo
 {
     public class Program
     {

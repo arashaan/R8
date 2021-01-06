@@ -5,7 +5,7 @@ using R8.Test.Shared;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-
+using R8.Lib.Test.FakeObjects;
 using Xunit;
 
 namespace R8.Lib.Test.MethodTests

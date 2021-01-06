@@ -1,20 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-using Newtonsoft.Json;
-
-using R8.AspNetCore.Demo.Services.Enums;
 using R8.AspNetCore.Routing;
-using R8.EntityFrameworkCore;
-using R8.Lib;
+using R8.AspNetCore3_1.Demo.Services.Enums;
 using R8.Lib.Search;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-
-namespace R8.AspNetCore.Demo.Services.Routing
+namespace R8.AspNetCore3_1.Demo.Services.Routing
 {
     public class PageModel<TSearch, TModel> : PageModelBase<TSearch, TModel> where TSearch : SearchBase where TModel : class
     {

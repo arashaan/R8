@@ -1,7 +1,7 @@
-﻿using R8.AspNetCore.Demo.Services.Enums;
-using R8.Lib;
+﻿using R8.AspNetCore3_1.Demo.Services.Enums;
+using R8.Lib.Validatable;
 
-namespace R8.AspNetCore.Demo.Services
+namespace R8.AspNetCore3_1.Demo.Services
 {
     public static class Extensions
     {
