@@ -11,11 +11,6 @@ namespace R8.Lib
     {
         private static readonly HashSet<char> DefaultNonWordCharacters = new HashSet<char> { ',', '.', ':', ';' };
 
-        private static bool IsWhitespace(this char character)
-        {
-            return character == ' ' || character == 'n' || character == 't';
-        }
-
         /// <summary>
         /// Converts string to camelCase.
         /// </summary>
@@ -139,8 +134,6 @@ namespace R8.Lib
 
                     if (char.IsUpper(currentChar) || char.IsLower(currentChar))
                     {
-                        Func<char, bool> desiredCharacter;
-
                         if (currentCharIndex == str.Length - 1)
                         {
                             result.Append(currentChar);
@@ -149,6 +142,7 @@ namespace R8.Lib
                         else
                         {
                             var targetChar = str[currentCharIndex + 1];
+                            Func<char, bool> desiredCharacter;
                             if (!char.IsUpper(targetChar))
                             {
                                 desiredCharacter = x =>
