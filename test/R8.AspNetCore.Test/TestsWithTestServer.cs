@@ -182,9 +182,10 @@ namespace R8.AspNetCore.Test
                 File = formFile
             };
 
-            //Act
+            // Act
             var file = model.Validate();
 
+            // Arrange
             Assert.False(file);
         }
 
@@ -198,9 +199,10 @@ namespace R8.AspNetCore.Test
                 File2 = formFile
             };
 
-            //Act
+            // Act
             var file = model.Validate();
 
+            // Arrange
             Assert.False(file);
         }
 
@@ -214,9 +216,10 @@ namespace R8.AspNetCore.Test
                 File = formFile
             };
 
-            //Act
+            // Act
             var file = model.Validate();
 
+            // Arrange
             Assert.False(file);
         }
 
@@ -230,9 +233,10 @@ namespace R8.AspNetCore.Test
                 File2 = formFile
             };
 
-            //Act
+            // Act
             var file = model.Validate();
 
+            // Arrange
             Assert.True(file);
         }
 

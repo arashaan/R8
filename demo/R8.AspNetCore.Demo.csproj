@@ -6,7 +6,6 @@
 		<PreserveCompilationReferences>true</PreserveCompilationReferences>
 		<PreserveCompilationContext>true</PreserveCompilationContext>
 		<MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
-		<LangVersion>8.0</LangVersion>
 		<RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
 	</PropertyGroup>
 

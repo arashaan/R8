@@ -22,6 +22,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj" />
+		<ProjectReference Include="..\..\src\netcoreapp3.1\R8.Lib\R8.Lib.csproj" />
 	</ItemGroup>
 	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
 </Project>
