@@ -1,6 +1,11 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Net;
+using System.Net.Mime;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Xml;
 
 using R8.Lib.IPProcess;
 
@@ -35,10 +40,30 @@ namespace R8.Lib.Test.IpProcess
         }
 
         [Fact]
+        public async Task CallGetIpAddressAsync2()
+        {
+            // Assets
+            var ipAddress = IPAddress.Parse("162.158.93.83");
+
+            // Acts
+            var ip = await ipAddress.GetIpAddressAsync();
+            var flag = await ip.GetFlagAsync();
+
+            using var xmlReader = XmlReader.Create(flag, new XmlReaderSettings() { Async = true });
+            var svg = await xmlReader.MoveToContentAsync() == XmlNodeType.Element &&
+                      "svg".Equals(xmlReader.Name, StringComparison.OrdinalIgnoreCase);
+
+            // Assert
+            Assert.InRange(flag.Length, 1, 9999999);
+            Assert.True(svg);
+        }
+
+        [Fact]
         public async Task CallGetIpAddressAsync()
         {
             // Assets
             var ipAddress = IPAddress.Parse("162.158.93.83");
+            var timeZone = Dates.GetNodaTimeZone("Europe/Berlin", false);
 
             // Acts
             var ip = await ipAddress.GetIpAddressAsync();
@@ -47,6 +72,12 @@ namespace R8.Lib.Test.IpProcess
             Assert.NotNull(ip);
             Assert.Equal("Germany", ip.Country);
             Assert.Equal("Euro", ip.Currency.Name);
+            Assert.Equal("Europe", ip.Continent);
+            Assert.Equal("Berlin", ip.Capital);
+            Assert.Equal("+49", ip.CountryPhoneCode);
+            Assert.Equal("Hessen", ip.Region);
+            Assert.Equal("Frankfurt am Main", ip.City);
+            Assert.Equal(timeZone, ip.TimeZone);
         }
 
         [Theory]
@@ -57,7 +88,7 @@ namespace R8.Lib.Test.IpProcess
             // Assets
 
             // Acts
-            var ip = await R8.Lib.IPProcess.Extensions.GetIpAddressAsync(ipAddress);
+            var ip = await IPProcess.Extensions.GetIpAddressAsync(ipAddress);
 
             // Assert
             Assert.NotNull(ip);
