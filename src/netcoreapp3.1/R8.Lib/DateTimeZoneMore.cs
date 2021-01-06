@@ -11,6 +11,24 @@ namespace R8.Lib
         public DateTimeZone NodaTimeZone { get; set; }
         public Offset Offset { get; set; }
 
+        public override bool Equals(object? obj)
+        {
+            if (!(obj is DateTimeZoneMore dtMore))
+                return false;
+
+            var errors = 0;
+            if (!dtMore.NodaTimeZone.Equals(NodaTimeZone))
+                errors++;
+
+            if (!dtMore.Offset.Equals(Offset))
+                errors++;
+
+            if (!dtMore.SystemTimeZone.Equals(SystemTimeZone))
+                errors++;
+
+            return errors == 0;
+        }
+
         public override string ToString()
         {
             return
