@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+
 using R8.AspNetCore.Localization;
 
 namespace R8.AspNetCore.Routing
@@ -20,7 +22,7 @@ namespace R8.AspNetCore.Routing
 
         public CulturalizedUrlHelper(IActionContextAccessor actionContext, IUrlHelperFactory urlHelperFactory)
         {
-            ActionContext = actionContext.ActionContext;
+            ActionContext = actionContext.ActionContext ?? throw new InvalidOperationException($"{typeof(IActionContextAccessor)} must been registered in dependencies.");
             _urlHelper = urlHelperFactory.GetUrlHelper(ActionContext);
         }
 
