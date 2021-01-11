@@ -52,7 +52,7 @@ namespace R8.AspNetCore.TagBuilders
         {
             var contentToStr = tag.GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
-            var result = GetTagBuilder(decoded);
+            var result = ParseAsTagBuilder(decoded);
             return result;
         }
 
@@ -65,7 +65,7 @@ namespace R8.AspNetCore.TagBuilders
         {
             var contentToStr = tag.GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
-            var result = GetTagBuilders(decoded);
+            var result = ParseAsTagBuilders(decoded);
             return result;
         }
 
@@ -81,7 +81,7 @@ namespace R8.AspNetCore.TagBuilders
 
             var contentToStr = tag.Invoke("").GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
-            var result = GetTagBuilder(decoded);
+            var result = ParseAsTagBuilder(decoded);
             return result;
         }
 
@@ -90,7 +90,7 @@ namespace R8.AspNetCore.TagBuilders
         /// </summary>
         /// <param name="html">An specific html string that representing an list of html tags.</param>
         /// <returns>An <see cref="ITagBuilderCollection"/> object.</returns>
-        public static ITagBuilderCollection GetTagBuilders(string html)
+        public static ITagBuilderCollection ParseAsTagBuilders(string html)
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(html);
@@ -123,12 +123,12 @@ namespace R8.AspNetCore.TagBuilders
         /// </summary>
         /// <param name="html">A <see cref="string"/> value that representing an html tag.</param>
         /// <returns>A <see cref="ITagBuilder"/> object.</returns>
-        public static ITagBuilder GetTagBuilder(string html)
+        public static ITagBuilder ParseAsTagBuilder(string html)
         {
             if (html == null)
                 return null;
 
-            var node = GetTagBuilders(html);
+            var node = ParseAsTagBuilders(html);
             var nodes = node?.Nodes;
             var firstNode = nodes?.FirstOrDefault();
             return firstNode;

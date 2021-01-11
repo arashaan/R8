@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -136,6 +137,12 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             set => _routeValues = value;
         }
 
+        /// <summary>
+        /// Sets this breadcrumb as active.
+        /// </summary>
+        [HtmlAttributeName("active")]
+        public bool Active { get; set; }
+
         [ViewContext, HtmlAttributeNotBound]
         public ViewContext ViewContext { get; set; }
 
@@ -154,26 +161,11 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            var currentPage = false;
             var contentContent = await output.GetChildContentAsync();
             var content = contentContent.GetContent();
             if (string.IsNullOrEmpty(content))
-            {
-                if (ViewContext == null)
-                    throw new NullReferenceException($"{nameof(ViewContext)} shouldn't be null.");
-
-                if (!(ViewContext.ViewData.Model is PageModelBase page))
-                    throw new NullReferenceException($"{nameof(ViewContext.ViewData.Model)} must be a derived type of {typeof(PageModelBase)}");
-
-                if (page.PageTitle == null)
-                {
-                    output.SuppressOutput();
-                    return;
-                }
-
-                content = page.PageTitle;
-                currentPage = true;
-            }
+                if (ViewContext?.ViewData.Model is PageModelBase page)
+                    content = page.PageTitle;
 
             var position = 0;
             if (_httpContextAccessor.HttpContext.Items.ContainsKey(HttpContextKey))
@@ -183,6 +175,32 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             var span = new TagBuilder("span");
             span.Attributes.Add("itemprop", "name");
             span.InnerHtml.AppendHtml(content);
+
+            var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
+            if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
+                RouteValues[LanguageRouteConstraint.Key] = culture;
+
+            if (!string.IsNullOrEmpty(Area))
+                RouteValues["area"] = Area;
+
+            var anchor = await new AnchorTagHelper(HtmlGenerator)
+            {
+                Action = Action,
+                Area = Area,
+                Controller = Controller,
+                Page = Page,
+                PageHandler = PageHandler,
+                Route = Route,
+                RouteValues = RouteValues,
+                ViewContext = ViewContext,
+                Fragment = Fragment,
+                Host = Host,
+                Protocol = Protocol
+            }.GetTagBuilderAsync();
+
+            var hrefLink = $"{_httpContextAccessor.HttpContext.GetBaseUrl()[..^1]}/{anchor.Attributes["href"][1..]}";
+            var currentLink =
+                $"{_httpContextAccessor.HttpContext.GetBaseUrl()[..^1]}/{ViewContext.HttpContext.Request.GetEncodedPathAndQuery()[1..]}";
 
             var routeLink = Route != null;
             var actionLink = Controller != null || Action != null;
@@ -195,36 +213,10 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             {
                 (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
 
-                var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
-                if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
-                    RouteValues[LanguageRouteConstraint.Key] = culture;
-
-                if (!string.IsNullOrEmpty(Area))
-                    RouteValues["area"] = Area;
-
-                var anchor = await new AnchorTagHelper(HtmlGenerator)
-                {
-                    Action = Action,
-                    Area = Area,
-                    Controller = Controller,
-                    Page = Page,
-                    PageHandler = PageHandler,
-                    Route = Route,
-                    RouteValues = RouteValues,
-                    ViewContext = ViewContext,
-                    Fragment = Fragment,
-                    Host = Host,
-                    Protocol = Protocol
-                }.GetTagBuilderAsync();
-
-                var hrefPath = anchor.Attributes["href"][1..];
-                var baseUrl = _httpContextAccessor.HttpContext.GetBaseUrl()[..^1];
-                var pageFinalUrl = $"{baseUrl}/{hrefPath}";
-
                 anchor.Attributes.Add("itemprop", "item");
                 anchor.Attributes.Add("itemtype", "https://schema.org/WebPage");
                 anchor.Attributes.Add("itemscope", "");
-                anchor.Attributes.Add("itemid", pageFinalUrl);
+                anchor.Attributes.Add("itemid", hrefLink);
 
                 anchor.InnerHtml.AppendHtml(span);
                 output.Content.AppendHtml(anchor);
@@ -234,7 +226,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             output.TagName = "li";
 
             output.AddClass("breadcrumb-item", HtmlEncoder.Default);
-            if (currentPage)
+            if (Active)
                 output.AddClass("active", HtmlEncoder.Default);
 
             output.Attributes.Add("aria-current", "page");
@@ -248,7 +240,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
 
             output.Content.AppendHtml(meta);
 
-            if (!_httpContextAccessor.HttpContext.Items.ContainsKey(BreadcrumbListTagHelper.BreadcrumbListContextName))
+            if (!_httpContextAccessor.HttpContext.Items.ContainsKey(BreadcrumbContainerTagHelper.BreadcrumbListContextName))
                 _httpContextAccessor.HttpContext.Items[HttpContextKey] = position;
         }
     }
