@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+
 using Humanizer.Localisation;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization.Routing;
@@ -8,8 +10,10 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+
 using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.ModelBinders;
@@ -18,6 +22,7 @@ using R8.AspNetCore3_1.Demo.Pages;
 using R8.AspNetCore3_1.Demo.Services.Globalization;
 using R8.Lib;
 using R8.Lib.Localization;
+
 using SixLabors.ImageSharp.Formats.Png;
 
 namespace R8.AspNetCore3_1.Demo
@@ -65,8 +70,8 @@ namespace R8.AspNetCore3_1.Demo
                 {
                     options.ModelBinderProviders.Insert(0, new StringModelBinderProvider());
                     options.ModelBinderProviders.Insert(0, new DateTimeUtcModelBinderProvider());
-                    options.EnableEndpointRouting = false;
-                    options.SuppressAsyncSuffixInActionNames = false;
+                    // options.EnableEndpointRouting = false;
+                    // options.SuppressAsyncSuffixInActionNames = false;
                     options.ValueProviderFactories.Insert(0, new SeparatedQueryStringValueProviderFactory());
 
                     options.Conventions.Add(new LocalizeActionRouteModelConvention());
@@ -96,7 +101,7 @@ namespace R8.AspNetCore3_1.Demo
             services.AddMemoryCache();
 
             services.AddHttpContextAccessor();
-            services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddTransient<IApplicationBuilder, ApplicationBuilder>();
             services.AddScoped(x =>
             {
@@ -106,6 +111,8 @@ namespace R8.AspNetCore3_1.Demo
             });
 
             services.AddScoped<ICulturalizedUrlHelper, CulturalizedUrlHelper>();
+            services.AddScoped<IViewRenderService, ViewRenderService>();
+
             // services.AddTransient<ApplicationDbContext>();
 
             //services.AddLocalizer((serviceProvider, config) =>
@@ -182,7 +189,7 @@ namespace R8.AspNetCore3_1.Demo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // app.UseFileServer();
+            app.UseFileServer();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

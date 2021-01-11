@@ -1,12 +1,13 @@
 ﻿@page
 @using R8.Lib
+@using R8.AspNetCore.Routing
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 @section Breadcrumbs
 {
-    <breadcrumb>Test</breadcrumb>
+    <breadcrumb asp-page="@typeof(PrivacyModel).GetPagePath()">Test</breadcrumb>
     <breadcrumb />
 }
 <div class="text-center">
