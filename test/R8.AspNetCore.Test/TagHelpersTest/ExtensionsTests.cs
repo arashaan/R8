@@ -221,7 +221,7 @@ namespace R8.AspNetCore.Test.TagHelpersTest
             // Act
             var rendered = await tag.GetTagBuilderAsync();
             var html = rendered.GetString();
-            var parsedTag = TagBuilders.Extensions.GetTagBuilder(html);
+            var parsedTag = TagBuilders.Extensions.ParseAsTagBuilder(html);
 
             // Arrange
             Assert.NotNull(parsedTag);
@@ -241,7 +241,7 @@ namespace R8.AspNetCore.Test.TagHelpersTest
             // Act
             var rendered = await tag.GetTagBuilderAsync();
             var html = rendered.GetString();
-            var parsedTag = TagBuilders.Extensions.GetTagBuilder(html);
+            var parsedTag = TagBuilders.Extensions.ParseAsTagBuilder(html);
             var attributes = parsedTag.Attributes.ToList();
             // Arrange
             Assert.NotNull(parsedTag);

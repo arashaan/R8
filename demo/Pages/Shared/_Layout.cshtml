@@ -33,12 +33,12 @@
     </header>
     <div class="container">
         <nav aria-label="breadcrumb">
-            <breadcrumb-list class="breadcrumb">
+            <breadcrumb-container class="breadcrumb">
                 <breadcrumb asp-page="@typeof(IndexModel).GetPagePath()">
                     Home
                 </breadcrumb>
                 @await RenderSectionAsync("Breadcrumbs", false)
-            </breadcrumb-list>
+            </breadcrumb-container>
         </nav>
         <main role="main" class="pb-3">
             @RenderBody()
