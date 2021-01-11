@@ -42,7 +42,7 @@
 		<DefineConstants>NET5</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.49.0.2128" />
+		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.49.0.2197" />
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
