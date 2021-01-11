@@ -20,7 +20,6 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
             entity.IsDeleted = false;
             var entry = dbContext.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             dbContext.GenerateAudit(entry, AuditFlags.UnDeleted);
             return true;
         }
@@ -32,7 +31,6 @@ namespace R8.AspNetCore.EntityFrameworkCore
                 : AuditFlags.Deleted;
             entity.IsDeleted = !entity.IsDeleted;
             var entry = dbContext.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             dbContext.GenerateAudit(entry, flag);
             return true;
         }
@@ -56,7 +54,6 @@ namespace R8.AspNetCore.EntityFrameworkCore
                 return false;
 
             var entry = dbContext.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             dbContext.GenerateAudit(entry, AuditFlags.Changed);
 
             return true;
@@ -69,7 +66,6 @@ namespace R8.AspNetCore.EntityFrameworkCore
 
             entity.IsDeleted = true;
             var entry = dbContext.Update(entity);
-            var frame = new StackTrace().GetFrame(1);
             dbContext.GenerateAudit(entry, AuditFlags.Deleted);
             return true;
         }
@@ -81,7 +77,6 @@ namespace R8.AspNetCore.EntityFrameworkCore
                 return false;
 
             var entry = dbContext.Add(entity);
-            var frame = new StackTrace().GetFrame(1);
             dbContext.GenerateAudit(entry, AuditFlags.Created);
             return true;
         }
