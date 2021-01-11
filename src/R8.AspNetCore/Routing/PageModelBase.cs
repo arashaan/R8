@@ -23,6 +23,7 @@ namespace R8.AspNetCore.Routing
                 var service = this.HttpContext.RequestServices.GetService(typeof(ICulturalizedUrlHelper));
                 return (service ?? base.Url) as ICulturalizedUrlHelper;
             }
+            set => Url = value;
         }
 
         /// <summary>
