@@ -13,7 +13,7 @@ using MimeKit;
 
 using Moq;
 
-namespace R8.AspNetCore.Test
+namespace R8.AspNetCore.Test.FakeObjects
 {
     public class FakeCore
     {
@@ -67,20 +67,6 @@ namespace R8.AspNetCore.Test
                 .Setup(m => m.CreateEntry(It.IsAny<object>()))
                 .Returns(Mock.Of<ICacheEntry>());
             MemoryCache = memoryCache;
-        }
-
-        public static IFormFile GetFormFile(string fileName)
-        {
-            var memoryStream = new MemoryStream();
-            using var fileStream = new FileStream(fileName, FileMode.Open);
-            fileStream.CopyTo(memoryStream);
-
-            var formFile = new FormFile(memoryStream, 0, memoryStream.Length, null, Path.GetFileName(fileName))
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = MimeTypes.GetMimeType(Path.GetFileName(fileName))
-            };
-            return formFile;
         }
     }
 }

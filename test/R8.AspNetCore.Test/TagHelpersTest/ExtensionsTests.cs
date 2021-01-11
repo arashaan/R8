@@ -205,7 +205,7 @@ namespace R8.AspNetCore.Test.TagHelpersTest
             var tag = new CustomSpanTagHelper();
 
             // Act
-            var rendered = await tag.RenderAsync();
+            var rendered = await tag.GetTagBuilderAsync();
             var html = rendered.GetString();
 
             // Arrange
@@ -219,7 +219,7 @@ namespace R8.AspNetCore.Test.TagHelpersTest
             var tag = new CustomSpanTagHelper();
 
             // Act
-            var rendered = await tag.RenderAsync();
+            var rendered = await tag.GetTagBuilderAsync();
             var html = rendered.GetString();
             var parsedTag = TagBuilders.Extensions.GetTagBuilder(html);
 
@@ -239,7 +239,7 @@ namespace R8.AspNetCore.Test.TagHelpersTest
             };
 
             // Act
-            var rendered = await tag.RenderAsync();
+            var rendered = await tag.GetTagBuilderAsync();
             var html = rendered.GetString();
             var parsedTag = TagBuilders.Extensions.GetTagBuilder(html);
             var attributes = parsedTag.Attributes.ToList();
