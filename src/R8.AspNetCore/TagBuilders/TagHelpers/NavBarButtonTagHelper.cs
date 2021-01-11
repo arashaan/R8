@@ -197,7 +197,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                     Route = Route,
                     RouteValues = RouteValues,
                     ViewContext = ViewContext
-                }.RenderAsync();
+                }.GetTagBuilderAsync();
                 var link = anchor.Attributes.First(x => x.Key == "href").Value;
 
                 if (ViewContext.HttpContext.Items

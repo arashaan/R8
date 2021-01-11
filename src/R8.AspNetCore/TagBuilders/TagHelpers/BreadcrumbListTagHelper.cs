@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
@@ -31,7 +32,9 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                 for (var index = 1; index <= tagBuilderCollection.Nodes.Count; index++)
                 {
                     var tagBuilder = tagBuilderCollection.Nodes[index - 1] as TagBuilderWithUnderlying;
-                    if (!tagBuilder.Attributes.Any(x => x.Key.Equals("itemtype", StringComparison.InvariantCultureIgnoreCase) && x.Value.Equals("http://schema.org/ListItem", StringComparison.InvariantCultureIgnoreCase)))
+                    if (!tagBuilder.Attributes.Any(x =>
+                        x.Key.Equals("itemtype", StringComparison.InvariantCultureIgnoreCase) &&
+                        x.Value.Equals("http://schema.org/ListItem", StringComparison.InvariantCultureIgnoreCase)))
                         continue;
 
                     var anchorTag = (TagBuilderWithUnderlying)tagBuilder.Nodes.Nodes.Find(x =>
@@ -49,6 +52,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
 
                     if (index < tagBuilderCollection.Nodes.Count)
                     {
+                        // position < last
                         if (anchorTag == null)
                         {
                             tagBuilder.Attributes.Remove("aria-current");
@@ -74,11 +78,12 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                     }
                     else
                     {
+                        // position = last
+
                         tagBuilder.InnerHtml.Clear();
                         if (anchorTag != null)
-                            tagBuilder.InnerHtml.AppendHtml(anchorTag);
-                        else
-                            if (spanTag != null)
+                            tagBuilder.InnerHtml.AppendHtml(anchorTag.InnerHtml);
+                        else if (spanTag != null)
                             tagBuilder.InnerHtml.AppendHtml(spanTag);
 
                         if (positionTag != null)

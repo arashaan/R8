@@ -149,7 +149,7 @@ namespace R8.AspNetCore.TagBuilders
             return writer.ToString();
         }
 
-        private static (TagHelperContext, TagHelperOutput) InitCore<THelper>(this THelper tagHelper) where THelper : TagHelper
+        private static (TagHelperContext, TagHelperOutput) InitCore<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
         {
             var tagType = tagHelper.GetType();
             if (tagType == null)
@@ -171,8 +171,15 @@ namespace R8.AspNetCore.TagBuilders
               new TagHelperAttributeList(),
               (useCachedResult, encoder) =>
                 Task.Factory.StartNew<TagHelperContent>(
-                  () => new DefaultTagHelperContent()
-                ));
+                  () =>
+                  {
+                      var instance = new DefaultTagHelperContent();
+
+                      if (!string.IsNullOrEmpty(unencodedContent))
+                          instance.SetContent(unencodedContent);
+
+                      return instance;
+                  }));
 
             return new ValueTuple<TagHelperContext, TagHelperOutput>(context, output);
         }
@@ -303,29 +310,41 @@ namespace R8.AspNetCore.TagBuilders
             return ReplaceHtmlByTagName(htmlDecodedText, tags);
         }
 
-        internal static (TagHelperContext, TagHelperOutput) Init<THelper>(this THelper tagHelper) where THelper : TagHelper
+        internal static (TagHelperContext, TagHelperOutput) Init<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
         {
-            var (context, output) = tagHelper.InitCore();
+            var (context, output) = tagHelper.InitCore(unencodedContent);
             tagHelper.Process(context, output);
             return new ValueTuple<TagHelperContext, TagHelperOutput>(context, output);
         }
 
-        internal static async Task<(TagHelperContext, TagHelperOutput)> InitAsync<THelper>(this THelper tagHelper) where THelper : TagHelper
+        internal static async Task<(TagHelperContext, TagHelperOutput)> InitAsync<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
         {
-            var (context, output) = tagHelper.InitCore();
+            var (context, output) = tagHelper.InitCore(unencodedContent);
             await tagHelper.ProcessAsync(context, output);
             return new ValueTuple<TagHelperContext, TagHelperOutput>(context, output);
         }
 
-        public static TagBuilder Render<THelper>(this THelper tagHelper) where THelper : TagHelper
+        public static TagBuilder GetTagBuilder<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
         {
-            var (context, output) = tagHelper.Init();
+            var output = tagHelper.GetOutput(unencodedContent);
             return output.RenderCore();
         }
 
-        public static async Task<TagBuilder> RenderAsync<THelper>(this THelper tagHelper) where THelper : TagHelper
+        public static TagHelperOutput GetOutput<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
         {
-            var (context, output) = await tagHelper.InitAsync().ConfigureAwait(false);
+            var (context, output) = tagHelper.Init(unencodedContent);
+            return output;
+        }
+
+        public static async Task<TagHelperOutput> GetOutputAsync<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
+        {
+            var (context, output) = await tagHelper.InitAsync(unencodedContent).ConfigureAwait(false);
+            return output;
+        }
+
+        public static async Task<TagBuilder> GetTagBuilderAsync<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
+        {
+            var output = await tagHelper.GetOutputAsync(unencodedContent).ConfigureAwait(false);
             return output.RenderCore();
         }
     }

@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
+
 using R8.AspNetCore.HttpContextExtensions;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.Routing;
@@ -23,12 +27,14 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
     [HtmlTargetElement("breadcrumb", Attributes = PageAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
     [HtmlTargetElement("breadcrumb", Attributes = PageHandlerAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
     [HtmlTargetElement("breadcrumb", Attributes = RouteAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
+    [HtmlTargetElement("breadcrumb", Attributes = ProtocolAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
+    [HtmlTargetElement("breadcrumb", Attributes = HostAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
+    [HtmlTargetElement("breadcrumb", Attributes = FragmentAttributeName, TagStructure = TagStructure.NormalOrSelfClosing)]
     [HtmlTargetElement("breadcrumb", Attributes = RouteValuesDictionaryName, TagStructure = TagStructure.NormalOrSelfClosing)]
     [HtmlTargetElement("breadcrumb", Attributes = RouteValuesPrefix + "*", TagStructure = TagStructure.NormalOrSelfClosing)]
     [HtmlTargetElement("breadcrumb", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class BreadcrumbTagHelper : TagHelper
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private const string HttpContextKey = "Breadcrumb";
 
         private const string RouteAttributeName = "asp-route";
@@ -37,7 +43,10 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
         private const string RouteValuesPrefix = "asp-route-";
         private const string ActionAttributeName = "asp-action";
         private const string ControllerAttributeName = "asp-controller";
+        private const string HostAttributeName = "asp-host";
         private const string AreaAttributeName = "asp-area";
+        private const string ProtocolAttributeName = "asp-protocol";
+        private const string FragmentAttributeName = "asp-fragment";
         private const string PageAttributeName = "asp-page";
         private const string PageHandlerAttributeName = "asp-page-handler";
         private IDictionary<string, string> _routeValues;
@@ -50,6 +59,24 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
         /// </remarks>
         [HtmlAttributeName(ActionAttributeName)]
         public string Action { get; set; }
+
+        /// <summary>
+        /// The protocol for the URL, such as &quot;http&quot; or &quot;https&quot;.
+        /// </summary>
+        [HtmlAttributeName(ProtocolAttributeName)]
+        public string Protocol { get; set; }
+
+        /// <summary>
+        /// The host name.
+        /// </summary>
+        [HtmlAttributeName(HostAttributeName)]
+        public string Host { get; set; }
+
+        /// <summary>
+        /// The URL fragment name.
+        /// </summary>
+        [HtmlAttributeName(FragmentAttributeName)]
+        public string Fragment { get; set; }
 
         /// <summary>
         /// The name of the controller.
@@ -113,15 +140,16 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
         public ViewContext ViewContext { get; set; }
 
         private readonly IHtmlHelper _htmlHelper;
-        private readonly IHtmlGenerator _htmlGenerator;
+        public readonly IHtmlGenerator HtmlGenerator;
         private readonly IOptions<RequestLocalizationOptions> _options;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public BreadcrumbTagHelper(IHttpContextAccessor actionContextAccessor, IHtmlHelper htmlHelper, IHtmlGenerator htmlGenerator, IOptions<RequestLocalizationOptions> options)
+        public BreadcrumbTagHelper(IHtmlHelper htmlHelper, IHtmlGenerator htmlGenerator, IOptions<RequestLocalizationOptions> options, IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = actionContextAccessor;
             _htmlHelper = htmlHelper;
-            _htmlGenerator = htmlGenerator;
+            HtmlGenerator = htmlGenerator;
             _options = options;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
@@ -131,8 +159,12 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             var content = contentContent.GetContent();
             if (string.IsNullOrEmpty(content))
             {
-                var page = ViewContext.ViewData.Model as PageModelBase
-                           ?? throw new NullReferenceException(nameof(Page));
+                if (ViewContext == null)
+                    throw new NullReferenceException($"{nameof(ViewContext)} shouldn't be null.");
+
+                if (!(ViewContext.ViewData.Model is PageModelBase page))
+                    throw new NullReferenceException($"{nameof(ViewContext.ViewData.Model)} must be a derived type of {typeof(PageModelBase)}");
+
                 if (page.PageTitle == null)
                 {
                     output.SuppressOutput();
@@ -148,20 +180,29 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                 int.TryParse(_httpContextAccessor.HttpContext.Items[HttpContextKey].ToString(), out position);
             position++;
 
-            (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
-
             var span = new TagBuilder("span");
             span.Attributes.Add("itemprop", "name");
             span.InnerHtml.AppendHtml(content);
 
-            var hasUrl = !string.IsNullOrEmpty(Page) || !string.IsNullOrEmpty(Action);
-            if (hasUrl)
+            var routeLink = Route != null;
+            var actionLink = Controller != null || Action != null;
+            var pageLink = Page != null || PageHandler != null;
+            if ((routeLink && actionLink) || (routeLink && pageLink) || (actionLink && pageLink))
             {
+                output.Content.AppendHtml(span);
+            }
+            else
+            {
+                (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
+
                 var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
                 if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
                     RouteValues[LanguageRouteConstraint.Key] = culture;
 
-                var anchor = await new AnchorTagHelper(_htmlGenerator)
+                if (!string.IsNullOrEmpty(Area))
+                    RouteValues["area"] = Area;
+
+                var anchor = await new AnchorTagHelper(HtmlGenerator)
                 {
                     Action = Action,
                     Area = Area,
@@ -170,14 +211,15 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                     PageHandler = PageHandler,
                     Route = Route,
                     RouteValues = RouteValues,
-                    ViewContext = ViewContext
-                }.RenderAsync();
+                    ViewContext = ViewContext,
+                    Fragment = Fragment,
+                    Host = Host,
+                    Protocol = Protocol
+                }.GetTagBuilderAsync();
 
-                // get final page Url
-                var href = anchor.Attributes.First(x =>
-                    x.Key.Equals("href", StringComparison.InvariantCultureIgnoreCase));
-                var pageUrl = href.Value;
-                var pageFinalUrl = _httpContextAccessor.HttpContext.GetBaseUrl() + pageUrl.Substring(1);
+                var hrefPath = anchor.Attributes["href"][1..];
+                var baseUrl = _httpContextAccessor.HttpContext.GetBaseUrl()[..^1];
+                var pageFinalUrl = $"{baseUrl}/{hrefPath}";
 
                 anchor.Attributes.Add("itemprop", "item");
                 anchor.Attributes.Add("itemtype", "https://schema.org/WebPage");
@@ -186,10 +228,6 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
 
                 anchor.InnerHtml.AppendHtml(span);
                 output.Content.AppendHtml(anchor);
-            }
-            else
-            {
-                output.Content.AppendHtml(span);
             }
 
             output.TagMode = TagMode.StartTagAndEndTag;
