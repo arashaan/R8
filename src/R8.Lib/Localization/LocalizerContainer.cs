@@ -79,9 +79,22 @@ namespace R8.Lib.Localization
         /// <returns>A <see cref="LocalizerContainer"/> instance.</returns>
         public static LocalizerContainer Deserialize(string json)
         {
-            return !string.IsNullOrEmpty(json)
-                ? JsonConvert.DeserializeObject<LocalizerContainer>(json)
-                : new LocalizerContainer();
+            var output = (LocalizerContainer)null;
+            if (!string.IsNullOrEmpty(json))
+            {
+                try
+                {
+                    output = JsonConvert.DeserializeObject<LocalizerContainer>(json);
+                }
+                catch
+                {
+                }
+            }
+
+            if (output == null || !output.HasValue)
+                output = new LocalizerContainer(json);
+
+            return output;
         }
 
         /// <summary>

@@ -42,7 +42,7 @@ namespace R8.AspNetCore.Attributes
                 return IconType.SvgPath;
             }
 
-            throw new ArgumentOutOfRangeException($"Unable to recognize {nameof(Path)}'s extension");
+            throw new ArgumentOutOfRangeException(nameof(path));
         }
     }
 

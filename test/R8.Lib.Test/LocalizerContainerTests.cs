@@ -1,7 +1,10 @@
 ﻿using System.Globalization;
+
 using Newtonsoft.Json;
+
 using R8.Lib.Enums;
 using R8.Lib.Localization;
+
 using Xunit;
 
 namespace R8.Lib.Test
@@ -367,6 +370,23 @@ namespace R8.Lib.Test
                 ["en"] = "Family Services",
                 ["fa"] = "خدمات خانوادگی",
                 ["tr"] = "Aile Hizmetleri"
+            };
+
+            // Acts
+            var deserialized = LocalizerContainer.Deserialize(serialized);
+
+            // Arranges
+            Assert.Equal(shouldBe, deserialized);
+        }
+
+        [Fact]
+        public void CallDeserialize2()
+        {
+            // Assets
+            var serialized = "Family Name";
+            var shouldBe = new LocalizerContainer
+            {
+                ["en-US"] = "Family Name",
             };
 
             // Acts
