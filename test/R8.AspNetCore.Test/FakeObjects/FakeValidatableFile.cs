@@ -17,8 +17,5 @@ namespace R8.AspNetCore.Test.FakeObjects
 
         [FileTypeValidation("png", "jpg")]
         public List<IFormFile> Files { get; set; }
-
-        [FileTypeValidation]
-        public IFormFile File2 { get; set; }
     }
 }

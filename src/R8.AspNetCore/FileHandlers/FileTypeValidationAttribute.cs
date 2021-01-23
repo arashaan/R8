@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using MimeKit;
 
 namespace R8.AspNetCore.FileHandlers
 {
@@ -14,12 +15,16 @@ namespace R8.AspNetCore.FileHandlers
     {
         private readonly List<string> _extensions;
 
-        public List<IFormFile> AllowedFiles;
+        public List<IFormFile> AllowedFiles { get; }
 
         public FileTypeValidationAttribute(params string[] fileTypes)
         {
-            var fullTypes = string.Join("|", fileTypes.ToList());
-            _extensions = fullTypes.Split("|").Select(x => x.ToLower()).ToList();
+            if (fileTypes == null || !fileTypes.Any())
+                throw new ArgumentNullException(nameof(fileTypes));
+
+            _extensions = fileTypes?.Where(x => !string.IsNullOrEmpty(x))?.Select(x => x.ToLowerInvariant()).ToList();
+            if (_extensions == null || !_extensions.Any())
+                throw new NullReferenceException("Extracted list of extensions are empty. Please try review your given file types.");
         }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -33,25 +38,42 @@ namespace R8.AspNetCore.FileHandlers
             var finalFiles = new List<IFormFile>();
             switch (value)
             {
+                case IFormFileCollection fileCollection:
+                    {
+                        if (fileCollection?.Any() == true)
+                        {
+                            foreach (var file in fileCollection)
+                            {
+                                var valid = file.TryValidateByExtensions(_extensions.ToArray());
+                                if (valid) finalFiles.Add(file);
+                            }
+                        }
+                        break;
+                    }
                 case IEnumerable<IFormFile> files:
-                    finalFiles.AddRange(files.ToList());
-                    break;
+                    {
+                        if (files?.Any() == true)
+                        {
+                            foreach (var file in files)
+                            {
+                                var valid = file.TryValidateByExtensions(_extensions.ToArray());
+                                if (valid) finalFiles.Add(file);
+                            }
+                        }
+                        break;
+                    }
 
                 case IFormFile file:
-                    finalFiles.Add(file);
-                    break;
-
+                    {
+                        var valid = file.TryValidateByExtensions(_extensions.ToArray());
+                        if (valid) finalFiles.Add(file);
+                        break;
+                    }
                 default:
                     return new ValidationResult(ErrorMessageString);
             }
 
-            var allowedFiles = finalFiles?
-              .Where(x => x != null)
-              .Where(x => x.Length > 0)
-              .Where(x => _extensions.Contains(Path.GetExtension(x.FileName).Substring(1).ToLower()));
-
-            AllowedFiles = allowedFiles.ToList();
-            var result = AllowedFiles.Count == 0
+            var result = finalFiles.Count == 0
               ? new ValidationResult(ErrorMessageString)
               : ValidationResult.Success;
             return result;
@@ -62,7 +84,7 @@ namespace R8.AspNetCore.FileHandlers
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            context.Attributes.Add("accept", string.Join(",", _extensions.Select(x => $".{x}")));
+            context.Attributes.Add("accept", string.Join(",", _extensions.Select(MimeTypes.GetMimeType)));
         }
     }
 }

@@ -194,16 +194,13 @@ namespace R8.AspNetCore.Test
         {
             // Assets
             var formFile = Extensions.GetFormFile(Constants.ValidPdfFile);
-            var model = new FakeValidatableFile
+            var model = new FakeValidatableFile3
             {
                 File2 = formFile
             };
 
-            // Act
-            var file = model.Validate();
-
             // Arrange
-            Assert.False(file);
+            Assert.Throws<ArgumentNullException>(() => model.Validate());
         }
 
         [Fact]

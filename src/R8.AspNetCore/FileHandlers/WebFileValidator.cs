@@ -5,8 +5,13 @@ using R8.Lib.Validatable;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.Zip;
+using R8.FileHandlers;
+using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace R8.AspNetCore.FileHandlers
 {
@@ -54,6 +59,154 @@ namespace R8.AspNetCore.FileHandlers
             var error = validationAttribute.FormatErrorMessage(null);
             validatableResultCollection.Add(new ValidatableResult(propertyName, new[] { error }.ToList()));
             return false;
+        }
+
+        /// <summary>
+        /// Checks file extension validation by given extensions
+        /// </summary>
+        /// <param name="file">An <see cref="IFormFile"/> object to check if it is validated.</param>
+        /// <param name="extensions">An array of file extensions.</param>
+        /// <returns></returns>
+        public static async Task<bool> TryValidateByExtensionsAsync(this IFormFile file, params string[] extensions)
+        {
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+
+            if (file.Length == 0)
+                return false;
+
+            if (extensions == null || !extensions.Any())
+                return true;
+
+            var fileName = file.FileName;
+            var fileExtension = Path.GetExtension(fileName);
+            fileExtension = fileExtension.StartsWith(".")
+                ? fileExtension[1..]
+                : fileExtension;
+
+            var matches = 0;
+            foreach (var extension in extensions)
+            {
+                var ext = extension.StartsWith(".") ? extension[1..] : extension;
+                if (ext.Equals(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                    matches++;
+            }
+
+            if (matches == 0)
+                return false;
+
+            switch (fileExtension)
+            {
+                case "bmp":
+                case "jpg":
+                case "tiff":
+                case "jpeg":
+                case "gif":
+                case "png":
+                    {
+                        await using var fileStream = file.OpenReadStream();
+                        return await fileStream.IsImageAsync();
+                    }
+
+                case "pdf":
+                    {
+                        await using var fileStream = file.OpenReadStream();
+                        return await fileStream.IsPdfAsync();
+                    }
+
+                case "zip":
+                case "rar":
+                    {
+                        await using var fileStream = file.OpenReadStream();
+                        return fileStream.IsArchive(true);
+                    }
+
+                case "doc":
+                case "docx":
+                case "ppt":
+                case "pptx":
+                case "xls":
+                case "xlsx":
+                case "mp4":
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// Checks file extension validation by given extensions
+        /// </summary>
+        /// <param name="file">An <see cref="IFormFile"/> object to check if it is validated.</param>
+        /// <param name="extensions">An array of file extensions.</param>
+        /// <returns></returns>
+        public static bool TryValidateByExtensions(this IFormFile file, params string[] extensions)
+        {
+            if (file == null)
+                throw new ArgumentNullException(nameof(file));
+
+            if (file.Length == 0)
+                return false;
+
+            if (extensions == null || !extensions.Any())
+                return true;
+
+            var fileName = file.FileName;
+            var fileExtension = Path.GetExtension(fileName);
+            fileExtension = fileExtension.StartsWith(".")
+                ? fileExtension[1..]
+                : fileExtension;
+
+            var matches = 0;
+            foreach (var extension in extensions)
+            {
+                var ext = extension.StartsWith(".") ? extension[1..] : extension;
+                if (ext.Equals(fileExtension, StringComparison.InvariantCultureIgnoreCase))
+                    matches++;
+            }
+
+            if (matches == 0)
+                return false;
+
+            switch (fileExtension)
+            {
+                case "bmp":
+                case "jpg":
+                case "tiff":
+                case "jpeg":
+                case "gif":
+                case "png":
+                    {
+                        using var fileStream = file.OpenReadStream();
+                        return fileStream.IsImage();
+                    }
+
+                case "pdf":
+                    {
+                        using var fileStream = file.OpenReadStream();
+                        return fileStream.IsPdf();
+                    }
+
+                case "zip":
+                case "rar":
+                    {
+                        using var fileStream = file.OpenReadStream();
+                        return fileStream.IsArchive(true);
+                    }
+
+                case "doc":
+                case "docx":
+                case "ppt":
+                case "pptx":
+                case "xls":
+                case "xlsx":
+                case "mp4":
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
