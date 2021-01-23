@@ -198,28 +198,28 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                 Protocol = Protocol
             }.GetTagBuilderAsync();
 
-            var hrefLink = $"{_httpContextAccessor.HttpContext.GetBaseUrl()[..^1]}/{anchor.Attributes["href"][1..]}";
-            var currentLink =
+            var fullUrl = $"{_httpContextAccessor.HttpContext.GetBaseUrl()[..^1]}/{anchor.Attributes["href"][1..]}";
+            var currentFullUrl =
                 $"{_httpContextAccessor.HttpContext.GetBaseUrl()[..^1]}/{ViewContext.HttpContext.Request.GetEncodedPathAndQuery()[1..]}";
 
             var routeLink = Route != null;
             var actionLink = Controller != null || Action != null;
             var pageLink = Page != null || PageHandler != null;
-            if ((routeLink && actionLink) || (routeLink && pageLink) || (actionLink && pageLink))
-            {
-                output.Content.AppendHtml(span);
-            }
-            else
+            if (routeLink || actionLink || pageLink)
             {
                 (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
 
                 anchor.Attributes.Add("itemprop", "item");
                 anchor.Attributes.Add("itemtype", "https://schema.org/WebPage");
                 anchor.Attributes.Add("itemscope", "");
-                anchor.Attributes.Add("itemid", hrefLink);
+                anchor.Attributes.Add("itemid", fullUrl);
 
                 anchor.InnerHtml.AppendHtml(span);
                 output.Content.AppendHtml(anchor);
+            }
+            else
+            {
+                output.Content.AppendHtml(span);
             }
 
             output.TagMode = TagMode.StartTagAndEndTag;

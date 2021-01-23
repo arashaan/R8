@@ -5,6 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
@@ -18,6 +22,9 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
         {
             _httpContextAccessor = httpContextAccessor;
         }
+
+        [HtmlAttributeNotBound, ViewContext]
+        public ViewContext ViewContext { get; set; }
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
@@ -50,31 +57,27 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                             c.Key.Equals("itemprop", StringComparison.InvariantCultureIgnoreCase) &&
                             c.Value.Equals("name", StringComparison.InvariantCultureIgnoreCase)));
 
+                    var classList = li.Attributes.ContainsKey("class")
+                        ? li.Attributes["class"]?.Split(" ").ToList()
+                        : new List<string>();
+
+                    var positionIncrement = false;
                     if (index < ol.Nodes.Count)
                     {
                         // position < last
-                        if (li.Attributes.ContainsKey("class"))
+
+                        if (classList?.Any(x => x.Equals("active")) == true)
+                            li.Attributes.Remove("class");
+
+                        if (a != null)
                         {
-                            var classAttr = li.Attributes["class"];
-                            if (!string.IsNullOrEmpty(classAttr))
-                            {
-                                var classes = classAttr.Split(" ").ToList();
-                                if (classes.Any())
-                                {
-                                    if (classes.Contains("active"))
-                                    {
-                                        classes.Remove("active");
-                                        li.Attributes.Remove("class");
+                            li.InnerHtml.Clear();
+                            li.InnerHtml.AppendHtml(a);
 
-                                        if (classes?.Any() == true)
-                                            foreach (var @class in classes)
-                                                li.AddCssClass(@class);
-                                    }
-                                }
-                            }
+                            if (metaPosition != null)
+                                positionIncrement = true;
                         }
-
-                        if (a == null)
+                        else
                         {
                             li.Attributes.Remove("aria-current");
                             li.Attributes.Remove("itemscope");
@@ -85,61 +88,42 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                             if (span != null)
                                 li.InnerHtml.AppendHtml(span.InnerHtml);
                         }
-                        else
-                        {
-                            li.InnerHtml.Clear();
-                            li.InnerHtml.AppendHtml(a);
-                            if (metaPosition != null)
-                            {
-                                metaPosition.Attributes["content"] = position.ToString();
-                                li.InnerHtml.AppendHtml(metaPosition);
-                                position++;
-                            }
-                        }
                     }
                     else
                     {
                         // position = last
-                        if (li.Attributes.ContainsKey("class"))
+                        if (a != null)
                         {
-                            var classAttr = li.Attributes["class"];
-                            if (!string.IsNullOrEmpty(classAttr))
+                            var currentPage = ViewContext.HttpContext.Request.GetEncodedPathAndQuery();
+                            if (a.Attributes["href"].Equals(currentPage, StringComparison.InvariantCulture))
                             {
-                                var classes = classAttr.Split(" ").ToList();
-                                if (classes.Any())
-                                {
-                                    if (!classes.Contains("active"))
-                                        li.AddCssClass("active");
-                                }
-                                else
-                                {
-                                    li.AddCssClass("active");
-                                }
+                                li.AddCssClass("active");
+                                li.InnerHtml.Clear();
+                                li.InnerHtml.AppendHtml(a.InnerHtml);
                             }
                             else
                             {
-                                li.AddCssClass("active");
+                                li.InnerHtml.Clear();
+                                li.InnerHtml.AppendHtml(a);
                             }
                         }
-                        else
+                        else if (span != null)
                         {
                             li.AddCssClass("active");
-                        }
-
-                        li.InnerHtml.Clear();
-                        if (a != null)
-                            li.InnerHtml.AppendHtml(a.InnerHtml);
-                        else if (span != null)
+                            li.InnerHtml.Clear();
                             li.InnerHtml.AppendHtml(span);
+                        }
 
                         if (metaPosition != null)
-                        {
-                            metaPosition.Attributes["content"] = position.ToString();
-                            li.InnerHtml.AppendHtml(metaPosition);
-                            position++;
-                        }
+                            positionIncrement = true;
                     }
 
+                    if (positionIncrement)
+                    {
+                        metaPosition.Attributes["content"] = position.ToString();
+                        li.InnerHtml.AppendHtml(metaPosition);
+                        position++;
+                    }
                     result.Add(li);
                 }
             }
