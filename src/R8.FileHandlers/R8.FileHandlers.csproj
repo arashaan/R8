@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Easily save and manipulate files.</Description>
-		<VersionPrefix>1.10.66</VersionPrefix>
+		<VersionPrefix>1.10.67</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -26,6 +26,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="DocumentFormat.OpenXml" Version="2.12.1" />
 		<PackageReference Include="GhostScript.NetCore" Version="1.0.1" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.0" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />

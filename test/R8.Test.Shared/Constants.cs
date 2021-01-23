@@ -16,6 +16,8 @@ namespace R8.Test.Shared
 
         public static string InvalidZipFile => Path.Combine(Assets, "invalid.zip");
         public static string EmptyZipFile => Path.Combine(Assets, "empty.zip");
+        public static string ValidWordFile => Path.Combine(Assets, "valid.docx");
+        public static string ValidExcelFile => Path.Combine(Assets, "valid.xlsx");
         public static string ValidImageFile => Path.Combine(Assets, "valid.png");
         public static string ValidPdfFile => Path.Combine(Assets, "valid.pdf");
         public static string ValidSvgFile => Path.Combine(Assets, "valid.svg");

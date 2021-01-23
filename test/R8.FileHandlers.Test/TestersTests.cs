@@ -164,5 +164,57 @@ namespace R8.FileHandlers.Test
             // Arrange
             Assert.True(act);
         }
+
+        [Fact, TestPriority(14)]
+        public void CallIsWordDoc_MismatchFile()
+        {
+            // Act
+            using var stream = new MemoryStream();
+            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            fileStream.CopyTo(stream);
+            var act = stream.IsWordDoc();
+
+            // Arrange
+            Assert.False(act);
+        }
+
+        [Fact, TestPriority(14)]
+        public void CallIsWordDoc()
+        {
+            // Act
+            using var stream = new MemoryStream();
+            using var fileStream = new FileStream(Constants.ValidWordFile, FileMode.Open);
+            fileStream.CopyTo(stream);
+            var act = stream.IsWordDoc();
+
+            // Arrange
+            Assert.True(act);
+        }
+
+        [Fact, TestPriority(15)]
+        public void CallIsExcelDoc()
+        {
+            // Act
+            using var stream = new MemoryStream();
+            using var fileStream = new FileStream(Constants.ValidExcelFile, FileMode.Open);
+            fileStream.CopyTo(stream);
+            var act = stream.IsExcel();
+
+            // Arrange
+            Assert.True(act);
+        }
+
+        [Fact, TestPriority(16)]
+        public void CallIsExcelDoc_MismatchFile()
+        {
+            // Act
+            using var stream = new MemoryStream();
+            using var fileStream = new FileStream(Constants.ValidWordFile, FileMode.Open);
+            fileStream.CopyTo(stream);
+            var act = stream.IsExcel();
+
+            // Arrange
+            Assert.False(act);
+        }
     }
 }

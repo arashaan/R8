@@ -123,10 +123,22 @@ namespace R8.AspNetCore.FileHandlers
 
                 case "doc":
                 case "docx":
+                    {
+                        await using var fileStream = file.OpenReadStream();
+                        return fileStream.IsWordDoc();
+                    }
                 case "ppt":
                 case "pptx":
+                    {
+                        await using var fileStream = file.OpenReadStream();
+                        return fileStream.IsPowerPoint();
+                    }
                 case "xls":
                 case "xlsx":
+                    {
+                        await using var fileStream = file.OpenReadStream();
+                        return fileStream.IsExcel();
+                    }
                 case "mp4":
                     return true;
 

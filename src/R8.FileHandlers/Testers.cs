@@ -4,13 +4,94 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
+
 using ICSharpCode.SharpZipLib.Zip;
+
 using SixLabors.ImageSharp;
 
 namespace R8.FileHandlers
 {
     public static class Testers
     {
+        /// <summary>
+        /// Represents a <see cref="bool"/> value that represents if <see cref="Stream"/> instance is a valid MSWord Document.
+        /// </summary>
+        /// <param name="stream">An instance of <see cref="Stream"/> that contains word document</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
+        public static bool IsWordDoc(this Stream stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (stream.Length == 0)
+                return false;
+
+            try
+            {
+                using var wordDocument = WordprocessingDocument.Open(stream, false);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Represents a <see cref="bool"/> value that represents if <see cref="Stream"/> instance is a valid MSExcel SpreadSheet.
+        /// </summary>
+        /// <param name="stream">An instance of <see cref="Stream"/> that contains excel file</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
+        public static bool IsExcel(this Stream stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (stream.Length == 0)
+                return false;
+
+            try
+            {
+                using var wordDocument = SpreadsheetDocument.Open(stream, false);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Represents a <see cref="bool"/> value that represents if <see cref="Stream"/> instance is a valid MSPowerPoint file.
+        /// </summary>
+        /// <param name="stream">An instance of <see cref="Stream"/> that contains powerpoint file</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
+        public static bool IsPowerPoint(this Stream stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (stream.Length == 0)
+                return false;
+
+            try
+            {
+                using var wordDocument = PresentationDocument.Open(stream, false);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Represents a <see cref="bool"/> value that represents if <see cref="Stream"/> instance is a valid <see cref="ZipFile"/>
         /// </summary>
