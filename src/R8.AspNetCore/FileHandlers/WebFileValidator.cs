@@ -203,7 +203,11 @@ namespace R8.AspNetCore.FileHandlers
                         using var fileStream = file.OpenReadStream();
                         return fileStream.IsPdf();
                     }
-
+                case "svg":
+                    {
+                        using var fileStream = file.OpenReadStream();
+                        return fileStream.IsSvg();
+                    }
                 case "zip":
                 case "rar":
                     {
@@ -213,10 +217,22 @@ namespace R8.AspNetCore.FileHandlers
 
                 case "doc":
                 case "docx":
+                    {
+                        using var fileStream = file.OpenReadStream();
+                        return fileStream.IsWordDoc();
+                    }
                 case "ppt":
                 case "pptx":
+                    {
+                        using var fileStream = file.OpenReadStream();
+                        return fileStream.IsPowerPoint();
+                    }
                 case "xls":
                 case "xlsx":
+                    {
+                        using var fileStream = file.OpenReadStream();
+                        return fileStream.IsExcel();
+                    }
                 case "mp4":
                     return true;
 
