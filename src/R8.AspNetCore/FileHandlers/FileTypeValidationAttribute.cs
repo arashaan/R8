@@ -84,7 +84,8 @@ namespace R8.AspNetCore.FileHandlers
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            context.Attributes.Add("accept", string.Join(",", _extensions.Select(MimeTypes.GetMimeType)));
+            context.Attributes.Add("accept",
+                string.Join(",", _extensions.Select(x => MimeTypes.GetMimeType(x.StartsWith(".") ? x : $".{x}"))));
         }
     }
 }

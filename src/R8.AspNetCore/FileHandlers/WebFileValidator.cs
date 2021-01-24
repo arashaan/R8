@@ -113,7 +113,11 @@ namespace R8.AspNetCore.FileHandlers
                         await using var fileStream = file.OpenReadStream();
                         return await fileStream.IsPdfAsync();
                     }
-
+                case "svg":
+                    {
+                        await using var fileStream = file.OpenReadStream();
+                        return fileStream.IsSvg();
+                    }
                 case "zip":
                 case "rar":
                     {
