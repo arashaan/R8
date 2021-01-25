@@ -28,7 +28,7 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
 		<PackageReference Include="MailKit" Version="2.10.1" />
 		<PackageReference Include="R8.EntityFrameworkCore" Version="1.10.68" />
 		<PackageReference Include="R8.FileHandlers" Version="1.10.67" />
