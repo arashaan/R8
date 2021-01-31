@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -12,8 +6,16 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Options;
+
 using R8.AspNetCore.Attributes;
 using R8.AspNetCore.Localization;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
@@ -174,16 +176,15 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             if (isWrapper)
             {
                 // includes children
-                
+
                 title.Attributes.Add("href", "#");
                 output.Attributes.Add("aria-expanded", "false");
-               
             }
             else
             {
                 // single item
-                
-                 var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
+
+                var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
                 if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
                     RouteValues[LanguageRouteConstraint.Key] = culture;
 
@@ -242,8 +243,9 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
 
                 if (!string.IsNullOrEmpty(Class))
                     classes.AddRange(Class.Split(' '));
-                
+
                 title.Attributes.Add("href", link);
+                title.AddCssClass("is-active");
             }
 
             var image = new TagBuilder("div");
@@ -275,7 +277,6 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             text.AddCssClass("text");
             text.InnerHtml.Append(subject);
 
-
             title.InnerHtml.AppendHtml(image).AppendHtml(text);
             output.Content.AppendHtml(title);
 
@@ -288,7 +289,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
 
                 output.Content.AppendHtml(subItems);
             }
-            
+
             output.TagMode = TagMode.StartTagAndEndTag;
             output.TagName = "li";
             output.AddClass("nav-item", HtmlEncoder.Default);
@@ -305,7 +306,6 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             //        navLink.InnerHtml.AppendHtml(badge);
             //    }
             //}
-
         }
     }
 }
