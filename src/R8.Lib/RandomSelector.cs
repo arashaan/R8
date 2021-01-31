@@ -49,6 +49,9 @@ namespace R8.Lib
             if (list.Count == 0)
                 return default;
 
+            if (list.Count == 1)
+                return list.First();
+
             var array = list.ToArray();
             return array[Generate(0, array.Length - 1)];
         }
