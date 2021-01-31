@@ -12,22 +12,14 @@ namespace R8.Lib.Paginator
         /// </summary>
         /// <param name="currentPage">An <see cref="int"/> value that representing page number that contains these data</param>
         /// <param name="pages">An <see cref="int"/> value that representing page numbers</param>
-        public Pagination(int currentPage, int pages)
-        {
-            CurrentPage = currentPage <= 0 ? 1 : currentPage;
-            Pages = pages;
-            CountAll = 0;
-        }
-
-        /// <summary>
-        /// Initializes an <see cref="Pagination"/> instance.
-        /// </summary>
-        /// <param name="currentPage">An <see cref="int"/> value that representing page number that contains these data</param>
-        /// <param name="pages">An <see cref="int"/> value that representing page numbers</param>
         /// <param name="countAll">An <see cref="int"/> value that representing loaded data count</param>
-        public Pagination(int currentPage, int pages, int countAll) : this(currentPage, pages)
+        public Pagination(int currentPage, int pages, int countAll = 0)
         {
-            CountAll = countAll;
+            Pages = pages < 0 ? 0 : pages;
+            CurrentPage = Pages > 0
+                ? currentPage <= 0 ? 1 : currentPage
+                : 0;
+            CountAll = countAll < 0 ? 0 : countAll;
         }
 
         [JsonProperty("page")]

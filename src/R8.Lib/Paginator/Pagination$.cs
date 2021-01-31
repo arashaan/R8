@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
-using Newtonsoft.Json;
 
 namespace R8.Lib.Paginator
 {
@@ -18,10 +18,14 @@ namespace R8.Lib.Paginator
         /// <param name="currentPage">An <see cref="int"/> value that representing page number that contains these data</param>
         /// <param name="pages">An <see cref="int"/> value that representing page numbers</param>
         /// <param name="countAll">An <see cref="int"/> value that representing loaded data count</param>
-        public Pagination(IEnumerable<TModel> items, int currentPage, int pages, int countAll = 0) : this(currentPage, pages, countAll)
+        public Pagination(IEnumerable<TModel> items, int currentPage, int pages, int countAll = 0)
         {
-            var models = items.ToList();
-            Items = models;
+            Pages = pages < 0 ? 0 : pages;
+            CurrentPage = Pages > 0
+                ? currentPage <= 0 ? 1 : currentPage
+                : 0;
+            CountAll = countAll < 0 ? 0 : countAll;
+            Items = items == null ? new List<TModel>() : items.ToList();
         }
 
         /// <summary>
@@ -30,12 +34,8 @@ namespace R8.Lib.Paginator
         /// <param name="currentPage">An <see cref="int"/> value that representing page number that contains these data</param>
         /// <param name="pages">An <see cref="int"/> value that representing page numbers</param>
         /// <param name="countAll">An <see cref="int"/> value that representing loaded data count</param>
-        public Pagination(int currentPage, int pages, int countAll = 0)
+        public Pagination(int currentPage, int pages, int countAll = 0) : this(null, currentPage, pages, countAll)
         {
-            CurrentPage = currentPage <= 0 ? 1 : currentPage;
-            Pages = pages;
-            CountAll = countAll;
-            Items = new List<TModel>();
         }
 
         /// <summary>
@@ -60,7 +60,9 @@ namespace R8.Lib.Paginator
 
         public override string ToString()
         {
-            return $"{Items.Count} items in Page {CurrentPage}/{Pages}";
+            return Items == null 
+                ? "No items." 
+                : $"{Items.Count} item(s) in page {CurrentPage}/{Pages}";
         }
 
         IEnumerator IEnumerable.GetEnumerator()
