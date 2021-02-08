@@ -29,7 +29,7 @@
 		<PackageReference Include="Humanizer.Core" Version="2.8.26" />
 		<PackageReference Include="EasyCaching.InMemory" Version="1.2.0" />
 		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.3.0" />
-		<PackageReference Include="R8.Lib" Version="1.10.68" />
+		<PackageReference Include="R8.Lib" Version="1.10.69.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
