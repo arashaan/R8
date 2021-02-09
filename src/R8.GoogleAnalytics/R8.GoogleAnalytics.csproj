@@ -2,10 +2,9 @@
 
 	<PropertyGroup>
 		<Description>An easy way to catch google analytics data.</Description>
-		<VersionPrefix>1.10.66</VersionPrefix>
+		<VersionPrefix>1.10.67-beta.1</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
-		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
-		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AssemblyName>R8.GoogleAnalytics</AssemblyName>
 		<PackageId>R8.GoogleAnalytics</PackageId>
@@ -25,14 +24,20 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	</PropertyGroup>
-	<ItemGroup Condition="('$(TargetFramework)' == 'netcoreapp3.1')">
-		<PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.49.0" />
-	</ItemGroup>
-	<PropertyGroup Condition="('$(TargetFramework)' == 'netcoreapp3.1')">
-		<DefineConstants>NETCORE3_1</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup Condition="('$(TargetFramework)' == 'net5.0') or ('$(TargetFramework)' == 'netstandard2.1')">
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+  <PropertyGroup>
+    <EnsureNETCoreAppRuntime>false</EnsureNETCoreAppRuntime> 
+    <LangVersion>8</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <Deterministic>true</Deterministic>
+    <Features>strict</Features>
+    <ReportAnalyzer>true</ReportAnalyzer>
+  </PropertyGroup>
+	<ItemGroup Condition="('$(TargetFramework)' == 'net5.0')">
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 		<Reference Include="Microsoft.Extensions.Configuration.Abstractions">
 			<HintPath>C:\Program Files\dotnet\packs\Microsoft.AspNetCore.App.Ref\5.0.0\ref\net5.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
@@ -42,7 +47,8 @@
 		<DefineConstants>NET5</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.49.0.2197" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.50.0.2197" />
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
