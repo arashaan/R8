@@ -8,10 +8,7 @@ using R8.Lib.Localization;
 
 namespace R8.AspNetCore.Routing
 {
-    /// <summary>
-    /// A full-fledged PageModel will optimizations for localization.
-    /// </summary>
-    public abstract class PageModelBase : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
+    public class ControllerModelBase : Controller
     {
         /// <summary>
         /// A full-fledged <see cref="IUrlHelper"/> object with an options to access culture data.
@@ -68,26 +65,32 @@ namespace R8.AspNetCore.Routing
             return Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
         }
 
-        /// <summary>
-        /// Gets or sets title of <see cref="PageModelBase"/>
-        /// </summary>
-        [ViewData]
-        public string PageTitle { get; set; }
-
-        protected string PagePath => GetType().GetPagePath();
-
-        public override RedirectToPageResult RedirectToPage()
+        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler)
         {
             var thisRoutes = Request.RouteValues;
             var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, new RouteValueDictionary());
-            return base.RedirectToPage(PagePath, values);
+            return base.RedirectToPage(pageName, pageHandler, values);
         }
 
-        public override RedirectToPageResult RedirectToPage(object routeValues)
+        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler, object routeValues)
         {
             var thisRoutes = Request.RouteValues;
             var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, routeValues);
-            return base.RedirectToPage(PagePath, values);
+            return base.RedirectToPage(pageName, pageHandler, values);
+        }
+
+        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler, object routeValues, string fragment)
+        {
+            var thisRoutes = Request.RouteValues;
+            var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, routeValues);
+            return base.RedirectToPage(pageName, pageHandler, values, fragment);
+        }
+
+        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler, string fragment)
+        {
+            var thisRoutes = Request.RouteValues;
+            var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, new RouteValueDictionary());
+            return base.RedirectToPage(pageName, pageHandler, values, fragment);
         }
 
         public RedirectToPageResult RedirectToPage<TPage>() where TPage : PageModelBase
@@ -118,34 +121,6 @@ namespace R8.AspNetCore.Routing
             var thisRoutes = Request.RouteValues;
             var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, routeValues);
             return base.RedirectToPage(pageName, values);
-        }
-
-        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler)
-        {
-            var thisRoutes = Request.RouteValues;
-            var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, new RouteValueDictionary());
-            return base.RedirectToPage(pageName, pageHandler, values);
-        }
-
-        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler, object routeValues)
-        {
-            var thisRoutes = Request.RouteValues;
-            var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, routeValues);
-            return base.RedirectToPage(pageName, pageHandler, values);
-        }
-
-        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler, object routeValues, string fragment)
-        {
-            var thisRoutes = Request.RouteValues;
-            var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, routeValues);
-            return base.RedirectToPage(pageName, pageHandler, values, fragment);
-        }
-
-        public override RedirectToPageResult RedirectToPage(string pageName, string pageHandler, string fragment)
-        {
-            var thisRoutes = Request.RouteValues;
-            var values = CulturalizedUrlHelper.TryAddCulture(Culture, thisRoutes, new RouteValueDictionary());
-            return base.RedirectToPage(pageName, pageHandler, values, fragment);
         }
     }
 }
