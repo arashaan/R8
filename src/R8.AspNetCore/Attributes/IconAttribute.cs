@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using R8.AspNetCore.Enums;
 
-using R8.AspNetCore.Enums;
+using System;
 
 namespace R8.AspNetCore.Attributes
 {
@@ -43,21 +42,6 @@ namespace R8.AspNetCore.Attributes
             }
 
             throw new ArgumentOutOfRangeException(nameof(path));
-        }
-    }
-
-    public static class IconAttributeExtensions
-    {
-        public static ItemImage GetIcon<T>(this T enumMember) where T : Enum
-        {
-            var iconAttr = typeof(T)
-                .GetMember(enumMember.ToString())[0]
-                .GetCustomAttribute<IconAttribute>();
-            if (iconAttr == null)
-                return null;
-
-            var icon = new ItemImage(iconAttr.Path);
-            return icon;
         }
     }
 }
