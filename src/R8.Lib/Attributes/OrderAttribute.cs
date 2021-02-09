@@ -2,14 +2,16 @@
 
 namespace R8.Lib.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Enum | AttributeTargets.Field)]
     public class OrderAttribute : Attribute
     {
-        public int X { get; set; }
+        private readonly int _priority;
 
-        public OrderAttribute(int x)
+        public OrderAttribute(int priority)
         {
-            X = x;
+            _priority = priority;
         }
+
+        public int Priority => _priority;
     }
 }
