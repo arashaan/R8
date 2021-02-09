@@ -30,13 +30,13 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             if (validation == null)
                 return;
 
-            if (!output.IsContentModified)
-            {
-                output.Attributes.Add("data-toggle", "tooltip");
-                output.Attributes.Add("data-placement", "bottom");
-                output.Attributes.Add("title", validation.FormatErrorMessage(null));
-                output.Attributes.Add("placeholder", validation.FormatErrorMessage(null));
-            }
+            //if (!output.IsContentModified)
+            //{
+            //    output.Attributes.Add("data-toggle", "tooltip");
+            //    output.Attributes.Add("data-placement", "bottom");
+            //    output.Attributes.Add("title", validation.FormatErrorMessage(null));
+            //    output.Attributes.Add("placeholder", validation.FormatErrorMessage(null));
+            //}
         }
     }
 }
