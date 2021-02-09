@@ -3,9 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+
 using R8.Lib;
 
 namespace R8.AspNetCore.Routing
@@ -140,7 +142,12 @@ namespace R8.AspNetCore.Routing
             var uri = new Uri(finalUrl);
             return uri;
         }
-
+        /// <summary>
+        /// Gets query strings from given <see cref="Uri"/> object.
+        /// </summary>
+        /// <param name="uri">An <see cref="Uri"/> component object.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="Dictionary{TKey,TValue}"/></returns>
         public static Dictionary<string, string> GetQueryStrings(this Uri uri)
         {
             if (uri == null) throw new ArgumentNullException(nameof(uri));
