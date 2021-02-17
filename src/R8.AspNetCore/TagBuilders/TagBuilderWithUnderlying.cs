@@ -14,5 +14,10 @@ namespace R8.AspNetCore.TagBuilders
         {
             return ((TagBuilder)this).GetString();
         }
+
+        public TagBuilder ToTagBuilder()
+        {
+            return this;
+        }
     }
 }

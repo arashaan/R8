@@ -14,5 +14,6 @@ namespace R8.AspNetCore.TagBuilders
         TagRenderMode TagRenderMode { get; }
 
         string GetString();
+        TagBuilder ToTagBuilder();
     }
 }
