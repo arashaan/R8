@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using System.Web;
-
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +8,15 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 using R8.Lib;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace R8.AspNetCore.TagBuilders
 {
@@ -165,7 +165,10 @@ namespace R8.AspNetCore.TagBuilders
               .Select(x => new TagHelperAttribute(x.Name, x.GetValue(tagHelper)))
               .ToList();
 
-            var context = new TagHelperContext(new TagHelperAttributeList(attributes), new Dictionary<object, object>(), Guid.NewGuid().ToString());
+            var items = new Dictionary<object, object>();
+            var uniqueIdentifier = Guid.NewGuid().ToString();
+            var tagHelperAttributeList = new TagHelperAttributeList(attributes);
+            var context = new TagHelperContext(tagHelperAttributeList, items, uniqueIdentifier);
             var output = new TagHelperOutput(
               tagName,
               new TagHelperAttributeList(),
