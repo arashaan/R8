@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 using Humanizer.Localisation;
 
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +21,9 @@ using R8.Lib;
 using R8.Lib.Localization;
 
 using SixLabors.ImageSharp.Formats.Png;
+
+using System;
+using System.Linq;
 
 namespace R8.AspNetCore3_1.Demo
 {
@@ -60,7 +60,7 @@ namespace R8.AspNetCore3_1.Demo
                     options.ConfigureRequestLocalization();
                     options.RequestCultureProviders.Insert(0, new RouteDataRequestCultureProvider
                     {
-                        RouteDataStringKey = LanguageRouteConstraint.Key,
+                        RouteDataStringKey = Constraints.LanguageKey,
                         Options = options
                     });
                 });
@@ -74,7 +74,7 @@ namespace R8.AspNetCore3_1.Demo
                     // options.SuppressAsyncSuffixInActionNames = false;
                     options.ValueProviderFactories.Insert(0, new SeparatedQueryStringValueProviderFactory());
 
-                    options.Conventions.Add(new LocalizeActionRouteModelConvention());
+                    options.Conventions.Add(new LocalizedActionRouteModelConvention());
                     //options.Filters.Add(new MiddlewareFilterAttribute(typeof(LocalizationPipeline)));
                 });
             // .AddMvcLocalization()
