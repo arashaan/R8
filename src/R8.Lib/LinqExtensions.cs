@@ -25,6 +25,23 @@ namespace R8.Lib
             return offset;
         }
 
+        public static IOrderedEnumerable<TSource> OrderByList<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, params TKey[] orderList)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            var indexedList = Enumerable.Range(0, orderList.Length).ToDictionary(r => orderList[r], r => r);
+            var orderedTestsSafe = source.OrderBy(item =>
+            {
+                var foundIndex = indexedList.TryGetValue(keySelector.Invoke(item), out var index);
+                return foundIndex
+                    ? index
+                    : int.MaxValue;
+            });
+            return orderedTestsSafe;
+        }
+
         public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
             if (items == null)
