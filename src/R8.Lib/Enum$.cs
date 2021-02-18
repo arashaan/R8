@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
@@ -83,8 +81,7 @@ namespace R8.Lib
 
         public static List<T> ToListOrderBy(params T[] array)
         {
-            var list = ToList().Select(x => (T)(object)x).ToList();
-            var result = array.ToList().Intersect(list).Union(list).ToList();
+            var result = ToList().OrderByList(x => (T)(object)x, array).Select(x => (T)(object)x).ToList();
             return result;
         }
     }
