@@ -11,6 +11,27 @@ namespace R8.Lib
     {
         private static readonly HashSet<char> DefaultNonWordCharacters = new HashSet<char> { ',', '.', ':', ';' };
 
+        public static string GetStringBetween(this string str, char start, char end)
+        {
+            return new string(str.SkipWhile(c => c != start)
+                .Skip(1)
+                .TakeWhile(c => c != end)
+                .ToArray()).Trim();
+        }
+
+        public static string ReplaceEnterChar(this string str, string replacement)
+        {
+            if (string.IsNullOrEmpty(str))
+                return str;
+
+            str = str.Replace("\r\n", replacement)
+                .Replace("\n", replacement)
+                .Replace("\r", replacement)
+                .Replace(Environment.NewLine, replacement);
+
+            return str;
+        }
+
         /// <summary>
         /// Converts string to camelCase.
         /// </summary>
