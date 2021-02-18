@@ -184,9 +184,9 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             {
                 // single item
 
-                var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
+                var culture = (string)ViewContext.HttpContext.Request.RouteValues[R8.AspNetCore.Localization.Constraints.LanguageKey];
                 if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
-                    RouteValues[LanguageRouteConstraint.Key] = culture;
+                    RouteValues[R8.AspNetCore.Localization.Constraints.LanguageKey] = culture;
 
                 var anchor = await new AnchorTagHelper(_htmlGenerator)
                 {

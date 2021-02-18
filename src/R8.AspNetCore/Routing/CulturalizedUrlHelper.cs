@@ -135,17 +135,17 @@ namespace R8.AspNetCore.Routing
                 throw new ArgumentNullException(nameof(requestRoutes));
 
             var routeValues = new RouteValueDictionary(values);
-            var hasCultureRoute = requestRoutes.ContainsKey(LanguageRouteConstraint.Key);
+            var hasCultureRoute = requestRoutes.ContainsKey(R8.AspNetCore.Localization.Constraints.LanguageKey);
             if (!hasCultureRoute)
                 return routeValues;
 
-            var currentCulture = requestRoutes[LanguageRouteConstraint.Key].ToString();
+            var currentCulture = requestRoutes[R8.AspNetCore.Localization.Constraints.LanguageKey].ToString();
             var defaultCulture = cultureProvider.DefaultRequestCulture.Culture.Name;
-            if (routeValues.ContainsKey(LanguageRouteConstraint.Key))
+            if (routeValues.ContainsKey(R8.AspNetCore.Localization.Constraints.LanguageKey))
                 return routeValues;
 
             if (currentCulture != defaultCulture)
-                routeValues[LanguageRouteConstraint.Key] = currentCulture;
+                routeValues[R8.AspNetCore.Localization.Constraints.LanguageKey] = currentCulture;
             return routeValues;
         }
 

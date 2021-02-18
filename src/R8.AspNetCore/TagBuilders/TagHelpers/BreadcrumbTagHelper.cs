@@ -176,9 +176,9 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             span.Attributes.Add("itemprop", "name");
             span.InnerHtml.AppendHtml(content);
 
-            var culture = (string)ViewContext.HttpContext.Request.RouteValues[LanguageRouteConstraint.Key];
+            var culture = (string)ViewContext.HttpContext.Request.RouteValues[R8.AspNetCore.Localization.Constraints.LanguageKey];
             if (culture != _options.Value.DefaultRequestCulture.Culture.Name)
-                RouteValues[LanguageRouteConstraint.Key] = culture;
+                RouteValues[R8.AspNetCore.Localization.Constraints.LanguageKey] = culture;
 
             if (!string.IsNullOrEmpty(Area))
                 RouteValues["area"] = Area;

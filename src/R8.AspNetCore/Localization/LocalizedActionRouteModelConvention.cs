@@ -1,16 +1,17 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+
+using System.Linq;
 
 namespace R8.AspNetCore.Localization
 {
-    public class LocalizeActionRouteModelConvention : IApplicationModelConvention
+    public class LocalizedActionRouteModelConvention : IApplicationModelConvention
     {
         private readonly AttributeRouteModel _routePrefix;
 
-        public LocalizeActionRouteModelConvention()
+        public LocalizedActionRouteModelConvention()
         {
-            _routePrefix = new AttributeRouteModel(new RouteAttribute(LanguageRouteConstraint.Key));
+            _routePrefix = new AttributeRouteModel(new RouteAttribute(R8.AspNetCore.Localization.Constraints.LanguageKey));
         }
 
         public void Apply(ApplicationModel application)

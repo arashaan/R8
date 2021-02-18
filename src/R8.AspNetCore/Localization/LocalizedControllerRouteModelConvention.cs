@@ -1,15 +1,18 @@
-﻿using System.Linq;
+﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
+
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace R8.AspNetCore.Localization
+using System.Linq;
+
+namespace R8.AspNetCore.Routing
 {
-    public class LocalizedPageRouteModelConvention : IPageRouteModelConvention
+    public class LocalizedControllerRouteModelConvention : IControllerModelConvention
     {
-        public void Apply(PageRouteModel model)
+        public void Apply(ControllerModel controller)
         {
-            foreach (var selector in model.Selectors.ToList())
+            foreach (var selector in controller.Selectors.ToList())
             {
-                model.Selectors.Add(new SelectorModel
+                controller.Selectors.Add(new SelectorModel
                 {
                     AttributeRouteModel = new AttributeRouteModel
                     {
