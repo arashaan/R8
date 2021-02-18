@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "R8.EntityFrameworkCore": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

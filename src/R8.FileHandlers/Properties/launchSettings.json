@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "R8.FileHandlers": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "R8.AspNetCore": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

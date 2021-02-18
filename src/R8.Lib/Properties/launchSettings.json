@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "R8.Lib": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
