@@ -18,8 +18,28 @@ namespace R8.AspNetCore.Localization
 {
     public static class LocalizerExtensions
     {
+        /// <summary>
+        /// Gets globalized url by given route and specific culture.
+        /// </summary>
+        /// <param name="localizer">An <see cref="ILocalizer"/> instance.</param>
+        /// <param name="httpContext">An <see cref="HttpContext"/> object.</param>
+        /// <param name="url">A <see cref="string"/> that representing url you going to globalize.</param>
+        /// <param name="culture">A <see cref="CultureInfo"/> object that indicates culture you going to globalize route to.</param>
+        /// <param name="fullUrl">A <see cref="bool"/> value that indicates whether you need full url or only absolute path.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <remarks>Example: '<c>/home/index</c>' to '<c>/en-US/home/index</c>'</remarks>
+        /// <returns>The generated globalized Url.</returns>
         public static string GetGlobalizedUrl(this ILocalizer localizer, HttpContext httpContext, string url, CultureInfo culture, bool fullUrl = true)
         {
+            if (localizer is null)
+                throw new ArgumentNullException(nameof(localizer));
+
+            if (httpContext is null)
+                throw new ArgumentNullException(nameof(httpContext));
+
+            if (string.IsNullOrEmpty(url))
+                throw new ArgumentException($"'{nameof(url)}' cannot be null or empty", nameof(url));
+
             Uri uri;
             try
             {
@@ -52,25 +72,36 @@ namespace R8.AspNetCore.Localization
                 : finalUrl;
         }
 
+        /// <summary>
+        /// Returns current culture from <see cref="IRequestCultureFeature"/> feature in <see cref="HttpContext"/>.
+        /// </summary>
+        /// <param name="context">An <see cref="HttpContext"/> instance.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="NullReferenceException"></exception>
+        /// <returns>A <see cref="CultureInfo"/> object.</returns>
         public static CultureInfo GetCulture(this HttpContext context)
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
             var features = context.Features ?? throw new ArgumentNullException(nameof(context.Features));
-            var requestCulture = features.Get<IRequestCultureFeature>() ?? throw new ArgumentNullException("features.Get<IRequestCultureFeature>()");
+            var requestCulture = features.Get<IRequestCultureFeature>() ?? throw new NullReferenceException(nameof(IRequestCultureFeature));
             return requestCulture.RequestCulture.Culture;
         }
 
         /// <summary>
-        /// Represents a culture translation in type of <see cref="HtmlString"/>.
+        /// Returns translation of given culture in type of <see cref="HtmlString"/>.
         /// </summary>
         /// <param name="container">A <see cref="LocalizerContainer"/> object that representing translations for specific key.</param>
         /// <param name="culture">A <see cref="CultureInfo"/> object that representing specific culture.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="HtmlString"/> object.</returns>
         /// <remarks>If <c>culture</c> be null then it mean <c>CultureInfo.CurrentCulture.</c></remarks>
         public static HtmlString GetHtmlString(this LocalizerContainer container, CultureInfo culture = null)
         {
+            if (container == null) 
+                throw new ArgumentNullException(nameof(container));
+
             var text = container.Get(culture ?? CultureInfo.CurrentCulture, false);
             return new HtmlString(HttpUtility.HtmlDecode(text));
         }
@@ -81,6 +112,7 @@ namespace R8.AspNetCore.Localization
         /// <param name="localizer">An instance of <see cref="ILocalizer"/>.</param>
         /// <param name="key">Name of specific key in <see cref="ILocalizer.Dictionary"/> that containing a localized text.</param>
         /// <param name="tags">A collection of html tags that should be replaced in given text.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="IHtmlContent"/> object that representing a formatted text with given tags.</returns>
         public static IHtmlContent Format(this ILocalizer localizer, string key, params Func<string, IHtmlContent>[] tags)
         {
@@ -98,6 +130,7 @@ namespace R8.AspNetCore.Localization
         /// <param name="localizer">An instance of <see cref="ILocalizer"/>.</param>
         /// <param name="key">Name of specific key in <see cref="ILocalizer.Dictionary"/> that containing a localized text.</param>
         /// <param name="args">A collection of arguments that should be replaced in given text.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="IHtmlContent"/> object that representing a formatted text with given tags.</returns>
         public static IHtmlContent Format<T>(this ILocalizer localizer, string key, params T[] args)
         {
@@ -137,6 +170,7 @@ namespace R8.AspNetCore.Localization
         /// <param name="localizer">An instance of <see cref="ILocalizer"/>.</param>
         /// <param name="key">Name of specific key in <see cref="ILocalizer.Dictionary"/> that containing a localized text.</param>
         /// <param name="tags">A collection of html tags that should be replaced in given html string.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="IHtmlContent"/> object that representing a formatted html with given tags.</returns>
         public static IHtmlContent Html(this ILocalizer localizer, string key, params Func<string, IHtmlContent>[] tags)
         {
