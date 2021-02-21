@@ -17,6 +17,7 @@ namespace R8.Lib.Localization
         /// <returns></returns>
         public static IServiceCollection AddLocalizer(this IServiceCollection services, Action<IServiceProvider, LocalizerConfiguration> config)
         {
+            // services.AddMemoryCache();
             services.AddSingleton<ILocalizer>(serviceProvider =>
             {
                 var memoryCache = serviceProvider.GetService<IMemoryCache>();

@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using R8.Lib.Enums;
+using R8.Lib.JsonExtensions;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-using R8.Lib.Enums;
-using R8.Lib.JsonExtensions;
 
 namespace R8.Lib.Localization
 {
@@ -71,6 +71,26 @@ namespace R8.Lib.Localization
         public IReadOnlyCollection<LocalizerCultureNode> Cultures => _cultures;
 
         private readonly List<LocalizerCultureNode> _cultures;
+        private long _counts;
+
+        /// <summary>
+        /// Sets usage counts for this key.
+        /// </summary>
+        /// <param name="count">A <see cref="long"/> value.</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void SetCounter(long count)
+        {
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            _counts = count;
+        }
+
+        /// <summary>
+        /// Gets usage counts for this key.
+        /// </summary>
+        /// <returns></returns>
+        public long GetCounter() => _counts;
 
         /// <summary>
         /// Deserializes already-serialized JSON to new <see cref="LocalizerContainer"/> instance.

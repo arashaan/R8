@@ -17,9 +17,15 @@ namespace R8.Lib.Localization
 
         /// <summary>
         /// Gets or sets if dictionary should be saved in memory cache.
+        /// Highly recommended to use MemoryCache to increase performance.
         /// </summary>
         /// <remarks>If false, Dictionary will be refreshed on every request and may cause performance issues.</remarks>
         public bool UseMemoryCache { get; set; }
+
+        /// <summary>
+        /// Gets or sets an counter that counts each key how many times used.
+        /// </summary>
+        public bool UsageCounter { get; set; }
 
         /// <summary>
         /// Gets or sets expiration limit for memory cache.
