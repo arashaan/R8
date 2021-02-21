@@ -25,8 +25,8 @@ namespace R8.EntityFrameworkCore
         /// </summary>
         /// <typeparam name="TDbContext">the type of DbContext.</typeparam>
         /// <param name="query">A <see cref="IQueryable{T}"/> source.</param>
-        /// <returns>A <see cref="DbContextBase"/> object for given type.</returns>
-        public static TDbContext GetDbContext<TDbContext>(this IQueryable query) where TDbContext : DbContextBase
+        /// <returns>A <see cref="DbContext"/> object for given type.</returns>
+        public static TDbContext GetDbContext<TDbContext>(this IQueryable query) where TDbContext : DbContext
         {
             const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance;
             var queryCompiler = typeof(EntityQueryProvider).GetField("_queryCompiler", bindingFlags).GetValue(query.Provider);

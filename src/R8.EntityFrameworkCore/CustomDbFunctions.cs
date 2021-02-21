@@ -1,9 +1,10 @@
-﻿using System;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+
+using System;
+using System.Linq;
 
 namespace R8.EntityFrameworkCore
 {
@@ -48,73 +49,96 @@ namespace R8.EntityFrameworkCore
         public static int? IsNumeric(this DbFunctions _, string expression) =>
         throw new InvalidOperationException("This method is for use with Entity Framework Core only and has no in-memory implementation.");
 
-        public static ModelBuilder AddCustomDbFunctions(this ModelBuilder modelBuilder)
+        public static ModelBuilder AddJsonValue(this ModelBuilder modelBuilder)
         {
             var jsonMethod = typeof(CustomDbFunctions).GetMethod(nameof(JsonValue)) ??
                              throw new InvalidOperationException();
             modelBuilder.HasDbFunction(jsonMethod)
-              .HasTranslation(args => SqlFunctionExpression.Create(
-                "JSON_VALUE",
-                args.Skip(1).ToArray(),
-                typeof(string),
-                null
-              ))
-              .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+                .HasTranslation(args => SqlFunctionExpression.Create(
+                    "JSON_VALUE",
+                    args.Skip(1).ToArray(),
+                    typeof(string),
+                    null
+                ))
+                .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+            return modelBuilder;
+        }
 
+        public static ModelBuilder AddIsNumeric(this ModelBuilder modelBuilder)
+        {
             var isNumeric = typeof(CustomDbFunctions).GetMethod(nameof(IsNumeric)) ??
                             throw new InvalidOperationException();
             modelBuilder.HasDbFunction(isNumeric)
-              .HasTranslation(args => SqlFunctionExpression.Create(
-                "ISNUMERIC",
-                args.Skip(1).ToArray(),
-                typeof(int?),
-                null
-              ))
-              .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+                .HasTranslation(args => SqlFunctionExpression.Create(
+                    "ISNUMERIC",
+                    args.Skip(1).ToArray(),
+                    typeof(int?),
+                    null
+                ))
+                .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+            return modelBuilder;
+        }
 
+        public static ModelBuilder AddDateDiff(this ModelBuilder modelBuilder)
+        {
             var dateDiff = typeof(CustomDbFunctions).GetMethod(nameof(DateDiff)) ??
                            throw new InvalidOperationException();
             modelBuilder.HasDbFunction(dateDiff)
-              .HasTranslation(args => SqlFunctionExpression.Create(
-                "DATEDIFF",
-                args.Skip(1).ToArray(),
-                typeof(int),
-                null
-              ))
-              .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+                .HasTranslation(args => SqlFunctionExpression.Create(
+                    "DATEDIFF",
+                    args.Skip(1).ToArray(),
+                    typeof(int),
+                    null
+                ))
+                .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
 
+            return modelBuilder;
+        }
+
+        public static ModelBuilder AddParseName(this ModelBuilder modelBuilder)
+        {
             var parseName = typeof(CustomDbFunctions).GetMethod(nameof(ParseName)) ??
-                           throw new InvalidOperationException();
+                            throw new InvalidOperationException();
             modelBuilder.HasDbFunction(parseName)
-              .HasTranslation(args => SqlFunctionExpression.Create(
-                "PARSENAME",
-                args.Skip(1).ToArray(),
-                typeof(string),
-                null
-              ))
-              .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+                .HasTranslation(args => SqlFunctionExpression.Create(
+                    "PARSENAME",
+                    args.Skip(1).ToArray(),
+                    typeof(string),
+                    null
+                ))
+                .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
 
+            return modelBuilder;
+        }
+
+        public static ModelBuilder AddDateAdd(this ModelBuilder modelBuilder)
+        {
             var dateAdd = typeof(CustomDbFunctions).GetMethod(nameof(DateAdd)) ??
-                            throw new InvalidOperationException();
+                          throw new InvalidOperationException();
             modelBuilder.HasDbFunction(dateAdd)
-              .HasTranslation(args => SqlFunctionExpression.Create(
-                "DATEADD",
-                args.Skip(1).ToArray(),
-                typeof(DateTime),
-                null
-              ))
-              .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+                .HasTranslation(args => SqlFunctionExpression.Create(
+                    "DATEADD",
+                    args.Skip(1).ToArray(),
+                    typeof(DateTime),
+                    null
+                ))
+                .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
 
+            return modelBuilder;
+        }
+
+        public static ModelBuilder AddRight(this ModelBuilder modelBuilder)
+        {
             var right = typeof(CustomDbFunctions).GetMethod(nameof(Right)) ??
-                            throw new InvalidOperationException();
+                        throw new InvalidOperationException();
             modelBuilder.HasDbFunction(right)
-              .HasTranslation(args => SqlFunctionExpression.Create(
-                "RIGHT",
-                args.Skip(1).ToArray(),
-                typeof(string),
-                null
-              ))
-              .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
+                .HasTranslation(args => SqlFunctionExpression.Create(
+                    "RIGHT",
+                    args.Skip(1).ToArray(),
+                    typeof(string),
+                    null
+                ))
+                .HasParameter("_").Metadata.TypeMapping = new StringTypeMapping("string");
 
             return modelBuilder;
         }
