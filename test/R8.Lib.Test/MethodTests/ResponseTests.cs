@@ -35,7 +35,7 @@ namespace R8.Lib.Test.MethodTests
             };
 
             _localizer = new Localizer(configuration, null);
-            _localizer.Refresh();
+            _localizer.RefreshAsync().GetAwaiter().GetResult();
         }
 
         [Fact]

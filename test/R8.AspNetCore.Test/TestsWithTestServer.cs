@@ -28,8 +28,8 @@ namespace R8.AspNetCore.Test
             using var scope = Fixture.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
             _localizer = serviceProvider.GetService<Lib.Localization.ILocalizer>();
-            _localizer.InitializeLocalizer();
-
+            _localizer.RefreshAsync().GetAwaiter().GetResult();
+            serviceProvider.UseFileHandlers();
             serviceProvider.UseResponse();
             serviceProvider.UseFileHandlers();
         }

@@ -55,7 +55,7 @@ namespace R8.AspNetCore.Test.ILocalizer
             var ctor = new Localizer(configuration, null);
 
             // Arrange
-            Assert.Throws<NullReferenceException>(() => ctor.Refresh());
+            Assert.ThrowsAsync<NullReferenceException>(() => ctor.RefreshAsync());
         }
 
         [Fact]

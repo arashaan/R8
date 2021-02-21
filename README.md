@@ -2,6 +2,8 @@
 
 Some useful packages to be used in >= .Net Core 3.1 & .Net Standard 2.1
 
+This package is under heavy maintenance. Each version may have some breaking changes. Currently i'm looking for better performance. So use this package as your own risk, and not for a working project.
+
 **Shortly i will add wikis and documentations.**
 
 ![Commit](https://img.shields.io/github/last-commit/iamr8/r8) ![.NET Core](https://github.com/arashaan/R8/workflows/.NET%20Core/badge.svg?branch=master)

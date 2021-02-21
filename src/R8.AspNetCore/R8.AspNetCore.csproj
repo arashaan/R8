@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Many many many useful features for Asp.NET Core</Description>
-		<VersionPrefix>1.10.82-beta.2</VersionPrefix>
+		<VersionPrefix>1.10.82-beta.3</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -24,27 +24,30 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 	</PropertyGroup>
-  <PropertyGroup>
-    <EnsureNETCoreAppRuntime>false</EnsureNETCoreAppRuntime> 
-    <LangVersion>8</LangVersion>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-    <Deterministic>true</Deterministic>
-    <Features>strict</Features>
-    <ReportAnalyzer>true</ReportAnalyzer>
-  </PropertyGroup>
+	<PropertyGroup>
+		<EnsureNETCoreAppRuntime>false</EnsureNETCoreAppRuntime>
+		<LangVersion>8</LangVersion>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+		<Deterministic>true</Deterministic>
+		<Features>strict</Features>
+		<ReportAnalyzer>true</ReportAnalyzer>
+	</PropertyGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
 		<PackageReference Include="MailKit" Version="2.10.1" />
-		<PackageReference Include="R8.EntityFrameworkCore" Version="1.10.81" />
+		<PackageReference Include="R8.EntityFrameworkCore" Version="1.10.82-beta.1" />
 		<PackageReference Include="R8.FileHandlers" Version="1.10.81" />
 	</ItemGroup>
+	<!--<ItemGroup>
+	  <ProjectReference Include="..\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj" />
+	</ItemGroup>-->
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<PlatformTarget>anycpu</PlatformTarget>

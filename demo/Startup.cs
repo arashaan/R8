@@ -122,9 +122,9 @@ namespace R8.AspNetCore3_1.Demo
 
             //    config.SupportedCultures = request.Value.SupportedCultures.ToList();
             //    config.UseMemoryCache = true;
-            //    config.Provider = new LocalizerCustomProvider
+            //    config.Provider = new LocalizerProvider
             //    {
-            //        DictionaryAsync = async () =>
+            //        Dictionary = async () =>
             //        {
             //            var dictionary = new Dictionary<string, LocalizerContainer>();
             //            await using var connection = new SqlConnection(appDbContextConnectionString);

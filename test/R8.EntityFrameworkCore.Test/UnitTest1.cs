@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using R8.EntityFrameworkCore.Test.FakeDatabase;
-
-using Xunit;
-using Xunit.Abstractions;
-using R8.EntityFrameworkCore.Test;
 using R8.EntityFrameworkCore.Test.FakeDatabase.FakeEntities;
 using R8.Lib;
 using R8.Lib.Enums;
 using R8.Lib.Localization;
+
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Xunit;
+using Xunit.Abstractions;
 
 namespace R8.EntityFrameworkCore.Test
 {
@@ -40,7 +40,7 @@ namespace R8.EntityFrameworkCore.Test
         }
 
         [Fact]
-        public async Task CallAdd()
+        public async Task CallUpdate()
         {
             // Assets
             var creatorGuid = Guid.NewGuid();
@@ -81,7 +81,7 @@ namespace R8.EntityFrameworkCore.Test
         }
 
         [Fact]
-        public async Task CallAdd11()
+        public async Task CallSaveAsync()
         {
             // Assets
             var creatorGuid = Guid.NewGuid();
@@ -104,12 +104,90 @@ namespace R8.EntityFrameworkCore.Test
 
                 var roleCreated = dbContext.Add(role, creatorGuid, out _);
                 var userCreated = dbContext.Add(user, creatorGuid, out _);
-                var saveStatus = await dbContext.SaveChangesAsync();
+                var saveStatus = await dbContext.SaveAsync();
 
                 await dbContext.Database.EnsureDeletedAsync();
 
                 // Arrange
                 Assert.Equal(DatabaseSaveState.Saved, saveStatus);
+            }
+        }
+
+        [Fact]
+        public async Task CallWhereHas()
+        {
+            // Assets
+            var creatorGuid = Guid.NewGuid();
+
+            // Act
+            await using var dbContext = new FakeDbContext(FakeDbRunner.CreateNewContextOptions());
+            {
+                await dbContext.Database.EnsureCreatedAsync();
+
+                var container = new LocalizerContainer("Admin");
+                container.Set("tr", "Destek");
+                container.Set("fa", "پشتیبان");
+                var role = new Role
+                {
+                    Name = container,
+                    CanonicalName = "admin",
+                };
+
+                var roleCreated = dbContext.Add(role, creatorGuid, out _);
+                var saveStatus = await dbContext.SaveAsync();
+
+                var timer = new System.Diagnostics.Stopwatch();
+                timer.Start();
+                var doWe = dbContext.Roles.WhereJSON("admin", "Admin").FirstOrDefault();
+                timer.Stop();
+
+                _output.WriteLine(timer.Elapsed.ToString("c"));
+
+                await dbContext.Database.EnsureDeletedAsync();
+
+                // Arrange
+                Assert.NotNull(doWe);
+                Assert.Equal("admin", doWe.CanonicalName);
+                Assert.Equal("Destek", doWe.Name.Get("tr"));
+            }
+        }
+
+        [Fact]
+        public async Task CallWhereHas2()
+        {
+            // Assets
+            var creatorGuid = Guid.NewGuid();
+
+            // Act
+            await using var dbContext = new FakeDbContext(FakeDbRunner.CreateNewContextOptions());
+            {
+                await dbContext.Database.EnsureCreatedAsync();
+
+                var container = new LocalizerContainer("Admin");
+                container.Set("tr", "Destek");
+                container.Set("fa", "پشتیبان");
+                var role = new Role
+                {
+                    Name = container,
+                    CanonicalName = "admin",
+                };
+
+                var roleCreated = dbContext.Add(role, creatorGuid, out _);
+                var saveStatus = await dbContext.SaveAsync();
+
+                var timer = new System.Diagnostics.Stopwatch();
+                timer.Start();
+                var doWe = dbContext.Roles.WhereJSONV2("tr", "Destek").FirstOrDefault();
+                timer.Stop();
+
+                _output.WriteLine(timer.Elapsed.ToString("c"));
+
+                await dbContext.Database.EnsureDeletedAsync();
+
+                // Arrange
+                Assert.NotNull(doWe);
+                Assert.Equal("admin", doWe.CanonicalName);
+                Assert.Equal("Destek", doWe.Name.Get("tr"));
             }
         }
 
@@ -355,7 +433,7 @@ namespace R8.EntityFrameworkCore.Test
         }
 
         [Fact]
-        public async Task CallAdd2()
+        public async Task CallUpdate2()
         {
             // Assets
             var creatorGuid = Guid.NewGuid();
