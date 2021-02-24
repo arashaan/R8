@@ -1,6 +1,4 @@
-﻿using R8.FileHandlers;
-
-namespace R8.AspNetCore.FileHandlers
+﻿namespace R8.FileHandlers.AspNetCore
 {
     public class FileHandlerPdfRuntime : IMyFileConfigurationPdfBase
     {

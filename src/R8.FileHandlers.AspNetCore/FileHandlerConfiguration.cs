@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-
 using Microsoft.AspNetCore.Hosting;
 
-using R8.FileHandlers;
-
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     public class FileHandlerConfiguration : IMyFileConfigurationRouting
     {

@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-using System;
-
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     public static class AddFileHandlersExtensions
     {

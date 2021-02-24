@@ -1,8 +1,6 @@
-﻿using R8.FileHandlers;
+﻿using SixLabors.ImageSharp.Formats;
 
-using SixLabors.ImageSharp.Formats;
-
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     public class FileHandlerImageRuntime : IMyFileConfigurationImageBase
     {

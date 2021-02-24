@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-
-using R8.FileHandlers;
 using R8.Lib;
 
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     public static class WebFileHandlers
     {

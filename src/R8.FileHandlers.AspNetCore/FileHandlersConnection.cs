@@ -1,8 +1,7 @@
 ﻿using System;
-
 using Microsoft.Extensions.DependencyInjection;
 
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     public static class FileHandlersConnection
     {

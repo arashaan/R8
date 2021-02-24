@@ -4,11 +4,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using MimeKit;
 
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class FileTypeValidationAttribute : ValidationAttribute, IClientModelValidator
@@ -85,7 +83,7 @@ namespace R8.AspNetCore.FileHandlers
                 throw new ArgumentNullException(nameof(context));
 
             context.Attributes.Add("accept",
-                string.Join(",", _extensions.Select(x => MimeTypes.GetMimeType(x.StartsWith(".") ? x : $".{x}"))));
+                string.Join(",", _extensions.Select(x => Extensions.GetMimeType(x.StartsWith(".") ? x : $".{x}"))));
         }
     }
 }

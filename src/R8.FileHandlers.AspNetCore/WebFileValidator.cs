@@ -1,19 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
-
-using R8.Lib.Validatable;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using ICSharpCode.SharpZipLib.Zip;
-using R8.FileHandlers;
-using SixLabors.ImageSharp.Formats.Jpeg;
+using Microsoft.AspNetCore.Http;
+using R8.Lib.Validatable;
 
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     public static class WebFileValidator
     {

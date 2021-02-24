@@ -1,12 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-
 using Microsoft.AspNetCore.Http;
-
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Png;
 
-namespace R8.AspNetCore.FileHandlers
+namespace R8.FileHandlers.AspNetCore
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class ImageSizeAttribute : ValidationAttribute
