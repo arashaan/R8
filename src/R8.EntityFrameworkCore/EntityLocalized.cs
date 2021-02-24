@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using R8.Lib.Localization;
+
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace R8.EntityFrameworkCore
 {
@@ -41,7 +43,6 @@ namespace R8.EntityFrameworkCore
     public abstract class EntityLocalized<TEntity> : EntityLocalized, IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityLocalized
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder) => builder
-                .ApplyConfiguration()
-                .ConfigureAuditCollection();
+            .ApplyConfiguration();
     }
 }

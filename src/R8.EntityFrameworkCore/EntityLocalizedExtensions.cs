@@ -31,7 +31,7 @@ namespace R8.EntityFrameworkCore
         }
 
         /// <summary>
-        /// Filters a sequence of values based on <c><see cref="localizedName"/></c> and <c><see cref="canonicalName"/></c> in given <see cref="IQueryable{TResult}"/>.
+        /// Filters a sequence of values based on <c><see cref="key"/></c> and <c><see cref="value"/></c> in given <see cref="IQueryable{TResult}"/>.
         /// </summary>
         /// <typeparam name="TSource">A generic type of <see cref="EntityLocalized"/></typeparam>
         /// <param name="source">A <see cref="IQueryable{T}"/> that representing translating query.</param>

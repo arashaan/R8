@@ -1,15 +1,107 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace R8.EntityFrameworkCore
 {
     public static class AuditExtensions
     {
+        /// <summary>
+        /// Generates and adds a audit in type of <see cref="IAudit"/> to given entity entry according to request.
+        /// </summary>
+        /// <param name="entry">A <see cref="EntityEntry"/> object that containing an database entry.</param>
+        /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of audit.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag)
+        {
+            if (entry == null)
+                throw new ArgumentNullException(nameof(entry));
+
+            if (!(entry.Entity is EntityBase entityBase))
+                return;
+
+            var audit = new Audit(flag, entityBase.Id);
+            entityBase.Audits ??= new AuditCollection();
+            entityBase.Audits.Add(audit);
+        }
+
+        /// <summary>
+        /// Generates and adds a audit in type of <see cref="IAudit"/> to given entity entry according to request.
+        /// </summary>
+        /// <param name="dbContext">A derived type of <see cref="DbContext"/>.</param>
+        /// <param name="entry">A <see cref="EntityEntry"/> object that containing an database entry.</param>
+        /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of audit.</param>
+        /// <param name="userId">A <see cref="Guid"/> id that representing maintainer internal id.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void GenerateAudit<TDbContext>(this TDbContext dbContext, EntityEntry entry, AuditFlags flag, Guid? userId) where TDbContext : DbContext
+        {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entry == null) throw new ArgumentNullException(nameof(entry));
+
+            var auditGenerated = false;
+
+            if (dbContext is IAuditGenerator auditContext)
+            {
+                var auditOptions = auditContext.AuditOptions.Invoke(entry);
+                if (userId != null)
+                {
+                    entry.GenerateAudit(flag, (Guid)userId, auditOptions);
+                }
+                else
+                {
+                    entry.GenerateAudit(flag, auditOptions);
+                }
+
+                auditGenerated = true;
+            }
+
+            if (!auditGenerated)
+                entry.GenerateAudit(AuditFlags.Created);
+        }
+
+        /// <summary>
+        /// Generates and adds a audit in type of <see cref="IAudit"/> to given entity entry according to request.
+        /// </summary>
+        /// <param name="entry">A <see cref="EntityEntry"/> object that containing an database entry.</param>
+        /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of audit.</param>
+        /// <param name="userId">A <see cref="Guid"/> object that representing which user did changes.</param>
+        /// <param name="options">A <see cref="AuditOptions"/> object that should being copied into audits.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag, Guid userId, AuditOptions options)
+        {
+            if (entry == null)
+                throw new ArgumentNullException(nameof(entry));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+
+            if (!(entry.Entity is EntityBase entityBase))
+                return;
+
+            entry.GenerateAudit(flag, userId, options.RemoteIpAddress, options.LocalIpAddress, options.UserAgent);
+        }
+
+        /// <summary>
+        /// Generates and adds a audit in type of <see cref="IAudit"/> to given entity entry according to request.
+        /// </summary>
+        /// <param name="entry">A <see cref="EntityEntry"/> object that containing an database entry.</param>
+        /// <param name="flag">A <see cref="AuditFlags"/> enumerator constant that representing type of audit.</param>
+        /// <param name="options">A <see cref="AuditOptions"/> object that should being copied into audits.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag, AuditOptions options)
+        {
+            if (entry == null)
+                throw new ArgumentNullException(nameof(entry));
+            if (options == null) throw new ArgumentNullException(nameof(options));
+
+            if (!(entry.Entity is EntityBase entityBase))
+                return;
+
+            entry.GenerateAudit(flag, options.UserId, options.RemoteIpAddress, options.LocalIpAddress, options.UserAgent);
+        }
+
         /// <summary>
         /// Generates and adds a audit in type of <see cref="IAudit"/> to given entity entry according to request.
         /// </summary>

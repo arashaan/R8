@@ -16,79 +16,216 @@ namespace R8.EntityFrameworkCore
 {
     public static class DbContextBaseExtensions
     {
+        /// <summary>
+        /// Applies configuration from all <see cref="IEntityTypeConfiguration{TEntity}" />.
+        /// instances that are defined in provided assembly.
+        /// </summary>
+        /// <typeparam name="TDbContext">A derived type of <see cref="DbContext"/></typeparam>
+        /// <param name="modelBuilder"></param>
+        /// <param name="dbContext"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public static void ScanConfigurations<TDbContext>(this ModelBuilder modelBuilder, TDbContext dbContext) where TDbContext : DbContext
         {
+            if (modelBuilder == null) throw new ArgumentNullException(nameof(modelBuilder));
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
             modelBuilder.ApplyConfigurationsFromAssembly(dbContext.GetType().Assembly);
         }
 
-        public static bool UnHide<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid userId) where TDbContext : DbContext where TSource : IEntityBase
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="entity"></param>
+        /// <param name="userId"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static bool UnHide<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid? userId = null) where TDbContext : DbContext where TSource : IEntityBase
         {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             if (!entity.IsDeleted)
                 return false;
 
             entity.IsDeleted = false;
             var entry = dbContext.Update(entity);
-            entry.GenerateAudit(AuditFlags.UnDeleted, userId);
+            dbContext.GenerateAudit(entry, AuditFlags.UnDeleted, userId);
 
             return true;
         }
 
-        public static bool ToggleHiding<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid userId) where TDbContext : DbContext where TSource : IEntityBase
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="entity"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static bool ToggleHiding<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid? userId = null) where TDbContext : DbContext where TSource : IEntityBase
         {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             var flag = entity.IsDeleted
                 ? AuditFlags.UnDeleted
                 : AuditFlags.Deleted;
             entity.IsDeleted = !entity.IsDeleted;
             var entry = dbContext.Update(entity);
-            entry.GenerateAudit(flag, userId);
+            dbContext.GenerateAudit(entry, flag, userId);
 
             return true;
         }
 
-        public static void GenerateAudit(this EntityEntry entry, AuditFlags flag, Guid userId)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="entity"></param>
+        /// <param name="errors"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, out ValidatableResultCollection errors) where TDbContext : DbContext where TSource : IEntityBase
         {
-            var remoteIpAddress = HttpExtensions.GetIPAddress();
-            var localIpAddress = HttpExtensions.GetLocalIPAddress();
-            entry.GenerateAudit(flag, userId, remoteIpAddress, localIpAddress, null);
-        }
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
 
-        public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid userId, out ValidatableResultCollection errors) where TDbContext : DbContext where TSource : IEntityBase
-        {
             var isValid = entity.TryValidate(out errors);
             if (!isValid)
                 return false;
 
             var entry = dbContext.Update(entity);
-            entry.GenerateAudit(AuditFlags.Changed, userId);
+            dbContext.GenerateAudit(entry, AuditFlags.Changed, null);
 
             return true;
         }
 
-        public static bool Hide<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid userId) where TDbContext : DbContext where TSource : IEntityBase
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="entity"></param>
+        /// <param name="userId"></param>
+        /// <param name="errors"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static bool Update<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid? userId, out ValidatableResultCollection errors) where TDbContext : DbContext where TSource : IEntityBase
         {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
+            var isValid = entity.TryValidate(out errors);
+            if (!isValid)
+                return false;
+
+            var entry = dbContext.Update(entity);
+            dbContext.GenerateAudit(entry, AuditFlags.Changed, userId);
+
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="entity"></param>
+        /// <param name="userId"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static bool Hide<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid? userId = null) where TDbContext : DbContext where TSource : IEntityBase
+        {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             if (entity.IsDeleted)
                 return false;
 
             entity.IsDeleted = true;
             var entry = dbContext.Update(entity);
-            entry.GenerateAudit(AuditFlags.Deleted, userId);
+            dbContext.GenerateAudit(entry, AuditFlags.Deleted, userId);
 
             return true;
         }
 
-        public static bool Add<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid userId, out ValidatableResultCollection errors) where TDbContext : DbContext where TSource : IEntityBase
+        /// <summary>
+        ///     <para>
+        ///         Begins tracking the given entity, and any other reachable entities that are
+        ///         not already being tracked, in the <see cref="EntityState.Added" /> state such that
+        ///         they will be inserted into the database when <see cref="Save()" /> is called.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TEntity"> The type of the entity. </typeparam>
+        /// <param name="dbContext">A <see cref="DbContext"/> instance.</param>
+        /// <param name="entity"> The entity to add. </param>
+        /// <param name="userId">A <see cref="Guid"/> id that representing maintainer internal id.</param>
+        /// <param name="errors">An output <see cref="ValidatableResultCollection"/> object when you get error.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>You'll get <see cref="true"/> when operation got success.</returns>
+        public static bool Add<TDbContext, TEntity>(this TDbContext dbContext, TEntity entity, Guid userId, out ValidatableResultCollection errors) where TDbContext : DbContext where TEntity : IEntityBase
         {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
             var isValid = entity.TryValidate(out errors);
             if (!isValid)
                 return false;
 
             var entry = dbContext.Add(entity);
-            entry.GenerateAudit(AuditFlags.Created, userId);
+            dbContext.GenerateAudit(entry, AuditFlags.Created, userId);
+
             return true;
         }
 
+        /// <summary>
+        ///     <para>
+        ///         Begins tracking the given entity, and any other reachable entities that are
+        ///         not already being tracked, in the <see cref="EntityState.Added" /> state such that
+        ///         they will be inserted into the database when <see cref="Save()" /> is called.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TEntity"> The type of the entity. </typeparam>
+        /// <param name="dbContext">A <see cref="DbContext"/> instance.</param>
+        /// <param name="entity"> The entity to add. </param>
+        /// <param name="errors">An output <see cref="ValidatableResultCollection"/> object when you get error.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>You'll get <see cref="true"/> when operation got success.</returns>
+        public static bool Add<TDbContext, TEntity>(this TDbContext dbContext, TEntity entity, out ValidatableResultCollection errors) where TDbContext : DbContext where TEntity : IEntityBase
+        {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+
+            var isValid = entity.TryValidate(out errors);
+            if (!isValid)
+                return false;
+
+            var entry = dbContext.Add(entity);
+            dbContext.GenerateAudit(entry, AuditFlags.Created, null);
+
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
         public static async Task<DatabaseSaveState> SaveAsync<TDbContext>(this TDbContext dbContext, CancellationToken cancellationToken = default) where TDbContext : DbContext
         {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+
             // TODO looking for a way to show possible exception for async method
             dbContext.ChangeTracker.DetectChanges();
             var canSave = dbContext.CanSave(out var changesCount, out var entries);
@@ -124,8 +261,17 @@ namespace R8.EntityFrameworkCore
             return result;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="saveException"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
         public static DatabaseSaveState Save<TDbContext>(this TDbContext dbContext, out Exception? saveException) where TDbContext : DbContext
         {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
             saveException = null;
             var canSave = dbContext.CanSave(out var changesCount, out var entries);
             if (!canSave)
@@ -161,8 +307,18 @@ namespace R8.EntityFrameworkCore
             return result;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <param name="changesCount"></param>
+        /// <param name="entries"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
         public static bool CanSave<TDbContext>(this TDbContext dbContext, out int changesCount, out List<EntityEntry> entries) where TDbContext : DbContext
         {
+            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
             entries = null;
             changesCount = 0;
             var allEntries = dbContext.ChangeTracker.Entries().ToList();
@@ -176,8 +332,18 @@ namespace R8.EntityFrameworkCore
             return changesCount != 0;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="responses"></param>
+        /// <param name="errors"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
         public static bool TryValidate<T>(this List<T> responses, out ValidatableResultCollection errors) where T : IResponseBaseDatabase
         {
+            if (responses == null) throw new ArgumentNullException(nameof(responses));
+
             errors = new ValidatableResultCollection();
             if (responses == null || responses.Count == 0)
                 return false;

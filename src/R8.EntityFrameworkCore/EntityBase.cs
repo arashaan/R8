@@ -59,7 +59,6 @@ namespace R8.EntityFrameworkCore
     public abstract class EntityBase<TEntity> : EntityBase, IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityBase
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder) => builder
-            .ApplyConfiguration()
-            .ConfigureAuditCollection();
+            .ApplyConfiguration();
     }
 }

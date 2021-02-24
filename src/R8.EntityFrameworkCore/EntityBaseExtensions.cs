@@ -1,38 +1,12 @@
-﻿using System;
-using System.Globalization;
-
-using Humanizer;
+﻿using Humanizer;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-using Newtonsoft.Json;
 
 namespace R8.EntityFrameworkCore
 {
-    public static class EntityBaseExtensions
+    internal static class EntityBaseExtensions
     {
-        public static string GetTableName(this EntityEntry entry)
-        {
-            return entry.Context.GetTableName(entry.Entity.GetType());
-        }
-
-        public static string GetTableName<TDbContext>(this TDbContext context, Type entity) where TDbContext : DbContext
-        {
-            var entityType = context.Model.FindEntityType(entity);
-            return entityType.GetTableName();
-        }
-
-        internal static PropertyBuilder<CultureInfo> HasCultureConversion(this PropertyBuilder<CultureInfo> property)
-        {
-            return property.HasConversion(
-                    x => x.Name,
-                    v => !string.IsNullOrEmpty(v) ? CultureInfo.GetCultureInfo(v) : null);
-        }
-
         internal static EntityTypeBuilder<TEntity> ApplyConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
         {
             builder.ToTable(typeof(TEntity).Name.Pluralize());
@@ -40,12 +14,8 @@ namespace R8.EntityFrameworkCore
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
             builder.Property(p => p.RowVersion).IsRowVersion();
             builder.HasQueryFilter(entity => !entity.IsDeleted);
-            return builder;
-        }
 
-        internal static void ConfigureAuditCollection<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
-        {
-            var tableName = builder.Metadata.AsEntityType().GetTableName();
+            var tableName = builder.GetTableName();
             var pluralizeAudit = nameof(Audit).Pluralize();
             builder.OwnsMany(x => x.Audits, action =>
             {
@@ -57,31 +27,7 @@ namespace R8.EntityFrameworkCore
                 action.Property(x => x.NewValues).HasJsonConversion();
                 action.Property(x => x.OldValues).HasJsonConversion();
             });
-        }
-
-        internal static PropertyBuilder<T> HasJsonConversion<T>(this PropertyBuilder<T> property)
-        {
-            property.HasConversion(
-                x => JsonConvert.SerializeObject(x),
-                x => JsonConvert.DeserializeObject<T>(x))
-                .Metadata.SetValueComparer(new ValueComparer<T>(
-                    (l, r) => JsonConvert.SerializeObject(l) == JsonConvert.SerializeObject(r),
-                    v => v == null ? 0 : JsonConvert.SerializeObject(v).GetHashCode(),
-                    v => JsonConvert.DeserializeObject<T>(
-                        JsonConvert.SerializeObject(v))));
-            return property;
-        }
-
-        public static void HasDateTimeUtcConversion(this ModelBuilder modelBuilder)
-        {
-            var converter = new ValueConverter<DateTime, DateTime>(
-                v => v.Kind == DateTimeKind.Utc ? v : v.ToUniversalTime(),
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-                foreach (var property in entityType.GetProperties())
-                    if (property.ClrType == typeof(DateTime) || property.ClrType == typeof(DateTime?))
-                        property.SetValueConverter(converter);
+            return builder;
         }
     }
 }
