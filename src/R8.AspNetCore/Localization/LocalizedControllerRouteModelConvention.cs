@@ -1,10 +1,7 @@
-﻿using DocumentFormat.OpenXml.Drawing.Diagrams;
-
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-using System.Linq;
-
-namespace R8.AspNetCore.Routing
+namespace R8.AspNetCore.Localization
 {
     public class LocalizedControllerRouteModelConvention : IControllerModelConvention
     {
