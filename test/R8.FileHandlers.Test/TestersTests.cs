@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using R8.AspNetCore.Test;
+using R8.AspNetCore.Test.TestOrderers;
 
-using R8.Test.Shared;
-using R8.Test.Shared.TestOrderers;
+using System;
+using System.IO;
 
 using Xunit;
 

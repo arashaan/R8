@@ -11,12 +11,12 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-using R8.AspNetCore.FileHandlers;
 using R8.AspNetCore.Localization;
 using R8.AspNetCore.ModelBinders;
 using R8.AspNetCore.Routing;
 using R8.AspNetCore3_1.Demo.Pages;
 using R8.AspNetCore3_1.Demo.Services.Globalization;
+using R8.FileHandlers.AspNetCore;
 using R8.Lib;
 using R8.Lib.Localization;
 

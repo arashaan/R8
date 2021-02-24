@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MartinCostello.Logging.XUnit" Version="0.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.12" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
+		<PackageReference Include="coverlet.collector" Version="1.2.0" />
+		<PackageReference Include="xunit" Version="2.4.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\demo\R8.AspNetCore3_1.Demo.csproj" />
+	  <ProjectReference Include="..\..\src\R8.AspNetCore\R8.AspNetCore.csproj" />
+	  <ProjectReference Include="..\..\src\R8.FileHandlers.AspNetCore\R8.FileHandlers.AspNetCore.csproj" />
+	</ItemGroup>
+
+	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
+</Project>

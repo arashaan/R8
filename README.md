@@ -22,6 +22,11 @@ PM> Install-Package R8.Lib
 ```
 PM> Install-Package R8.FileHandlers
 ```
+## R8.FileHandlers.AspNetCore
+[![Nuget](https://img.shields.io/nuget/vpre/R8.FileHandlers.AspNetCore)](https://www.nuget.org/packages/R8.FileHandlers.AspNetCore/) ![R8FileHandlersDownloads](https://img.shields.io/nuget/dt/R8.FileHandlers.AspNetCore)
+```
+PM> Install-Package R8.FileHandlers
+```
 ## R8.EntityFrameworkCore
 [![Nuget](https://img.shields.io/nuget/vpre/R8.EntityFrameworkCore)](https://www.nuget.org/packages/R8.EntityFrameworkCore/) ![R8EntityFrameworkCoreDownloads](https://img.shields.io/nuget/dt/R8.EntityFrameworkCore)
 ```

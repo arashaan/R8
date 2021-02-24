@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using R8.AspNetCore.Test.FakeObjects;
-using R8.Test.Shared;
 using Xunit;
 
 namespace R8.AspNetCore.Test.ILocalizer

@@ -1,12 +1,14 @@
-﻿using SixLabors.ImageSharp.Formats.Bmp;
+﻿using R8.AspNetCore.Test;
+using R8.AspNetCore.Test.TestOrderers;
+
+using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 
 using System;
 using System.IO;
-using R8.Test.Shared;
-using R8.Test.Shared.TestOrderers;
+
 using Xunit;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]

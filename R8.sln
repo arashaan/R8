@@ -33,11 +33,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.EntityFrameworkCore.Test
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "R8.Test.Shared", "test\R8.Test.Shared\R8.Test.Shared.shproj", "{4F966DA3-AFBF-4736-8B54-26A69970B6DC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.FileHandlers.AspNetCore", "src\R8.FileHandlers.AspNetCore\R8.FileHandlers.AspNetCore.csproj", "{171A7A96-BBCC-4557-96F1-0F7FF9164665}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.FileHandlers.AspNetCore.Test", "test\R8.FileHandlers.AspNetCore.Test\R8.FileHandlers.AspNetCore.Test.csproj", "{9B3A3748-E44E-40C1-B1DC-28B0F9508D3B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{36821a46-3477-4908-9c04-a0c173963ba4}*SharedItemsImports = 5
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{4a2983dd-4dab-4a2c-9d55-b9b7593b58cf}*SharedItemsImports = 5
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{4f966da3-afbf-4736-8b54-26a69970b6dc}*SharedItemsImports = 13
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{9b3a3748-e44e-40c1-b1dc-28b0f9508d3b}*SharedItemsImports = 5
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{c624c39a-1c05-4f0f-8ffc-e0fea58b1598}*SharedItemsImports = 5
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{eb6ce609-3ac4-44d8-acc2-50f3c1066648}*SharedItemsImports = 5
 	EndGlobalSection
@@ -90,6 +95,14 @@ Global
 		{DC5334A7-40F1-4297-B0BF-199DC05C1B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC5334A7-40F1-4297-B0BF-199DC05C1B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC5334A7-40F1-4297-B0BF-199DC05C1B41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{171A7A96-BBCC-4557-96F1-0F7FF9164665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{171A7A96-BBCC-4557-96F1-0F7FF9164665}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{171A7A96-BBCC-4557-96F1-0F7FF9164665}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{171A7A96-BBCC-4557-96F1-0F7FF9164665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B3A3748-E44E-40C1-B1DC-28B0F9508D3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B3A3748-E44E-40C1-B1DC-28B0F9508D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B3A3748-E44E-40C1-B1DC-28B0F9508D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B3A3748-E44E-40C1-B1DC-28B0F9508D3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -107,6 +120,8 @@ Global
 		{EB6CE609-3AC4-44D8-ACC2-50F3C1066648} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 		{DC5334A7-40F1-4297-B0BF-199DC05C1B41} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 		{4F966DA3-AFBF-4736-8B54-26A69970B6DC} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
+		{171A7A96-BBCC-4557-96F1-0F7FF9164665} = {9C6EA3D5-AF4B-40BD-A0CD-A718C5344DAE}
+		{9B3A3748-E44E-40C1-B1DC-28B0F9508D3B} = {9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {335BA588-BA31-47FF-A0BE-3C61EA63F88D}

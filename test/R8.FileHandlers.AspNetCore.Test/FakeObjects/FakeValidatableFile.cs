@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-
-using R8.AspNetCore.FileHandlers;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using R8.Lib.Validatable;
 
-using System.Collections.Generic;
-
-namespace R8.AspNetCore.Test.FakeObjects
+namespace R8.FileHandlers.AspNetCore.Test.FakeObjects
 {
     public class FakeValidatableFile : ValidatableObject
     {

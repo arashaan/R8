@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.IO;
 
-namespace R8.Test.Shared
+namespace R8.AspNetCore.Test
 {
     public static class Constants
     {

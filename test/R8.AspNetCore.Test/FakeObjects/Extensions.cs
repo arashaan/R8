@@ -8,8 +8,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 
-using MimeKit;
-
 using Moq;
 
 using System;
@@ -58,20 +56,6 @@ namespace R8.AspNetCore.Test.FakeObjects
             {
                 ViewData = viewData
             };
-        }
-
-        public static IFormFile GetFormFile(string fileName)
-        {
-            var memoryStream = new MemoryStream();
-            using var fileStream = new FileStream(fileName, FileMode.Open);
-            fileStream.CopyTo(memoryStream);
-
-            var formFile = new FormFile(memoryStream, 0, memoryStream.Length, null, Path.GetFileName(fileName))
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = MimeTypes.GetMimeType(Path.GetFileName(fileName))
-            };
-            return formFile;
         }
     }
 }

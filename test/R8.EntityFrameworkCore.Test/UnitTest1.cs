@@ -61,8 +61,8 @@ namespace R8.EntityFrameworkCore.Test
                     Password = "Shabbeh",
                 };
 
-                var roleCreated = dbContext.Add(role, creatorGuid, out _);
-                var userCreated = dbContext.Add(user, creatorGuid, out _);
+                var roleCreated = dbContext.Add(role, out _);
+                var userCreated = dbContext.Add(user, out _);
                 user.RoleId = role.Id;
                 var userUpdated = dbContext.Update(user, creatorGuid, out var userErrors);
 
@@ -77,6 +77,36 @@ namespace R8.EntityFrameworkCore.Test
                 Assert.NotEqual(Guid.Empty, user.Id);
                 Assert.NotEqual(Guid.Empty, role.Id);
                 Assert.Equal(role.Id, user.RoleId);
+            }
+        }
+
+        [Fact]
+        public async Task CallAuditGeneratorByOptions()
+        {
+            // Assets
+            var creatorGuid = Guid.NewGuid();
+
+            // Act
+            await using var dbContext = new FakeDbContext(FakeDbRunner.CreateNewContextOptions());
+            {
+                await dbContext.Database.EnsureCreatedAsync();
+
+                var role = new Role
+                {
+                    Name = new LocalizerContainer("Admin"),
+                    CanonicalName = "admin",
+                };
+                var roleCreated = dbContext.Add(role, out _);
+                var saveStatus = await dbContext.SaveAsync();
+
+                await dbContext.Database.EnsureDeletedAsync();
+
+                // Arrange
+
+                Assert.NotEqual(Guid.Empty, role.Id);
+                Assert.Equal("WinDesktop", role.Audits[0].UserAgent);
+                Assert.Equal(HttpExtensions.GetLocalIPAddress(), role.Audits[0].LocalIpAddress);
+                Assert.Equal(HttpExtensions.GetIPAddress(), role.Audits[0].RemoteIpAddress);
             }
         }
 
@@ -102,8 +132,8 @@ namespace R8.EntityFrameworkCore.Test
                     Password = "Shabbeh",
                 };
 
-                var roleCreated = dbContext.Add(role, creatorGuid, out _);
-                var userCreated = dbContext.Add(user, creatorGuid, out _);
+                var roleCreated = dbContext.Add(role, out _);
+                var userCreated = dbContext.Add(user, out _);
                 var saveStatus = await dbContext.SaveAsync();
 
                 await dbContext.Database.EnsureDeletedAsync();
@@ -133,7 +163,7 @@ namespace R8.EntityFrameworkCore.Test
                     CanonicalName = "admin",
                 };
 
-                var roleCreated = dbContext.Add(role, creatorGuid, out _);
+                var roleCreated = dbContext.Add(role, out _);
                 var saveStatus = await dbContext.SaveAsync();
 
                 var timer = new System.Diagnostics.Stopwatch();
@@ -172,7 +202,7 @@ namespace R8.EntityFrameworkCore.Test
                     CanonicalName = "admin",
                 };
 
-                var roleCreated = dbContext.Add(role, creatorGuid, out _);
+                var roleCreated = dbContext.Add(role, out _);
                 var saveStatus = await dbContext.SaveAsync();
 
                 var timer = new System.Diagnostics.Stopwatch();
@@ -206,7 +236,7 @@ namespace R8.EntityFrameworkCore.Test
                     Username = "Arash",
                     Password = "Shabbeh",
                 };
-                dbContext.Add(user, creatorGuid, out _);
+                dbContext.Add(user, out _);
                 user.Username = new LocalizerContainer("iamr8");
                 dbContext.Update(user, creatorGuid, out _);
 
@@ -237,7 +267,7 @@ namespace R8.EntityFrameworkCore.Test
                     Name = new LocalizerContainer("Admin"),
                     CanonicalName = "admin",
                 };
-                dbContext.Add(role, creatorGuid, out _);
+                dbContext.Add(role, out _);
                 role.Name = new LocalizerContainer("Client");
                 dbContext.Update(role, creatorGuid, out _);
 
@@ -270,7 +300,7 @@ namespace R8.EntityFrameworkCore.Test
                     Name = new LocalizerContainer("Admin"),
                     CanonicalName = "admin",
                 };
-                dbContext.Add(role, creatorGuid, out _);
+                dbContext.Add(role, out _);
                 var roleHide = dbContext.UnHide(role, creatorGuid);
 
                 await dbContext.Database.EnsureDeletedAsync();
@@ -294,7 +324,7 @@ namespace R8.EntityFrameworkCore.Test
                     Name = new LocalizerContainer("Admin"),
                     CanonicalName = "admin",
                 };
-                dbContext.Add(role, creatorGuid, out _);
+                dbContext.Add(role, out _);
                 dbContext.Hide(role, creatorGuid);
                 dbContext.UnHide(role, creatorGuid);
 
@@ -325,7 +355,7 @@ namespace R8.EntityFrameworkCore.Test
                     Name = new LocalizerContainer("Admin"),
                     CanonicalName = "admin",
                 };
-                dbContext.Add(role, creatorGuid, out _);
+                dbContext.Add(role, out _);
                 dbContext.Hide(role, creatorGuid);
 
                 await dbContext.Database.EnsureDeletedAsync();
@@ -355,7 +385,7 @@ namespace R8.EntityFrameworkCore.Test
                     Name = new LocalizerContainer("Admin"),
                     CanonicalName = "admin",
                 };
-                dbContext.Add(role, creatorGuid, out _);
+                dbContext.Add(role, out _);
                 dbContext.ToggleHiding(role, creatorGuid);
 
                 await dbContext.Database.EnsureDeletedAsync();
@@ -385,7 +415,7 @@ namespace R8.EntityFrameworkCore.Test
                     Name = new LocalizerContainer("Admin"),
                     CanonicalName = "admin",
                 };
-                dbContext.Add(role, creatorGuid, out _);
+                dbContext.Add(role, out _);
                 var roleHide = dbContext.Hide(role, creatorGuid);
 
                 await dbContext.Database.EnsureDeletedAsync();
@@ -413,7 +443,7 @@ namespace R8.EntityFrameworkCore.Test
                     CanonicalName = "admin",
                 };
 
-                dbContext.Add(role, creatorGuid, out _);
+                dbContext.Add(role, out _);
 
                 await dbContext.Database.EnsureDeletedAsync();
 
@@ -453,8 +483,8 @@ namespace R8.EntityFrameworkCore.Test
                     Username = "Arash",
                 };
 
-                var roleCreated = dbContext.Add(role, creatorGuid, out _);
-                var userCreated = dbContext.Add(user, creatorGuid, out _);
+                var roleCreated = dbContext.Add(role, out _);
+                var userCreated = dbContext.Add(user, out _);
                 user.RoleId = role.Id;
                 var userUpdated = dbContext.Update(user, creatorGuid, out var userErrors);
 

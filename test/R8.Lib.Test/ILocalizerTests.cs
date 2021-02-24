@@ -1,5 +1,5 @@
-﻿using R8.Lib.Localization;
-using R8.Test.Shared;
+﻿using R8.AspNetCore.Test;
+using R8.Lib.Localization;
 
 using System;
 using System.Collections.Generic;
