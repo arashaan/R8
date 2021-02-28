@@ -19,7 +19,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="localizedName">A <see cref="string"/> value that representing localized name that already stored in <see cref="LocalizerContainer"/> in entity.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>Continues chains of <see cref="IQueryable"/> plus adding current filter.</returns>
-        public static IQueryable<TSource> WhereJSON<TSource>(this IQueryable<TSource> source, string canonicalName, string localizedName) where TSource : EntityLocalized
+        public static IQueryable<TSource> WhereLocalized<TSource>(this IQueryable<TSource> source, string canonicalName, string localizedName) where TSource : EntityLocalized
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -40,7 +40,8 @@ namespace R8.EntityFrameworkCore
         /// <param name="deepCheck">Preview feature.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>Continues chains of <see cref="IQueryable"/> plus adding current filter.</returns>
-        public static IQueryable<TSource> WhereJSONV2<TSource>(this IQueryable<TSource> source, string key, string value, bool deepCheck = false) where TSource : EntityLocalized
+        /// <remarks>For value type those are not string, you need to first convert your object to json.</remarks>
+        public static IQueryable<TSource> WhereJson<TSource>(this IQueryable<TSource> source, string key, string value, bool deepCheck = false) where TSource : EntityLocalized
         {
             // TODO get Expression
             if (source == null)
