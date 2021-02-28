@@ -7,13 +7,21 @@ namespace R8.EntityFrameworkCore
 {
     internal static class EntityBaseExtensions
     {
-        internal static EntityTypeBuilder<TEntity> ApplyConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
+        internal static EntityTypeBuilder<TEntity> InitializeConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
         {
-            builder.ToTable(typeof(TEntity).Name.Pluralize());
+            var tableName = Extensions.GetTableName(typeof(TEntity));
+            builder.ToTable(tableName);
             builder.HasKey(x => x.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
             builder.Property(p => p.RowVersion).IsRowVersion();
             builder.HasQueryFilter(entity => !entity.IsDeleted);
+
+            return builder;
+        }
+
+        internal static EntityTypeBuilder<TEntity> ApplyConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
+        {
+            builder.InitializeConfiguration();
 
             var tableName = builder.GetTableName();
             var pluralizeAudit = nameof(Audit).Pluralize();
