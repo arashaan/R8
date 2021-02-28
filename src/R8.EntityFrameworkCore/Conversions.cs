@@ -49,6 +49,36 @@ namespace R8.EntityFrameworkCore
         }
 
         /// <summary>
+        /// Converts given property to JSON to save in Database and get back in original type for scaffolding.
+        /// </summary>
+        /// <typeparam name="T">Type of given property.</typeparam>
+        /// <param name="property">A <see cref="PropertyBuilder"/> object.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A programmed <see cref="PropertyBuilder"/>.</returns>
+        public static PropertyBuilder<T> HasJsonConversionV2<T>(this PropertyBuilder<T> property) where T : class, new()
+        {
+            var converter = new ValueConverter<T, string>
+            (
+                v => JsonConvert.SerializeObject(v),
+                v => JsonConvert.DeserializeObject<T>(v) ?? new T()
+            );
+
+            var comparer = new ValueComparer<T>
+            (
+                (l, r) => JsonConvert.SerializeObject(l) == JsonConvert.SerializeObject(r),
+                v => v == null ? 0 : JsonConvert.SerializeObject(v).GetHashCode(),
+                v => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(v))
+            );
+
+            property.HasConversion(converter);
+            property.Metadata.SetValueConverter(converter);
+            property.Metadata.SetValueComparer(comparer);
+            property.HasColumnType("jsonb");
+
+            return property;
+        }
+
+        /// <summary>
         /// Converts all CLR types of <see cref="DateTime"/> to UTC format to save in Database and back.
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
