@@ -67,7 +67,7 @@ namespace R8.EntityFrameworkCore
 
         public long Id { get; set; }
 
-        [JsonConverter(typeof(AuditUserIdConverter))]
+        [JsonConverter(typeof(AuditGuidIdConverter))]
         public Guid? UserId { get; set; }
 
         [JsonConverter(typeof(AuditCultureConverter))]
