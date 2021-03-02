@@ -40,6 +40,18 @@ namespace R8.EntityFrameworkCore.Test
         }
 
         [Fact]
+        public void CallGetTableName()
+        {
+            var type = typeof(User);
+
+            var tableName = R8.EntityFrameworkCore.Extensions.GetTableName(type);
+
+            Assert.NotNull(tableName);
+            Assert.Equal("Users", tableName);
+            ;
+        }
+
+        [Fact]
         public async Task CallUpdate()
         {
             // Assets
@@ -168,7 +180,7 @@ namespace R8.EntityFrameworkCore.Test
 
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
-                var doWe = dbContext.Roles.WhereJSON("admin", "Admin").FirstOrDefault();
+                var doWe = dbContext.Roles.WhereLocalized("admin", "Admin").FirstOrDefault();
                 timer.Stop();
 
                 _output.WriteLine(timer.Elapsed.ToString("c"));
@@ -207,7 +219,7 @@ namespace R8.EntityFrameworkCore.Test
 
                 var timer = new System.Diagnostics.Stopwatch();
                 timer.Start();
-                var doWe = dbContext.Roles.WhereJSONV2("tr", "Destek").FirstOrDefault();
+                var doWe = dbContext.Roles.WhereJson("tr", "Destek").FirstOrDefault();
                 timer.Stop();
 
                 _output.WriteLine(timer.Elapsed.ToString("c"));

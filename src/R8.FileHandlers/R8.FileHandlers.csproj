@@ -38,7 +38,7 @@
     <ReportAnalyzer>true</ReportAnalyzer>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="DocumentFormat.OpenXml" Version="2.12.2" />
+		<PackageReference Include="DocumentFormat.OpenXml" Version="2.12.3" />
 		<PackageReference Include="GhostScript.NetCore" Version="1.0.1" />
 		<PackageReference Include="System.Drawing.Common" Version="5.0.1" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />
