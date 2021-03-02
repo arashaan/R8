@@ -32,6 +32,34 @@ namespace R8.EntityFrameworkCore
         }
 
         /// <summary>
+        /// Sets Auto-Increment for specific Property in given types.
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        /// <param name="property"></param>
+        /// <param name="start"></param>
+        /// <param name="entityTypes"></param>
+        /// <returns></returns>
+        public static ModelBuilder HasAutoIncrementColumn(this ModelBuilder modelBuilder, string property, long start, params Type[] entityTypes)
+        {
+            if (entityTypes == null || !entityTypes.Any())
+                return modelBuilder;
+
+            foreach (var entityType in entityTypes)
+            {
+                var tableName = entityType.Name;
+                modelBuilder.HasSequence<long>($"{tableName}_seq", schema: "dbo")
+                    .StartsAt(start)
+                    .IncrementsBy(1);
+
+                modelBuilder.Entity(entityType)
+                    .Property(property)
+                    .HasDefaultValueSql($"NEXT VALUE FOR dbo.{tableName}_seq");
+            }
+
+            return modelBuilder;
+        }
+
+        /// <summary>
         ///
         /// </summary>
         /// <typeparam name="TDbContext"></typeparam>
