@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using R8.AspNetCore.Test;
 using R8.AspNetCore3_1.Demo;
 
 using System.Diagnostics.CodeAnalysis;
@@ -61,7 +62,10 @@ namespace R8.FileHandlers.AspNetCore.Test.TestServerSimulation
             builder.UseContentRoot(Directory.GetCurrentDirectory());
             builder.UseSolutionRelativeContentRoot(Directory.GetCurrentDirectory(), "R8.sln");
             builder.UseStartup<Startup>().UseEnvironment("Test");
-            Output.WriteLine("Specified Directory: {0}", Directory.GetCurrentDirectory());
+
+            Output.WriteLine("Solution Folder: {0}", Constants.GetProjectRootFolder());
+            Output.WriteLine("Project Folder: {0}", Constants.GetSolutionRootFolder());
+            Output.WriteLine("Output Folder: {0}", Directory.GetCurrentDirectory());
         }
 
         public TestServerFixture SetOutput(ITestOutputHelper output)

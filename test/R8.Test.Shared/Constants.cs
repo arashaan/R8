@@ -1,12 +1,27 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace R8.AspNetCore.Test
 {
     public static class Constants
     {
-        public const string Assets = "E:\\Work\\Develope\\R8\\test\\R8.Test.Shared\\Assets";
+        public static string GetProjectRootFolder()
+        {
+            var exePath = Path.GetDirectoryName(System.Reflection
+                .Assembly.GetExecutingAssembly().CodeBase);
+            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+            var appRoot = appPathMatcher.Match(exePath).Value;
+            return appRoot;
+        }
+
+        public static string GetSolutionRootFolder()
+        {
+            return GetProjectRootFolder().Split("\\test\\")[0];
+        }
+
+        public static string Assets => GetSolutionRootFolder() + "\\test\\R8.Test.Shared\\Assets";
         public static string FolderPath => Path.Combine(Assets, "Dictionary");
         public static string GhostScriptFile => Path.Combine(Assets, "gsdll64.dll");
         public static string WatermarkFile => Path.Combine(Assets, "wm.png");

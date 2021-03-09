@@ -23,6 +23,7 @@ using R8.Lib.Localization;
 using SixLabors.ImageSharp.Formats.Png;
 
 using System;
+using System.IO;
 using System.Linq;
 
 namespace R8.AspNetCore3_1.Demo
@@ -166,7 +167,7 @@ namespace R8.AspNetCore3_1.Demo
                 config.CacheSlidingExpiration = TimeSpan.FromDays(3);
                 config.Provider = new LocalizerJsonProvider
                 {
-                    Folder = "E:/Work/Develope/R8/test/R8.Test.Shared/Assets/Dictionary",
+                    Folder = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName.Replace("\\","/") + "/R8.Test.Shared/Assets/Dictionary",
                     FileName = "dic",
                 };
             });
