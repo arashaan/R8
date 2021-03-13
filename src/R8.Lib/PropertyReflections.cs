@@ -55,7 +55,7 @@ namespace R8.Lib
         /// <param name="propertyValue">An <see cref="object"/> that representing output value in property type.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="bool"/> that should be true when value is in given type, otherwise false.</returns>
-        public static bool TrySetValue(this Type type, string value, out object propertyValue)
+        public static bool TryConvertFrom(this Type type, string value, out object propertyValue)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
 
