@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>A Package to make more simplicity in coding.</Description>
-		<VersionPrefix>1.10.82-beta.1</VersionPrefix>
+		<VersionPrefix>1.10.82</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>

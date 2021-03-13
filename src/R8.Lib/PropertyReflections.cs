@@ -52,14 +52,14 @@ namespace R8.Lib
         /// </summary>
         /// <param name="type">A <see cref="Type"/> to check value type.</param>
         /// <param name="value">A <see cref="string"/> that representing value to be converted.</param>
-        /// <param name="propertyValue">An <see cref="object"/> that representing output value in property type.</param>
+        /// <param name="output">An <see cref="object"/> that representing output value in property type.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="bool"/> that should be true when value is in given type, otherwise false.</returns>
-        public static bool TryConvertFrom(this Type type, string value, out object propertyValue)
+        public static bool TryConvertFrom(this Type type, string value, out object output)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
 
-            propertyValue = null;
+            output = null;
             var propertyType = type.GetUnderlyingType();
             if (propertyType.IsEnum)
             {
@@ -67,7 +67,7 @@ namespace R8.Lib
                 if (!isEnum)
                     return false;
 
-                propertyValue = enumDetail;
+                output = enumDetail;
             }
             else
             {
@@ -77,7 +77,7 @@ namespace R8.Lib
                     if (!isInt)
                         return false;
 
-                    propertyValue = intDetail;
+                    output = intDetail;
                 }
                 else if (propertyType == typeof(double))
                 {
@@ -86,7 +86,7 @@ namespace R8.Lib
                     if (!isDouble)
                         return false;
 
-                    propertyValue = doubleDetail;
+                    output = doubleDetail;
                 }
                 else if (propertyType == typeof(long))
                 {
@@ -94,11 +94,11 @@ namespace R8.Lib
                     if (!isLong)
                         return false;
 
-                    propertyValue = longDetail;
+                    output = longDetail;
                 }
                 else if (propertyType == typeof(string))
                 {
-                    propertyValue = string.IsNullOrEmpty(value) ? null : value;
+                    output = string.IsNullOrEmpty(value) ? null : value;
                 }
                 else if (propertyType == typeof(DateTime))
                 {
@@ -111,11 +111,11 @@ namespace R8.Lib
                         if (!isDateTime)
                             return false;
 
-                        propertyValue = dateTimeDetail;
+                        output = dateTimeDetail;
                     }
                     else
                     {
-                        propertyValue = year;
+                        output = year;
                     }
                 }
                 else if (propertyType == typeof(bool))
@@ -128,7 +128,7 @@ namespace R8.Lib
                         return false;
                     }
 
-                    propertyValue = value.Equals("on", StringComparison.InvariantCultureIgnoreCase) ||
+                    output = value.Equals("on", StringComparison.InvariantCultureIgnoreCase) ||
                                     value.Equals("true", StringComparison.InvariantCultureIgnoreCase);
                 }
                 else
