@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -10,6 +11,135 @@ namespace R8.Lib
 {
     public static class PropertyReflections
     {
+        /// <summary>
+        /// Returns underlying type under nullable type or generic type.
+        /// </summary>
+        /// <param name="type">A <see cref="Type"/>.</param>
+        /// <param name="ignoreNullability">Checks if need to be bypassed nullable types and get underlying type.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="Type"/>.</returns>
+        public static Type GetUnderlyingType(this Type type, bool ignoreNullability = true)
+        {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            var resultType = (Type?)null;
+            var interfaces = type.GetInterfaces();
+            if (interfaces.Any())
+            {
+                foreach (var @interface in interfaces)
+                {
+                    var hasGeneric = @interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(IList<>);
+                    if (!hasGeneric)
+                        continue;
+
+                    var genericTypes = @interface.GetGenericArguments();
+                    resultType = genericTypes[0];
+                    break;
+                }
+            }
+
+            resultType ??= type;
+
+            if (ignoreNullability)
+                resultType = Nullable.GetUnderlyingType(resultType) ?? resultType;
+
+            return resultType;
+        }
+
+        /// <summary>
+        /// Checks if given value is capable to keep in the given type and returns value with given type.
+        /// </summary>
+        /// <param name="type">A <see cref="Type"/> to check value type.</param>
+        /// <param name="value">A <see cref="string"/> that representing value to be converted.</param>
+        /// <param name="propertyValue">An <see cref="object"/> that representing output value in property type.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="bool"/> that should be true when value is in given type, otherwise false.</returns>
+        public static bool TrySetValue(this Type type, string value, out object propertyValue)
+        {
+            if (type == null) throw new ArgumentNullException(nameof(type));
+
+            propertyValue = null;
+            var propertyType = type.GetUnderlyingType();
+            if (propertyType.IsEnum)
+            {
+                var isEnum = Enum.TryParse(propertyType, value, out var enumDetail);
+                if (!isEnum)
+                    return false;
+
+                propertyValue = enumDetail;
+            }
+            else
+            {
+                if (propertyType == typeof(int))
+                {
+                    var isInt = int.TryParse(value, out var intDetail);
+                    if (!isInt)
+                        return false;
+
+                    propertyValue = intDetail;
+                }
+                else if (propertyType == typeof(double))
+                {
+                    var isDouble = double.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"),
+                        out var doubleDetail);
+                    if (!isDouble)
+                        return false;
+
+                    propertyValue = doubleDetail;
+                }
+                else if (propertyType == typeof(long))
+                {
+                    var isLong = long.TryParse(value, out var longDetail);
+                    if (!isLong)
+                        return false;
+
+                    propertyValue = longDetail;
+                }
+                else if (propertyType == typeof(string))
+                {
+                    propertyValue = string.IsNullOrEmpty(value) ? null : value;
+                }
+                else if (propertyType == typeof(DateTime))
+                {
+                    var isYearDateTime = DateTime.TryParseExact(value, "yyyy", new CultureInfo("en-US"),
+                        DateTimeStyles.AdjustToUniversal, out var year);
+                    if (!isYearDateTime)
+                    {
+                        var isDateTime = DateTime.TryParse(value, new CultureInfo("en-US"),
+                            DateTimeStyles.AdjustToUniversal, out var dateTimeDetail);
+                        if (!isDateTime)
+                            return false;
+
+                        propertyValue = dateTimeDetail;
+                    }
+                    else
+                    {
+                        propertyValue = year;
+                    }
+                }
+                else if (propertyType == typeof(bool))
+                {
+                    if (!value.Contains("on", StringComparison.InvariantCultureIgnoreCase) &&
+                        !value.Contains("off", StringComparison.InvariantCultureIgnoreCase) &&
+                        !value.Contains("true", StringComparison.InvariantCultureIgnoreCase) &&
+                        !value.Contains("false", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return false;
+                    }
+
+                    propertyValue = value.Equals("on", StringComparison.InvariantCultureIgnoreCase) ||
+                                    value.Equals("true", StringComparison.InvariantCultureIgnoreCase);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static object GetExpressionValue(this Expression expression)
         {
             var objectMember = Expression.Convert(expression, typeof(object));
