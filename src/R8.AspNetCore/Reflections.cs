@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-using R8.AspNetCore.Attributes;
-using R8.Lib;
 using R8.Lib.Validatable;
 
 using System;
@@ -13,17 +10,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Resources;
 
 namespace R8.AspNetCore
 {
     public static class Reflections
     {
-        public static (IHtmlContent, IHtmlContent) GetRegularExpression<TModel>(this Expression<Func<TModel, object>> property, bool requireTag = true)
-        {
-            return GetRegularExpression(property.Type, property.Name);
-        }
-
         /// <summary>
         /// Returns <see cref="ModelMetadata"/> for given model.
         /// </summary>
@@ -88,6 +79,35 @@ namespace R8.AspNetCore
         }
 
         /// <summary>
+        /// Returns an <see cref="IEnumerable{T}"/> of <see cref="Attribute"/> for given metadata.
+        /// </summary>
+        /// <param name="metadata">A <see cref="ModelMetadata"/> object.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="Attribute"/></returns>
+        public static IEnumerable<object> GetAttributes(this ModelMetadata metadata)
+        {
+            if (metadata == null) throw new ArgumentNullException(nameof(metadata));
+
+            var attributes = metadata.GetDefaultModelMetadata().Attributes.PropertyAttributes;
+            return attributes;
+        }
+
+        /// <summary>
+        /// Returns whether given metadata is required or not.
+        /// </summary>
+        /// <param name="metadata">A <see cref="ModelMetadata"/> object.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="bool"/> value.</returns>
+        public static bool IsRequired(this ModelMetadata metadata)
+        {
+            if (metadata == null) throw new ArgumentNullException(nameof(metadata));
+
+            var attributes = metadata.GetAttributes();
+            var required = attributes.Any(x => x is RequiredAttribute);
+            return required;
+        }
+
+        /// <summary>
         /// Returns <see cref="ModelMetadata"/> for given property in model.
         /// </summary>
         /// <typeparam name="T">Derived type of <see cref="ValidatableObject"/>.</typeparam>
@@ -102,9 +122,7 @@ namespace R8.AspNetCore
             if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
 
             var propertyInfo = model.GetType().GetProperty(propertyName);
-            var modelType = model.GetType();
-            var provider = new EmptyModelMetadataProvider();
-            var metadata = provider.GetMetadataForProperty(propertyInfo, modelType);
+            var metadata = model.GetMetadataForProperty(propertyInfo);
             return metadata.GetDefaultModelMetadata();
         }
 
@@ -176,94 +194,6 @@ namespace R8.AspNetCore
             var propertyInfo = model.GetType().GetProperty(propertyName);
             var propertyExplorer = model.GetExplorerForProperty(propertyInfo);
             return propertyExplorer;
-        }
-
-        public static Dictionary<string, object> GetValidator(this Type modelType, string expression, Type resourceType)
-        {
-            if (string.IsNullOrEmpty(expression))
-                return default;
-
-            var property = modelType.GetPublicProperties().FirstOrDefault(x => x.Name.Equals(expression, StringComparison.CurrentCulture));
-            if (property == null)
-                return default;
-
-            var result = new Dictionary<string, object>
-            {
-                {
-                    "data-val", "true"
-                }
-            };
-            var regTerm = string.Empty;
-
-            var required = property.GetCustomAttribute<RequiredAttribute>();
-            if (required != null)
-            {
-                var finalRequired = string.Empty;
-                if (required.ErrorMessageResourceType != null)
-                {
-                    var resourceManager = new ResourceManager(resourceType);
-
-                    var displayName = property.GetDisplayName();
-                    var requiredString = resourceManager.GetString(required.ErrorMessageResourceName);
-                    finalRequired += string.Format(requiredString, displayName);
-                }
-                else
-                {
-                    finalRequired += required.ErrorMessage;
-                }
-
-                result.Add("data-val-required", finalRequired);
-            }
-
-            var (pattern, regex) = modelType.GetRegularExpression(expression);
-            if (pattern != null && regex != null)
-                regTerm = $"{pattern} {regex}";
-
-            return result;
-        }
-
-        public static (IHtmlContent, IHtmlContent) GetRegularExpression(this Type modelType, string expression, bool requireTag = true)
-        {
-            if (modelType == null)
-                return default;
-
-            if (string.IsNullOrEmpty(expression))
-                return default;
-
-            var property = modelType.GetPublicProperties()
-                .Find(x => x.Name.Equals(expression, StringComparison.CurrentCulture));
-            if (property == null)
-                return default;
-
-            var validator = property.GetCustomAttribute<ValueValidationAttribute>();
-            if (validator != null)
-            {
-                return new ValueTuple<IHtmlContent, IHtmlContent>
-                {
-                    Item1 = requireTag
-                        ? new HtmlString($"data-val-regex-pattern=\"{validator.Pattern}\"")
-                        : new HtmlString(validator.Pattern),
-                    Item2 = requireTag
-                        ? new HtmlString($"data-val-regex=\"{validator.ErrorMessage}\"")
-                        : new HtmlString(validator.ErrorMessage)
-                };
-            }
-
-            var regular = property.GetCustomAttribute<RegularExpressionAttribute>();
-            if (regular != null)
-            {
-                return new ValueTuple<IHtmlContent, IHtmlContent>
-                {
-                    Item1 = requireTag
-                        ? new HtmlString($"data-val-regex-pattern=\"{regular.Pattern}\"")
-                        : new HtmlString(regular.Pattern),
-                    Item2 = requireTag
-                        ? new HtmlString($"data-val-regex=\"{regular.ErrorMessage}\"")
-                        : new HtmlString(regular.ErrorMessage)
-                };
-            }
-
-            return new ValueTuple<IHtmlContent, IHtmlContent>(null, null);
         }
     }
 }
