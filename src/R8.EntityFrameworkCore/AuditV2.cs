@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 using R8.EntityFrameworkCore.AuditSubClasses;
-using R8.EntityFrameworkCore.JsonConverters;
+using R8.Lib.JsonConverters;
 
 using System;
 using System.Collections.Generic;
@@ -14,10 +14,10 @@ namespace R8.EntityFrameworkCore
 
         public Guid RowId { get; set; }
 
-        [JsonConverter(typeof(AuditDateTimeConverter))]
+        [JsonConverter(typeof(JsonDateTimeToUnixConverter))]
         public DateTime DateTime { get; set; }
 
-        [JsonConverter(typeof(AuditGuidIdConverter))]
+        [JsonConverter(typeof(JsonGuidConverter))]
         public Guid? UserId { get; set; }
 
         public string TransactionId { get; set; }

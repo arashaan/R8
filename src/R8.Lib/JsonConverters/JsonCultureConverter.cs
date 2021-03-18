@@ -2,9 +2,9 @@
 using System.Globalization;
 using Newtonsoft.Json;
 
-namespace R8.EntityFrameworkCore.JsonConverters
+namespace R8.Lib.JsonConverters
 {
-    public class AuditCultureConverter : JsonConverter<CultureInfo?>
+    public class JsonCultureConverter : JsonConverter<CultureInfo?>
     {
         public override void WriteJson(JsonWriter writer, CultureInfo? value, JsonSerializer serializer)
         {
