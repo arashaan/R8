@@ -11,8 +11,24 @@ namespace R8.Lib
     {
         private static readonly HashSet<char> DefaultNonWordCharacters = new HashSet<char> { ',', '.', ':', ';' };
 
+        /// <summary>
+        /// Returns a <see cref="string"/> between to given characters.
+        /// </summary>
+        /// <param name="str">A <see cref="string"/> value to check in</param>
+        /// <param name="start">Starting <see cref="char"/></param>
+        /// <param name="end">Ending <see cref="char"/></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns>A <see cref="string"/> between two characters.</returns>
         public static string GetStringBetween(this string str, char start, char end)
         {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+            if (start <= 0)
+                throw new ArgumentOutOfRangeException(nameof(start));
+            if (end <= 0)
+                throw new ArgumentOutOfRangeException(nameof(end));
+
             return new string(str.SkipWhile(c => c != start)
                 .Skip(1)
                 .TakeWhile(c => c != end)
