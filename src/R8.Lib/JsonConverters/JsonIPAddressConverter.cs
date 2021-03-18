@@ -1,11 +1,10 @@
-﻿using Newtonsoft.Json;
-
-using System;
+﻿using System;
 using System.Net;
+using Newtonsoft.Json;
 
-namespace R8.EntityFrameworkCore.JsonConverters
+namespace R8.Lib.JsonConverters
 {
-    internal class AuditIPAddressConverter : JsonConverter<IPAddress>
+    public class JsonIPAddressConverter : JsonConverter<IPAddress>
     {
         public override void WriteJson(JsonWriter writer, IPAddress value, JsonSerializer serializer)
         {

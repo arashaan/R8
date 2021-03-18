@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
-using System;
-
-namespace R8.EntityFrameworkCore.JsonConverters
+namespace R8.Lib.JsonConverters
 {
-    public class AuditGuidIdConverter : JsonConverter<Guid?>
+    public class JsonGuidConverter : JsonConverter<Guid?>
     {
         public override void WriteJson(JsonWriter writer, Guid? value, JsonSerializer serializer)
         {

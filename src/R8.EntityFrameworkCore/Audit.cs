@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-using R8.EntityFrameworkCore.JsonConverters;
+using R8.Lib.JsonConverters;
 
 using System;
 using System.Collections.Generic;
@@ -58,24 +58,24 @@ namespace R8.EntityFrameworkCore
 
         public string UserAgent { get; set; }
 
-        [JsonConverter(typeof(AuditIPAddressConverter))]
+        [JsonConverter(typeof(JsonIPAddressConverter))]
         [Column("IpAddress")]
         public IPAddress RemoteIpAddress { get; set; }
 
-        [JsonConverter(typeof(AuditIPAddressConverter))]
+        [JsonConverter(typeof(JsonIPAddressConverter))]
         public IPAddress LocalIpAddress { get; set; }
 
         public long Id { get; set; }
 
-        [JsonConverter(typeof(AuditGuidIdConverter))]
+        [JsonConverter(typeof(JsonGuidConverter))]
         public Guid? UserId { get; set; }
 
-        [JsonConverter(typeof(AuditCultureConverter))]
+        [JsonConverter(typeof(JsonCultureConverter))]
         public CultureInfo? Culture { get; set; }
 
         public Guid RowId { get; set; }
 
-        [JsonConverter(typeof(AuditDateTimeConverter))]
+        [JsonConverter(typeof(JsonDateTimeToUnixConverter))]
         public DateTime DateTime { get; set; }
 
         public AuditFlags Flag { get; set; }
