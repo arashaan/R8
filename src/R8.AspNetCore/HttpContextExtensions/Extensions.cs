@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Routing;
 
 using NodaTime;
+
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace R8.AspNetCore.HttpContextExtensions
 {
@@ -28,6 +31,24 @@ namespace R8.AspNetCore.HttpContextExtensions
                 throw new ArgumentNullException(nameof(context));
 
             return context.GetRouteData().Values["page"].ToString();
+        }
+
+        public static async Task RedirectWithPostDataAsync(this HttpContext httpContext, string url, NameValueCollection data)
+        {
+            var response = httpContext.Response;
+            response.Clear();
+
+            var s = new StringBuilder();
+            s.Append("<html>");
+            s.AppendFormat("<body onload='document.forms[\"form\"].submit()'>");
+            s.AppendFormat("<form name='form' action='{0}' method='post'>", url);
+            foreach (string key in data)
+                s.AppendFormat("<input type='hidden' name='{0}' value='{1}' />", key, data[key]);
+
+            s.Append("</form></body></html>");
+
+            var bytes = Encoding.ASCII.GetBytes(s.ToString());
+            await httpContext.Response.Body.WriteAsync(bytes);
         }
 
         /// <summary>
