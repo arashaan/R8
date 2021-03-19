@@ -1,5 +1,4 @@
 ﻿using R8.AspNetCore.Test;
-using R8.Lib.Enums;
 using R8.Lib.Localization;
 using R8.Lib.Test.Enums;
 using R8.Lib.Test.FakeObjects;
@@ -55,32 +54,6 @@ namespace R8.Lib.Test.MethodTests
             Assert.Equal(expected, response.Message);
         }
 
-        [Fact]
-        public async Task CallResponseGeneric_Message()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-
-            // Act
-            var response = new FakeResponse<object>(Flags.Success);
-            response.SetLocalizer(_localizer);
-
-            var expected = "عملیات به موفقیت انجام شد";
-
-            // Arrange
-            Assert.Equal(expected, response.Message);
-        }
-
-        [Fact]
-        public void CallResponseGeneric_DirectCast2()
-        {
-            // Act
-            var response = new FakeResponse<object>(Flags.Success);
-
-            // Arrange
-            Assert.True(response);
-        }
-
         //[Fact]
         //public void CallResponseGeneric_DirectCast4()
         //{
@@ -101,33 +74,6 @@ namespace R8.Lib.Test.MethodTests
 
             // Act
             var response = new FakeResponse(Flags.ParamIsNull);
-
-            // Arrange
-            Assert.False(response.Success);
-        }
-
-        [Fact]
-        public void CallResponseGeneric_CheckSuccess()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-
-            // Act
-            var response = new FakeResponse<object>(Flags.Success);
-
-            // Arrange
-            Assert.True(response.Success);
-        }
-
-        [Fact]
-        public void CallResponseGeneric_CheckSuccess2()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-
-            // Act
-            var response = new FakeResponse<object>(Flags.Success);
-            response.Save = DatabaseSaveState.SaveFailure;
 
             // Arrange
             Assert.False(response.Success);

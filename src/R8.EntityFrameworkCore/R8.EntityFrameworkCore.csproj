@@ -2,9 +2,9 @@
 
 	<PropertyGroup>
 		<Description>A predefined pattern for EntityFramework Core to easily store Audits</Description>
-		<VersionPrefix>1.10.82.3</VersionPrefix>
+		<VersionPrefix>1.10.84</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
-		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AssemblyName>R8.EntityFrameworkCore</AssemblyName>
@@ -41,16 +41,16 @@
 	<ItemGroup>
 		<PackageReference Include="Humanizer.Core" Version="2.8.26" />
 		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.4.1" />
-		<PackageReference Include="R8.Lib" Version="1.10.83.2" />
+		<!--<PackageReference Include="R8.Lib" Version="1.10.83.2" />-->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.4">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
-	<!--<ItemGroup>
+	<ItemGroup>
 	  <ProjectReference Include="..\R8.Lib\R8.Lib.csproj" />
-	</ItemGroup>-->
+	</ItemGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<PlatformTarget>anycpu</PlatformTarget>

@@ -1,7 +1,7 @@
 ﻿using R8.Lib.Localization;
 using R8.Lib.Validatable;
 
-namespace R8.Lib.MethodReturn
+namespace R8.EntityFrameworkCore
 {
     public abstract class ResponseBase<TSource, TStatus> : ResponseBaseDatabase<TStatus> where TSource : class
     {

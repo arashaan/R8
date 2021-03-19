@@ -15,6 +15,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\src\R8.AspNetCore\R8.AspNetCore.csproj" />
+		<ProjectReference Include="..\src\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj" />
 		<ProjectReference Include="..\src\R8.FileHandlers.AspNetCore\R8.FileHandlers.AspNetCore.csproj" />
 	</ItemGroup>
 </Project>

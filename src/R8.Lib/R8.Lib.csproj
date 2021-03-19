@@ -2,9 +2,9 @@
 
 	<PropertyGroup>
 		<Description>A Package to make more simplicity in coding.</Description>
-		<VersionPrefix>1.10.83.2</VersionPrefix>
+		<VersionPrefix>1.10.84</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
-		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AssemblyName>R8.Lib</AssemblyName>
@@ -36,12 +36,6 @@
 		<Deterministic>true</Deterministic>
 		<Features>strict</Features>
 		<ReportAnalyzer>true</ReportAnalyzer>
-	</PropertyGroup>
-	<ItemGroup Condition="('$(TargetFramework)' == 'netstandard2.1')">
-		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-	</ItemGroup>
-	<PropertyGroup Condition="('$(TargetFramework)' == 'netstandard2.1')">
-		<DefineConstants>NETSTANDARD2_1</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />

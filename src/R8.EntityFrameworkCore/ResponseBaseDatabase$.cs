@@ -1,8 +1,8 @@
-﻿using R8.Lib.Enums;
-using R8.Lib.Localization;
+﻿using R8.Lib.Localization;
+using R8.Lib.MethodReturn;
 using R8.Lib.Validatable;
 
-namespace R8.Lib.MethodReturn
+namespace R8.EntityFrameworkCore
 {
     /// <summary>
     /// An base class for saving changes of DbContext entity.

@@ -44,6 +44,7 @@ Global
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{4f966da3-afbf-4736-8b54-26a69970b6dc}*SharedItemsImports = 13
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{9b3a3748-e44e-40c1-b1dc-28b0f9508d3b}*SharedItemsImports = 5
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{c624c39a-1c05-4f0f-8ffc-e0fea58b1598}*SharedItemsImports = 5
+		test\R8.Test.Shared\R8.Test.Shared.projitems*{dc5334a7-40f1-4297-b0bf-199dc05c1b41}*SharedItemsImports = 5
 		test\R8.Test.Shared\R8.Test.Shared.projitems*{eb6ce609-3ac4-44d8-acc2-50f3c1066648}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

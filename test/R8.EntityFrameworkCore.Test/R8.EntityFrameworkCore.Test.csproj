@@ -23,4 +23,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj" />
 	</ItemGroup>
+	<Import Project="..\R8.Test.Shared\R8.Test.Shared.projitems" Label="Shared" />
 </Project>
