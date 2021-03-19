@@ -1,4 +1,4 @@
-﻿using R8.Lib.Test.FakeObjects;
+﻿using R8.AspNetCore.Test.FakeObjects;
 
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
