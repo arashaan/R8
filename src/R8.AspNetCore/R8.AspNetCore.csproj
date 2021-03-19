@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Many many many useful features for Asp.NET Core</Description>
-		<VersionPrefix>1.10.84</VersionPrefix>
+		<VersionPrefix>1.10.84.1</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -42,7 +42,7 @@
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.9.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.31" />
 		<PackageReference Include="MailKit" Version="2.11.1" />
-		<PackageReference Include="R8.Lib" Version="1.10.84" />
+		<PackageReference Include="R8.Lib" Version="1.10.84.1" />
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
