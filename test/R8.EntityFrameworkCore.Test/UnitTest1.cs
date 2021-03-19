@@ -116,6 +116,7 @@ namespace R8.EntityFrameworkCore.Test
                 // Arrange
 
                 Assert.NotEqual(Guid.Empty, role.Id);
+                Assert.Equal(DatabaseSaveState.Saved, saveStatus);
                 Assert.Equal("WinDesktop", role.Audits[0].UserAgent);
                 Assert.Equal(HttpExtensions.GetLocalIPAddress(), role.Audits[0].LocalIpAddress);
                 Assert.Equal(HttpExtensions.GetIPAddress(), role.Audits[0].RemoteIpAddress);

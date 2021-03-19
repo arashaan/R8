@@ -60,7 +60,7 @@ namespace R8.EntityFrameworkCore
         }
 
         /// <summary>
-        ///
+        /// Sets <see cref="EntityBase.IsDeleted"/> value to <c>false</c> in <see cref="EntityBase"/> typed class, based on <see cref="EntityBase"/> strategy.
         /// </summary>
         /// <typeparam name="TDbContext"></typeparam>
         /// <typeparam name="TSource"></typeparam>
@@ -68,7 +68,8 @@ namespace R8.EntityFrameworkCore
         /// <param name="entity"></param>
         /// <param name="userId"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <returns></returns>
+        /// <returns>A <see cref="bool"/> that indicates operations if successfully done.</returns>
+        /// <remarks>In <see cref="EntityBase"/> strategy, any row will not be deleted, Only <see cref="EntityBase.IsDeleted"/> will be set to <c>true</c>.</remarks>
         public static bool UnHide<TDbContext, TSource>(this TDbContext dbContext, TSource entity, Guid? userId = null) where TDbContext : DbContext where TSource : IEntityBase
         {
             if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
@@ -243,43 +244,75 @@ namespace R8.EntityFrameworkCore
         }
 
         /// <summary>
-        ///
+        ///     <para>
+        ///         Saves all changes made in this context to the database.
+        ///     </para>
+        ///     <para>
+        ///         This method will automatically call <see cref="ChangeTracker.DetectChanges" /> to discover any
+        ///         changes to entity instances before saving to the underlying database. This can be disabled via
+        ///         <see cref="ChangeTracker.AutoDetectChangesEnabled" />.
+        ///     </para>
+        ///     <para>
+        ///         Multiple active operations on the same context instance are not supported.  Use 'await' to ensure
+        ///         that any asynchronous operations have completed before calling another method on this context.
+        ///     </para>
         /// </summary>
-        /// <typeparam name="TDbContext"></typeparam>
-        /// <param name="dbContext"></param>
-        /// <param name="cancellationToken"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns></returns>
-        public static async Task<DatabaseSaveState> SaveAsync<TDbContext>(this TDbContext dbContext, CancellationToken cancellationToken = default) where TDbContext : DbContext
+        /// <param name="dbContext">A derived type of <see cref="DbContext"/>.</param>
+        /// <param name="cancellationToken"> A <see cref="CancellationToken" /> to observe while waiting for the task to complete. </param>
+        /// <returns>
+        ///     A task that represents the asynchronous save operation. The task result contains An <see cref="DatabaseSaveStatus"/>.
+        /// </returns>
+        /// <exception cref="DbUpdateException">
+        ///     An error is encountered while saving to the database.
+        /// </exception>
+        /// <exception cref="DbUpdateConcurrencyException">
+        ///     A concurrency violation is encountered while saving to the database.
+        ///     A concurrency violation occurs when an unexpected number of rows are affected during save.
+        ///     This is usually because the data in the database has been modified since it was loaded into memory.
+        /// </exception>
+        public static async Task<DatabaseSaveStatus> SaveAsync<TDbContext>(this TDbContext dbContext, CancellationToken cancellationToken = default) where TDbContext : DbContext
         {
-            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (dbContext == null)
+                throw new ArgumentNullException(nameof(dbContext));
 
-            // TODO looking for a way to show possible exception for async method
             dbContext.ChangeTracker.DetectChanges();
-            var canSave = dbContext.CanSave(out var changesCount, out var entries);
+            var canSave = dbContext.NeedSave(out var changesCount, out var entries);
             if (!canSave)
-                return DatabaseSaveState.NoNeedToSave;
+                return new DatabaseSaveStatus { Save = DatabaseSaveState.NoNeedToSave };
 
-            DatabaseSaveState result;
+            var result = new DatabaseSaveStatus
+            {
+                EntityEntries = entries,
+                ChangesBeforeSave = changesCount
+            };
+
             try
             {
                 dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
-                var changesInDatabase = await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                var changesInDatabase = await dbContext
+                    .SaveChangesAsync(cancellationToken)
+                    .ConfigureAwait(false);
                 if (changesInDatabase > 0)
                 {
-                    result = changesInDatabase == changesCount
+                    result.Save = changesInDatabase == changesCount
                         ? DatabaseSaveState.Saved
                         : DatabaseSaveState.SavedWithErrors;
+                    result.ChangesAfterSave = changesInDatabase;
                 }
                 else
                 {
-                    result = DatabaseSaveState.NotSaved;
+                    result.Save = DatabaseSaveState.NotSaved;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                result = DatabaseSaveState.SaveFailure;
+                result.Save = DatabaseSaveState.SaveFailure;
+
+                if (ex is DbUpdateConcurrencyException concurrencyException)
+                    result.DbUpdateConcurrencyException = concurrencyException;
+
+                if (ex is DbUpdateException dbUpdateException)
+                    result.DbUpdateException = dbUpdateException;
             }
             finally
             {
@@ -290,42 +323,68 @@ namespace R8.EntityFrameworkCore
         }
 
         /// <summary>
-        ///
+        ///     <para>
+        ///         Saves all changes made in this context to the database.
+        ///     </para>
+        ///     <para>
+        ///         This method will automatically call <see cref="ChangeTracker.DetectChanges" /> to discover any
+        ///         changes to entity instances before saving to the underlying database. This can be disabled via
+        ///         <see cref="ChangeTracker.AutoDetectChangesEnabled" />.
+        ///     </para>
         /// </summary>
-        /// <typeparam name="TDbContext"></typeparam>
-        /// <param name="dbContext"></param>
-        /// <param name="saveException"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns></returns>
-        public static DatabaseSaveState Save<TDbContext>(this TDbContext dbContext, out Exception? saveException) where TDbContext : DbContext
+        /// <param name="dbContext">A derived type of <see cref="DbContext"/>.</param>
+        /// <returns>
+        ///     An <see cref="DatabaseSaveStatus"/>.
+        /// </returns>
+        /// <exception cref="DbUpdateException">
+        ///     An error is encountered while saving to the database.
+        /// </exception>
+        /// <exception cref="DbUpdateConcurrencyException">
+        ///     A concurrency violation is encountered while saving to the database.
+        ///     A concurrency violation occurs when an unexpected number of rows are affected during save.
+        ///     This is usually because the data in the database has been modified since it was loaded into memory.
+        /// </exception>
+        public static DatabaseSaveStatus Save<TDbContext>(this TDbContext dbContext) where TDbContext : DbContext
         {
-            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
-            saveException = null;
-            var canSave = dbContext.CanSave(out var changesCount, out var entries);
-            if (!canSave)
-                return DatabaseSaveState.NoNeedToSave;
+            if (dbContext == null)
+                throw new ArgumentNullException(nameof(dbContext));
 
             dbContext.ChangeTracker.DetectChanges();
-            DatabaseSaveState result;
+            var canSave = dbContext.NeedSave(out var changesCount, out var entries);
+            if (!canSave)
+                return new DatabaseSaveStatus { Save = DatabaseSaveState.NoNeedToSave };
+
+            var result = new DatabaseSaveStatus
+            {
+                EntityEntries = entries,
+                ChangesBeforeSave = changesCount
+            };
+
             try
             {
                 dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
                 var changesInDatabase = dbContext.SaveChanges();
                 if (changesInDatabase > 0)
                 {
-                    result = changesInDatabase == changesCount
+                    result.Save = changesInDatabase == changesCount
                         ? DatabaseSaveState.Saved
                         : DatabaseSaveState.SavedWithErrors;
+                    result.ChangesAfterSave = changesInDatabase;
                 }
                 else
                 {
-                    result = DatabaseSaveState.NotSaved;
+                    result.Save = DatabaseSaveState.NotSaved;
                 }
             }
             catch (Exception ex)
             {
-                saveException = ex;
-                result = DatabaseSaveState.SaveFailure;
+                result.Save = DatabaseSaveState.SaveFailure;
+
+                if (ex is DbUpdateConcurrencyException concurrencyException)
+                    result.DbUpdateConcurrencyException = concurrencyException;
+
+                if (ex is DbUpdateException dbUpdateException)
+                    result.DbUpdateException = dbUpdateException;
             }
             finally
             {
@@ -344,9 +403,11 @@ namespace R8.EntityFrameworkCore
         /// <param name="entries"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
-        public static bool CanSave<TDbContext>(this TDbContext dbContext, out int changesCount, out List<EntityEntry> entries) where TDbContext : DbContext
+        public static bool NeedSave<TDbContext>(this TDbContext dbContext, out int changesCount, out List<EntityEntry> entries) where TDbContext : DbContext
         {
-            if (dbContext == null) throw new ArgumentNullException(nameof(dbContext));
+            if (dbContext == null)
+                throw new ArgumentNullException(nameof(dbContext));
+
             entries = null;
             changesCount = 0;
             var allEntries = dbContext.ChangeTracker.Entries().ToList();
