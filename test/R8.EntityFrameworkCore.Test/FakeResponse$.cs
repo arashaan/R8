@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
 
+using R8.EntityFrameworkCore.Test.Enums;
 using R8.Lib.Localization;
-using R8.Lib.MethodReturn;
-using R8.Lib.Test.Enums;
 using R8.Lib.Validatable;
 
-namespace R8.Lib.Test.FakeObjects
+namespace R8.EntityFrameworkCore.Test
 {
     public class FakeResponse<TModel> : ResponseBase<TModel, Flags> where TModel : class
     {

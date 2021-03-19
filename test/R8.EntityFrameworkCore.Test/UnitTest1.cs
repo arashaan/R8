@@ -1,7 +1,6 @@
 using R8.EntityFrameworkCore.Test.FakeDatabase;
 using R8.EntityFrameworkCore.Test.FakeDatabase.FakeEntities;
 using R8.Lib;
-using R8.Lib.Enums;
 using R8.Lib.Localization;
 
 using System;

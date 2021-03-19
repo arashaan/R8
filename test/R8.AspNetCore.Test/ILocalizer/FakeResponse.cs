@@ -37,36 +37,4 @@ namespace R8.AspNetCore.Test.ILocalizer
             base.SetStatus(status);
         }
     }
-
-    public class FakeResponse<TModel> : ResponseBase<TModel, Flags> where TModel : class
-    {
-        public FakeResponse()
-        {
-        }
-
-        public FakeResponse(R8.Lib.Localization.ILocalizer localizer) : base(localizer)
-        {
-        }
-
-        public FakeResponse(Flags status) : base(status)
-        {
-        }
-
-        public string Message
-        {
-            get
-            {
-                var localizer = this.GetLocalizer();
-                return localizer != null ? localizer[Status.ToString()] : Status.ToString();
-            }
-        }
-
-        public override Flags Status { get; set; }
-        public override ValidatableResultCollection Errors { get; protected set; }
-
-        public override void SetStatus(Flags status)
-        {
-            base.SetStatus(status);
-        }
-    }
 }

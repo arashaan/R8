@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-using R8.Lib.Enums;
-
 using System.Collections.Generic;
 
 namespace R8.EntityFrameworkCore

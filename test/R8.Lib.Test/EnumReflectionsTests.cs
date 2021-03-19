@@ -1,4 +1,5 @@
-﻿using R8.Lib.Enums;
+﻿using R8.Lib.Test.Enums;
+
 using Xunit;
 
 namespace R8.Lib.Test
@@ -22,26 +23,26 @@ namespace R8.Lib.Test
         public void CallToEnum_Lowercase()
         {
             // Arrange
-            const string str = "noneedtosave";
+            const string str = "tokenisnotvalid";
 
             // Act
-            var act = str.ToEnum<DatabaseSaveState>();
+            var act = str.ToEnum<Flags>();
 
             // Assert
-            Assert.Equal(DatabaseSaveState.NoNeedToSave, act);
+            Assert.Equal(Flags.TokenIsNotValid, act);
         }
 
         [Fact]
         public void CallToEnum()
         {
             // Arrange
-            const string str = "NoNeedToSave";
+            const string str = "TokenIsNotValid";
 
             // Act
-            var act = str.ToEnum<DatabaseSaveState>();
+            var act = str.ToEnum<Flags>();
 
             // Assert
-            Assert.Equal(DatabaseSaveState.NoNeedToSave, act);
+            Assert.Equal(Flags.TokenIsNotValid, act);
         }
     }
 }

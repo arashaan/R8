@@ -1,9 +1,8 @@
-﻿using System.Globalization;
+﻿using Newtonsoft.Json;
 
-using Newtonsoft.Json;
-
-using R8.Lib.Enums;
 using R8.Lib.Localization;
+
+using System.Globalization;
 
 using Xunit;
 
@@ -46,10 +45,10 @@ namespace R8.Lib.Test
             var model = new LocalizerContainer();
 
             // Acts
-            model[Languages.Persian] = "آرش";
+            model["fa"] = "آرش";
 
             // Arranges
-            Assert.Equal("آرش", model[Languages.Persian]);
+            Assert.Equal("آرش", model["fa"]);
         }
 
         [Fact]
@@ -403,7 +402,7 @@ namespace R8.Lib.Test
             var container1 = new LocalizerContainer { ["en"] = "Arash" };
 
             // Arranges
-            Assert.Equal("Arash", container1[Languages.English]);
+            Assert.Equal("Arash", container1["en"]);
         }
 
         [Fact]

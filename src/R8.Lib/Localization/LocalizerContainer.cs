@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using R8.Lib.Enums;
 using R8.Lib.JsonExtensions;
 
 using System;
@@ -34,16 +33,6 @@ namespace R8.Lib.Localization
         /// </summary>
         /// <param name="localized">A <see cref="string"/> value that representing equivalent translation for current culture.</param>
         public LocalizerContainer(string localized) : this(CultureInfo.CurrentCulture, localized)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a <see cref="LocalizerContainer"/> to store a word in many languages.
-        /// </summary>
-        /// <param name="language">A enumerator constant value to store localized text in.</param>
-        /// <param name="localized">A <see cref="string"/> value that representing equivalent translation for given culture.</param>
-        public LocalizerContainer(Languages language, string localized) : this(
-            CultureInfo.GetCultureInfo(language.GetDisplayName()), localized)
         {
         }
 
@@ -253,17 +242,6 @@ namespace R8.Lib.Localization
         }
 
         /// <summary>
-        /// Sets equivalent translation for given language.
-        /// </summary>
-        /// <param name="language">An enumerator constant that representing specific language.</param>
-        /// <param name="localized">An <see cref="string"/> value that represents equivalent translation.</param>
-        public void Set(Languages language, string localized)
-        {
-            var description = language.GetDescription();
-            Set(description, localized);
-        }
-
-        /// <summary>
         /// Returns equivalent translation for given culture.
         /// </summary>
         /// <param name="language">An <see cref="string"/> that represents specified language to get translation value from.</param>
@@ -292,29 +270,6 @@ namespace R8.Lib.Localization
         /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
         /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
         public string this[string language, bool useFallback]
-        {
-            get => Get(language, useFallback);
-            set => Set(language, value);
-        }
-
-        /// <summary>
-        /// Returns equivalent translation for given culture.
-        /// </summary>
-        /// <param name="language">An enumerator constant that represents specified language to get translation value from.</param>
-        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
-        public string this[Languages language]
-        {
-            get => Get(language);
-            set => Set(language, value);
-        }
-
-        /// <summary>
-        /// Returns equivalent translation for given culture.
-        /// </summary>
-        /// <param name="language">An enumerator constant that represents specified language to get translation value from.</param>
-        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
-        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
-        public string this[Languages language, bool useFallback]
         {
             get => Get(language, useFallback);
             set => Set(language, value);
@@ -357,18 +312,6 @@ namespace R8.Lib.Localization
         public string Get(string culture, bool useFallback = true)
         {
             var locale = CultureInfo.GetCultureInfo(culture);
-            return this.Get(locale, useFallback);
-        }
-
-        /// <summary>
-        /// Returns equivalent translation for given culture.
-        /// </summary>
-        /// <param name="language">An enumerator constant that should get translation value from.</param>
-        /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
-        /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
-        public string Get(Languages language, bool useFallback = true)
-        {
-            var locale = language.GetDescription();
             return this.Get(locale, useFallback);
         }
 

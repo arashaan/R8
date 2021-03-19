@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 using R8.Lib;
-using R8.Lib.Enums;
 using R8.Lib.MethodReturn;
 using R8.Lib.Validatable;
 

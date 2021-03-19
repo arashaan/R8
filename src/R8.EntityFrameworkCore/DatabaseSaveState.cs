@@ -1,4 +1,4 @@
-﻿namespace R8.Lib.Enums
+﻿namespace R8.EntityFrameworkCore
 {
     public enum DatabaseSaveState
     {
