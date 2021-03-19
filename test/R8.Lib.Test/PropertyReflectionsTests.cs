@@ -175,6 +175,54 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public void CallTrySetValue_DateTime8()
+        {
+            // Assets
+            var input = new List<string>()
+            {
+                "2020/05/23",
+                "2020/05/232",
+                "2020/05/23",
+            };
+            var type = typeof(List<DateTime>);
+
+            // Act
+            var method = type.TryParse(input, out var output);
+
+            var expected = new DateTime(2020, 05, 23);
+            DateTime.SpecifyKind(expected, DateTimeKind.Utc);
+
+            // Arrange
+            Assert.True(method);
+            Assert.NotNull(output);
+            Assert.IsType<List<DateTime>>(output);
+        }
+
+        [Fact]
+        public void CallTrySetValue_DateTime9()
+        {
+            // Assets
+            var input = new[]
+            {
+                "2020/05/23",
+                "2020/05/232",
+                "2020/05/23",
+            };
+            var type = typeof(DateTime[]);
+
+            // Act
+            var method = type.TryParse(input, out var output);
+
+            var expected = new DateTime(2020, 05, 23);
+            DateTime.SpecifyKind(expected, DateTimeKind.Utc);
+
+            // Arrange
+            Assert.True(method);
+            Assert.NotNull(output);
+            Assert.IsType<DateTime[]>(output);
+        }
+
+        [Fact]
         public void CallTrySetValue_DateTime2()
         {
             // Assets
@@ -182,7 +230,7 @@ namespace R8.Lib.Test
             var type = typeof(DateTime);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             var expected = new DateTime(2020, 05, 23);
             DateTime.SpecifyKind(expected, DateTimeKind.Utc);
@@ -200,7 +248,7 @@ namespace R8.Lib.Test
             var type = typeof(DateTime);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             var expected = new DateTime(2020, 05, 23);
             DateTime.SpecifyKind(expected, DateTimeKind.Utc);
@@ -220,7 +268,7 @@ namespace R8.Lib.Test
             var type = typeof(DateTime);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             var expected = new DateTime(2020, 01, 01);
             DateTime.SpecifyKind(expected, DateTimeKind.Utc);
@@ -240,7 +288,7 @@ namespace R8.Lib.Test
             var type = typeof(DateTime);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             var expected = new DateTime(2020, 05, 01);
             DateTime.SpecifyKind(expected, DateTimeKind.Utc);
@@ -260,7 +308,7 @@ namespace R8.Lib.Test
             var type = typeof(DateTime);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             var expected = new DateTime(2020, 05, 01);
             DateTime.SpecifyKind(expected, DateTimeKind.Utc);
@@ -280,7 +328,7 @@ namespace R8.Lib.Test
             var type = typeof(DateTime);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -295,7 +343,7 @@ namespace R8.Lib.Test
             var type = typeof(DateTime);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -310,7 +358,7 @@ namespace R8.Lib.Test
             var type = typeof(bool);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arranges
             Assert.True(method);
@@ -327,7 +375,7 @@ namespace R8.Lib.Test
             var type = typeof(bool);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arranges
             Assert.True(method);
@@ -344,7 +392,7 @@ namespace R8.Lib.Test
             var type = typeof(bool);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -359,7 +407,7 @@ namespace R8.Lib.Test
             var type = typeof(int);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -374,7 +422,7 @@ namespace R8.Lib.Test
             var type = typeof(int);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -389,7 +437,7 @@ namespace R8.Lib.Test
             var type = typeof(int);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.True(method);
@@ -406,7 +454,7 @@ namespace R8.Lib.Test
             var type = typeof(int);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -421,7 +469,7 @@ namespace R8.Lib.Test
             var type = typeof(double);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -436,7 +484,7 @@ namespace R8.Lib.Test
             var type = typeof(double);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.True(method);
@@ -453,7 +501,7 @@ namespace R8.Lib.Test
             var type = typeof(long);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.True(method);
@@ -469,7 +517,7 @@ namespace R8.Lib.Test
             var type = typeof(long);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -484,7 +532,7 @@ namespace R8.Lib.Test
             var type = typeof(long);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);
@@ -499,7 +547,7 @@ namespace R8.Lib.Test
             var type = typeof(Flags);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.True(method);
@@ -515,7 +563,7 @@ namespace R8.Lib.Test
             var type = typeof(Flags);
 
             // Act
-            var method = type.TryConvertFrom(input, out var output);
+            var method = type.TryParse(input, out var output);
 
             // Arrange
             Assert.False(method);

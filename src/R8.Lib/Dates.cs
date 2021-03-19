@@ -10,11 +10,21 @@ namespace R8.Lib
 {
     public static class Dates
     {
+        /// <summary>
+        /// Returns a <see cref="DateTime"/> object according to given unix timestamp.
+        /// </summary>
+        /// <param name="unixTimeStamp"></param>
+        /// <returns>A <see cref="DateTime"/> in Universal DateTime.</returns>
         public static DateTime FromUnixTime(long unixTimeStamp)
         {
             return DateTimeOffset.FromUnixTimeSeconds(unixTimeStamp).UtcDateTime;
         }
 
+        /// <summary>
+        /// Returns a unix timestamp from given <see cref="DateTime"/>.
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <returns>A <see cref="long"/> that indicates as Unix Timestamp.</returns>
         public static long ToUnixTime(this DateTime dateTime)
         {
             return new DateTimeOffset(dateTime).ToUnixTimeSeconds();
@@ -40,9 +50,13 @@ namespace R8.Lib
         /// </summary>
         /// <param name="utcDateTime">UTC DateTime to convert</param>
         /// <param name="timeZone">Specific TimeZone</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>Local DateTime for specific TimeZone</returns>
         public static DateTime GetLocalDateTime(this DateTime utcDateTime, DateTimeZone timeZone)
         {
+            if (timeZone == null) 
+                throw new ArgumentNullException(nameof(timeZone));
+            
             if (utcDateTime.Kind != DateTimeKind.Utc)
                 throw new AmbiguousMatchException($"'{nameof(utcDateTime)}' should be kind of {DateTimeKind.Utc}");
 

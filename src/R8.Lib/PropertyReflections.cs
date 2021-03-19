@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -51,15 +52,63 @@ namespace R8.Lib
         /// Checks if given value is capable to keep in the given type and returns value with given type.
         /// </summary>
         /// <param name="type">A <see cref="Type"/> to check value type.</param>
+        /// <param name="values">An <see cref="IEnumerable{T}"/> of <see cref="string"/> that representing list of values to be converted.</param>
+        /// <param name="output">An <see cref="object"/> that representing output value in property type.</param>
+        /// <returns>A <see cref="bool"/> that should be true when value is in given type, otherwise false.</returns>
+        /// <remarks><c>output</c> parameter type will be same as given <see cref="Type"/>, if parse completes successfully.</remarks>
+        public static bool TryParse(this Type type, IEnumerable<string> values, out object output)
+        {
+            output = null;
+
+            if (type == null)
+                return false;
+            if (values == null)
+                return false;
+
+            var underlyingType = type.GetUnderlyingType();
+            if (!(Activator.CreateInstance(typeof(List<>).MakeGenericType(underlyingType)) is IList list))
+                return false;
+
+            foreach (var value in values)
+            {
+                var validValue = underlyingType.TryParse(value, out var tempValue);
+                if (!validValue)
+                    continue;
+
+                list.Add(tempValue);
+            }
+
+            if (list.Count == 0)
+                return false;
+
+            if (!type.IsArray)
+            {
+                output = list;
+                return true;
+            }
+
+            var array = Array.CreateInstance(underlyingType, list.Count);
+            for (var arrayIndex = 0; arrayIndex < list.Count; arrayIndex++)
+                array.SetValue(list[arrayIndex], arrayIndex);
+
+            output = array;
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if given value is capable to keep in the given type and returns value with given type.
+        /// </summary>
+        /// <param name="type">A <see cref="Type"/> to check value type.</param>
         /// <param name="value">A <see cref="string"/> that representing value to be converted.</param>
         /// <param name="output">An <see cref="object"/> that representing output value in property type.</param>
-        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="bool"/> that should be true when value is in given type, otherwise false.</returns>
-        public static bool TryConvertFrom(this Type type, string value, out object output)
+        /// <remarks><c>output</c> parameter type will be same as given <see cref="Type"/>, if parse completes successfully.</remarks>
+        public static bool TryParse(this Type type, string value, out object output)
         {
-            if (type == null) throw new ArgumentNullException(nameof(type));
-
             output = null;
+            if (type == null)
+                return false;
+
             var propertyType = type.GetUnderlyingType();
             if (propertyType.IsEnum)
             {
@@ -68,76 +117,81 @@ namespace R8.Lib
                     return false;
 
                 output = enumDetail;
+                return true;
             }
-            else
+
+            if (propertyType == typeof(int))
             {
-                if (propertyType == typeof(int))
+                var isInt = int.TryParse(value, out var intDetail);
+                if (!isInt)
+                    return false;
+
+                output = intDetail;
+                return true;
+            }
+
+            if (propertyType == typeof(double))
+            {
+                var isDouble = double.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"),
+                    out var doubleDetail);
+                if (!isDouble)
+                    return false;
+
+                output = doubleDetail;
+                return true;
+            }
+
+            if (propertyType == typeof(long))
+            {
+                var isLong = long.TryParse(value, out var longDetail);
+                if (!isLong)
+                    return false;
+
+                output = longDetail;
+                return true;
+            }
+
+            if (propertyType == typeof(string))
+            {
+                output = string.IsNullOrEmpty(value) ? null : value;
+                return true;
+            }
+
+            if (propertyType == typeof(DateTime))
+            {
+                var isYearDateTime = DateTime.TryParseExact(value, "yyyy", new CultureInfo("en-US"),
+                    DateTimeStyles.AdjustToUniversal, out var year);
+                if (!isYearDateTime)
                 {
-                    var isInt = int.TryParse(value, out var intDetail);
-                    if (!isInt)
+                    var isDateTime = DateTime.TryParse(value, new CultureInfo("en-US"),
+                        DateTimeStyles.AdjustToUniversal, out var dateTimeDetail);
+                    if (!isDateTime)
                         return false;
 
-                    output = intDetail;
+                    output = dateTimeDetail;
+                    return true;
                 }
-                else if (propertyType == typeof(double))
-                {
-                    var isDouble = double.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"),
-                        out var doubleDetail);
-                    if (!isDouble)
-                        return false;
 
-                    output = doubleDetail;
-                }
-                else if (propertyType == typeof(long))
-                {
-                    var isLong = long.TryParse(value, out var longDetail);
-                    if (!isLong)
-                        return false;
+                output = year;
+                return true;
+            }
 
-                    output = longDetail;
-                }
-                else if (propertyType == typeof(string))
-                {
-                    output = string.IsNullOrEmpty(value) ? null : value;
-                }
-                else if (propertyType == typeof(DateTime))
-                {
-                    var isYearDateTime = DateTime.TryParseExact(value, "yyyy", new CultureInfo("en-US"),
-                        DateTimeStyles.AdjustToUniversal, out var year);
-                    if (!isYearDateTime)
-                    {
-                        var isDateTime = DateTime.TryParse(value, new CultureInfo("en-US"),
-                            DateTimeStyles.AdjustToUniversal, out var dateTimeDetail);
-                        if (!isDateTime)
-                            return false;
-
-                        output = dateTimeDetail;
-                    }
-                    else
-                    {
-                        output = year;
-                    }
-                }
-                else if (propertyType == typeof(bool))
-                {
-                    if (!value.Contains("on", StringComparison.InvariantCultureIgnoreCase) &&
-                        !value.Contains("off", StringComparison.InvariantCultureIgnoreCase) &&
-                        !value.Contains("true", StringComparison.InvariantCultureIgnoreCase) &&
-                        !value.Contains("false", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        return false;
-                    }
-
-                    output = value.Equals("on", StringComparison.InvariantCultureIgnoreCase) ||
-                                    value.Equals("true", StringComparison.InvariantCultureIgnoreCase);
-                }
-                else
+            if (propertyType == typeof(bool))
+            {
+                if (!value.Contains("on", StringComparison.InvariantCultureIgnoreCase) &&
+                    !value.Contains("off", StringComparison.InvariantCultureIgnoreCase) &&
+                    !value.Contains("true", StringComparison.InvariantCultureIgnoreCase) &&
+                    !value.Contains("false", StringComparison.InvariantCultureIgnoreCase))
                 {
                     return false;
                 }
+
+                output = value.Equals("on", StringComparison.InvariantCultureIgnoreCase) ||
+                         value.Equals("true", StringComparison.InvariantCultureIgnoreCase);
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         public static object GetExpressionValue(this Expression expression)
