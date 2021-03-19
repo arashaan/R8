@@ -39,11 +39,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="R8.FileHandlers" Version="1.10.82" />
-		<!--<PackageReference Include="R8.Lib" Version="1.10.83.2" />-->
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\R8.Lib\R8.Lib.csproj" />
+		<PackageReference Include="R8.FileHandlers" Version="1.10.84" />
+		<PackageReference Include="R8.Lib" Version="1.10.84" />
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
