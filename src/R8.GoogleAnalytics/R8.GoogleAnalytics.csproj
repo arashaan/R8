@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>An easy way to catch google analytics data.</Description>
-		<VersionPrefix>1.10.84</VersionPrefix>
+		<VersionPrefix>1.10.84.1</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -37,12 +37,6 @@
     <Features>strict</Features>
     <ReportAnalyzer>true</ReportAnalyzer>
   </PropertyGroup>
-	<ItemGroup Condition="('$(TargetFramework)' == 'net5.0')">
-		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-	</ItemGroup>
-	<PropertyGroup Condition="('$(TargetFramework)' == 'net5.0')">
-		<DefineConstants>NET5</DefineConstants>
-	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
 		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.51.0.2197" />

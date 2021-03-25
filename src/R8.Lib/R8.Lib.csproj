@@ -2,10 +2,9 @@
 
 	<PropertyGroup>
 		<Description>A Package to make more simplicity in coding.</Description>
-		<VersionPrefix>1.10.84</VersionPrefix>
+		<VersionPrefix>1.10.84.1</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<AssemblyName>R8.Lib</AssemblyName>
 		<PackageId>R8.Lib</PackageId>
