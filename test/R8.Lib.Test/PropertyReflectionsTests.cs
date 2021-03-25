@@ -25,7 +25,7 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallGetUnderlyingType()
+        public void CallGetUnderlyingType_Object()
         {
             // Assets
             var list = new List<object>();
@@ -37,7 +37,7 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallGetUnderlyingType2()
+        public void CallGetUnderlyingType_ObjectNullable()
         {
             // Assets
             var list = new List<object?>();
@@ -49,7 +49,7 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallGetUnderlyingType3()
+        public void CallGetUnderlyingType_IntNullable()
         {
             // Assets
             var list = new List<int?>();
@@ -61,7 +61,7 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallGetUnderlyingType4()
+        public void CallGetUnderlyingType_Int()
         {
             // Assets
             var list = new List<int?>();
@@ -458,6 +458,21 @@ namespace R8.Lib.Test
 
             // Arrange
             Assert.False(method);
+            Assert.Null(output);
+        }
+
+        [Fact]
+        public void CallTrySetValue_String()
+        {
+            // Assets
+            var input = (string)null;
+            var type = typeof(string);
+
+            // Act
+            var method = type.TryParse(input, out var output);
+
+            // Arrange
+            Assert.True(method);
             Assert.Null(output);
         }
 

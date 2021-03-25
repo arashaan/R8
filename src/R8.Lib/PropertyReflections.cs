@@ -109,6 +109,16 @@ namespace R8.Lib
             if (type == null)
                 return false;
 
+            var isNullableType = Nullable.GetUnderlyingType(type) != null;
+            if (!isNullableType && type != typeof(string))
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    output = null;
+                    return false;
+                }
+            }
+
             var propertyType = type.GetUnderlyingType();
             if (propertyType.IsEnum)
             {
@@ -153,7 +163,9 @@ namespace R8.Lib
 
             if (propertyType == typeof(string))
             {
-                output = string.IsNullOrEmpty(value) ? null : value;
+                if (!string.IsNullOrEmpty(value))
+                    output = value;
+
                 return true;
             }
 
