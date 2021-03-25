@@ -22,7 +22,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidZipFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidZipFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsArchive(false);
 
@@ -35,7 +35,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.EmptyZipFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetEmptyZipFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsArchive(true);
 
@@ -48,7 +48,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.InvalidZipFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetInvalidZipFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsArchive(true);
 
@@ -61,7 +61,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.InvalidZipFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetInvalidZipFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsImage();
 
@@ -91,7 +91,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsImage();
 
@@ -111,7 +111,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.EmptyZipFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetEmptyZipFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsPdf();
 
@@ -124,7 +124,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidSvgFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidSvgFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsSvg();
 
@@ -144,7 +144,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsSvg();
 
@@ -157,7 +157,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidPdfFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidPdfFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsPdf();
 
@@ -170,7 +170,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsWordDoc();
 
@@ -183,7 +183,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidWordFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidWordFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsWordDoc();
 
@@ -196,7 +196,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidExcelFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidExcelFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsExcel();
 
@@ -209,7 +209,7 @@ namespace R8.FileHandlers.Test
         {
             // Act
             using var stream = new MemoryStream();
-            using var fileStream = new FileStream(Constants.ValidWordFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidWordFile(), FileMode.Open);
             fileStream.CopyTo(stream);
             var act = stream.IsExcel();
 

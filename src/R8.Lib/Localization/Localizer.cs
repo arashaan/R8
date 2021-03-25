@@ -99,6 +99,29 @@ namespace R8.Lib.Localization
                 ? GetValue(culture, key).Get(culture, false)
                 : null;
 
+        public string this[Enum key, CultureInfo culture, bool fullName = false]
+        {
+            get
+            {
+                var _culture = culture ?? CultureInfo.CurrentCulture;
+                var _key = fullName ? $"{key.GetType().Name}_{key.ToString()}" : key.ToString();
+                var value = GetValue(_culture, _key);
+
+                return value.Get(culture, false);
+            }
+        }
+
+        public LocalizerContainer this[Enum key, bool fullName = false]
+        {
+            get
+            {
+                var _key = fullName ? $"{key.GetType().Name}_{key.ToString()}" : key.ToString();
+                var value = GetValue(CultureInfo.CurrentCulture, _key);
+
+                return value;
+            }
+        }
+
         public LocalizerContainer this[string key] =>
             !string.IsNullOrEmpty(key)
                 ? GetValue(CultureInfo.CurrentCulture, key)

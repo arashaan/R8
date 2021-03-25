@@ -1,42 +1,66 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace R8.AspNetCore.Test
 {
     public static class Constants
     {
-        public static string GetProjectRootFolder()
+        public static string GetProjectFolder()
         {
-            var exePath = Path.GetDirectoryName(System.Reflection
-                .Assembly.GetExecutingAssembly().CodeBase);
-            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
-            var appRoot = appPathMatcher.Match(exePath).Value;
-            return appRoot;
+            var currentAssembly = Assembly.GetExecutingAssembly();
+            var exePath = Path.GetDirectoryName(currentAssembly.Location);
+            var projectRegex = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+(bin|.vs))");
+            var projectFolder = projectRegex.Match(exePath).Value;
+            return projectFolder;
         }
 
-        public static string GetSolutionRootFolder()
+        public static string GetSolutionFolder(string fallback = null)
         {
-            return GetProjectRootFolder().Split("\\test\\")[0];
+            var projectFolder = GetProjectFolder();
+            var array = projectFolder.Split("\\test\\");
+            var solutionFolder = array[0];
+            var driveRegex = new Regex(@"[A-Z]:\\");
+            if (!driveRegex.Match(solutionFolder).Value.Equals(projectFolder, StringComparison.InvariantCultureIgnoreCase))
+                return solutionFolder;
+
+            // use fallback ( for live unit testing )
+            if (string.IsNullOrEmpty(fallback))
+                throw new ArgumentNullException(fallback);
+
+            return fallback;
         }
 
-        public static string Assets => GetSolutionRootFolder() + "\\test\\R8.Test.Shared\\Assets";
-        public static string FolderPath => Path.Combine(Assets, "Dictionary");
-        public static string GhostScriptFile => Path.Combine(Assets, "gsdll64.dll");
-        public static string WatermarkFile => Path.Combine(Assets, "wm.png");
-        public static string NewGuidName => Guid.NewGuid().ToString("N");
-        public static string ValidZipFile => Path.Combine(Assets, "valid.zip");
-        public static string ValidZipFile2 => Path.Combine(Assets, "valid2.zip");
+        public static string GetAssetsFolder()
+        {
+            var solutionFolder = GetSolutionFolder("C:\\Users\\VorTex\\Downloads\\R8");
 
-        public static string InvalidZipFile => Path.Combine(Assets, "invalid.zip");
-        public static string EmptyZipFile => Path.Combine(Assets, "empty.zip");
-        public static string ValidWordFile => Path.Combine(Assets, "valid.docx");
-        public static string ValidExcelFile => Path.Combine(Assets, "valid.xlsx");
-        public static string ValidImageFile => Path.Combine(Assets, "valid.png");
-        public static string ValidPdfFile => Path.Combine(Assets, "valid.pdf");
-        public static string ValidSvgFile => Path.Combine(Assets, "valid.svg");
-        public static string GoogleJson => Path.Combine(Assets, "google.json");
+            var assetsFolder = solutionFolder + "\\test\\R8.Test.Shared\\Assets";
+            return assetsFolder;
+        }
+
+        public static string GetLocalizerDictionaryPath()
+        {
+            var assetsFolder = GetAssetsFolder();
+            var dictionaryPath = Path.Combine(assetsFolder, "Dictionary");
+            return dictionaryPath;
+        }
+
+        public static string GetGhostScriptFile() => Path.Combine(GetAssetsFolder(), "gsdll64.dll");
+        public static string GetWatermarkFile() => Path.Combine(GetAssetsFolder(), "wm.png");
+        public static string GetValidZipFile() => Path.Combine(GetAssetsFolder(), "valid.zip");
+        public static string GetValidZipFile2() => Path.Combine(GetAssetsFolder(), "valid2.zip");
+
+        public static string GetInvalidZipFile() => Path.Combine(GetAssetsFolder(), "invalid.zip");
+        public static string GetEmptyZipFile() => Path.Combine(GetAssetsFolder(), "empty.zip");
+        public static string GetValidWordFile() => Path.Combine(GetAssetsFolder(), "valid.docx");
+        public static string GetValidExcelFile() => Path.Combine(GetAssetsFolder(), "valid.xlsx");
+        public static string GetValidImageFile() => Path.Combine(GetAssetsFolder(), "valid.png");
+        public static string GetValidPdfFile() => Path.Combine(GetAssetsFolder(), "valid.pdf");
+        public static string GetValidSvgFile() => Path.Combine(GetAssetsFolder(), "valid.svg");
+        public static string GetGoogleJson() => Path.Combine(GetAssetsFolder(), "google.json");
 
         public static CultureInfo DefaultCulture => CultureInfo.GetCultureInfo("tr");
         public static string JsonFileName => "dic";

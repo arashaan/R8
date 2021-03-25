@@ -38,7 +38,7 @@ namespace R8.GoogleAnalytics.Test
             };
 
             // Act
-            var instance = new GoogleAnalyticsProvider(Constants.GoogleJson, "187208166");
+            var instance = new GoogleAnalyticsProvider(Constants.GetGoogleJson(), "187208166");
             await instance.ExecuteAsync(startDate, endDate, serviceRequests);
 
             // Arrange

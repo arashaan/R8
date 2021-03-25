@@ -1,7 +1,7 @@
-﻿using System;
-using System.Reflection;
+﻿using NodaTime;
 
-using NodaTime;
+using System;
+using System.Reflection;
 
 using Xunit;
 
@@ -196,11 +196,12 @@ namespace R8.Lib.Test
         public void CallGetNodeTimeZone_ToString()
         {
             // Act
-            var act = Dates.GetNodaTimeZone("Iran Standard Time").ToString();
+            var noda = Dates.GetNodaTimeZone("Iran Standard Time");
+            var act = noda.ToString();
 
             // Arrange
             Assert.NotNull(act);
-            Assert.Equal("(UTC+03:30) Tehran", act);
+            Assert.Equal($"(UTC{noda.Offset}) Tehran", act);
         }
     }
 }

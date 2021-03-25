@@ -29,7 +29,7 @@ namespace R8.Lib.Test.MethodTests
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = Constants.FolderPath,
+                    Folder = Constants.GetLocalizerDictionaryPath(),
                     FileName = Constants.JsonFileName,
                 }
             };

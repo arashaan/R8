@@ -23,60 +23,60 @@ namespace R8.FileHandlers.Test
         public void CallSaveImage()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new JpegEncoder(),
-                Path = Constants.Assets,
+                Path = Constants.GetAssetsFolder(),
                 HierarchicallyDateFolders = false,
                 SaveAsRealName = true,
                 OverwriteExistingFile = true,
                 TestDevelopment = true,
-                WatermarkPath = Constants.WatermarkFile
+                WatermarkPath = Constants.GetWatermarkFile()
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.jpg", file.FilePath);
         }
 
         [Fact, TestPriority(1)]
         public void CallSaveImage_WithWatermark_Png()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new PngEncoder(),
-                Path = Constants.Assets,
+                Path = Constants.GetAssetsFolder(),
                 HierarchicallyDateFolders = false,
                 SaveAsRealName = true,
                 OverwriteExistingFile = true,
                 TestDevelopment = true,
-                WatermarkPath = Constants.WatermarkFile
+                WatermarkPath = Constants.GetWatermarkFile()
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.png", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.png", file.FilePath);
         }
 
         [Fact, TestPriority(2)]
         public void CallSaveImage_WithWatermark_Bmp()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new BmpEncoder(),
-                Path = Constants.Assets,
+                Path = Constants.GetAssetsFolder(),
                 HierarchicallyDateFolders = false,
                 SaveAsRealName = true,
                 OverwriteExistingFile = true,
                 TestDevelopment = true,
-                WatermarkPath = Constants.WatermarkFile
+                WatermarkPath = Constants.GetWatermarkFile()
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.bmp", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.bmp", file.FilePath);
         }
 
         [Fact, TestPriority(3)]
@@ -90,7 +90,7 @@ namespace R8.FileHandlers.Test
         public void CallSave_NameNull()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             Assert.Throws<ArgumentNullException>(() => fileStream.Save(null, null));
         }
 
@@ -98,27 +98,27 @@ namespace R8.FileHandlers.Test
         public void CallSaveImage_WithWatermark_Gif()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new GifEncoder(),
-                Path = Constants.Assets,
+                Path = Constants.GetAssetsFolder(),
                 HierarchicallyDateFolders = false,
                 SaveAsRealName = true,
                 OverwriteExistingFile = true,
                 TestDevelopment = true,
-                WatermarkPath = Constants.WatermarkFile
+                WatermarkPath = Constants.GetWatermarkFile()
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.gif", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.gif", file.FilePath);
         }
 
         [Fact, TestPriority(6)]
         public void CallSave_WithoutExtension()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             Assert.Throws<NullReferenceException>(() => fileStream.Save("test", null));
         }
 
@@ -126,10 +126,10 @@ namespace R8.FileHandlers.Test
         public void CallSave_Zip()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidZipFile2, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidZipFile2(), FileMode.Open);
             var file = fileStream.Save<MyFileConfiguration>("valid.zip", cfg =>
             {
-                cfg.Path = Constants.Assets;
+                cfg.Path = Constants.GetAssetsFolder();
                 cfg.HierarchicallyDateFolders = false;
                 cfg.SaveAsRealName = true;
                 cfg.OverwriteExistingFile = true;
@@ -137,18 +137,18 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\valid.zip", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\valid.zip", file.FilePath);
         }
 
         [Fact, TestPriority(8)]
         public void CallSave_Pdf()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidPdfFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidPdfFile(), FileMode.Open);
             var file = fileStream.Save<MyFileConfigurationPdf>("test.pdf", cfg =>
             {
-                cfg.GhostScriptDllPath = Constants.GhostScriptFile;
-                cfg.Path = Constants.Assets;
+                cfg.GhostScriptDllPath = Constants.GetGhostScriptFile();
+                cfg.Path = Constants.GetAssetsFolder();
                 cfg.HierarchicallyDateFolders = false;
                 cfg.SaveAsRealName = true;
                 cfg.OverwriteExistingFile = true;
@@ -156,28 +156,28 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.pdf", file.FilePath);
-            Assert.Equal(Constants.Assets + "\\test_thumbnail.jpg", file.ThumbnailPath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.pdf", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test_thumbnail.jpg", file.ThumbnailPath);
         }
 
         [Fact, TestPriority(9)]
         public void CallSave_Image()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.Save<MyFileConfigurationImage>("test.jpg", cfg =>
             {
                 cfg.ImageEncoder = new JpegEncoder();
-                cfg.Path = Constants.Assets;
+                cfg.Path = Constants.GetAssetsFolder();
                 cfg.HierarchicallyDateFolders = false;
                 cfg.SaveAsRealName = true;
                 cfg.OverwriteExistingFile = true;
                 cfg.TestDevelopment = true;
-                cfg.WatermarkPath = Constants.WatermarkFile;
+                cfg.WatermarkPath = Constants.GetWatermarkFile();
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.jpg", file.FilePath);
         }
 
         [Fact, TestPriority(10)]
@@ -190,11 +190,11 @@ namespace R8.FileHandlers.Test
             var day = toDate.Day.ToString("D2");
 
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.Save<MyFileConfigurationImage>("test.jpg", cfg =>
             {
                 cfg.ImageEncoder = new JpegEncoder();
-                cfg.Path = Constants.Assets;
+                cfg.Path = Constants.GetAssetsFolder();
                 cfg.HierarchicallyDateFolders = true;
                 cfg.SaveAsRealName = true;
                 cfg.OverwriteExistingFile = true;
@@ -202,27 +202,27 @@ namespace R8.FileHandlers.Test
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + $"\\{year}\\{month}\\{day}\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + $"\\{year}\\{month}\\{day}\\test.jpg", file.FilePath);
         }
 
         [Fact, TestPriority(11)]
         public void CallSaveImage_WithWatermark_Jpg()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new JpegEncoder(),
-                Path = Constants.Assets,
+                Path = Constants.GetAssetsFolder(),
                 HierarchicallyDateFolders = false,
                 SaveAsRealName = true,
                 OverwriteExistingFile = true,
                 TestDevelopment = true,
-                WatermarkPath = Constants.WatermarkFile
+                WatermarkPath = Constants.GetWatermarkFile()
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.jpg", file.FilePath);
         }
 
         [Fact, TestPriority(12)]
@@ -236,7 +236,7 @@ namespace R8.FileHandlers.Test
         public void CallSaveImage_NullName()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             Assert.Throws<ArgumentNullException>(() => fileStream.SaveImage(null, null));
         }
 
@@ -244,21 +244,21 @@ namespace R8.FileHandlers.Test
         public void CallSaveImage_Resize()
         {
             // Act
-            using var fileStream = new FileStream(Constants.ValidImageFile, FileMode.Open);
+            using var fileStream = new FileStream(Constants.GetValidImageFile(), FileMode.Open);
             var file = fileStream.SaveImage("test", new MyFileConfigurationImage
             {
                 ImageEncoder = new JpegEncoder(),
-                Path = Constants.Assets,
+                Path = Constants.GetAssetsFolder(),
                 HierarchicallyDateFolders = false,
                 SaveAsRealName = true,
                 OverwriteExistingFile = true,
                 TestDevelopment = true,
-                WatermarkPath = Constants.WatermarkFile,
+                WatermarkPath = Constants.GetWatermarkFile(),
                 ResizeToSize = 300
             });
 
             Assert.NotNull(file);
-            Assert.Equal(Constants.Assets + "\\test.jpg", file.FilePath);
+            Assert.Equal(Constants.GetAssetsFolder() + "\\test.jpg", file.FilePath);
         }
     }
 }
