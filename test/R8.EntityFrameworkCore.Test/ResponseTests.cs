@@ -28,7 +28,7 @@ namespace R8.EntityFrameworkCore.Test
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = Constants.FolderPath,
+                    Folder = Constants.GetLocalizerDictionaryPath(),
                     FileName = Constants.JsonFileName,
                 }
             };

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -52,5 +53,21 @@ namespace R8.Lib.Localization
         /// <param name="key">A key to find in internal dictionary</param>
         /// <remarks><see cref="LocalizerContainer"/> has Direct Cast to <see cref="string"/>. So you don't need to use .ToString()</remarks>
         LocalizerContainer this[string key] { get; }
+
+        /// <summary>
+        /// Gets value from internal dictionary
+        /// </summary>
+        /// <param name="key">A key to find in internal dictionary</param>
+        /// <param name="fullName">A <see cref="bool"/> that indicates if key should be like: <c>ENUM_KEY</c> ( ENUM: for type name, KEY: given enum key ), otherwise key will be like: <c>KEY</c>.</param>
+        /// <remarks><see cref="LocalizerContainer"/> has Direct Cast to <see cref="string"/>. So you don't need to use .ToString()</remarks>
+        LocalizerContainer this[Enum key, bool fullName = false] { get; }
+
+        /// <summary>
+        /// Gets value from internal dictionary
+        /// </summary>
+        /// <param name="key">A key to find in internal dictionary</param>
+        /// <param name="culture">Specific culture to search in</param>
+        /// <param name="fullName">A <see cref="bool"/> that indicates if key should be like: <c>ENUM_KEY</c> ( ENUM: for type name, KEY: given enum key ), otherwise key will be like: <c>KEY</c>.</param>
+        string this[Enum key, CultureInfo culture, bool fullName = false] { get; }
     }
 }

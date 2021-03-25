@@ -25,6 +25,8 @@ using SixLabors.ImageSharp.Formats.Png;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace R8.AspNetCore3_1.Demo
 {
@@ -167,7 +169,7 @@ namespace R8.AspNetCore3_1.Demo
                 config.CacheSlidingExpiration = TimeSpan.FromDays(3);
                 config.Provider = new LocalizerJsonProvider
                 {
-                    Folder = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName.Replace("\\","/") + "/R8.Test.Shared/Assets/Dictionary",
+                    Folder = GetLocalizerDictionaryPath(),
                     FileName = "dic",
                 };
             });
@@ -214,6 +216,45 @@ namespace R8.AspNetCore3_1.Demo
             {
                 endpoints.MapRazorPages();
             });
+        }
+        public static string GetProjectFolder()
+        {
+            var currentAssembly = Assembly.GetExecutingAssembly();
+            var exePath = Path.GetDirectoryName(currentAssembly.Location);
+            var projectRegex = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+(bin|.vs))");
+            var projectFolder = projectRegex.Match(exePath).Value;
+            return projectFolder;
+        }
+
+        public static string GetSolutionFolder(string fallback = null)
+        {
+            var projectFolder = GetProjectFolder();
+            var array = projectFolder.Split("\\test\\");
+            var solutionFolder = array[0];
+            var driveRegex = new Regex(@"[A-Z]:\\");
+            if (!driveRegex.Match(solutionFolder).Value.Equals(projectFolder, StringComparison.InvariantCultureIgnoreCase))
+                return solutionFolder;
+
+            // use fallback ( for live unit testing )
+            if (string.IsNullOrEmpty(fallback))
+                throw new ArgumentNullException(fallback);
+
+            return fallback;
+        }
+
+        public static string GetAssetsFolder()
+        {
+            var solutionFolder = GetSolutionFolder("C:\\Users\\VorTex\\Downloads\\R8");
+
+            var assetsFolder = solutionFolder + "\\test\\R8.Test.Shared\\Assets";
+            return assetsFolder;
+        }
+
+        public static string GetLocalizerDictionaryPath()
+        {
+            var assetsFolder = GetAssetsFolder();
+            var dictionaryPath = Path.Combine(assetsFolder, "Dictionary");
+            return dictionaryPath;
         }
     }
 }

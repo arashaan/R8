@@ -63,8 +63,8 @@ namespace R8.FileHandlers.AspNetCore.Test.TestServerSimulation
             builder.UseSolutionRelativeContentRoot(Directory.GetCurrentDirectory(), "R8.sln");
             builder.UseStartup<Startup>().UseEnvironment("Test");
 
-            Output.WriteLine("Solution Folder: {0}", Constants.GetProjectRootFolder());
-            Output.WriteLine("Project Folder: {0}", Constants.GetSolutionRootFolder());
+            Output.WriteLine("Solution Folder: {0}", Constants.GetProjectFolder());
+            Output.WriteLine("Project Folder: {0}", Constants.GetSolutionFolder());
             Output.WriteLine("Output Folder: {0}", Directory.GetCurrentDirectory());
         }
 

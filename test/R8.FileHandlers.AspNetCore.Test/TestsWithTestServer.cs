@@ -32,7 +32,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public async Task CallUploadFile()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
             //Act
             var file = await formFile.UploadAsync();
 
@@ -45,7 +45,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
             var model = new FakeValidatableFile
             {
                 File = formFile
@@ -61,7 +61,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile4()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
             var model = new FakeValidatableFile
             {
                 File3 = formFile
@@ -77,7 +77,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile10()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
 
             //Act
             var valid = WebFileValidator.TryValidateFile<FakeValidatableFile>(nameof(FakeValidatableFile.File),
@@ -90,7 +90,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile11()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidPdfFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidPdfFile());
 
             //Act
             var valid = WebFileValidator.TryValidateFile<FakeValidatableFile>(nameof(FakeValidatableFile.File),
@@ -105,8 +105,8 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile12()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
-            var formFile2 = FakeObjects.Extensions.GetFormFile(Constants.ValidPdfFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
+            var formFile2 = FakeObjects.Extensions.GetFormFile(Constants.GetValidPdfFile());
             var files = new FormFileCollection();
             files.Add(formFile);
             files.Add(formFile2);
@@ -122,8 +122,8 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile13()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
-            var formFile2 = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
+            var formFile2 = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
             var files = new FormFileCollection();
             files.Add(formFile);
             files.Add(formFile2);
@@ -139,7 +139,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile5()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidPdfFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidPdfFile());
             var model = new FakeValidatableFile
             {
                 File3 = formFile
@@ -155,7 +155,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile2()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidPdfFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidPdfFile());
             var model = new FakeValidatableFile
             {
                 File = formFile
@@ -172,7 +172,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateFile3()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidPdfFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidPdfFile());
             var model = new FakeValidatableFile3
             {
                 File2 = formFile
@@ -186,7 +186,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateImage()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
             var model = new FakeValidateImageSize
             {
                 File = formFile
@@ -203,7 +203,7 @@ namespace R8.FileHandlers.AspNetCore.Test
         public void CallValidateImage2()
         {
             // Assets
-            var formFile = FakeObjects.Extensions.GetFormFile(Constants.ValidImageFile);
+            var formFile = FakeObjects.Extensions.GetFormFile(Constants.GetValidImageFile());
             var model = new FakeValidateImageSize
             {
                 File2 = formFile

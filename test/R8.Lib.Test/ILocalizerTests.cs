@@ -1,5 +1,6 @@
 ﻿using R8.AspNetCore.Test;
 using R8.Lib.Localization;
+using R8.Lib.Test.Enums;
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace R8.Lib.Test
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = Constants.FolderPath,
+                    Folder = Constants.GetLocalizerDictionaryPath(),
                     FileName = Constants.JsonFileName,
                 }
             };
@@ -133,6 +134,34 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public async Task CallTryGetValue_Enum()
+        {
+            // Assets
+            var culture = CultureInfo.GetCultureInfo("fa");
+
+            // Act
+            await _localizer.RefreshAsync();
+            var localized = _localizer[Flags.Success, culture];
+
+            // Arrange
+            Assert.Equal("عملیات به موفقیت انجام شد", localized);
+        }
+
+        [Fact]
+        public async Task CallTryGetValue_Enum2()
+        {
+            // Assets
+            var culture = CultureInfo.GetCultureInfo("fa");
+
+            // Act
+            await _localizer.RefreshAsync();
+            var localized = _localizer[Flags.Success].Get("fa");
+
+            // Arrange
+            Assert.Equal("عملیات به موفقیت انجام شد", localized);
+        }
+
+        [Fact]
         public async Task CallTryGetValue_CorrectLanguageButCouldntFindKey()
         {
             // Assets
@@ -163,7 +192,7 @@ namespace R8.Lib.Test
                 SupportedCultures = SupportedCultures,
                 Provider = new LocalizerJsonProvider
                 {
-                    Folder = Constants.FolderPath,
+                    Folder = Constants.GetLocalizerDictionaryPath(),
                 }
             };
 
