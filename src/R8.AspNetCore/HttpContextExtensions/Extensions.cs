@@ -4,11 +4,15 @@ using Microsoft.AspNetCore.Routing;
 
 using NodaTime;
 
+using R8.AspNetCore.Attributes;
+using R8.Lib;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
@@ -33,7 +37,84 @@ namespace R8.AspNetCore.HttpContextExtensions
             return context.GetRouteData().Values["page"].ToString();
         }
 
+        /// <summary>
+        /// Converts array form to given type.
+        /// </summary>
+        /// <typeparam name="T">A type for model.</typeparam>
+        /// <param name="form">An <see cref="HttpContext"/>'s <see cref="IFormCollection"/>.</param>
+        /// <param name="name">Name of the array included in Requested Form.</param>
+        /// <param name="ignoreCase">Indicates case-sensitive for array property names.</param>
+        /// <exception cref="MissingMethodException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <remarks>For example returns all form inputs with name : <c>register[firstname]</c></remarks>
+        /// <returns>A model filled by given array values.</returns>
+        public static T GetForm<T>(this IFormCollection form, string name, bool ignoreCase = true) where T : class
+        {
+            if (form == null)
+                throw new ArgumentNullException(nameof(form));
+
+            var formDictionary = form
+                .Where(x => x.Key.StartsWith($"{name}["))
+                .ToDictionary(x => x.Key.GetStringBetween('[', ']'), x => x.Value);
+            if (!formDictionary.Any())
+                return default;
+
+            var model = Activator.CreateInstance<T>();
+            var properties = model.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).ToList();
+            if (!properties.Any())
+                return default;
+
+            var usedProperties = new List<PropertyInfo>();
+
+            static string GetPropertyName(MemberInfo propertyInfo)
+            {
+                return propertyInfo.GetCustomAttribute<FormProperty>()?.PropertyName ?? propertyInfo.Name;
+            }
+
+            foreach (var (key, values) in formDictionary)
+            {
+                if (values.Count == 0)
+                    continue;
+
+                var property = properties.Find(x => GetPropertyName(x).Equals(key,
+                    ignoreCase ? StringComparison.InvariantCultureIgnoreCase : StringComparison.InvariantCulture));
+                if (property == null)
+                    continue;
+
+                if (usedProperties.Any(x => x.Equals(property)))
+                    continue;
+
+                usedProperties.Add(property);
+                var propertyType = property.PropertyType;
+                var type = propertyType.GetUnderlyingType();
+
+                object propertyValue;
+                if (values.Count > 1 && type != propertyType)
+                {
+                    var validValue = propertyType.TryParse(values.ToArray(), out propertyValue);
+                    if (!validValue)
+                        continue;
+                }
+                else
+                {
+                    var validValue = type.TryParse(values[0], out propertyValue);
+                    if (!validValue)
+                        continue;
+                }
+
+                property.SetValue(model, propertyValue);
+            }
+
+            return model;
+        }
+
         public static async Task RedirectWithPostDataAsync(this HttpContext httpContext, string url, NameValueCollection data)
+        {
+            var bytes = httpContext.RedirectWithPostDataCore(url, data);
+            await httpContext.Response.Body.WriteAsync(bytes);
+        }
+
+        private static byte[] RedirectWithPostDataCore(this HttpContext httpContext, string url, NameValueCollection data)
         {
             var response = httpContext.Response;
             response.Clear();
@@ -48,7 +129,13 @@ namespace R8.AspNetCore.HttpContextExtensions
             s.Append("</form></body></html>");
 
             var bytes = Encoding.ASCII.GetBytes(s.ToString());
-            await httpContext.Response.Body.WriteAsync(bytes);
+            return bytes;
+        }
+
+        public static void RedirectWithPostData(this HttpContext httpContext, string url, NameValueCollection data)
+        {
+            var bytes = httpContext.RedirectWithPostDataCore(url, data);
+            httpContext.Response.Body.Write(bytes);
         }
 
         /// <summary>
