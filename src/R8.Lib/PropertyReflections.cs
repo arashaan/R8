@@ -110,7 +110,7 @@ namespace R8.Lib
                 return false;
 
             var isNullableType = Nullable.GetUnderlyingType(type) != null;
-            if (!isNullableType)
+            if (!isNullableType && type != typeof(string))
             {
                 if (string.IsNullOrEmpty(value))
                 {
@@ -163,7 +163,9 @@ namespace R8.Lib
 
             if (propertyType == typeof(string))
             {
-                output = string.IsNullOrEmpty(value) ? null : value;
+                if (!string.IsNullOrEmpty(value))
+                    output = value;
+
                 return true;
             }
 
