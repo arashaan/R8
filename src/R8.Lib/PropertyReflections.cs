@@ -24,28 +24,52 @@ namespace R8.Lib
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            var resultType = (Type?)null;
-            var interfaces = type.GetInterfaces();
-            if (interfaces.Any())
-            {
-                foreach (var @interface in interfaces)
-                {
-                    var hasGeneric = @interface.IsGenericType && @interface.GetGenericTypeDefinition() == typeof(IList<>);
-                    if (!hasGeneric)
-                        continue;
-
-                    var genericTypes = @interface.GetGenericArguments();
-                    resultType = genericTypes[0];
-                    break;
-                }
-            }
-
-            resultType ??= type;
-
+            var resultType = type.GetEnumerableUnderlyingType() ?? type;
             if (ignoreNullability)
                 resultType = Nullable.GetUnderlyingType(resultType) ?? resultType;
 
             return resultType;
+        }
+
+        /// <summary>
+        /// Returns underlying type under a enumerable.
+        /// </summary>
+        /// <param name="type">A <see cref="Type"/>.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="Type"/>.</returns>
+        public static Type? GetEnumerableUnderlyingType(this Type type)
+        {
+            return type.GetGenericUnderlyingType(typeof(IList<>));
+        }
+
+        /// <summary>
+        /// Returns underlying type under a generic type.
+        /// </summary>
+        /// <param name="type">A <see cref="Type"/>.</param>
+        /// <param name="genericType"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="Type"/>.</returns>
+        public static Type? GetGenericUnderlyingType(this Type type, Type genericType)
+        {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            var interfaces = type.GetInterfaces();
+            if (!interfaces.Any())
+                return null;
+
+            foreach (var @interface in interfaces)
+            {
+                var hasGeneric = @interface.IsGenericType && @interface.GetGenericTypeDefinition() == genericType;
+                if (!hasGeneric)
+                    continue;
+
+                var genericTypes = @interface.GetGenericArguments();
+                if (genericTypes.Any())
+                    return genericTypes[0];
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -122,7 +146,7 @@ namespace R8.Lib
             var propertyType = type.GetUnderlyingType();
             if (propertyType.IsEnum)
             {
-                var isEnum = Enum.TryParse(propertyType, value, out var enumDetail);
+                var isEnum = Enum.TryParse(propertyType, value, true, out var enumDetail);
                 if (!isEnum)
                     return false;
 

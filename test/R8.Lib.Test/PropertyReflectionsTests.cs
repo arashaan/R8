@@ -555,6 +555,40 @@ namespace R8.Lib.Test
         }
 
         [Fact]
+        public void CallTrySetValue_Enum4()
+        {
+            // Assets
+            var input = "SUCCESS";
+            var type = typeof(Flags);
+
+            // Act
+            var method = type.TryParse(input, out var output);
+
+            // Arrange
+            Assert.True(method);
+            Assert.NotNull(output);
+            Assert.Equal(Flags.Success, output);
+            Assert.IsType<Flags>(output);
+        }
+
+        [Fact]
+        public void CallTrySetValue_Enum3()
+        {
+            // Assets
+            var input = 100.ToString();
+            var type = typeof(Flags);
+
+            // Act
+            var method = type.TryParse(input, out var output);
+
+            // Arrange
+            Assert.True(method);
+            Assert.NotNull(output);
+            Assert.Equal(Flags.Success, output);
+            Assert.IsType<Flags>(output);
+        }
+
+        [Fact]
         public void CallTrySetValue_Enum()
         {
             // Assets
@@ -567,6 +601,7 @@ namespace R8.Lib.Test
             // Arrange
             Assert.True(method);
             Assert.NotNull(output);
+            Assert.Equal(Flags.Success, output);
             Assert.IsType<Flags>(output);
         }
 
