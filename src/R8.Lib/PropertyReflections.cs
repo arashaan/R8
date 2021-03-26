@@ -146,7 +146,7 @@ namespace R8.Lib
             var propertyType = type.GetUnderlyingType();
             if (propertyType.IsEnum)
             {
-                var isEnum = Enum.TryParse(propertyType, value, out var enumDetail);
+                var isEnum = Enum.TryParse(propertyType, value, true, out var enumDetail);
                 if (!isEnum)
                     return false;
 
