@@ -86,21 +86,12 @@ namespace R8.AspNetCore.HttpContextExtensions
 
                 usedProperties.Add(property);
                 var propertyType = property.PropertyType;
-                var type = propertyType.GetUnderlyingType();
 
-                object propertyValue;
-                if (values.Count > 1 && type != propertyType)
-                {
-                    var validValue = propertyType.TryParse(values.ToArray(), out propertyValue);
-                    if (!validValue)
-                        continue;
-                }
-                else
-                {
-                    var validValue = type.TryParse(values[0], out propertyValue);
-                    if (!validValue)
-                        continue;
-                }
+                var validValue = propertyType.GetEnumerableUnderlyingType() != null
+                    ? propertyType.TryParse(values.ToArray(), out var propertyValue)
+                    : propertyType.GetUnderlyingType().TryParse(values[0], out propertyValue);
+                if (!validValue)
+                    continue;
 
                 property.SetValue(model, propertyValue);
             }
