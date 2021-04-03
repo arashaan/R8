@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
@@ -30,29 +29,31 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
         {
             _httpContextAccessor.HttpContext.Items[BreadcrumbListContextName] = true;
             var content = await output.GetChildContentAsync();
-            var ol = content.GetTagBuilders();
+            var ol = content.GetTagBuilder();
+            var olNodes = ol.GetInnerHtmlNodes();
 
             var position = 1;
-            var result = new List<TagBuilderWithUnderlying>();
-            if (ol.Nodes?.Any() == true)
+            var result = new List<TagBuilder>();
+            if (olNodes?.Any() == true)
             {
-                for (var index = 1; index <= ol.Nodes.Count; index++)
+                for (var index = 1; index <= olNodes.Count; index++)
                 {
-                    var li = ol.Nodes[index - 1] as TagBuilderWithUnderlying;
+                    var li = olNodes[index - 1];
                     if (!li.Attributes.Any(x =>
                         x.Key.Equals("itemtype", StringComparison.InvariantCultureIgnoreCase) &&
                         x.Value.Equals("http://schema.org/ListItem", StringComparison.InvariantCultureIgnoreCase)))
                         continue;
 
-                    var a = (TagBuilderWithUnderlying)li.Nodes.Nodes.Find(x =>
+                    var nodes = li.GetInnerHtmlNodes();
+                    var a = nodes.Find(x =>
                         x.TagName.Equals("a", StringComparison.InvariantCultureIgnoreCase));
 
-                    var metaPosition = (TagBuilderWithUnderlying)li.Nodes.Nodes.Find(x =>
+                    var metaPosition = nodes.Find(x =>
                        x.Attributes.Any(c =>
                            c.Key.Equals("itemprop", StringComparison.InvariantCultureIgnoreCase) &&
                            c.Value.Equals("position", StringComparison.InvariantCultureIgnoreCase)));
 
-                    var span = (TagBuilderWithUnderlying)li.Nodes.Nodes.Find(x =>
+                    var span = nodes.Find(x =>
                         x.Attributes.Any(c =>
                             c.Key.Equals("itemprop", StringComparison.InvariantCultureIgnoreCase) &&
                             c.Value.Equals("name", StringComparison.InvariantCultureIgnoreCase)));
@@ -62,7 +63,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
                         : new List<string>();
 
                     var positionIncrement = false;
-                    if (index < ol.Nodes.Count)
+                    if (index < olNodes.Count)
                     {
                         // position < last
 

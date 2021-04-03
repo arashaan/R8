@@ -40,7 +40,6 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.9.0" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.11.32" />
 		<PackageReference Include="MailKit" Version="2.11.1" />
 		<PackageReference Include="R8.Lib" Version="1.10.86.1" />
 	</ItemGroup>
