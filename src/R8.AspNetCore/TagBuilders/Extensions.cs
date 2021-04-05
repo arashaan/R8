@@ -1,6 +1,4 @@
-﻿using HtmlAgilityPack;
-
-using Microsoft.AspNetCore.Html;
+﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -43,12 +41,200 @@ namespace R8.AspNetCore.TagBuilders
                 output.Attributes.Insert(0, new TagHelperAttribute("name", bindPropertyAttribute.Name));
         }
 
+        internal static int FindEndTagIndex(string html, int startPoint, string tagName, int possibleSimilar = 0)
+        {
+            if (string.IsNullOrEmpty(html))
+                return -1;
+
+            var rest = html.Substring(startPoint);
+            if (string.IsNullOrEmpty(rest))
+                return -1;
+
+            if (!rest.StartsWith("<"))
+            {
+                var possibleNextStartTagIndex = html.IndexOf("<", startPoint);
+                if (possibleNextStartTagIndex == -1)
+                    return -1;
+
+                return FindEndTagIndex(html, possibleNextStartTagIndex, tagName, possibleSimilar);
+            }
+
+            var possibleEndTagIndex = html.IndexOf($"</{tagName}>", startPoint);
+            if (possibleEndTagIndex < 0)
+                return -1;
+
+            var possibleEndTagRange = html.IndexOf(">", possibleEndTagIndex);
+            if (possibleEndTagRange == -1)
+                return -1;
+
+            var testingPossibleEndTag = html.Substring(possibleEndTagIndex, possibleEndTagRange - possibleEndTagIndex + 1);
+            var possibleSimilarStartIndex = html.IndexOf($"<{tagName}", startPoint);
+            if (possibleSimilarStartIndex == -1 || possibleEndTagIndex < possibleSimilarStartIndex)
+            {
+                if (possibleSimilar <= 0)
+                    return possibleEndTagIndex;
+
+                return FindEndTagIndex(html, ++possibleEndTagIndex, tagName, --possibleSimilar);
+            }
+
+            possibleSimilar++;
+            var possibleSimilarEndIndex = html.IndexOf(">", possibleSimilarStartIndex) + 1;
+            if (possibleSimilarEndIndex == -1)
+                return -1;
+
+            // only for development
+            // var testingSimilar = rest[possibleSimilarStartIndex..^(html.Length - possibleSimilarEndIndex - 1)];
+
+            if (!string.IsNullOrEmpty(rest))
+                return FindEndTagIndex(html, possibleSimilarEndIndex, tagName, possibleSimilar);
+
+            return -1;
+        }
+
+        public static bool ParseAsTagBuilder(string html, int startIndex, out TagBuilder tag, out int tagEndIndex)
+        {
+            if (startIndex == 0)
+                html = html
+                    .Replace("\r\n", "")
+                    .Replace("</ ", "</")
+                    .Trim();
+
+            tag = null;
+            tagEndIndex = -1;
+            var tagIndexA = html.IndexOf("<", startIndex);
+            var isComment = html[tagIndexA + 1] == '!';
+            if (isComment)
+            {
+                const string commentFinisher = "—-->";
+                tagIndexA = html.IndexOf(commentFinisher, startIndex) + commentFinisher.Length;
+                if (tagIndexA >= html.Length)
+                    return false;
+
+                var mock = html[tagIndexA..]; // for development
+                return ParseAsTagBuilder(html, tagIndexA, out tag, out tagEndIndex);
+            }
+
+            List<string> tagAttributes;
+            if (tagIndexA > -1)
+            {
+                if (tagIndexA != startIndex)
+                    return ParseAsTagBuilder(html, tagIndexA, out tag, out tagEndIndex);
+
+                var tagIndexZ = html.IndexOf(">", tagIndexA);
+                if (tagIndexZ > -1)
+                {
+                    var tagAttrs = html[(tagIndexA + 1)..tagIndexZ];
+                    var hasEndTag = html[tagIndexZ - 1] != '/';
+
+                    if (tagAttrs.EndsWith("/"))
+                        tagAttrs = tagAttrs[..^1].Trim();
+
+                    tagAttributes = tagAttrs.Split(" ").ToList();
+                    var tagName = tagAttributes[0];
+                    if (string.IsNullOrEmpty(tagName))
+                        throw new NullReferenceException($"Unable to find name of the tag.");
+
+                    tagAttributes = tagAttributes.Skip(1).ToList();
+                    tag = new TagBuilder(tagName)
+                    {
+                        TagRenderMode = !hasEndTag
+                            ? TagRenderMode.SelfClosing
+                            : TagRenderMode.Normal
+                    };
+
+                    if (hasEndTag)
+                    {
+                        tagEndIndex = FindEndTagIndex(html, tagIndexZ + 1, tagName);
+                        if (tagEndIndex == -1)
+                            throw new NullReferenceException($"Unable to find matching end tag for <{tagName}>");
+
+                        var content = html[(tagIndexZ + 1)..tagEndIndex];
+                        if (!string.IsNullOrEmpty(content))
+                            tag.InnerHtml.AppendHtml(content);
+                    }
+                    else
+                    {
+                        tagEndIndex = tagIndexZ;
+                    }
+                }
+                else
+                {
+                    throw new NullReferenceException($"Unable to find a valid start tag.");
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            if (tagAttributes.Any())
+            {
+                foreach (var attribute in tagAttributes)
+                {
+                    var attributeParts = attribute.Split("=");
+                    var key = attributeParts[0];
+                    var value = attributeParts.Length switch
+                    {
+                        2 => attributeParts[1]?.Replace("'", "\"")?.Replace("\"", ""),
+                        1 => string.Empty,
+                        _ => throw new IndexOutOfRangeException("Unknown format detected for html attribute.")
+                    };
+
+                    tag.Attributes.Add(key, value);
+                }
+            }
+
+            return true;
+        }
+
+        private static void ParseAsTagBuilders(string html, int startIndex, out List<TagBuilder> output)
+        {
+            output = new List<TagBuilder>();
+            var canContinue = ParseAsTagBuilder(html, startIndex, out var tag, out var tagEndIndex);
+
+            if (tag != null)
+                output.Add(tag);
+
+            if (!canContinue)
+                return;
+
+            startIndex = tagEndIndex + 1;
+            if (startIndex >= html.Length || html.IndexOf("<", startIndex) == -1)
+                return;
+
+            ParseAsTagBuilders(html, startIndex, out var tempOutput);
+            if (tempOutput?.Any() == true)
+                output.AddRange(tempOutput);
+        }
+
         /// <summary>
-        /// Returns a generated instance of <see cref="ITagBuilder"/> by given html string.
+        /// Parses only html TAGs into a <see cref="List{T}"/> of <see cref="TagBuilder"/>.
+        /// </summary>
+        /// <param name="html">A <see cref="string"/> that contains html.</param>
+        /// <returns>A <see cref="List{T}"/> that contains parsed tag builders of given html.</returns>
+        public static List<TagBuilder> ParseAsTagBuilders(string html)
+        {
+            ParseAsTagBuilders(html, 0, out var output);
+            return output;
+        }
+
+        /// <summary>
+        /// Parses only html TAGs into a <see cref="List{T}"/> of <see cref="TagBuilder"/>.
+        /// </summary>
+        /// <param name="html">A <see cref="IHtmlContent"/> that contains html.</param>
+        /// <returns>A <see cref="List{T}"/> that contains parsed tag builders of given html.</returns>
+        public static List<TagBuilder> ParseAsTagBuilders(this IHtmlContent html)
+        {
+            ParseAsTagBuilders(html.GetString(), 0, out var output);
+            return output;
+        }
+
+        /// <summary>
+        /// Returns a generated instance of <see cref="TagBuilder"/> by given html string.
         /// </summary>
         /// <param name="tag">An specific html string that representing an html tag.</param>
-        /// <returns>An <see cref="ITagBuilder"/> object.</returns>
-        public static ITagBuilder GetTagBuilder(this IHtmlContent tag)
+        /// <returns>An <see cref="TagBuilder"/> object.</returns>
+        public static TagBuilder GetTagBuilder(this IHtmlContent tag)
         {
             var contentToStr = tag.GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
@@ -60,8 +246,8 @@ namespace R8.AspNetCore.TagBuilders
         /// Returns a collection of generated instance of <see cref="ITagBuilder"/> by given html string.
         /// </summary>
         /// <param name="tag">An specific html string that representing an list of html tags.</param>
-        /// <returns>An <see cref="ITagBuilderCollection"/> object.</returns>
-        public static ITagBuilderCollection GetTagBuilders(this IHtmlContent tag)
+        /// <returns>An list of <see cref="TagBuilder"/> object.</returns>
+        public static List<TagBuilder> GetTagBuilders(this IHtmlContent tag)
         {
             var contentToStr = tag.GetString();
             var decoded = HttpUtility.HtmlDecode(contentToStr);
@@ -74,7 +260,7 @@ namespace R8.AspNetCore.TagBuilders
         /// </summary>
         /// <param name="tag">An specific html string that representing an html tag.</param>
         /// <returns>An <see cref="ITagBuilder"/> object.</returns>
-        public static ITagBuilder GetTagBuilder(this Func<string, IHtmlContent> tag)
+        public static TagBuilder GetTagBuilder(this Func<string, IHtmlContent> tag)
         {
             if (tag == null)
                 throw new ArgumentNullException(nameof(tag));
@@ -86,52 +272,32 @@ namespace R8.AspNetCore.TagBuilders
         }
 
         /// <summary>
-        /// Returns a collection of generated instance of <see cref="ITagBuilder"/> by given html string.
+        /// Converts <see cref="TagBuilder.InnerHtml"/> contents to a list of <see cref="TagBuilder"/>;
         /// </summary>
-        /// <param name="html">An specific html string that representing an list of html tags.</param>
-        /// <returns>An <see cref="ITagBuilderCollection"/> object.</returns>
-        public static ITagBuilderCollection ParseAsTagBuilders(string html)
+        /// <param name="tag"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static List<TagBuilder> GetInnerHtmlNodes(this TagBuilder tag)
         {
-            var doc = new HtmlDocument();
-            doc.LoadHtml(html);
+            if (tag == null)
+                throw new ArgumentNullException(nameof(tag));
 
-            var result = new TagBuilderCollection();
-            if (doc.DocumentNode?.ChildNodes == null || !doc.DocumentNode.ChildNodes.Any() ||
-                doc.DocumentNode.ChildNodes.All(x => x.NodeType != HtmlNodeType.Element))
-                return result;
-
-            foreach (var node in doc.DocumentNode.ChildNodes)
-            {
-                if (node.NodeType != HtmlNodeType.Element)
-                    continue;
-
-                var tagBuilder = new TagBuilderWithUnderlying(node.Name);
-                tagBuilder.MergeAttributes(node.Attributes.ToDictionary(x => x.Name, x => x.Value));
-                tagBuilder.InnerHtml.AppendHtml(node.InnerHtml);
-
-                if (tagBuilder.HasInnerHtml)
-                    tagBuilder.Nodes = GetTagBuilders(tagBuilder.InnerHtml);
-
-                result.Nodes.Add(tagBuilder);
-            }
-
-            return result;
+            var content = tag.InnerHtml.GetString();
+            return string.IsNullOrEmpty(content) ? null : ParseAsTagBuilders(content);
         }
 
         /// <summary>
-        /// Returns an <see cref="ITagBuilder"/> object from given html tag.
+        /// Returns an <see cref="TagBuilder"/> object from given html tag.
         /// </summary>
         /// <param name="html">A <see cref="string"/> value that representing an html tag.</param>
-        /// <returns>A <see cref="ITagBuilder"/> object.</returns>
-        public static ITagBuilder ParseAsTagBuilder(string html)
+        /// <returns>A <see cref="TagBuilder"/> object.</returns>
+        public static TagBuilder ParseAsTagBuilder(string html)
         {
             if (html == null)
                 return null;
 
-            var node = ParseAsTagBuilders(html);
-            var nodes = node?.Nodes;
-            var firstNode = nodes?.FirstOrDefault();
-            return firstNode;
+            ParseAsTagBuilder(html, 0, out var tag, out _);
+            return tag;
         }
 
         /// <summary>
@@ -146,7 +312,8 @@ namespace R8.AspNetCore.TagBuilders
 
             using var writer = new Utf8StringWriter();
             content.WriteTo(writer, HtmlEncoder.Default);
-            return writer.ToString();
+            var text = writer.ToString();
+            return string.IsNullOrEmpty(text) ? null : text;
         }
 
         private static (TagHelperContext, TagHelperOutput) InitCore<THelper>(this THelper tagHelper, string unencodedContent = null) where THelper : TagHelper
@@ -228,7 +395,7 @@ namespace R8.AspNetCore.TagBuilders
                     var tagDicName = tagGroup.Id;
                     var tag = tagGroup.Tag;
 
-                    var temp = htmlDecodedText.TryReplaceCore((TagBuilder)tag, tagDicName, out var tempHtmlDecodedText);
+                    var temp = htmlDecodedText.TryReplaceCore(tag, tagDicName, out var tempHtmlDecodedText);
                     if (!temp)
                         continue;
 
@@ -242,22 +409,22 @@ namespace R8.AspNetCore.TagBuilders
             return new HtmlString(htmlDecodedText);
         }
 
-        private static bool TryReplaceCore(this string htmlDecodedText, TagBuilder tag, string tagName, out string editedHtmlText)
+        private static bool TryReplaceCore(this string html, TagBuilder tag, string tagName, out string editedHtmlText)
         {
-            editedHtmlText = htmlDecodedText;
+            editedHtmlText = html;
             var tagStart = $"<{tagName}>";
             var tagEnd = $"</{tagName}>";
             var attributes = string.Join(" ", tag.Attributes.Select(x => $"{x.Key}='{x.Value}'"));
 
-            var innerHtmlStartIndex = htmlDecodedText.IndexOf(tagStart) + tagStart.Length;
-            var innerHtmlEndIndex = htmlDecodedText.IndexOf(tagEnd, innerHtmlStartIndex);
+            var innerHtmlStartIndex = html.IndexOf(tagStart) + tagStart.Length;
+            var innerHtmlEndIndex = html.IndexOf(tagEnd, innerHtmlStartIndex);
 
             if (innerHtmlStartIndex == -1 || innerHtmlEndIndex == -1)
                 return false;
 
-            var innerHtml = htmlDecodedText[innerHtmlStartIndex..innerHtmlEndIndex];
+            var innerHtml = html[innerHtmlStartIndex..innerHtmlEndIndex];
 
-            var stringBuilder = new StringBuilder(htmlDecodedText);
+            var stringBuilder = new StringBuilder(html);
             var finalInnerHtml = tag.HasInnerHtml
                 ? tag.InnerHtml.GetString().Trim()
                 : innerHtml?.Trim();
@@ -268,24 +435,24 @@ namespace R8.AspNetCore.TagBuilders
                     stringBuilder.Remove(innerHtmlStartIndex, innerHtml.Length);
 
                 stringBuilder.Insert(innerHtmlStartIndex, finalInnerHtml);
-                htmlDecodedText = stringBuilder.ToString();
+                html = stringBuilder.ToString();
             }
 
-            htmlDecodedText = htmlDecodedText.Replace(tagStart, $"<{tag.TagName} {attributes}>");
-            htmlDecodedText = htmlDecodedText.Replace(tagEnd, $"</{tag.TagName}>");
-            editedHtmlText = htmlDecodedText;
+            html = html.Replace(tagStart, $"<{tag.TagName} {attributes}>");
+            html = html.Replace(tagEnd, $"</{tag.TagName}>");
+            editedHtmlText = html;
             return true;
         }
 
-        public static HtmlString ReplaceHtml(this string htmlDecodedText, params Func<string, IHtmlContent>[] tags)
+        public static HtmlString ReplaceHtml(this string html, params Func<string, IHtmlContent>[] tags)
         {
-            if (string.IsNullOrEmpty(htmlDecodedText))
+            if (string.IsNullOrEmpty(html))
                 return new HtmlString(null);
 
             if (tags?.Any() != true)
-                return new HtmlString(htmlDecodedText);
+                return new HtmlString(html);
 
-            htmlDecodedText = htmlDecodedText
+            html = html
                 .Replace("\r\n", "")
                 .Replace("</ ", "</");
 
@@ -293,14 +460,14 @@ namespace R8.AspNetCore.TagBuilders
             {
                 var tag = tags[i].GetTagBuilder();
 
-                var temp = htmlDecodedText.TryReplaceCore((TagBuilder)tag, i.ToString(), out var tempHtmlDecodedText);
+                var temp = html.TryReplaceCore(tag, i.ToString(), out var tempHtmlDecodedText);
                 if (!temp)
                     continue;
 
-                htmlDecodedText = tempHtmlDecodedText;
+                html = tempHtmlDecodedText;
             }
 
-            return new HtmlString(htmlDecodedText);
+            return new HtmlString(html);
         }
 
         public static HtmlString Replace(this IHtmlHelper _, string htmlDecodedText, params Func<string, IHtmlContent>[] tags)
