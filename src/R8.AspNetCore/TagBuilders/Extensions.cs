@@ -91,7 +91,7 @@ namespace R8.AspNetCore.TagBuilders
             return -1;
         }
 
-        public static bool ParseAsTagBuilder(string html, int startIndex, out TagBuilder tag, out int tagEndIndex)
+        private static bool ParseAsTagBuilder(string html, int startIndex, out TagBuilder tag, out int tagEndIndex)
         {
             if (startIndex == 0)
                 html = html

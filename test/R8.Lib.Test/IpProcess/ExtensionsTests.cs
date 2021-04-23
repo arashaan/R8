@@ -75,8 +75,8 @@ namespace R8.Lib.Test.IpProcess
             Assert.Equal("Europe", ip.Continent);
             Assert.Equal("Berlin", ip.Capital);
             Assert.Equal("+49", ip.CountryPhoneCode);
-            Assert.Equal("Hessen", ip.Region);
-            Assert.Equal("Frankfurt am Main", ip.City);
+            Assert.Equal("Hesse", ip.Region);
+            Assert.Equal("Frankfurt", ip.City);
             Assert.Equal(timeZone, ip.TimeZone);
         }
 
