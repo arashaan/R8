@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>A predefined pattern for EntityFramework Core to easily store Audits</Description>
-		<VersionPrefix>1.10.85.3</VersionPrefix>
+		<VersionPrefix>1.11</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
@@ -41,7 +41,7 @@
 	<ItemGroup>
 		<PackageReference Include="Humanizer.Core" Version="2.8.26" />
 		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="2.5.0" />
-		<PackageReference Include="R8.Lib" Version="1.10.86.1" />
+		<PackageReference Include="R8.Lib" Version="1.11.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.5">
 			<PrivateAssets>all</PrivateAssets>
