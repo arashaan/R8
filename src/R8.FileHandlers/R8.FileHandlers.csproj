@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Easily save and manipulate files.</Description>
-		<VersionPrefix>1.10.84</VersionPrefix>
+		<VersionPrefix>1.11</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
