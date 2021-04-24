@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Reflection;
 
 namespace R8.Lib
@@ -175,6 +176,17 @@ namespace R8.Lib
                 return true;
             }
 
+            if (propertyType == typeof(decimal))
+            {
+                var isDecimal = decimal.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"),
+                    out var decimalDetail);
+                if (!isDecimal)
+                    return false;
+
+                output = decimalDetail;
+                return true;
+            }
+
             if (propertyType == typeof(long))
             {
                 var isLong = long.TryParse(value, out var longDetail);
@@ -182,6 +194,16 @@ namespace R8.Lib
                     return false;
 
                 output = longDetail;
+                return true;
+            }
+
+            if (propertyType == typeof(IPAddress))
+            {
+                var isIpAddress = IPAddress.TryParse(value, out var ipAddress);
+                if (!isIpAddress)
+                    return false;
+
+                output = ipAddress;
                 return true;
             }
 
