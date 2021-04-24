@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Google.Apis.AnalyticsReporting.v4;
+﻿using Google.Apis.AnalyticsReporting.v4;
 using Google.Apis.AnalyticsReporting.v4.Data;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
@@ -12,6 +6,13 @@ using Google.Apis.Services;
 using Microsoft.Extensions.Configuration;
 
 using Newtonsoft.Json;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace R8.GoogleAnalytics
 {
@@ -156,67 +157,33 @@ namespace R8.GoogleAnalytics
             this.ViewId = viewId;
         }
 
-        private IEnumerable<ReportRequest> ResolveServiceRequests(DateTime startDate, DateTime endDate, IEnumerable<GoogleAnalyticsRequest> serviceRequests)
+        /// <summary>
+        /// Executes Google Analytics Provider to retrieve requested data since given start date until now.
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="serviceRequests"></param>
+        /// <param name="timeOut"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="TaskCanceledException"></exception>
+        /// <exception cref="SocketException"></exception>
+        /// <returns></returns>
+        public Task ExecuteAsync(DateTime startDate, IEnumerable<GoogleAnalyticsRequest> serviceRequests, TimeSpan? timeOut = null)
         {
-            if (serviceRequests == null || !serviceRequests.Any())
-                throw new ArgumentNullException(nameof(serviceRequests));
-
-            var dateRange = new DateRange
-            {
-                StartDate = startDate.Date.ToString("yyyy-MM-dd"),
-                EndDate = endDate.Date.ToString("yyyy-MM-dd")
-            };
-            var result = from serviceRequest in serviceRequests
-                         where serviceRequest.MetricsRequest.Count > 0
-                         select new ReportRequest
-                         {
-                             DateRanges = new List<DateRange> { dateRange },
-                             Metrics = serviceRequest.MetricsRequest.Select(x => new Metric() { Expression = x.Name }).ToList(),
-                             Dimensions = serviceRequest.DimensionsRequest.Select(x => new Dimension { Name = x }).ToList(),
-                             ViewId = ViewId,
-                             OrderBys = ResolveOrders(serviceRequest.Orders),
-                             IncludeEmptyRows = serviceRequest.IncludeEmptyRows,
-                             PageSize = ResolvePageSize(serviceRequest.PageSize),
-                             FiltersExpression = ResolveFilters(serviceRequest.Filters)
-                         };
-            return result;
+            return ExecuteAsync(startDate, DateTime.Now, serviceRequests, timeOut);
         }
 
-        private static IList<OrderBy> ResolveOrders(Dictionary<string, GoogleAnalyticsOrderType> dic)
-        {
-            if (dic == null || !dic.Any())
-                return new List<OrderBy>();
-
-            var result = dic?.Select(order => new OrderBy
-            {
-                FieldName = order.Key.StartsWith("ga:") ? order.Key : $"ga:{order.Key}",
-                SortOrder = order.Value.ToString().ToUpper()
-            }).ToList();
-            return result;
-        }
-
-        private static int? ResolvePageSize(int pageSize)
-        {
-            var result = pageSize <= 0 ? 10 : pageSize;
-            return result;
-        }
-
-        private static string ResolveFilters(Dictionary<string, string> dic)
-        {
-            if (dic == null || !dic.Any())
-                return null;
-
-            var tempDic = dic.Select(x => $"{(x.Key.StartsWith("ga:") ? x.Key : "ga:" + x.Key)}=={x.Value}").ToList();
-            var result = string.Join(";", tempDic);
-            return result;
-        }
-
-        public Task ExecuteAsync(DateTime startDate, IEnumerable<GoogleAnalyticsRequest> serviceRequests)
-        {
-            return ExecuteAsync(startDate, DateTime.Now, serviceRequests);
-        }
-
-        public async Task ExecuteAsync(DateTime startDate, DateTime endDate, IEnumerable<GoogleAnalyticsRequest> serviceRequests)
+        /// <summary>
+        /// Executes Google Analytics Provider to retrieve requested data since given start date until given end date.
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="serviceRequests"></param>
+        /// <param name="timeOut"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="TaskCanceledException"></exception>
+        /// <exception cref="SocketException"></exception>
+        /// <returns></returns>
+        public async Task ExecuteAsync(DateTime startDate, DateTime endDate, IEnumerable<GoogleAnalyticsRequest> serviceRequests, TimeSpan? timeOut = null)
         {
             if (serviceRequests == null || !serviceRequests.Any())
                 throw new ArgumentNullException(nameof(serviceRequests));
@@ -226,10 +193,42 @@ namespace R8.GoogleAnalytics
                 .FromJson(JsonConvert.SerializeObject(this))
                 .CreateScoped(AnalyticsReportingService.Scope.AnalyticsReadonly);
             var initializer = new BaseClientService.Initializer { HttpClientInitializer = httpClientInitializer };
-            var service = new AnalyticsReportingService(initializer);
+            var service = new AnalyticsReportingService(initializer)
+            {
+                HttpClient = { Timeout = timeOut ?? TimeSpan.FromSeconds(5) }
+            };
 
-            var list = ResolveServiceRequests(startDate, endDate, googleAnalyticsRequests).ToList();
-            var requestBody = new GetReportsRequest { ReportRequests = list };
+            var dateRange = new DateRange
+            {
+                StartDate = startDate.Date.ToString("yyyy-MM-dd"),
+                EndDate = endDate.Date.ToString("yyyy-MM-dd")
+            };
+            var list = from serviceRequest in serviceRequests
+                       where serviceRequest.MetricsRequest.Count > 0
+                       select new ReportRequest
+                       {
+                           DateRanges = new List<DateRange> { dateRange },
+                           Metrics = serviceRequest.MetricsRequest.Select(x => new Metric { Expression = x.Name }).ToList(),
+                           Dimensions = serviceRequest.DimensionsRequest.Select(x => new Dimension { Name = x }).ToList(),
+                           ViewId = ViewId,
+                           OrderBys = serviceRequest.Orders?.Any() == true
+                               ? serviceRequest.Orders.Select(order => new OrderBy
+                               {
+                                   FieldName = order.Key.StartsWith("ga:") ? order.Key : $"ga:{order.Key}",
+                                   SortOrder = order.Value.ToString().ToUpper()
+                               }).ToList()
+                               : null,
+                           IncludeEmptyRows = serviceRequest.IncludeEmptyRows,
+                           PageSize = serviceRequest.PageSize <= 0 ? 10 : serviceRequest.PageSize,
+                           FiltersExpression = serviceRequest.Filters?.Any() == true
+                               ? string.Join(";",
+                                   serviceRequest.Filters
+                                       .Select(x => $"{(x.Key.StartsWith("ga:") ? x.Key : "ga:" + x.Key)}=={x.Value}")
+                                       .ToList())
+                               : null
+                       };
+
+            var requestBody = new GetReportsRequest { ReportRequests = list.ToList() };
             var request = service.Reports.BatchGet(requestBody);
             var response = await request.ExecuteAsync();
             var reports = response.Reports.ToList();
