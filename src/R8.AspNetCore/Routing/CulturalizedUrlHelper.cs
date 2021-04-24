@@ -46,7 +46,7 @@ namespace R8.AspNetCore.Routing
             {
                 EndWithIndex = true
             };
-            var address = PageHandlers.GetPath(typeof(TPage), currentConfig);
+            var address = PageHandlers.GetPagePath(typeof(TPage), currentConfig);
             return endpointRoute
                 ? this.Page(address)
                 : address;
