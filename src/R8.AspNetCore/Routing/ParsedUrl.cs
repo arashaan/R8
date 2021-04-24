@@ -2,8 +2,12 @@
 
 namespace R8.AspNetCore.Routing
 {
-    public class ParsedUrl
+    internal class ParsedUrl
     {
+        /// <summary>
+        /// A <see cref="ParsedUrl"/> instance that contains absolute path and query strings.
+        /// </summary>
+        /// <param name="absolutePath">Absolute path of url.</param>
         public ParsedUrl(string absolutePath)
         {
             AbsolutePath = absolutePath;
