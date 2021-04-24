@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>An easy way to catch google analytics data.</Description>
-		<VersionPrefix>1.10.84.1</VersionPrefix>
+		<VersionPrefix>1.11.2</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>

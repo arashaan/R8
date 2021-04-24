@@ -38,6 +38,17 @@ namespace R8.AspNetCore.HttpContextExtensions
         }
 
         /// <summary>
+        /// Determines whether the beginning of this <see cref="PathString"/> instance matches the specified <see cref="PathString"/>.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="paths"></param>
+        /// <returns>true if value matches the beginning of this string; otherwise, false.</returns>
+        public static bool StartsWithSegments(this PathString path, params PathString[] paths)
+        {
+            return paths.Any(path.StartsWithSegments);
+        }
+
+        /// <summary>
         /// Converts array form to given type.
         /// </summary>
         /// <typeparam name="T">A type for model.</typeparam>

@@ -1,20 +1,21 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+using R8.Lib;
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-
-using R8.Lib;
-
 namespace R8.AspNetCore.Routing
 {
     public static class PageHandlers
     {
-        internal static IEnumerable<string> Namespaces(this Type pageType)
+        internal static IEnumerable<string> GetNamespaces(this Type pageType)
         {
             var nameSpace = pageType?.Namespace;
             if (string.IsNullOrEmpty(nameSpace))
@@ -24,85 +25,85 @@ namespace R8.AspNetCore.Routing
             return splitByDots;
         }
 
-        public static ActionResult Combine(this RedirectToPageResult targetPageUrl, Dictionary<string, object> with)
-        {
-            var targetUrlQueryStrings = (targetPageUrl.RouteValues?.Any() == true
-                ? $"?{string.Join("&", targetPageUrl.RouteValues.SelectMany(x => $"{x.Key}={x.Value}"))}"
-                : "");
-            var urlAndQueries = $"{targetPageUrl.PageName}{targetUrlQueryStrings}";
-            var parsedUrl = ParseUrl(urlAndQueries);
-            var parsedQueryBuilder = parsedUrl.QueryBuilder ?? new QueryBuilder();
-            var dic = new ConcurrentDictionary<string, string>(parsedQueryBuilder);
+        // public static ActionResult Combine(this RedirectToPageResult targetPageUrl, Dictionary<string, object> with)
+        // {
+        //     var targetUrlQueryStrings = (targetPageUrl.RouteValues?.Any() == true
+        //         ? $"?{string.Join("&", targetPageUrl.RouteValues.SelectMany(x => $"{x.Key}={x.Value}"))}"
+        //         : "");
+        //     var urlAndQueries = $"{targetPageUrl.PageName}{targetUrlQueryStrings}";
+        //     var parsedUrl = ParseUrl(urlAndQueries);
+        //     var parsedQueryBuilder = parsedUrl.QueryBuilder ?? new QueryBuilder();
+        //     var dic = new ConcurrentDictionary<string, string>(parsedQueryBuilder);
+        //
+        //     if (with?.Any() == true)
+        //     {
+        //         foreach (var (query, value) in with)
+        //         {
+        //             if (value == null || string.IsNullOrEmpty(value.ToString()))
+        //                 continue;
+        //
+        //             dic.AddOrUpdate(query, _ => value.ToString(), (a, b) => value.ToString());
+        //         }
+        //     }
+        //
+        //     parsedQueryBuilder = new QueryBuilder(dic);
+        //     var result =
+        //       new RedirectToPageResult(targetPageUrl.PageName, targetPageUrl.PageHandler, parsedQueryBuilder, targetPageUrl.Permanent)
+        //       {
+        //           Fragment = targetPageUrl.Fragment,
+        //           Host = targetPageUrl.Host,
+        //           PreserveMethod = targetPageUrl.PreserveMethod,
+        //           Protocol = targetPageUrl.Protocol,
+        //           UrlHelper = targetPageUrl.UrlHelper
+        //       };
+        //     return result;
+        // }
+        //
+        // internal static ParsedUrl Combine(this Uri uri, Dictionary<string, object> with)
+        // {
+        //     var urlAndQueries = uri.PathAndQuery;
+        //     var (absolutePath, queryBuilder) = ParseUrl(urlAndQueries);
+        //     var parsedQueryBuilder = queryBuilder ?? new QueryBuilder();
+        //     var dic = new ConcurrentDictionary<string, string>(parsedQueryBuilder);
+        //
+        //     if (with?.Any() == true)
+        //     {
+        //         foreach (var (query, value) in with)
+        //         {
+        //             if (value == null || string.IsNullOrEmpty(value.ToString()))
+        //                 continue;
+        //
+        //             dic.AddOrUpdate(query, _ => value.ToString(), (a, b) => value.ToString());
+        //         }
+        //     }
+        //
+        //     parsedQueryBuilder = new QueryBuilder(dic);
+        //     var result = new ParsedUrl(absolutePath, parsedQueryBuilder);
+        //     return result;
+        // }
+        //
+        // public static Dictionary<string, object> ToDictionary(this QueryBuilder queryBuilder)
+        // {
+        //     var que = queryBuilder?
+        //         .Select(x => new { x.Key, x.Value })?
+        //         .GroupBy(x => x.Key)?
+        //         .Select(x => new { x.Last().Key, x.Last().Value })?
+        //         .ToList();
+        //     return que?.Any() == true
+        //         ? que.ToDictionary(x => x.Key, x => (object)x.Value)
+        //         : default;
+        // }
+        //
+        // public static Dictionary<string, string> ToDictionary(this QueryString queryString)
+        // {
+        //     if (queryString == null || !queryString.HasValue)
+        //         return null;
+        //
+        //     var dic = ParseQueryString(queryString.Value);
+        //     return dic;
+        // }
 
-            if (with?.Any() == true)
-            {
-                foreach (var (query, value) in with)
-                {
-                    if (value == null || string.IsNullOrEmpty(value.ToString()))
-                        continue;
-
-                    dic.AddOrUpdate(query, _ => value.ToString(), (a, b) => value.ToString());
-                }
-            }
-
-            parsedQueryBuilder = new QueryBuilder(dic);
-            var result =
-              new RedirectToPageResult(targetPageUrl.PageName, targetPageUrl.PageHandler, parsedQueryBuilder, targetPageUrl.Permanent)
-              {
-                  Fragment = targetPageUrl.Fragment,
-                  Host = targetPageUrl.Host,
-                  PreserveMethod = targetPageUrl.PreserveMethod,
-                  Protocol = targetPageUrl.Protocol,
-                  UrlHelper = targetPageUrl.UrlHelper
-              };
-            return result;
-        }
-
-        public static ParsedUrl Combine(this Uri uri, Dictionary<string, object> with)
-        {
-            var urlAndQueries = uri.PathAndQuery;
-            var (absolutePath, queryBuilder) = ParseUrl(urlAndQueries);
-            var parsedQueryBuilder = queryBuilder ?? new QueryBuilder();
-            var dic = new ConcurrentDictionary<string, string>(parsedQueryBuilder);
-
-            if (with?.Any() == true)
-            {
-                foreach (var (query, value) in with)
-                {
-                    if (value == null || string.IsNullOrEmpty(value.ToString()))
-                        continue;
-
-                    dic.AddOrUpdate(query, _ => value.ToString(), (a, b) => value.ToString());
-                }
-            }
-
-            parsedQueryBuilder = new QueryBuilder(dic);
-            var result = new ParsedUrl(absolutePath, parsedQueryBuilder);
-            return result;
-        }
-
-        public static Dictionary<string, object> ToDictionary(this QueryBuilder queryBuilder)
-        {
-            var que = queryBuilder?
-                .Select(x => new { x.Key, x.Value })?
-                .GroupBy(x => x.Key)?
-                .Select(x => new { x.Last().Key, x.Last().Value })?
-                .ToList();
-            return que?.Any() == true
-                ? que.ToDictionary(x => x.Key, x => (object)x.Value)
-                : default;
-        }
-
-        public static Dictionary<string, string> ToDictionary(this QueryString queryString)
-        {
-            if (queryString == null || !queryString.HasValue)
-                return null;
-
-            var dic = ParseQueryString(queryString.Value);
-            return dic;
-        }
-
-        public static Dictionary<string, string> ParseQueryString(string queryString)
+        internal static Dictionary<string, string> ParseQueryString(string queryString)
         {
             if (string.IsNullOrEmpty(queryString))
                 return null;
@@ -120,7 +121,7 @@ namespace R8.AspNetCore.Routing
             return dic;
         }
 
-        public static Uri GetUrlUri(string url)
+        internal static Uri GetUrlUri(string url)
         {
             if (string.IsNullOrEmpty(url))
                 return null;
@@ -142,6 +143,7 @@ namespace R8.AspNetCore.Routing
             var uri = new Uri(finalUrl);
             return uri;
         }
+
         /// <summary>
         /// Gets query strings from given <see cref="Uri"/> object.
         /// </summary>
@@ -160,6 +162,11 @@ namespace R8.AspNetCore.Routing
             return result;
         }
 
+        /// <summary>
+        /// Returns a <see cref="ParsedUrl"/> type that contains absolute path and query strings.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         internal static ParsedUrl ParseUrl(string url)
         {
             if (string.IsNullOrEmpty(url))
@@ -176,10 +183,10 @@ namespace R8.AspNetCore.Routing
             return result;
         }
 
-        internal static string GetPath(Type type, PageHandlerConfiguration currentConfig)
+        public static string GetPagePath(Type type, PageHandlerConfiguration currentConfig)
         {
             var sectionSeparator = currentConfig.UseBackslash ? @"\" : "/";
-            var namespaces = type.Namespaces().ToList();
+            var namespaces = type.GetNamespaces().ToList();
             var manageNamespace = new List<string>();
 
             var pagesIndex = namespaces.IndexOf(currentConfig.PagesFolder);
@@ -209,15 +216,27 @@ namespace R8.AspNetCore.Routing
             return address;
         }
 
-        public static string GetPagePath<TPage>(this ICulturalizedUrlHelper urlHelper) where TPage : PageModelBase
+        /// <summary>
+        /// Returns Absolute Path of given page.
+        /// </summary>
+        /// <typeparam name="TPage"></typeparam>
+        /// <param name="urlHelper"></param>
+        /// <returns></returns>
+        public static string GetPagePath<TPage>(this ICulturalizedUrlHelper urlHelper) where TPage : PageModel
         {
             var currentConfig = new PageHandlerConfiguration();
-            var address = GetPath(typeof(TPage), currentConfig);
+            var address = GetPagePath(typeof(TPage), currentConfig);
 
             var url = urlHelper.Page(address);
             return url;
         }
 
+        /// <summary>
+        /// Returns Absolute Path of given page.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public static string GetPagePath(this Type type, Action<PageHandlerConfiguration> config = null)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
@@ -228,7 +247,7 @@ namespace R8.AspNetCore.Routing
             var currentConfig = new PageHandlerConfiguration();
             config?.Invoke(currentConfig);
 
-            var address = GetPath(type, currentConfig);
+            var address = GetPagePath(type, currentConfig);
             if (currentConfig.RouteDictionary == null)
                 return address;
 
