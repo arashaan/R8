@@ -35,6 +35,18 @@ namespace R8.Lib
                 .ToArray()).Trim();
         }
 
+        /// <summary>
+        /// Returns short UUID for given guid.
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        public static string ToShort(this Guid guid)
+        {
+            return Convert.ToBase64String(guid.ToByteArray())[..^2]  // remove trailing == padding
+                .Replace('+', '-')                          // escape (for filepath)
+                .Replace('/', '_');                         // escape (for filepath)
+        }
+
         public static string ReplaceEnterChar(this string str, string replacement)
         {
             if (string.IsNullOrEmpty(str))
