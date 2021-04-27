@@ -4,6 +4,7 @@ using R8.Lib.JsonConverters;
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Net;
@@ -56,6 +57,7 @@ namespace R8.EntityFrameworkCore
             NewValues = newValues ?? new Dictionary<string, object>();
         }
 
+        [MaxLength(300)]
         public string UserAgent { get; set; }
 
         [JsonConverter(typeof(JsonIPAddressConverter))]
@@ -71,6 +73,7 @@ namespace R8.EntityFrameworkCore
         public Guid? UserId { get; set; }
 
         [JsonConverter(typeof(JsonCultureConverter))]
+        [MaxLength(10)]
         public CultureInfo? Culture { get; set; }
 
         public Guid RowId { get; set; }
