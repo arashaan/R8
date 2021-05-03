@@ -39,7 +39,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.2" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.0" />
 		<PackageReference Include="MailKit" Version="2.11.1" />
 		<PackageReference Include="R8.Lib" Version="1.11.1" />
 	</ItemGroup>
