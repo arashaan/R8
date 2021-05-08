@@ -2260,6 +2260,7 @@ namespace R8.FileHandlers
         /// </summary>
         /// <param name="filePath">An string value contains <c>Absolute Path\FileName.xyz</c></param>
         /// <returns>An string value, maybe same as <c>Absolute Path\FileName.xyz</c>, or maybe like <c>Absolute Path\FileName_2.xyz</c></returns>
+        /// <remarks>Using this method may decrease performance, because of CHECK-UNTIL-FIND method.</remarks>
         /// <exception cref="ArgumentNullException"></exception>
         public static string GetUniqueFileName(string filePath)
         {

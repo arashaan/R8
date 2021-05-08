@@ -135,29 +135,31 @@ namespace R8.FileHandlers
                 throw new ArgumentNullException(nameof(filename));
 
             var fileExtension = Path.GetExtension(filename);
-            if (string.IsNullOrEmpty(filename))
-                throw new ArgumentException(null, nameof(filename));
+            if (string.IsNullOrEmpty(fileExtension))
+                throw new ArgumentException("Unable to retrieve file extension.", nameof(fileExtension));
 
             if (!fileExtension[1..].Equals("pdf", StringComparison.InvariantCultureIgnoreCase))
-                throw new ArgumentException(null, nameof(filename));
+                throw new ArgumentException("Given file must have pdf extension.", nameof(filename));
 
             if (config == null)
                 throw new ArgumentNullException(nameof(config));
 
             if (string.IsNullOrEmpty(config.GhostScriptDllPath))
                 throw new NullReferenceException(
-                    $"{nameof(config.GhostScriptDllPath)} expected to been filled to use PDF features");
+                    $"{nameof(config.GhostScriptDllPath)} is required to process pdf files.");
 
             filename = filename.Replace("\\", "/");
 
             var isPdf = await stream.IsPdfAsync().ConfigureAwait(false);
             if (!isPdf)
-                throw new NullReferenceException($"{nameof(filename)} should be a valid pdf file");
+                throw new NullReferenceException($"{nameof(filename)} should be a valid pdf file.");
 
             await using var outputPdf = new MemoryStream();
             await using var outputThumbnail = new MemoryStream();
-            var tempThumbnailStream = await stream.PdfToImageAsync(config.GhostScriptDllPath,
-                config.ImageQuality ?? DefaultPdfImageQuality, config.ResolutionDpi ?? DefaultPdfImageResolution).ConfigureAwait(false);
+            var tempThumbnailStream = await stream.PdfToImageAsync(
+                ghostScriptPath: config.GhostScriptDllPath,
+                jpgQuality: config.ImageQuality ?? DefaultPdfImageQuality,
+                dpi: config.ResolutionDpi ?? DefaultPdfImageResolution).ConfigureAwait(false);
 
             await tempThumbnailStream.CopyToAsync(outputThumbnail).ConfigureAwait(false);
 
@@ -225,7 +227,7 @@ namespace R8.FileHandlers
                 throw new ArgumentNullException(nameof(filename));
 
             if (stream.Length == 0)
-                return null;
+                throw new ArgumentNullException(nameof(stream));
 
             filename = filename.Replace("\\", "/");
             var fileExtension = Path.GetExtension(filename);
