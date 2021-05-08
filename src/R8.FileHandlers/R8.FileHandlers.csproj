@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Easily save and manipulate files.</Description>
-		<VersionPrefix>1.11.1</VersionPrefix>
+		<VersionPrefix>1.11.2</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -43,7 +43,7 @@
 		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11" />
 		<PackageReference Include="SharpZipLib" Version="1.3.1" />
-		<PackageReference Include="Humanizer.Core" Version="2.8.26" />
+		<PackageReference Include="Humanizer.Core" Version="2.10.1" />
 	</ItemGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
