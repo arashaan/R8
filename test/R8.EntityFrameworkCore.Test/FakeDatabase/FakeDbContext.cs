@@ -26,7 +26,7 @@ namespace R8.EntityFrameworkCore.Test.FakeDatabase
         public Func<EntityEntry, AuditOptions> AuditOptions => entry => new AuditOptions
         {
             LocalIpAddress = HttpExtensions.GetLocalIPAddress(),
-            RemoteIpAddress = HttpExtensions.GetIPAddress(),
+            RemoteIpAddress = HttpExtensions.GetIPAddressAsync().GetAwaiter().GetResult(),
             UserAgent = "WinDesktop"
         };
 

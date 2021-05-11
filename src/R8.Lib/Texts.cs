@@ -47,6 +47,12 @@ namespace R8.Lib
                 .Replace('/', '_');                         // escape (for filepath)
         }
 
+        /// <summary>
+        /// Replaces NewLine characters to specific character.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
         public static string ReplaceEnterChar(this string str, string replacement)
         {
             if (string.IsNullOrEmpty(str))
@@ -65,9 +71,11 @@ namespace R8.Lib
         /// </summary>
         /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="string"/> value</returns>
         public static string ToCamelCase(this string s, CultureInfo culture = null)
         {
+            if (s == null) throw new ArgumentNullException(nameof(s));
             var currentCulture = culture ?? CultureInfo.CurrentCulture;
 
             var result = s.Humanize(culture: currentCulture);
@@ -82,9 +90,11 @@ namespace R8.Lib
         /// </summary>
         /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="string"/> value</returns>
         public static string FromKebabCase(this string s, CultureInfo culture = null)
         {
+            if (s == null) throw new ArgumentNullException(nameof(s));
             var currentCulture = culture ?? CultureInfo.CurrentCulture;
             return s.Replace("-", " ", true, currentCulture);
         }
@@ -94,9 +104,11 @@ namespace R8.Lib
         /// </summary>
         /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="string"/> value</returns>
         public static string ToKebabCase(this string s, CultureInfo culture = null)
         {
+            if (s == null) throw new ArgumentNullException(nameof(s));
             var currentCulture = culture ?? CultureInfo.CurrentCulture;
             return s.Humanize(culture: currentCulture).ToLower(currentCulture)
                 .Replace(" ", "-", true, currentCulture);
@@ -108,9 +120,11 @@ namespace R8.Lib
         /// <param name="s">An <see cref="string"/> value containing string to convert.</param>
         /// <param name="ignoreSpace"></param>
         /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="string"/> value</returns>
         public static string ToUnescaped(this string s, bool ignoreSpace = false, CultureInfo culture = null)
         {
+            if (s == null) throw new ArgumentNullException(nameof(s));
             var currentCulture = culture ?? CultureInfo.CurrentCulture;
 
             if (!string.IsNullOrEmpty(s))
@@ -172,7 +186,7 @@ namespace R8.Lib
                     }
                     else
                     {
-                        currentWord = str.Substring(startingIndex);
+                        currentWord = str[startingIndex..];
                         canCarryOn = !string.IsNullOrEmpty(currentWord);
                     }
                     if (!canCarryOn)

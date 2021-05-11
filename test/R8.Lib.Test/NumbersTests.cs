@@ -1,9 +1,40 @@
-﻿using Xunit;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using Xunit;
+using Xunit.Abstractions;
 
 namespace R8.Lib.Test
 {
     public class NumbersTests
     {
+        private readonly ITestOutputHelper _outputHelper;
+
+        public NumbersTests(ITestOutputHelper output)
+        {
+            _outputHelper = output;
+        }
+
+        [Fact]
+        public void CallRoundUp()
+        {
+            const double num = 1.78;
+            var act = num.RoundToUp();
+
+            Assert.Equal(2, act);
+        }
+
+        [Fact]
+        public void CallHumanizeTelephoneNumbers()
+        {
+            var list = new List<string>()
+            {
+                "44447832", "44447833"
+            };
+            var act = Numbers.HumanizeTelephoneNumbers(list);
+            Assert.Equal("44447832-3", act.First().Name);
+        }
+
         [Fact]
         public void CallFixCurrency_NullArg()
         {
@@ -72,6 +103,21 @@ namespace R8.Lib.Test
             var final = Numbers.HumanizeCurrency(price);
 
             var expected = "10 هزار";
+
+            // Arrange
+            Assert.Equal(expected, final);
+        }
+
+        [Fact]
+        public void CallCurrencyToWords2()
+        {
+            // Assets
+            var price = "310500";
+
+            // Act
+            var final = Numbers.HumanizeCurrency(price);
+
+            var expected = "310 هزار و 500 ";
 
             // Arrange
             Assert.Equal(expected, final);

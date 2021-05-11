@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+
 using Xunit;
 
 namespace R8.Lib.Test
@@ -16,6 +17,15 @@ namespace R8.Lib.Test
 
             // Assert
             Assert.Equal("thisIsFake", act);
+        }
+
+        [Fact]
+        public void CallGetStringBetween()
+        {
+            const string text = "this Text is [ Fake ] .";
+            var act = text.GetStringBetween('[', ']').Trim();
+
+            Assert.Equal("Fake", act);
         }
 
         [Fact]

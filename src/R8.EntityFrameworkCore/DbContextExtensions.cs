@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-using R8.Lib;
-using R8.Lib.MethodReturn;
 using R8.Lib.Validatable;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -439,7 +438,7 @@ namespace R8.EntityFrameworkCore
             var newList = responses
                 .Cast<IResponseBaseDatabase>()
                 .Where(responseBaseDatabase => responseBaseDatabase.GetType()
-                    .GetPublicProperties()
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .Any(propertyInfo => propertyInfo.Name == nameof(ResponseBase<object, string>.Result) &&
                                          propertyInfo.GetValue(responseBaseDatabase) is IEntityBase))
                 .ToList();
@@ -448,8 +447,8 @@ namespace R8.EntityFrameworkCore
 
             foreach (var value in from response in newList
                                   let prop = response.GetType()
-                                      .GetPublicProperties()
-                                      .Find(propertyInfo => propertyInfo.Name == nameof(ResponseBase<object, string>.Result) &&
+                                      .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                      .FirstOrDefault(propertyInfo => propertyInfo.Name == nameof(ResponseBase<object, string>.Result) &&
                                                             propertyInfo.GetValue(response) is IEntityBase)
                                   select (IEntityBase)prop.GetValue(response)
                 into value

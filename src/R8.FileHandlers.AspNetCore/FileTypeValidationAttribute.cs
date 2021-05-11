@@ -40,11 +40,10 @@ namespace R8.FileHandlers.AspNetCore
                     {
                         if (fileCollection?.Any() == true)
                         {
-                            foreach (var file in fileCollection)
-                            {
-                                var valid = file.TryValidateByExtensions(_extensions.ToArray());
-                                if (valid) finalFiles.Add(file);
-                            }
+                            finalFiles.AddRange(from file in fileCollection
+                                let valid = file.TryValidateByExtensions(true, _extensions.ToArray())
+                                where valid
+                                select file);
                         }
                         break;
                     }
@@ -52,18 +51,17 @@ namespace R8.FileHandlers.AspNetCore
                     {
                         if (files?.Any() == true)
                         {
-                            foreach (var file in files)
-                            {
-                                var valid = file.TryValidateByExtensions(_extensions.ToArray());
-                                if (valid) finalFiles.Add(file);
-                            }
+                            finalFiles.AddRange(from file in files
+                                let valid = file.TryValidateByExtensions(true, _extensions.ToArray())
+                                where valid
+                                select file);
                         }
                         break;
                     }
 
                 case IFormFile file:
                     {
-                        var valid = file.TryValidateByExtensions(_extensions.ToArray());
+                        var valid = file.TryValidateByExtensions(true, _extensions.ToArray());
                         if (valid) finalFiles.Add(file);
                         break;
                     }

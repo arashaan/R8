@@ -118,7 +118,7 @@ namespace R8.EntityFrameworkCore.Test
                 Assert.Equal(DatabaseSaveState.Saved, saveStatus);
                 Assert.Equal("WinDesktop", role.Audits[0].UserAgent);
                 Assert.Equal(HttpExtensions.GetLocalIPAddress(), role.Audits[0].LocalIpAddress);
-                Assert.Equal(HttpExtensions.GetIPAddress(), role.Audits[0].RemoteIpAddress);
+                Assert.Equal(HttpExtensions.GetIPAddressAsync().GetAwaiter().GetResult(), role.Audits[0].RemoteIpAddress);
             }
         }
 
@@ -442,7 +442,7 @@ namespace R8.EntityFrameworkCore.Test
             // Assets
             var creatorGuid = Guid.NewGuid();
             var localIp = HttpExtensions.GetLocalIPAddress();
-            var remoteIp = HttpExtensions.GetIPAddress();
+            var remoteIp = HttpExtensions.GetIPAddressAsync().GetAwaiter().GetResult();
 
             // Act
             await using var dbContext = new FakeDbContext(FakeDbRunner.CreateNewContextOptions());

@@ -115,7 +115,7 @@ namespace R8.FileHandlers.AspNetCore.Test
             var valid = WebFileValidator.TryValidateFile<FakeValidatableFile>(nameof(FakeValidatableFile.Files),
                 files, out var errors);
 
-            Assert.False(valid);
+            Assert.True(valid);
         }
 
         [Fact]

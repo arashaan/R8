@@ -5,6 +5,7 @@ using R8.Lib.Validatable;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace R8.AspNetCore.ClientValidatable
 {
@@ -33,7 +34,9 @@ namespace R8.AspNetCore.ClientValidatable
             var errs = new List<string>();
             foreach (var (name, errors) in collection)
             {
-                var keyProp = modelType.GetPublicProperties().Find(c => c.Name == name);
+                var keyProp = modelType
+                    .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .FirstOrDefault(c => c.Name == name);
                 if (keyProp == null)
                     continue;
 

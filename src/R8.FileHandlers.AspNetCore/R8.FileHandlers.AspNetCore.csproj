@@ -1,50 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
- <PropertyGroup>
-		<Description>Integration for using R8.FileHandlers in AspNetCore</Description>
-		<VersionPrefix>1.11.2</VersionPrefix>
-		<Authors>Arash Shabbeh</Authors>
-		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<AssemblyName>R8.FileHandlers.AspNetCore</AssemblyName>
-		<PackageId>R8.FileHandlers.AspNetCore</PackageId>
-		<PackageTags>GhostScript;SharpZipLib;SixLabors;Humanizer;AspNetCore</PackageTags>
-		<PackageProjectUrl>https://github.com/iamr8/R8</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-		<GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-		<GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<DebugType>embedded</DebugType>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-	</PropertyGroup>
-	<PropertyGroup>
-		<EnsureNETCoreAppRuntime>false</EnsureNETCoreAppRuntime>
-		<LangVersion>8</LangVersion>
-		<AnalysisLevel>latest</AnalysisLevel>
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-		<Deterministic>true</Deterministic>
-		<Features>strict</Features>
-		<ReportAnalyzer>true</ReportAnalyzer>
-	</PropertyGroup>
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="R8.FileHandlers" Version="1.11.2" />
-		<PackageReference Include="R8.Lib" Version="1.11.2" />
-	</ItemGroup>
-	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<PlatformTarget>anycpu</PlatformTarget>
-	</PropertyGroup>
-
+  <PropertyGroup>
+    <Description>Integration for using R8.FileHandlers in AspNetCore</Description>
+    <VersionPrefix>1.11.3</VersionPrefix>
+    <Authors>Arash Shabbeh</Authors>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>R8.FileHandlers.AspNetCore</AssemblyName>
+    <PackageId>R8.FileHandlers.AspNetCore</PackageId>
+    <PackageTags>GhostScript;SharpZipLib;SixLabors;Humanizer;AspNetCore</PackageTags>
+    <PackageProjectUrl>https://github.com/iamr8/R8</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/iamr8/R8</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>embedded</DebugType>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+  <PropertyGroup>
+    <EnsureNETCoreAppRuntime>false</EnsureNETCoreAppRuntime>
+    <LangVersion>8</LangVersion>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <Deterministic>true</Deterministic>
+    <Features>strict</Features>
+    <ReportAnalyzer>true</ReportAnalyzer>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="R8.FileHandlers" Version="1.11.3" />
+    <PackageReference Include="R8.Lib" Version="1.11.4" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>anycpu</PlatformTarget>
+  </PropertyGroup>
 </Project>

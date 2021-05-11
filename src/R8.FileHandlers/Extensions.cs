@@ -2209,27 +2209,21 @@ namespace R8.FileHandlers
         /// <param name="width">Screen's width</param>
         /// <param name="height">Screen's height</param>
         /// <returns>A <see cref="AspectRatio"/> instance representing scale like <example>1:1</example></returns>
-        public static AspectRatio FindAspectRatio(int width, int height)
+        public static AspectRatio GetAspectRatio(int width, int height)
         {
-            if (width < height)
+            static int Calculate(int x, int y)
             {
-                var temp = width;
-                width = height;
-                height = temp;
-            }
-
-            while (true)
-            {
-                var remainder = width % height;
-                if (remainder == 0)
+                while (y != 0)
                 {
-                    var ar = height;
-                    return new AspectRatio(width / ar, height / ar);
+                    var remainder = x % y;
+                    x = y;
+                    y = remainder;
                 }
 
-                width = height;
-                height = remainder;
+                return x;
             }
+
+            return new AspectRatio(width / Calculate(width, height), height / Calculate(width, height));
         }
 
         ///// <summary>
@@ -2297,6 +2291,7 @@ namespace R8.FileHandlers
         /// Represents an truncated filePath
         /// </summary>
         /// <param name="fileName">Original filename</param>
+        /// <param name="length"></param>
         /// <returns>An string like <c>4d2b37e0-1ecd-4cb0-9e37-0ab9... .jpg</c></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static string TruncateFileName(string fileName, int length = 10)
@@ -2339,7 +2334,7 @@ namespace R8.FileHandlers
         /// </summary>
         /// <param name="filePath">An <see cref="string"/> value that representing full file path</param>
         /// <returns>An <see cref="bool"/> value that shows if file is deleted or no</returns>
-        public static bool Delete(string filePath)
+        public static bool TryDeleteFile(string filePath)
         {
             try
             {
@@ -2347,7 +2342,7 @@ namespace R8.FileHandlers
                     return false;
 
                 File.Delete(filePath);
-                return true;
+                return !File.Exists(filePath);
             }
             catch
             {

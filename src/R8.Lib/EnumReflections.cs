@@ -15,83 +15,114 @@ namespace R8.Lib
             if (enumMember == null) throw new ArgumentNullException(nameof(enumMember));
             var enumType = enumMember.GetType();
             var enumName = Enum.GetName(enumType, enumMember);
-            if (enumName == null)
-                return null;
-
             var memberInfos = enumType.GetMember(enumName);
             var memberInfo = memberInfos.Single();
             return memberInfo.GetCustomAttribute<TAttribute>();
         }
 
+        /// <summary>
+        /// Returns a <see cref="Enum"/> based on given string.
+        /// </summary>
+        /// <param name="enumType"></param>
+        /// <param name="value"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
         public static object ToEnum(Type enumType, string value)
         {
+            if (enumType == null) throw new ArgumentNullException(nameof(enumType));
+            if (value == null) throw new ArgumentNullException(nameof(value));
             return Enum.Parse(enumType, value, true);
         }
 
+        /// <summary>
+        /// Returns a <see cref="Enum"/> based on given string.
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="value"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
         public static TEnum ToEnum<TEnum>(this string value) where TEnum : Enum
         {
-            return (TEnum)Enum.Parse(typeof(TEnum), value, true);
+            if (value == null) throw new ArgumentNullException(nameof(value));
+            return (TEnum)ToEnum(typeof(TEnum), value);
         }
 
+        /// <summary>
+        /// Returns <see cref="DescriptionAttribute"/> value from given member.
+        /// </summary>
+        /// <param name="value">An enum member that should be checked for <see cref="DescriptionAttribute"/> value</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="string"/> value.</returns>
         public static string GetDescription(this Enum value)
         {
+            if (value == null) throw new ArgumentNullException(nameof(value));
             return value.GetAttribute<DescriptionAttribute>()?.Description ?? Enum.GetName(value.GetType(), value);
         }
 
+        /// <summary>
+        /// Returns <see cref="DisplayAttribute"/> value from given member.
+        /// </summary>
+        /// <param name="value">An enum member that should be checked for <see cref="DisplayAttribute"/> value</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="string"/> value.</returns>
         public static string GetDisplayName(this Enum value)
         {
+            if (value == null) throw new ArgumentNullException(nameof(value));
             return value.GetAttribute<DisplayAttribute>()?.GetName() ?? Enum.GetName(value.GetType(), value);
         }
 
-        public static string Display(Type enumType, string name)
+        /// <summary>
+        /// Create a <see cref="Dictionary{TKey,TValue}"/> from given enum type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns></returns>
+        public static Dictionary<int, string> ToDictionary(Type type)
         {
-            var result = name;
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (!type.IsEnum)
+                throw new ArgumentException(nameof(type));
 
-            var field = enumType.GetField(name);
-            if (field == null)
-                return result;
-
-            var attribute = field
-              .GetCustomAttributes(inherit: false)
-              .OfType<DisplayAttribute>()
-              .FirstOrDefault();
-
-            if (attribute != null)
-                result = attribute.GetName();
-
-            return result;
+            var values = Enum.GetValues(type).Cast<object>().ToList();
+            return values.Any()
+                ? values.ToDictionary(x => (int)x, x => x.ToString())
+                : new Dictionary<int, string>();
         }
 
-        public static Dictionary<int, string> ToDictionary(Type enumType)
+        /// <summary>
+        /// Creates an array from given <see cref="Enum{T}"/>
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns>An array that contains the elements from the input sequence.</returns>
+        public static int[] ToArray(Type type)
         {
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (!type.IsEnum)
+                throw new ArgumentException(nameof(type));
+
             return Enum
-              .GetValues(enumType)
-              .Cast<object>()
-              .ToDictionary(foo => (int)foo, foo => foo.ToString());
+                .GetValues(type)
+                .Cast<int>()
+                .ToArray();
         }
 
-        public static Dictionary<int, string> ToDictionary<TEnum>() where TEnum : Enum
+        /// <summary>
+        /// Creates a <see cref="List{T}"/> from given <see cref="Enum{T}"/>
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns>A <see cref="List{T}"/> that contains elements from the input sequence.</returns>
+        public static List<int> ToList(Type type)
         {
-            return Enum
-              .GetValues(typeof(TEnum))
-              .Cast<object>()
-              .ToDictionary(x => (int)x, x => x.ToString());
-        }
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (!type.IsEnum)
+                throw new ArgumentException(nameof(type));
 
-        public static List<int> ToList<TEnum>() where TEnum : Enum
-        {
-            return Enum
-              .GetValues(typeof(TEnum))
-              .Cast<int>()
-              .ToList();
-        }
-
-        public static string[] ToArray<TEnum>() where TEnum : Enum
-        {
-            if (!typeof(TEnum).IsEnum)
-                throw new InvalidOperationException();
-
-            return (string[])Enum.GetValues(typeof(TEnum));
+            return ToArray(type).ToList();
         }
     }
 }

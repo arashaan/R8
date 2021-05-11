@@ -18,7 +18,7 @@ namespace R8.Lib
             }
         }
 
-        public static bool TryFromKebabCase(string enumValue, out T en)
+        public static bool TryParseFromKebabCase(string enumValue, out T en)
         {
             en = (T)(object)0;
             if (string.IsNullOrEmpty(enumValue))
@@ -39,7 +39,14 @@ namespace R8.Lib
             }
         }
 
-        public static T FromKebabCase(string enumValue)
+        /// <summary>
+        /// Parses a kebab-case'd parameter to given type of <see cref="Enum"/>.
+        /// </summary>
+        /// <param name="enumValue"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns></returns>
+        public static T? ParseFromKebabCase(string enumValue)
         {
             if (enumValue == null)
                 throw new ArgumentNullException(nameof(enumValue));
@@ -50,17 +57,22 @@ namespace R8.Lib
                 .ToEnum<T>();
         }
 
-        public static string[] ToArray()
+        /// <summary>
+        /// Creates an array from given <see cref="Enum{T}"/>
+        /// </summary>
+        /// <returns>An array that contains the elements from the input sequence.</returns>
+        public static int[] ToArray()
         {
-            return (string[])Enum.GetValues(typeof(T));
+            return EnumReflections.ToArray(typeof(T));
         }
 
+        /// <summary>
+        /// Creates a <see cref="List{T}"/> from given <see cref="Enum{T}"/>
+        /// </summary>
+        /// <returns>A <see cref="List{T}"/> that contains elements from the input sequence.</returns>
         public static List<int> ToList()
         {
-            return Enum
-                .GetValues(typeof(T))
-                .Cast<int>()
-                .ToList();
+            return ToArray().ToList();
         }
 
         public static List<FieldInfo> GetFields()
@@ -72,16 +84,15 @@ namespace R8.Lib
 
         public static Dictionary<int, string> ToDictionary()
         {
-            var values = Enum.GetValues(typeof(T)).Cast<object>().ToList();
-            if (values.Any())
-                return values.ToDictionary(x => (int)x, x => x.ToString());
-
-            return new Dictionary<int, string>();
+            return EnumReflections.ToDictionary(typeof(T));
         }
 
         public static List<T> ToListOrderBy(params T[] array)
         {
-            var result = ToList().OrderByList(x => (T)(object)x, array).Select(x => (T)(object)x).ToList();
+            var result = ToList()
+                .OrderByList(x => (T)(object)x, array)
+                .Select(x => (T)(object)x)
+                .ToList();
             return result;
         }
     }

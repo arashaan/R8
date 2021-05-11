@@ -18,12 +18,6 @@ namespace R8.Lib
             return Convert.ToInt32(Math.Ceiling(num));
         }
 
-        [Obsolete]
-        public static int FixPageNumber(string pageNo)
-        {
-            return string.IsNullOrEmpty(pageNo) ? 1 : int.TryParse(pageNo, out var page) ? page : 1;
-        }
-
         /// <summary>
         /// Returns a humanized currency string.
         /// </summary>
@@ -39,15 +33,33 @@ namespace R8.Lib
                 : text;
         }
 
-        public static Dictionary<string, List<string>> HumanizeTelephoneNumbers(this List<string> list)
+        public class HumanizedTelephoneNumber
         {
-            if (list.Count == 0)
+            public string Name { get; set; }
+            public List<string> Numbers { get; set; }
+
+            public override string ToString()
+            {
+                return Name;
+            }
+        }
+
+        /// <summary>
+        /// Returns a humanized text for a list of telephone numbers.
+        /// </summary>
+        /// <param name="listOfPhoneNumbers"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>For example: 021 44447832 - 021 44447833 => 021 44447832-3</returns>
+        public static IEnumerable<HumanizedTelephoneNumber> HumanizeTelephoneNumbers(List<string> listOfPhoneNumbers)
+        {
+            if (listOfPhoneNumbers == null) throw new ArgumentNullException(nameof(listOfPhoneNumbers));
+            if (listOfPhoneNumbers.Count == 0)
                 return default;
 
-            var result = new Dictionary<string, List<string>>();
+            var result = new List<HumanizedTelephoneNumber>();
             var complexList = new List<List<string>>();
 
-            var phones = list.OrderBy(number => long.Parse(Regex.Replace(number, @"[^\d]", ""))).ToList();
+            var phones = listOfPhoneNumbers.OrderBy(number => long.Parse(Regex.Replace(number, @"[^\d]", ""))).ToList();
             if (phones.Count > 1)
             {
                 var groupedNumbers = new List<string>() { phones[0] };
@@ -110,8 +122,8 @@ namespace R8.Lib
                             else
                             {
                                 var firstPhone =
-                                    phoneGroup[0].Substring(phoneNum);
-                                var currentRemaining = phone.Substring(phoneNum);
+                                    phoneGroup[0][phoneNum..];
+                                var currentRemaining = phone[phoneNum..];
                                 namer +=
                                     $"{firstPhone}-{currentRemaining}";
                                 break;
@@ -122,13 +134,13 @@ namespace R8.Lib
                     }
                 }
 
-                result.Add(groupName, phoneGroup);
+                result.Add(new HumanizedTelephoneNumber() { Name = groupName, Numbers = phoneGroup });
             }
             return result;
         }
 
         /// <summary>
-        ///
+        /// Converts price amount to words.
         /// </summary>
         /// <param name="priceStr"></param>
         /// <param name="zero"></param>
@@ -136,9 +148,12 @@ namespace R8.Lib
         /// <param name="million"></param>
         /// <param name="billion"></param>
         /// <param name="thousandBillion"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
         public static string HumanizeCurrency(string priceStr, string zero = "صفر", string thousand = "هزار", string million = "میلیون", string billion = "میلیارد", string thousandBillion = "هزار میلیارد")
         {
+            if (priceStr == null) throw new ArgumentNullException(nameof(priceStr));
+            priceStr = priceStr.FixUnicodeNumbers();
             var isPrice = ulong.TryParse(priceStr.Replace(",", "").Replace("/", ""), out var price);
             if (!isPrice)
                 return priceStr;

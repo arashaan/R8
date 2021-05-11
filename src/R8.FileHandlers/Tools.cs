@@ -1,4 +1,7 @@
-﻿using SixLabors.ImageSharp;
+﻿using Ghostscript.NET;
+using Ghostscript.NET.Rasterizer;
+
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
@@ -9,36 +12,11 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Ghostscript.NET;
-using Ghostscript.NET.Rasterizer;
 
 namespace R8.FileHandlers
 {
     public static class Tools
     {
-        ///// <summary>
-        ///// Represents an instance of <see cref="Image"/> with stuck watermark on it
-        ///// </summary>
-        ///// <param name="source">Source <see cref="Image"/></param>
-        ///// <param name="watermark">Watermark <see cref="Image"/></param>
-        ///// <returns>Returns an Image with source and watermark on it</returns>
-        ///// <exception cref="ArgumentNullException"></exception>
-        ///// <exception cref="ObjectDisposedException"></exception>
-        //public static Image DrawWatermark(this Image source, Image watermark)
-        //{
-        //    if (source == null)
-        //        throw new ArgumentNullException(nameof(source));
-        //    if (watermark == null)
-        //        throw new ArgumentNullException(nameof(watermark));
-
-        //    using var outputImage = new Image<Rgba32>(source.Width, source.Height);
-        //    outputImage.Mutate(o => o
-        //        .DrawImage(source, 1f)
-        //        .DrawImage(watermark, 1f)
-        //    );
-        //    return outputImage;
-        //}
-
         /// <summary>
         /// Resizes <see cref="Image"/> based on specific width and height.
         /// </summary>
@@ -62,32 +40,11 @@ namespace R8.FileHandlers
             }));
         }
 
-        ///// <summary>
-        ///// Represents comparison between two <see cref="Stream"/>
-        ///// </summary>
-        ///// <returns>An <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
-        ///// <exception cref="ArgumentNullException"></exception>
-        ///// <exception cref="ObjectDisposedException"></exception>
-        //public static async Task<bool> CompareAsync(this Stream stream1, Stream stream2)
-        //{
-        //    if (stream1 == null)
-        //        throw new ArgumentNullException(nameof(stream1));
-        //    if (stream2 == null)
-        //        throw new ArgumentNullException(nameof(stream2));
-
-        //    var comparer = new StreamCompare();
-        //    var areEqual = await comparer
-        //        .AreEqualAsync(stream1, stream2)
-        //        .ConfigureAwait(false);
-
-        //    return areEqual;
-        //}
         /// <summary>
         /// Represents a instance of <see cref="Stream"/> contains PDF Preview
         /// </summary>
         /// <param name="stream">An <see cref="Stream"/> contains PDF data</param>
         /// <param name="ghostScriptPath">An <see cref="string"/> path for <c>gsdll64.dll</c> fill path</param>
-        /// <param name="outputStreamHandler">An <see cref="Action{TResult}"/> to do whatever need to be done when still output stream scope is open.</param>
         /// <param name="jpgQuality">An <see cref="int"/> value that representing Preview image quality for <c>JpegEncoder</c>.</param>
         /// <param name="dpi">An <see cref="int"/> value that representing Pdf thumbnail resolution</param>
         /// <returns>An <see cref="Task"/> representing the asynchronous operation.</returns>

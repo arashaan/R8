@@ -31,7 +31,8 @@ namespace R8.AspNetCore.TagBuilders
 
             var containerType = metadata.ContainerType;
             var propInfo = containerType
-                .GetPublicProperties().Find(x => x.Name.Equals(propName, StringComparison.CurrentCulture));
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .FirstOrDefault(x => x.Name.Equals(propName, StringComparison.CurrentCulture));
 
             var bindPropertyAttribute = propInfo?.GetCustomAttribute<BindPropertyAttribute>();
             if (bindPropertyAttribute == null)

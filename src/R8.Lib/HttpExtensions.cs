@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using R8.Lib.IPProcess;
+
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -8,6 +12,42 @@ namespace R8.Lib
 {
     public static class HttpExtensions
     {
+        /// <summary>
+        /// Returns full information about specific ip address
+        /// </summary>
+        /// <param name="ipAddress">Ip Address that you want to parse</param>
+        /// <returns>A <see cref="Task{TResult}"/> object representing the asynchronous operation.</returns>
+        public static async Task<IPAddressFull> GetIPAddressInformationAsync(this IPAddress ipAddress) =>
+            await GetIPAddressInformationAsync(ipAddress.ToString()).ConfigureAwait(false);
+
+        /// <summary>
+        /// Returns full information about specific ip address
+        /// </summary>
+        /// <param name="ipAddress">Ip Address that you want to parse</param>
+        /// <returns>A <see cref="Task{TResult}"/> object representing the asynchronous operation.</returns>
+        public static async Task<IPAddressFull> GetIPAddressInformationAsync(string ipAddress)
+        {
+            using var clientHandler = new HttpClientHandler();
+
+            HttpContent? httpContent;
+            try
+            {
+                httpContent = await clientHandler.GetAsync($"http://free.ipwhois.io/json/{ipAddress}").ConfigureAwait(false);
+            }
+            catch
+            {
+                return null;
+            }
+
+            if (httpContent == null)
+                return null;
+
+            var json = await httpContent.ReadAsStringAsync().ConfigureAwait(false);
+            var jsonObj = JsonConvert.DeserializeObject<IPAddressFull>(json);
+            clientHandler.Dispose();
+            return jsonObj;
+        }
+
         /// <summary>
         /// Request a POST method
         /// </summary>
@@ -26,15 +66,29 @@ namespace R8.Lib
         }
 
         /// <summary>
+        /// Pings a website to determine if internet is connected.
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        public static async Task<EndPoint> IsInternetConnectedAsync(string host = "8.8.8.8", int port = 65530)
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
+            await socket.ConnectAsync(host, port);
+            var localEndPoint = socket.LocalEndPoint;
+            socket.Close();
+            return localEndPoint;
+        }
+
+        /// <summary>
         /// Retrieves <see cref="IPAddress"/> from according to current system network adapters.
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="IPAddress"/> object.</returns>
-        public static IPAddress GetIPAddress()
+        public static async Task<IPAddress> GetIPAddressAsync()
         {
-            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0);
-            socket.Connect("8.8.8.8", 65530);
-            if (!(socket.LocalEndPoint is IPEndPoint endPoint))
+            var endpoint = await IsInternetConnectedAsync();
+            if (!(endpoint is IPEndPoint endPoint))
                 return null;
 
             var localIp = endPoint.Address.ToString();

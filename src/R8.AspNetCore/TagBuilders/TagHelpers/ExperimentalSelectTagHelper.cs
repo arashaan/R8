@@ -1,13 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+
 using R8.AspNetCore.Attributes;
-using R8.Lib;
 using R8.Lib.Localization;
+
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
@@ -28,7 +29,8 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
 
             var containerType = metadata.ContainerType;
             var propInfo = containerType
-              .GetPublicProperties().Find(x => x.Name.Equals(propName, StringComparison.CurrentCulture));
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .FirstOrDefault(x => x.Name.Equals(propName, StringComparison.CurrentCulture));
 
             metadata.ApplyNewBindProperty(ref output);
             var filterAttribute = propInfo.GetCustomAttribute<FilterAttribute>();

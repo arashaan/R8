@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -59,18 +59,13 @@ namespace R8.Lib
             if (!interfaces.Any())
                 return null;
 
-            foreach (var @interface in interfaces)
-            {
-                var hasGeneric = @interface.IsGenericType && @interface.GetGenericTypeDefinition() == genericType;
-                if (!hasGeneric)
-                    continue;
-
-                var genericTypes = @interface.GetGenericArguments();
-                if (genericTypes.Any())
-                    return genericTypes[0];
-            }
-
-            return null;
+            return (from @interface in interfaces
+                    let hasGeneric = @interface.IsGenericType && @interface.GetGenericTypeDefinition() == genericType
+                    where hasGeneric
+                    select @interface.GetGenericArguments()
+                into genericTypes
+                    where genericTypes.Any()
+                    select genericTypes[0]).FirstOrDefault();
         }
 
         /// <summary>
@@ -272,6 +267,7 @@ namespace R8.Lib
         /// </summary>
         /// <typeparam name="TModel">A generic type for source.</typeparam>
         /// <param name="source">An object to get properties list.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="Dictionary{TKey,TValue}"/> object</returns>
         public static Dictionary<string, object> ToDictionary<TModel>(this TModel source) where TModel : class
         {
@@ -279,7 +275,7 @@ namespace R8.Lib
                 throw new ArgumentNullException(nameof(source));
 
             var dictionary = new Dictionary<string, object>();
-            foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(source))
+            foreach (var property in source.GetType().GetProperties())
             {
                 var value = property.GetValue(source);
                 if (value is DateTime)
@@ -295,22 +291,29 @@ namespace R8.Lib
         /// </summary>
         /// <typeparam name="T">A generic type</typeparam>
         /// <param name="expression">An <see cref="Expression{TDelegate}"/> that need to be checked for member name.</param>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidExpressionException"></exception>
         /// <returns>A <see cref="string"/> value</returns>
-        public static string GetMemberName<T>(this Expression<T> expression) => expression.Body switch
+        public static string GetMemberName<T>(this Expression<T> expression)
         {
-            MemberExpression m => m.Member.Name,
-            UnaryExpression u when u.Operand is MemberExpression m => m.Member.Name,
-            _ => throw new NotImplementedException(expression.GetType().ToString())
-        };
+            if (expression == null) throw new ArgumentNullException(nameof(expression));
+            return expression.Body switch
+            {
+                MemberExpression m => m.Member.Name,
+                UnaryExpression { Operand: MemberExpression m } => m.Member.Name,
+                _ => throw new InvalidExpressionException(expression.GetType().ToString())
+            };
+        }
 
         /// <summary>
         /// Returns list of <see cref="Type"/> from given type to the first abstract type.
         /// </summary>
         /// <param name="type">A <see cref="Type"/> that should be checked for chain root.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="List{T}"/> object.</returns>
         public static List<Type> GetTypesToRoot(this Type type)
         {
+            if (type == null) throw new ArgumentNullException(nameof(type));
             var nestedTypes = new List<Type>();
             var found = false;
             do
@@ -323,16 +326,6 @@ namespace R8.Lib
                 type = type.BaseType;
             } while (!found);
             return nestedTypes;
-        }
-
-        /// <summary>
-        /// Returns a list of public <see cref="PropertyInfo"/> from given model type.
-        /// </summary>
-        /// <param name="modelType">A <see cref="Type"/> that need to be checked for properties</param>
-        /// <returns>An <see cref="List{T}"/> object</returns>
-        public static List<PropertyInfo> GetPublicProperties(this Type modelType)
-        {
-            return modelType.GetProperties(BindingFlags.Instance | BindingFlags.Public).ToList();
         }
 
         /// <summary>
@@ -366,20 +359,16 @@ namespace R8.Lib
         /// </summary>
         /// <param name="type">A <see cref="Type"/> that need to be checked to find base type.</param>
         /// <param name="baseType">A <see cref="Type"/> that expect to being found as base type.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="bool"/> value.</returns>
         public static bool HasBaseType(this Type type, Type baseType)
         {
-            try
-            {
-                if (type != baseType)
-                    return type.BaseType == baseType || HasBaseType(type.BaseType, baseType);
+            if (type == null) throw new ArgumentNullException(nameof(type));
+            if (baseType == null) throw new ArgumentNullException(nameof(baseType));
+            var rootTypes = type.GetTypesToRoot();
 
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            var hasBaseType = rootTypes.Any(x => x == baseType);
+            return hasBaseType;
         }
 
         /// <summary>
@@ -387,13 +376,12 @@ namespace R8.Lib
         /// </summary>
         /// <typeparam name="TMember">Type of given member.</typeparam>
         /// <param name="member">A generic object that should be checked for <see cref="DisplayAttribute"/> value</param>
+        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="string"/> value.</returns>
         public static string GetDisplayName<TMember>(this TMember member) where TMember : MemberInfo
         {
-            var display = member.GetCustomAttribute<DisplayAttribute>();
-            return display != null
-              ? display.GetName()
-              : member.Name;
+            if (member == null) throw new ArgumentNullException(nameof(member));
+            return member.GetCustomAttribute<DisplayAttribute>()?.GetName() ?? member.Name;
         }
 
         private static List<ExpressionArgument> GetArguments(this Expression expression, List<ExpressionArgument> currentList)
@@ -456,6 +444,7 @@ namespace R8.Lib
                     output = (LambdaExpression)unary.Operand;
                     return true;
 
+                case null:
                 default:
                     output = null;
                     return false;

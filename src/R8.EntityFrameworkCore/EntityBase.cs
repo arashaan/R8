@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using Newtonsoft.Json;
 
-using R8.Lib;
 using R8.Lib.Validatable;
 
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 
 namespace R8.EntityFrameworkCore
 {
@@ -40,7 +40,10 @@ namespace R8.EntityFrameworkCore
             if (errors?.Any() != true)
                 return errors?.Count == 0;
 
-            var ignoredNames = this.GetType().GetPublicProperties().ConvertAll(x => x.Name);
+            var ignoredNames = this.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .ToList()
+                .ConvertAll(x => x.Name);
             var ignored = errors.Where(x => ignoredNames.Contains(x.Name)).ToList();
             if (!ignored.Any())
                 return errors?.Count == 0;

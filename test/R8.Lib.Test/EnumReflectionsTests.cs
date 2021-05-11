@@ -1,4 +1,5 @@
-﻿using R8.Lib.Test.Enums;
+﻿using R8.Lib.Attributes;
+using R8.Lib.Test.Enums;
 
 using Xunit;
 
@@ -6,18 +7,18 @@ namespace R8.Lib.Test
 {
     public class EnumReflectionsTests
     {
-        //[Fact]
-        //public void CallFromKebabCaseToEnum()
-        //{
-        //    // Arrange
-        //    const string str = "project-owner";
+        [Fact]
+        public void CallGetAttribute()
+        {
+            // Arrange
+            const Flags @enum = Flags.Success;
 
-        //    // Act
-        //    var act = str.FromKebabCaseToEnum<Roles>();
+            // Act
+            var act = @enum.GetAttribute<FlagShowAttribute>();
 
-        //    // Assert
-        //    Assert.Equal(Roles.Operator, act);
-        //}
+            // Assert
+            Assert.NotNull(act);
+        }
 
         [Fact]
         public void CallToEnum_Lowercase()
