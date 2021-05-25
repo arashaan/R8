@@ -15,7 +15,7 @@ namespace R8.Lib
         /// <param name="stream"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns></returns>
-        public static async Task<T> ReadAsObjectAsync<T>(this Stream stream) where T : class
+        public static async Task<T> ReadAsDeserializedObjectAsync<T>(this Stream stream) where T : class
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
