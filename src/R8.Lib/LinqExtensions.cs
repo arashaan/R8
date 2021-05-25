@@ -6,6 +6,16 @@ namespace R8.Lib
 {
     public static class LinqExtensions
     {
+        /// <summary>
+        /// Reports specified index of given value in string.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="value"></param>
+        /// <param name="nth"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns></returns>
         public static int FindByIndex(this string str, string value, int nth = 1)
         {
             if (str == null)
@@ -13,7 +23,7 @@ namespace R8.Lib
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
             if (nth <= 0)
-                throw new ArgumentException("Can not find the 0th index of substring in string. Must start with 1");
+                throw new ArgumentOutOfRangeException(nameof(nth), "Can not find the 0th index of substring in string. Must start with 1");
 
             var offset = str.IndexOf(value, StringComparison.Ordinal);
             for (var i = 1; i < nth; i++)
@@ -25,6 +35,17 @@ namespace R8.Lib
             return offset;
         }
 
+        /// <summary>
+        /// Sorts the elements of a sequence in ascending order according to a key, with priority of given list.
+        /// </summary>
+        /// <typeparam name="TSource"></typeparam>
+        /// <typeparam name="TKey"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="keySelector"></param>
+        /// <param name="orderList"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns></returns>
         public static IOrderedEnumerable<TSource> OrderByList<TSource, TKey>(this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector, params TKey[] orderList)
         {
@@ -42,6 +63,14 @@ namespace R8.Lib
             return orderedTestsSafe;
         }
 
+        /// <summary>
+        /// Reports index of given predicate in a collection.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="items"></param>
+        /// <param name="predicate"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
         public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
         {
             if (items == null)
@@ -65,7 +94,7 @@ namespace R8.Lib
         /// <param name="first">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> whose elements that are not also in <paramref name="second" /> will be returned.</param>
         /// <param name="second">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> whose elements that also occur in the first sequence will cause those elements to be removed from the returned sequence.</param>
         /// <typeparam name="TSource">The type of the elements of the input sequences.</typeparam>
-        /// <exception cref="T:System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         /// <paramref name="first" /> or <paramref name="second" /> is null.</exception>
         public static IEnumerable<TSource> Except<TSource>(this IEnumerable<TSource> first, TSource second)
         {
@@ -79,8 +108,8 @@ namespace R8.Lib
         /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
         /// <param name="source">An IEnumerable collection values to determine the element with the maximum value of.</param>
         /// <param name="keySelector">A function to extract the key for each element.</param>
-        /// <exception cref="System.ArgumentNullException">source or keySelector is null.</exception>
-        /// <exception cref="System.InvalidOperationException">source contains no elements.</exception>
+        /// <exception cref="ArgumentNullException">source or keySelector is null.</exception>
+        /// <exception cref="InvalidOperationException">source contains no elements.</exception>
         /// <returns>The element in source with the maximum value of a selector function.</returns>
         public static TSource MaxBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector) => MaxOrMinBy(source, keySelector, 1);
 
@@ -91,8 +120,8 @@ namespace R8.Lib
         /// <typeparam name="TKey">The type of the key returned by keySelector.</typeparam>
         /// <param name="source">An IEnumerable collection values to determine the element with the minimum value of.</param>
         /// <param name="keySelector">A function to extract the key for each element.</param>
-        /// <exception cref="System.ArgumentNullException">source or keySelector is null.</exception>
-        /// <exception cref="System.InvalidOperationException">source contains no elements.</exception>
+        /// <exception cref="ArgumentNullException">source or keySelector is null.</exception>
+        /// <exception cref="InvalidOperationException">source contains no elements.</exception>
         /// <returns>The element in source with the minimum value of a selector function.</returns>
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector) => MaxOrMinBy(source, keySelector, -1);
 
