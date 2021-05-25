@@ -206,7 +206,6 @@ namespace R8.AspNetCore3_1.Demo
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
-            ServiceActivator.Configure(app.ApplicationServices);
 
             app.UseLocalizer();
             app.UseResponse();

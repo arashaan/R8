@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
-using R8.Lib;
 using R8.Lib.Paginator;
 using R8.Lib.Search;
 
@@ -235,7 +234,7 @@ namespace R8.EntityFrameworkCore
             if (rowCount <= 0)
                 return output;
 
-            var pageCount = ((double)rowCount / pageSize).RoundToUp();
+            var pageCount = Math.Ceiling((double)rowCount / pageSize);
             if (page > pageCount)
                 page = 1;
 
@@ -260,8 +259,8 @@ namespace R8.EntityFrameworkCore
                     .ConfigureAwait(false);
             }
 
-            var pages = ((double)rowCount / pageSize).RoundToUp();
-            return new Pagination<TSource>(models, page, pages, rowCount);
+            var pages = Math.Ceiling((double)rowCount / pageSize);
+            return new Pagination<TSource>(models, page, Convert.ToInt32(pages), rowCount);
         }
 
         public static Task<Pagination<TResult>> ToPaginatedListAsync<TSource, TResult>(
@@ -313,7 +312,7 @@ namespace R8.EntityFrameworkCore
             if (rowCount <= 0)
                 return output;
 
-            var pageCount = ((double)rowCount / pageSize).RoundToUp();
+            var pageCount = Math.Ceiling((double)rowCount / pageSize);
             if (page > pageCount)
                 page = 1;
 
@@ -331,8 +330,8 @@ namespace R8.EntityFrameworkCore
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            var pages = ((double)rowCount / pageSize).RoundToUp();
-            output = new Pagination<TResult>(models, page, pages, rowCount);
+            var pages = Math.Ceiling((double)rowCount / pageSize);
+            output = new Pagination<TResult>(models, page, Convert.ToInt32(pages), rowCount);
             return output;
         }
 
