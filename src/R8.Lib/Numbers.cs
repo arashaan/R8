@@ -7,31 +7,31 @@ namespace R8.Lib
 {
     public static class Numbers
     {
-        /// <summary>
-        /// Returns an rounded number
-        /// </summary>
-        /// <param name="num">An <see cref="double"/> number to being rounded</param>
-        /// <returns>An <see cref="double"/> rounded number</returns>
-        /// <exception cref="OverflowException"></exception>
-        public static int RoundToUp(this double num)
-        {
-            return Convert.ToInt32(Math.Ceiling(num));
-        }
+        ///// <summary>
+        ///// Returns an rounded number
+        ///// </summary>
+        ///// <param name="num">An <see cref="double"/> number to being rounded</param>
+        ///// <returns>An <see cref="double"/> rounded number</returns>
+        ///// <exception cref="OverflowException"></exception>
+        //public static int RoundToUp(this double num)
+        //{
+        //    return Convert.ToInt32(Math.Ceiling(num));
+        //}
 
-        /// <summary>
-        /// Returns a humanized currency string.
-        /// </summary>
-        /// <param name="text">An <see cref="string"/> value that contains string currency</param>
-        /// <returns>An <see cref="string"/> value</returns>
-        public static string HumanizeCurrencyTo3Numbers(string text)
-        {
-            if (string.IsNullOrEmpty(text))
-                return default;
+        ///// <summary>
+        ///// Returns a humanized currency string.
+        ///// </summary>
+        ///// <param name="text">An <see cref="string"/> value that contains string currency</param>
+        ///// <returns>An <see cref="string"/> value</returns>
+        //public static string HumanizeCurrencyTo3Numbers(string text)
+        //{
+        //    if (string.IsNullOrEmpty(text))
+        //        return default;
 
-            return decimal.TryParse(text, out var currency)
-                ? $"{currency:#,###}"
-                : text;
-        }
+        //    return decimal.TryParse(text, out var currency)
+        //        ? $"{currency:#,###}"
+        //        : text;
+        //}
 
         public class HumanizedTelephoneNumber
         {
@@ -63,9 +63,7 @@ namespace R8.Lib
             if (phones.Count > 1)
             {
                 var groupedNumbers = new List<string>() { phones[0] };
-
                 var formerNumber = string.Empty;
-                var currentNumber = string.Empty;
 
                 do
                 {
@@ -73,7 +71,7 @@ namespace R8.Lib
                         formerNumber = phones[0];
                     var formerSanitized = long.Parse(Regex.Replace(formerNumber, @"[^\d]", ""));
 
-                    currentNumber = phones.Count != 1 ? phones[1] : phones[0];
+                    var currentNumber = phones.Count != 1 ? phones[1] : phones[0];
                     var currentSanitized = long.Parse(Regex.Replace(currentNumber, @"[^\d]", ""));
 
                     if (currentSanitized == (formerSanitized + 1))
