@@ -76,16 +76,6 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallEnumGetFields()
-        {
-            var arrange = Enum<Flags>.GetFields();
-
-            Assert.NotNull(arrange);
-            Assert.NotEmpty(arrange);
-            Assert.Equal("Failed", arrange.First().Name);
-        }
-
-        [Fact]
         public void CallEnumCount()
         {
             var arrange = Enum<Flags>.Count;

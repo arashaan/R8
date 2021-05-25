@@ -16,15 +16,6 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public void CallRoundUp()
-        {
-            const double num = 1.78;
-            var act = num.RoundToUp();
-
-            Assert.Equal(2, act);
-        }
-
-        [Fact]
         public void CallHumanizeTelephoneNumbers()
         {
             var list = new List<string>()
@@ -35,35 +26,35 @@ namespace R8.Lib.Test
             Assert.Equal("44447832-3", act.First().Name);
         }
 
-        [Fact]
-        public void CallFixCurrency_NullArg()
-        {
-            // Assets
-            var price = "";
+        //[Fact]
+        //public void CallFixCurrency_NullArg()
+        //{
+        //    // Assets
+        //    var price = "";
 
-            // Act
-            var final = Numbers.HumanizeCurrencyTo3Numbers(price);
+        //    // Act
+        //    var final = Numbers.HumanizeCurrencyTo3Numbers(price);
 
-            var expected = (string)null;
+        //    var expected = (string)null;
 
-            // Arrange
-            Assert.Equal(expected, final);
-        }
+        //    // Arrange
+        //    Assert.Equal(expected, final);
+        //}
 
-        [Fact]
-        public void CallFixCurrency()
-        {
-            // Assets
-            var price = "10000";
+        //[Fact]
+        //public void CallFixCurrency()
+        //{
+        //    // Assets
+        //    var price = "10000";
 
-            // Act
-            var final = Numbers.HumanizeCurrencyTo3Numbers(price);
+        //    // Act
+        //    var final = Numbers.HumanizeCurrencyTo3Numbers(price);
 
-            var expected = "10,000";
+        //    var expected = "10,000";
 
-            // Arrange
-            Assert.Equal(expected, final);
-        }
+        //    // Arrange
+        //    Assert.Equal(expected, final);
+        //}
 
         [Fact]
         public void CallCurrencyToWords_NonPrice()

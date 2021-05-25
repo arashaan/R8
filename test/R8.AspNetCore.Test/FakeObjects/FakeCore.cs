@@ -1,17 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
-using MimeKit;
-
 using Moq;
+
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace R8.AspNetCore.Test.FakeObjects
 {
