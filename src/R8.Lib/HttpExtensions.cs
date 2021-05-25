@@ -24,45 +24,20 @@ namespace R8.Lib
         /// Returns full information about specific ip address
         /// </summary>
         /// <param name="ipAddress">Ip Address that you want to parse</param>
+        /// <exception cref="HttpRequestException"></exception>
         /// <returns>A <see cref="Task{TResult}"/> object representing the asynchronous operation.</returns>
         public static async Task<IPAddressFull> GetIPAddressInformationAsync(string ipAddress)
         {
+            var url = $"http://free.ipwhois.io/json/{ipAddress}";
             using var clientHandler = new HttpClientHandler();
-
-            HttpContent? httpContent;
-            try
-            {
-                httpContent = await clientHandler.GetAsync($"http://free.ipwhois.io/json/{ipAddress}").ConfigureAwait(false);
-            }
-            catch
-            {
-                return null;
-            }
-
-            if (httpContent == null)
+            using var client = new HttpClient(clientHandler);
+            var responseMessage = await client.GetAsync(url).ConfigureAwait(false);
+            if (!responseMessage.IsSuccessStatusCode)
                 return null;
 
-            var json = await httpContent.ReadAsStringAsync().ConfigureAwait(false);
+            var json = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var jsonObj = JsonConvert.DeserializeObject<IPAddressFull>(json);
-            clientHandler.Dispose();
             return jsonObj;
-        }
-
-        /// <summary>
-        /// Request a POST method
-        /// </summary>
-        /// <param name="clientHandler">An <see cref="HttpClientHandler"/> </param>
-        /// <param name="url">Url to send request</param>
-        /// <param name="content">Payload content to send</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>An <see cref="string"/> response content</returns>
-        public static async Task<HttpContent?> PostAsync(this HttpClientHandler clientHandler, string url, HttpContent content)
-        {
-            var client = new HttpClient(clientHandler);
-            var responseMessage = await client.PostAsync(url, content).ConfigureAwait(false);
-            return !responseMessage.IsSuccessStatusCode
-                ? null
-                : responseMessage.Content;
         }
 
         /// <summary>
@@ -100,7 +75,6 @@ namespace R8.Lib
         /// <summary>
         /// Retrieves <see cref="IPAddress"/> from according to current system network adapters.
         /// </summary>
-        /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="IPAddress"/> object.</returns>
         public static IPAddress GetLocalIPAddress()
         {
@@ -110,22 +84,6 @@ namespace R8.Lib
                     return ip;
 
             return IPAddress.None;
-        }
-
-        /// <summary>
-        /// Request a GET method
-        /// </summary>
-        /// <param name="clientHandler">An <see cref="HttpClientHandler"/> </param>
-        /// <param name="url">Url to send request</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns>An <see cref="string"/> response content</returns>
-        public static async Task<HttpContent?> GetAsync(this HttpClientHandler clientHandler, string url)
-        {
-            var client = new HttpClient(clientHandler);
-            var responseMessage = await client.GetAsync(url).ConfigureAwait(false);
-            return !responseMessage.IsSuccessStatusCode
-                ? null
-                : responseMessage.Content;
         }
     }
 }
