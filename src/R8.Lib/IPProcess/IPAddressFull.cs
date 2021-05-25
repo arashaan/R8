@@ -30,11 +30,9 @@ namespace R8.Lib.IPProcess
             IPAddress = IPAddress.Parse(ip);
 
             var ipCurrency = new IPCountryCurrency(currency, currencyCode, currencySymbol, currencyRates, currencyPlural);
-            IPCoordinates coordinates = null;
-            if (latitude != null && longitude != null)
-                coordinates = new IPCoordinates(latitude.Value, longitude.Value);
 
-            Isp = new ISPFull(asn, isp);
+            ISPAsn = asn;
+            ISPName = isp;
             Country = country;
             Code = int.TryParse(countryCode, out var countryCodeInt) ? countryCodeInt : (int?)null;
             Flag = countryFlag;
@@ -45,7 +43,9 @@ namespace R8.Lib.IPProcess
             City = city;
             TimeZone = Dates.GetNodaTimeZone(timezone, false);
             Currency = ipCurrency;
-            Coordinates = coordinates;
+
+            if (latitude != null && longitude != null)
+                Coordinates = new[] { latitude.Value, longitude.Value };
             Continent = continent;
         }
 
@@ -55,13 +55,18 @@ namespace R8.Lib.IPProcess
         [JsonIgnore]
         public IPAddress IPAddress { get; }
 
-        public ISPFull Isp { get; }
+        public string ISPAsn { get; }
+        public string ISPName { get; }
 
         public string Flag { get; }
         public string Continent { get; }
         public string Capital { get; }
         public string Country { get; }
-        public IPCoordinates Coordinates { get; }
+
+        /// <summary>
+        /// Gets coordinates of server by the following order <c>latitude, longitude</c>
+        /// </summary>
+        public double[] Coordinates { get; }
 
         public int? Code { get; }
         public string CountryPhoneCode { get; }
@@ -88,11 +93,12 @@ namespace R8.Lib.IPProcess
                 throw new NullReferenceException($"{Flag} expected to filled with flag icon url.");
 
             using var clientHandler = new HttpClientHandler();
-            var responseMessage = await clientHandler.GetAsync(Flag).ConfigureAwait(false);
-            if (responseMessage == null)
+            using var client = new HttpClient(clientHandler);
+            var responseMessage = await client.GetAsync(Flag).ConfigureAwait(false);
+            if (!responseMessage.IsSuccessStatusCode)
                 return null;
 
-            return await responseMessage.ReadAsStreamAsync().ConfigureAwait(false);
+            return await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false);
         }
 
         public override string ToString()

@@ -25,12 +25,11 @@ namespace R8.Lib.Test
 
             // Acts
             var ip = await ipAddress.GetIPAddressInformationAsync().ConfigureAwait(false);
-            await ip.Isp.GetInformationAsync().ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(ip);
-            Assert.NotNull(ip.Isp.Name);
-            Assert.StartsWith("Mobin Net", ip.Isp.Name);
+            Assert.NotNull(ip.ISPName);
+            Assert.StartsWith("MCI", ip.ISPName);
         }
 
         [Fact]
