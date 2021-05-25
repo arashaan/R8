@@ -15,16 +15,17 @@ namespace R8.AspNetCore
         /// <param name="claimsIdentity"></param>
         /// <param name="key"></param>
         /// <param name="expiryDateTime"></param>
+        /// <param name="securityToken"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="SecurityTokenEncryptionFailedException"></exception>
         /// <returns>A token.</returns>
-        public static string GenerateAccessToken(this ClaimsIdentity claimsIdentity, byte[] key, DateTime expiryDateTime)
+        public static string GenerateAccessToken(this ClaimsIdentity claimsIdentity, byte[] key, DateTime expiryDateTime, out JwtSecurityToken securityToken)
         {
             if (claimsIdentity == null) throw new ArgumentNullException(nameof(claimsIdentity));
             if (key == null) throw new ArgumentNullException(nameof(key));
 
-            var securityToken = new JwtSecurityToken(
+            securityToken = new JwtSecurityToken(
                 claims: claimsIdentity.Claims,
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature),
