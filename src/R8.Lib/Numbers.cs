@@ -7,32 +7,6 @@ namespace R8.Lib
 {
     public static class Numbers
     {
-        ///// <summary>
-        ///// Returns an rounded number
-        ///// </summary>
-        ///// <param name="num">An <see cref="double"/> number to being rounded</param>
-        ///// <returns>An <see cref="double"/> rounded number</returns>
-        ///// <exception cref="OverflowException"></exception>
-        //public static int RoundToUp(this double num)
-        //{
-        //    return Convert.ToInt32(Math.Ceiling(num));
-        //}
-
-        ///// <summary>
-        ///// Returns a humanized currency string.
-        ///// </summary>
-        ///// <param name="text">An <see cref="string"/> value that contains string currency</param>
-        ///// <returns>An <see cref="string"/> value</returns>
-        //public static string HumanizeCurrencyTo3Numbers(string text)
-        //{
-        //    if (string.IsNullOrEmpty(text))
-        //        return default;
-
-        //    return decimal.TryParse(text, out var currency)
-        //        ? $"{currency:#,###}"
-        //        : text;
-        //}
-
         public class HumanizedTelephoneNumber
         {
             public string Name { get; set; }
@@ -59,7 +33,7 @@ namespace R8.Lib
             var result = new List<HumanizedTelephoneNumber>();
             var complexList = new List<List<string>>();
 
-            var phones = listOfPhoneNumbers.OrderBy(number => long.Parse(Regex.Replace(number, @"[^\d]", ""))).ToList();
+            var phones = Enumerable.OrderBy(listOfPhoneNumbers, number => long.Parse(Regex.Replace(number, @"[^\d]", ""))).ToList();
             if (phones.Count > 1)
             {
                 var groupedNumbers = new List<string>() { phones[0] };

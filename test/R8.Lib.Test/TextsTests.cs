@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 
 using Xunit;
 
@@ -6,6 +7,38 @@ namespace R8.Lib.Test
 {
     public class TextsTests
     {
+        [Fact]
+        public void CallFindByIndex()
+        {
+            const string text = "Can not 0 find the 0th index";
+
+            var index = text.FindByIndex("0", 1);
+
+            Assert.NotEqual(-1, index);
+            Assert.InRange(index, 0, 999);
+            Assert.Equal(text.IndexOf("find the ") + "find the ".Length, index);
+        }
+
+        [Fact]
+        public void CallToShort()
+        {
+            var guid = Guid.Parse("a9930e3e-aaa0-4d9a-bfe0-b37c1d35562b");
+
+            var @short = guid.ToShort();
+
+            Assert.Equal("Pg6TqaCqmk2", @short);
+        }
+
+        [Fact]
+        public void CallReplace()
+        {
+            const string text = "Can not find the 0th index";
+
+            var replaces = text.Replace("_", " ", "the");
+
+            Assert.Equal("Can_not_find___0th_index", replaces);
+        }
+
         [Fact]
         public void CallToCamelCase()
         {

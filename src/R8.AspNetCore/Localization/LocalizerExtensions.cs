@@ -99,7 +99,7 @@ namespace R8.AspNetCore.Localization
         /// <remarks>If <c>culture</c> be null then it mean <c>CultureInfo.CurrentCulture.</c></remarks>
         public static HtmlString GetHtmlString(this LocalizerContainer container, CultureInfo culture = null)
         {
-            if (container == null) 
+            if (container == null)
                 throw new ArgumentNullException(nameof(container));
 
             var text = container.Get(culture ?? CultureInfo.CurrentCulture, false);

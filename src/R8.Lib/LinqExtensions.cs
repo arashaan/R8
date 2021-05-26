@@ -7,59 +7,35 @@ namespace R8.Lib
     public static class LinqExtensions
     {
         /// <summary>
-        /// Reports specified index of given value in string.
-        /// </summary>
-        /// <param name="str"></param>
-        /// <param name="value"></param>
-        /// <param name="nth"></param>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <returns></returns>
-        public static int FindByIndex(this string str, string value, int nth = 1)
-        {
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-            if (nth <= 0)
-                throw new ArgumentOutOfRangeException(nameof(nth), "Can not find the 0th index of substring in string. Must start with 1");
-
-            var offset = str.IndexOf(value, StringComparison.Ordinal);
-            for (var i = 1; i < nth; i++)
-            {
-                if (offset == -1)
-                    return -1;
-                offset = str.IndexOf(value, offset + 1, StringComparison.Ordinal);
-            }
-            return offset;
-        }
-
-        /// <summary>
-        /// Sorts the elements of a sequence in ascending order according to a key, with priority of given list.
+        /// Sorts the elements of a sequence in ascending order according to a key, with given priority.
         /// </summary>
         /// <typeparam name="TSource"></typeparam>
         /// <typeparam name="TKey"></typeparam>
         /// <param name="source"></param>
         /// <param name="keySelector"></param>
-        /// <param name="orderList"></param>
+        /// <param name="priorities"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <returns></returns>
-        public static IOrderedEnumerable<TSource> OrderByList<TSource, TKey>(this IEnumerable<TSource> source,
-            Func<TSource, TKey> keySelector, params TKey[] orderList)
+        public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, params TKey[] priorities)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
 
-            var indexedList = Enumerable.Range(0, orderList.Length).ToDictionary(r => orderList[r], r => r);
-            var orderedTestsSafe = source.OrderBy(item =>
-            {
-                var foundIndex = indexedList.TryGetValue(keySelector.Invoke(item), out var index);
-                return foundIndex
-                    ? index
-                    : int.MaxValue;
-            });
+            if (priorities == null || !priorities.Any())
+                return Enumerable.OrderBy(source, keySelector);
+
+            var indexedList = Enumerable
+                .Range(0, priorities.Length)
+                .ToDictionary(r => priorities[r], r => r);
+            var orderedTestsSafe = Enumerable.OrderBy(source, item =>
+           {
+               var foundIndex = indexedList.TryGetValue(keySelector.Invoke(item), out var index);
+               return foundIndex
+                   ? index
+                   : int.MaxValue;
+           });
             return orderedTestsSafe;
         }
 

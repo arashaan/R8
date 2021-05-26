@@ -4,9 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Query;
+
+using R8.Lib;
 
 using System;
-using System.Reflection;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace R8.EntityFrameworkCore
 {
@@ -22,6 +28,59 @@ namespace R8.EntityFrameworkCore
         {
             if (entry == null) throw new ArgumentNullException(nameof(entry));
             return entry.Context.GetTableName(entry.Entity.GetType());
+        }
+
+        /// <summary>
+        /// Returns arguments used in an chained queryable.
+        /// </summary>
+        /// <param name="queryable">Expression you want to decompile</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="List{T}"/> object</returns>
+        public static IEnumerable<Expression> GetExpressionTree(this IQueryable queryable)
+        {
+            if (queryable == null)
+                throw new ArgumentNullException(nameof(queryable));
+
+            var tempExpression = queryable.Expression;
+            var result = new List<Expression>();
+            while (tempExpression != null)
+            {
+                if (!(tempExpression is MethodCallExpression methodCall) ||
+                    tempExpression.NodeType != ExpressionType.Call)
+                {
+                    if (tempExpression is QueryRootExpression queryExpression)
+                    {
+                        result.Add(queryExpression);
+                        tempExpression = null;
+                    }
+
+                    break;
+                }
+
+                var arguments = methodCall.Arguments;
+                // var name = methodCall.Method.Name; // for development
+                //
+                if (arguments.Count == 0)
+                    break;
+
+                var next = arguments[0];
+                // var nextType = next.GetType(); // for development
+                if (arguments.Count > 1)
+                {
+                    var current = arguments[1];
+                    var lambda = current.GetLambdaOrNull();
+                    if (lambda != null)
+                        result.Add(methodCall);
+                }
+                else
+                {
+                    result.Add(methodCall);
+                }
+
+                tempExpression = next;
+            }
+            result?.Reverse();
+            return result;
         }
 
         /// <summary>

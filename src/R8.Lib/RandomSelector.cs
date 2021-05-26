@@ -46,14 +46,20 @@ namespace R8.Lib
                 return default;
 
             var list = enumerable.ToList();
-            if (list.Count == 0)
-                return default;
+            switch (list.Count)
+            {
+                case 0:
+                    return default;
 
-            if (list.Count == 1)
-                return list.First();
+                case 1:
+                    return list.First();
 
-            var array = list.ToArray();
-            return array[Generate(0, array.Length - 1)];
+                default:
+                    {
+                        var array = list.ToArray();
+                        return array[Generate(0, array.Length - 1)];
+                    }
+            }
         }
 
         /// <summary>

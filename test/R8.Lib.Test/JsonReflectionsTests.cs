@@ -5,6 +5,7 @@ using R8.Lib.Test.FakeObjects;
 using R8.Lib.Test.MethodTests;
 
 using Xunit;
+using PropertyReflections = R8.Lib.PropertyReflections;
 
 namespace R8.Lib.Test
 {

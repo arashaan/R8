@@ -90,7 +90,7 @@ namespace R8.Lib
         public static List<T> ToListOrderBy(params T[] array)
         {
             var result = ToList()
-                .OrderByList(x => (T)(object)x, array)
+                .OrderBy(x => (T)(object)x, array)
                 .Select(x => (T)(object)x)
                 .ToList();
             return result;

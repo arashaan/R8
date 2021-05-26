@@ -12,6 +12,35 @@ namespace R8.Lib
         private static readonly HashSet<char> DefaultNonWordCharacters = new HashSet<char> { ',', '.', ':', ';' };
 
         /// <summary>
+        /// Reports specified index of given value in string.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="value"></param>
+        /// <param name="nth"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <returns></returns>
+        public static int FindByIndex(this string str, string value, int nth)
+        {
+            if (str == null)
+                throw new ArgumentNullException(nameof(str));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+            if (nth < 0)
+                throw new ArgumentOutOfRangeException(nameof(nth), "Can not find the minus-zero index of substring in string. Must start with 0");
+
+            var offset = str.IndexOf(value, StringComparison.Ordinal);
+            for (var index = 0; index < nth; index++)
+            {
+                if (offset == -1)
+                    return -1;
+
+                offset = str.IndexOf(value, offset + 1, StringComparison.Ordinal);
+            }
+            return offset;
+        }
+
+        /// <summary>
         /// Returns a <see cref="string"/> between to given characters.
         /// </summary>
         /// <param name="str">A <see cref="string"/> value to check in</param>
@@ -42,9 +71,10 @@ namespace R8.Lib
         /// <returns></returns>
         public static string ToShort(this Guid guid)
         {
-            return Convert.ToBase64String(guid.ToByteArray())[..^2]  // remove trailing == padding
-                .Replace('+', '-')                          // escape (for filepath)
-                .Replace('/', '_');                         // escape (for filepath)
+            return Convert.ToBase64String(guid.ToByteArray())[..^2]
+                .Replace('+', '-')
+                .Replace('/', '_')
+                .Split("_")[0];
         }
 
         /// <summary>
@@ -288,21 +318,21 @@ namespace R8.Lib
         /// </summary>
         /// <param name="s">An <see cref="string"/> value</param>
         /// <param name="oldValues">An <see cref="IEnumerable{T}"/> of strings to be replaced/</param>
-        /// <param name="value">New value should been replaced with old values</param>
+        /// <param name="newValue">New value should been replaced with old values</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="string"/> value</returns>
-        public static string Replace(this string s, IEnumerable<string> oldValues, string value)
+        public static string Replace(this string s, string newValue, params string[] oldValues)
         {
             if (s == null)
                 throw new ArgumentNullException(nameof(s));
             if (oldValues == null)
                 throw new ArgumentNullException(nameof(oldValues));
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
+            if (newValue == null)
+                throw new ArgumentNullException(nameof(newValue));
 
             return oldValues
                 .ToList()
-                .Aggregate(s, (current, oldValue) => current.Replace(oldValue, value));
+                .Aggregate(s, (value, oldValue) => value.Replace(oldValue, newValue));
         }
 
         /// <summary>

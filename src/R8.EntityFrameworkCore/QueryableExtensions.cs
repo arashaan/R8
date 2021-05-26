@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
+using R8.Lib;
 using R8.Lib.Paginator;
 using R8.Lib.Search;
 
@@ -42,46 +43,6 @@ namespace R8.EntityFrameworkCore
             throw new NullReferenceException($"Unable to get '{typeof(TDbContext).Name}' from query");
         }
 
-        //private static IQueryable<TSource> ApplyAdminSearchConditions<TSource, TSearch>(this IQueryable<TSource> query, HttpContext httpContext, TSearch searchModel, CurrentUser currentUser = null) where TSource : EntityBase where TSearch : BaseSearchModel
-        //{
-        //    currentUser ??= httpContext.GetAuthenticatedUser();
-        //    if (searchModel == null)
-        //        return query;
-
-        //    Audit baser;
-        //    var dateTimeProperty = new Audit().GetPublicProperties().FirstOrDefault(x => x.Name == nameof(baser.DateTime)).GetJsonProperty();
-        //    var userIdProperty = new Audit().GetPublicProperties().FirstOrDefault(x => x.Name == nameof(baser.UserId)).GetJsonProperty();
-
-        //    if (!string.IsNullOrEmpty(searchModel.CreationDateFrom))
-        //    {
-        //        // var dateTime = ((DateTime)searchModel.CreationDateFrom).ToString("yyyy/MM/dd", new CultureInfo("en-US"));
-        //        query = query.Where(x => EF.Functions.DateDiff("DAY", searchModel.CreationDateFrom,
-        //          EF.Functions.JsonValue(x.AuditsJson, "$[0]." + dateTimeProperty)) <= 0);
-        //    }
-
-        //    if (!string.IsNullOrEmpty(searchModel.CreationDateTo))
-        //    {
-        //        // var dateTime = ((DateTime)searchModel.CreationDateTo).ToString("yyyy/MM/dd", new CultureInfo("en-US"));
-        //        query = query.Where(x => EF.Functions.DateDiff("DAY", searchModel.CreationDateTo,
-        //          EF.Functions.JsonValue(x.AuditsJson, "$[0]." + dateTimeProperty)) >= 0);
-        //    }
-
-        //    if (currentUser.Role != Roles.Admin)
-        //        return query;
-
-        //    if (string.IsNullOrEmpty(searchModel.CreatorId))
-        //        return query;
-
-        //    query = query.Where(entity => EF.Functions.JsonValue(entity.AuditsJson, "$[0]." + userIdProperty) == searchModel.CreatorId);
-
-        //    return query;
-        //}
-
-        //public static string DateTimeId => new Audit()
-        //        .GetPublicProperties()
-        //        .Find(x => x.Name == nameof(Audit.DateTime))
-        //        .GetJsonProperty();
-
         /// <summary>
         /// Sorts the elements of a sequence in ascending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.
         /// </summary>
@@ -96,14 +57,6 @@ namespace R8.EntityFrameworkCore
 
             return query.OrderBy(x => x.Audits.First().DateTime);
         }
-
-        //public static IOrderedEnumerable<TSource> OrderByCreationDateTime<TSource>(this ICollection<TSource> sources) where TSource : EntityBase
-        //{
-        //    var source = sources
-        //        .OrderBy(x => x.Audits.FirstOrDefault(v => v.Flag == AuditFlags.Created).DateTime);
-
-        //    return source;
-        //}
 
         /// <summary>
         /// Sorts the elements of a sequence in ascending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.
@@ -120,23 +73,6 @@ namespace R8.EntityFrameworkCore
             return sources.OrderBy(x => x.Audits.First().DateTime);
         }
 
-        //
-        // public static string DapperGetColumns(string tableName, string idColumn, params string[] columns)
-        // {
-        //     if (tableName == null) throw new ArgumentNullException(nameof(tableName));
-        //     if (idColumn == null) throw new ArgumentNullException(nameof(idColumn));
-        //
-        //     // AS {nameof(EntityBase.IdString)}
-        //     var text = $"[{tableName}].[{idColumn}] ";
-        //     if (columns?.Any() != true)
-        //         return text;
-        //
-        //     text += ", ";
-        //     text += string.Join(", ", columns.Select(column => $"[{tableName}].[{column}]"));
-        //
-        //     return text;
-        // }
-
         /// <summary>
         /// Returns a simplified SQL like query.
         /// </summary>
@@ -146,14 +82,6 @@ namespace R8.EntityFrameworkCore
         {
             return $"%{string.Join("%", searchString.Split(' ').ToArray())}%";
         }
-
-        //public static IOrderedEnumerable<TSource> OrderDescendingByCreationDateTime<TSource>(this ICollection<TSource> sources) where TSource : EntityBase
-        //{
-        //    var source = sources
-        //        .OrderByDescending(x => x.Audits.FirstOrDefault(v => v.Flag == AuditFlags.Created).DateTime);
-
-        //    return source;
-        //}
 
         /// <summary>
         /// Sorts the elements of a sequence in descending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.
@@ -184,23 +112,6 @@ namespace R8.EntityFrameworkCore
 
             return query.OrderByDescending(x => x.Audits.First().DateTime);
         }
-
-        ///// <summary>
-        ///// Sorts the elements of a sequence in descending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.
-        ///// </summary>
-        ///// <typeparam name="TSource">A type of <see cref="EntityBase"/>.</typeparam>
-        ///// <param name="sources">A collection of <see cref="TSource"/>.</param>
-        ///// <exception cref="ArgumentNullException"></exception>
-        ///// <returns>An <see cref="IOrderedEnumerable{TElement}"/> whose elements are sorted in descending order according to <see cref="Audit"/></returns>
-        //public static IOrderedEnumerable<TSource> OrderDescendingByCreationDateTime<TSource>(this IEnumerable<TSource> sources) where TSource : EntityBase
-        //{
-        //    if (sources == null)
-        //        throw new ArgumentNullException(nameof(sources));
-
-        //    var source = sources
-        //        .OrderByDescending(x => x.Audits.FirstOrDefault(v => v.Flag == AuditFlags.Created)?.DateTime);
-        //    return source;
-        //}
 
         /// <summary>
         /// Paginates results according to given page number and page size.

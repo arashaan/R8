@@ -141,7 +141,7 @@ namespace R8.Lib
                 }
             }
 
-            return result.OrderBy(x => x.Offset).ToList();
+            return Enumerable.OrderBy(result, x => x.Offset).ToList();
         }
     }
 }
