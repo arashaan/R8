@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+
+using System;
 using System.Net;
-using Newtonsoft.Json;
 
 namespace R8.Lib.JsonConverters
 {
@@ -8,7 +9,9 @@ namespace R8.Lib.JsonConverters
     {
         public override void WriteJson(JsonWriter writer, IPAddress value, JsonSerializer serializer)
         {
-            var plainIp = value.ToString();
+            var plainIp = value == null || IPAddress.IsLoopback(value)
+                ? null
+                : value.ToString();
             writer.WriteValue(plainIp);
         }
 
