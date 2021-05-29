@@ -4,11 +4,54 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 
 namespace R8.Lib
 {
     public static class TypeReflections
     {
+        /// <summary>
+        /// Returns an array of types can be assigned to given type.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="type"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static Type[] GetTypesAssignableFrom(this Assembly assembly, Type type)
+        {
+            if (assembly == null)
+                throw new ArgumentNullException(nameof(assembly));
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            List<Type> assemblyTypes;
+            try
+            {
+                assemblyTypes = assembly.DefinedTypes.Select(x => x.AsType()).ToList();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                assemblyTypes = ex.Types.Where(t => t != null).Select(IntrospectionExtensions.GetTypeInfo).Select(x => x.AsType()).ToList();
+            }
+
+            return assemblyTypes.Where(type.IsAssignableFrom).ToArray();
+        }
+
+        /// <summary>
+        /// Returns an array of types that deriven from given type.
+        ///
+        /// </summary>
+        /// <typeparam name="TType"></typeparam>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static Type[] GetTypesAssignableFrom<TType>(this Assembly assembly)
+        {
+            if (assembly == null)
+                throw new ArgumentNullException(nameof(assembly));
+
+            return assembly.GetTypesAssignableFrom(typeof(TType));
+        }
+
         /// <summary>
         /// Determines whether given type is a number type.
         /// </summary>
@@ -286,7 +329,7 @@ namespace R8.Lib
         /// <param name="baseType">A <see cref="Type"/> that expect to being found as base type.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="bool"/> value.</returns>
-        public static bool HasBaseType(this Type type, Type baseType)
+        public static bool HasRootType(this Type type, Type baseType)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             if (baseType == null) throw new ArgumentNullException(nameof(baseType));
@@ -300,9 +343,11 @@ namespace R8.Lib
         /// Returns list of <see cref="Type"/> from given type to the first abstract type.
         /// </summary>
         /// <param name="type">A <see cref="Type"/> that should be checked for chain root.</param>
+        /// <param name="stopOnAbstract"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="List{T}"/> object.</returns>
-        public static List<Type> GetTypesToRoot(this Type type)
+        /// <remarks>Using this method may impact your performance.</remarks>
+        public static IEnumerable<Type> GetTypesToRoot(this Type type, bool stopOnAbstract = true)
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
             var nestedTypes = new List<Type>();
@@ -311,7 +356,7 @@ namespace R8.Lib
             {
                 nestedTypes.Add(type);
 
-                if (type.IsAbstract || type.BaseType == null)
+                if ((stopOnAbstract && type.IsAbstract) || type.BaseType == null)
                     found = true;
 
                 type = type.BaseType;
