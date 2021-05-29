@@ -1,4 +1,4 @@
-﻿namespace R8.EntityFrameworkCore
+﻿namespace R8.EntityFrameworkCore.Audits
 {
     /// <summary>
     /// An enumerator constant that represents state of audit.

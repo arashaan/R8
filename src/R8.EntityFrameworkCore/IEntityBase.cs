@@ -1,33 +1,22 @@
-﻿using R8.Lib.Validatable;
-
-using System;
+﻿using R8.EntityFrameworkCore.Audits;
+using R8.Lib.Validatable;
 
 namespace R8.EntityFrameworkCore
 {
     /// <summary>
     /// An <see cref="IEntityBase"/> interface that representing some basic data about specific entity.
     /// </summary>
-    public interface IEntityBase
+    public interface IEntityBase : IEntityBaseIdentifier, IEntityBaseAudit
     {
-        /// <summary>
-        /// Gets or sets <see cref="Guid"/> Id for current entity.
-        /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets an array of bytes that representing row version to avoid conflicting data where users works on current entity simultaneously.
-        /// </summary>
-        public byte[] RowVersion { get; set; }
-
         /// <summary>
         /// Gets or sets shown status for current entity.
         /// </summary>
         public bool IsDeleted { get; set; }
 
         /// <summary>
-        /// Gets or sets a collection of <see cref="IAudit"/> to track entity changes.
+        /// Gets or sets an array of bytes that representing row version to avoid conflicting data where users works on current entity simultaneously.
         /// </summary>
-        public AuditCollection Audits { get; set; }
+        public byte[] RowVersion { get; set; }
 
         bool TryValidate(out ValidatableResultCollection errors);
     }

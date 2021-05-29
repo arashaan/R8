@@ -5,30 +5,26 @@ using Newtonsoft.Json;
 
 using R8.Lib.Validatable;
 
-using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using R8.EntityFrameworkCore.Audits;
 
 namespace R8.EntityFrameworkCore
 {
     /// <summary>
     /// Initializes a base type for entities.
     /// </summary>
-    public class EntityBase : ValidatableObject, IEntityBase
+    public class EntityBase : EntityBaseIdentifier, IEntityBase
     {
-        [Required]
-        public Guid Id { get; set; }
+        [JsonIgnore]
+        public bool IsDeleted { get; set; }
 
         [JsonIgnore, EditorBrowsable(EditorBrowsableState.Never)]
         public byte[] RowVersion { get; set; }
 
         [JsonIgnore]
-        public bool IsDeleted { get; set; }
-
-        [JsonIgnore]
-        public AuditCollection Audits { get; set; }
+        public AuditCollection Audits { get; set; } = new AuditCollection();
 
         public bool TryValidate(out ValidatableResultCollection errors)
         {

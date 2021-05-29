@@ -5,55 +5,12 @@ using R8.Lib.Localization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace R8.EntityFrameworkCore
 {
     public static class EntityLocalizedExtensions
     {
-        ///// <summary>
-        ///// Filters a sequence of values based on <c><see cref="localizedName"/></c> and <c><see cref="canonicalName"/></c> in given <see cref="IQueryable{TResult}"/>.
-        ///// </summary>
-        ///// <typeparam name="TSource">A generic type of <see cref="EntityLocalized"/></typeparam>
-        ///// <param name="source">A <see cref="IQueryable{T}"/> that representing translating query.</param>
-        ///// <param name="canonicalName">A <see cref="string"/> value that representing canonical name that already stored in entity.</param>
-        ///// <param name="localizedName">A <see cref="string"/> value that representing localized name that already stored in <see cref="LocalizerContainer"/> in entity.</param>
-        ///// <exception cref="ArgumentNullException"></exception>
-        ///// <returns>Continues chains of <see cref="IQueryable"/> plus adding current filter.</returns>
-        //[Obsolete]
-        //public static IQueryable<TSource> WhereLocalized<TSource>(this IQueryable<TSource> source, string canonicalName, string localizedName) where TSource : EntityLocalized
-        //{
-        //    if (source == null)
-        //        throw new ArgumentNullException(nameof(source));
-
-        //    var twoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-        //    return source.Where(x =>
-        //        x.CanonicalName.Equals(canonicalName) ||
-        //        EF.Functions.Like(x.NameJson, $"%\"{twoLetter}\":\"{localizedName}\"%"));
-        //}
-
-        ///// <summary>
-        ///// Filters a sequence of values based on <c><see cref="localizedName"/></c> and <c><see cref="canonicalName"/></c> in given <see cref="IEnumerable{TResult}"/>.
-        ///// </summary>
-        ///// <typeparam name="TSource">A generic type of <see cref="EntityLocalized"/></typeparam>
-        ///// <param name="source">A <see cref="IQueryable{T}"/> that representing translating query.</param>
-        ///// <param name="canonicalName">A <see cref="string"/> value that representing canonical name that already stored in entity.</param>
-        ///// <param name="localizedName">A <see cref="string"/> value that representing localized name that already stored in <see cref="LocalizerContainer"/> in entity.</param>
-        ///// <exception cref="ArgumentNullException"></exception>
-        ///// <returns>Continues chains of <see cref="IEnumerable{TResult}"/> plus adding current filter.</returns>
-        //[Obsolete]
-        //public static IEnumerable<TSource> WhereLocalized<TSource>(this IEnumerable<TSource> source, string canonicalName, string localizedName) where TSource : EntityLocalized
-        //{
-        //    if (source == null)
-        //        throw new ArgumentNullException(nameof(source));
-
-        //    var twoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
-        //    return source.Where(x =>
-        //        x.CanonicalName.Equals(canonicalName) ||
-        //        x.NameJson.Contains($"\"{twoLetter}\":\"{localizedName}\""));
-        //}
-
         /// <summary>
         /// Filters a sequence of values based on <c><see cref="key"/></c> and <c><see cref="value"/></c> for json in given <see cref="IQueryable{TResult}"/>.
         /// </summary>

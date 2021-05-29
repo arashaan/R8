@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 
+using R8.EntityFrameworkCore.ResponseWrappers;
 using R8.EntityFrameworkCore.Test.Enums;
 using R8.Lib.Localization;
 using R8.Lib.Validatable;
@@ -33,10 +34,5 @@ namespace R8.EntityFrameworkCore.Test
 
         [JsonIgnore]
         public override ValidatableResultCollection Errors { get; protected set; }
-
-        public override void SetStatus(Flags status)
-        {
-            base.SetStatus(status);
-        }
     }
 }

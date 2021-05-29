@@ -22,40 +22,40 @@ namespace R8.EntityFrameworkCore.Test
             _output = output;
         }
 
-        [Fact]
-        public async Task CallWhereJson()
-        {
-            // Assets
-            var creatorGuid = Guid.NewGuid();
+        //[Fact]
+        //public async Task CallWhereJson()
+        //{
+        //    // Assets
+        //    var creatorGuid = Guid.NewGuid();
 
-            // Act
-            await using var dbContext = new FakeDbContext(FakeDbRunner.CreateNewContextOptions());
-            {
-                await dbContext.Database.EnsureCreatedAsync();
+        //    // Act
+        //    await using var dbContext = new FakeDbContext(FakeDbContextFactory.GetDbContextOptions());
+        //    {
+        //        await dbContext.Database.EnsureCreatedAsync();
 
-                var container = new LocalizerContainer("Admin");
-                container.Set("tr", "Destek");
-                container.Set("fa", "پشتیبان");
-                var role = new Role
-                {
-                    Name = container,
-                    CanonicalName = "admin",
-                };
+        //        var container = new LocalizerContainer("Admin");
+        //        container.Set("tr", "Destek");
+        //        container.Set("fa", "پشتیبان");
+        //        var role = new Role
+        //        {
+        //            Name = container,
+        //            Slug = "admin",
+        //        };
 
-                var roleCreated = dbContext.Add(role, out _);
-                var saveStatus = await dbContext.SaveAsync();
+        //        var roleCreated = dbContext.Add(role);
+        //        var saveStatus = await dbContext.SaveChangesFullAsync();
 
-                var query = dbContext.Roles.WhereJson("tr", "Destek");
-                var doWe = query.FirstOrDefault();
-                var sql = query.ToQueryString();
+        //        var query = dbContext.Roles.WhereJson("tr", "Destek");
+        //        var doWe = query.FirstOrDefault();
+        //        var sql = query.ToQueryString();
 
-                await dbContext.Database.EnsureDeletedAsync();
+        //        await dbContext.Database.EnsureDeletedAsync();
 
-                // Arrange
-                Assert.NotNull(doWe);
-                Assert.Equal("admin", doWe.CanonicalName);
-                Assert.Equal("Destek", doWe.Name.Get("tr"));
-            }
-        }
+        //        // Arrange
+        //        Assert.NotNull(doWe);
+        //        Assert.Equal("admin", doWe.Slug);
+        //        Assert.Equal("Destek", doWe.Name.Get("tr"));
+        //    }
+        //}
     }
 }

@@ -2,39 +2,40 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using R8.EntityFrameworkCore.Audits;
 
 namespace R8.EntityFrameworkCore
 {
     internal static class EntityBaseExtensions
     {
-        internal static EntityTypeBuilder<TEntity> InitializeConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
+        internal static EntityTypeBuilder<TEntity> ApplyIdentifierConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBaseIdentifier
         {
-            var tableName = Extensions.GetTableName(typeof(TEntity));
-            builder.ToTable(tableName);
+            builder.ToTable(Extensions.GetTableName(typeof(TEntity)));
             builder.HasKey(x => x.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
-            builder.Property(p => p.RowVersion).IsRowVersion();
-            builder.HasQueryFilter(entity => !entity.IsDeleted);
+            return builder;
+        }
 
+        internal static EntityTypeBuilder<TEntity> ApplyAuditConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBaseAudit
+        {
+            builder.OwnsMany(x => x.Audits, action =>
+            {
+                action.WithOwner().HasForeignKey(x => x.RowId);
+                action.ToTable($"{builder.GetTableName()}_{nameof(Audit).Pluralize()}");
+                action.HasKey(x => x.Id);
+                action.Property(x => x.Id).ValueGeneratedOnAdd();
+                action.Property(x => x.Additional).HasJsonConversion();
+                action.Property(x => x.Changes).HasJsonConversion();
+            });
             return builder;
         }
 
         internal static EntityTypeBuilder<TEntity> ApplyConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBase
         {
-            builder.InitializeConfiguration();
-
-            var tableName = builder.GetTableName();
-            var pluralizeAudit = nameof(Audit).Pluralize();
-            builder.OwnsMany(x => x.Audits, action =>
-            {
-                action.WithOwner().HasForeignKey(x => x.RowId);
-                action.ToTable($"{tableName}_{pluralizeAudit}");
-                action.HasKey(x => x.Id);
-                action.Property(x => x.Id).ValueGeneratedOnAdd();
-                action.Property(x => x.Culture).HasCultureConversion();
-                action.Property(x => x.NewValues).HasJsonConversion();
-                action.Property(x => x.OldValues).HasJsonConversion();
-            });
+            builder.ApplyIdentifierConfiguration();
+            builder.ApplyAuditConfiguration();
+            builder.Property(p => p.RowVersion).IsRowVersion();
+            builder.HasQueryFilter(entity => !entity.IsDeleted);
             return builder;
         }
     }

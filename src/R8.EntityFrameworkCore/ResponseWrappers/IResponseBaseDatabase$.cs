@@ -1,6 +1,6 @@
 ﻿using R8.Lib.MethodReturn;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.ResponseWrappers
 {
     /// <summary>
     /// A base interface for <see cref="ResponseBaseDatabase{TStatus}"/>.

@@ -23,20 +23,20 @@ namespace R8.EntityFrameworkCore.Test
             var creatorGuid = Guid.NewGuid();
 
             // Act
-            await using var dbContext = new FakeDbContext(FakeDbRunner.CreateNewContextOptions());
+            await using var dbContext = new FakeDbContext(FakeDbContext.GetOptions());
             {
                 await dbContext.Database.EnsureCreatedAsync();
                 var role = new Role
                 {
                     Name = new LocalizerContainer("Admin"),
-                    CanonicalName = "admin",
+                    Slug = "admin",
                 };
-                dbContext.Add(role, out _);
-                dbContext.ToggleHiding(role, creatorGuid);
+                dbContext.Add(role);
+                dbContext.Remove(role);
                 var roleQuery = dbContext.Roles
                     .AsNoTracking()
-                    .Where(x => x.CanonicalName == "admin")
-                    .Select(x => new { x.CanonicalName });
+                    .Where(x => x.Slug == "admin")
+                    .Select(x => new { x.Slug });
 
                 var queryableTree = roleQuery.GetExpressionTree().ToList();
 

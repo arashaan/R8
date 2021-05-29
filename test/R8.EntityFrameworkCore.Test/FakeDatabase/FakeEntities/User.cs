@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace R8.EntityFrameworkCore.Test.FakeDatabase.FakeEntities
 {
@@ -15,7 +13,6 @@ namespace R8.EntityFrameworkCore.Test.FakeDatabase.FakeEntities
         [Required]
         public string Password { get; set; }
 
-        public string Birthday { get; set; }
         public Guid? RoleId { get; set; }
         public virtual Role Role { get; set; }
 

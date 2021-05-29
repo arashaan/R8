@@ -1,14 +1,29 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using R8.Lib.JsonExtensions;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.Audits
 {
     /// <summary>
     /// Represents a strongly typed list of <see cref="IAudit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
     /// </summary>
     public class AuditCollection : List<Audit>
     {
+        /// <summary>
+        /// Represents a strongly typed list of <see cref="IAudit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
+        /// </summary>
+        public AuditCollection()
+        {
+        }
+
+        /// <summary>
+        /// Represents a strongly typed list of <see cref="IAudit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
+        /// </summary>
+        public AuditCollection(IEnumerable<Audit> collection) : base(collection)
+        {
+        }
+
         public override string ToString()
         {
             var toString = $"{this.Count} Audits.";
@@ -21,15 +36,24 @@ namespace R8.EntityFrameworkCore
         /// <summary>
         /// Gets first item of current instance in type of <see cref="IAudit"/> that represents creation data.
         /// </summary>
-        public IAudit Created => this.First(x => x.Flag == AuditFlags.Created);
+        public Audit Created => this.OrderByDescending(x => x.DateTime).FirstOrDefault(x => x.Flag == AuditFlags.Created);
 
         private static JsonSerializerSettings SerializerSettings
         {
             get
             {
-                var settings = Lib.JsonExtensions.CustomJsonSerializerSettings.Settings;
-                settings.DefaultValueHandling = DefaultValueHandling.Ignore;
-
+                var settings = new JsonSerializerSettings
+                {
+                    Error = (serializer, err) => err.ErrorContext.Handled = true,
+                    DefaultValueHandling = DefaultValueHandling.Ignore,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ObjectCreationHandling = ObjectCreationHandling.Replace,
+                    ContractResolver = new NullToEmptyContractResolver(),
+                    Formatting = Formatting.None,
+                    PreserveReferencesHandling = PreserveReferencesHandling.None,
+                    TypeNameHandling = TypeNameHandling.Auto
+                };
                 return settings;
             }
         }
@@ -54,7 +78,7 @@ namespace R8.EntityFrameworkCore
         }
 
         /// <summary>
-        /// Returns a deserialized instance of <see cref="AuditCollection"/> according to given json.
+        /// Returns a deserialized instance of <see cref="AuditChangesCollection"/> according to given json.
         /// </summary>
         /// <param name="json">A <see cref="string"/> value that representing JSON data.</param>
         /// <returns>A <see cref="AuditCollection"/> object.</returns>
@@ -79,6 +103,6 @@ namespace R8.EntityFrameworkCore
         /// <summary>
         /// Gets last item of current instance in type of <see cref="IAudit"/>.
         /// </summary>
-        public IAudit Last => this.OrderByDescending(x => x.DateTime).First();
+        public Audit Last => this.OrderByDescending(x => x.DateTime).FirstOrDefault();
     }
 }

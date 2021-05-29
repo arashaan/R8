@@ -2,7 +2,7 @@
 using R8.Lib.MethodReturn;
 using R8.Lib.Validatable;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.ResponseWrappers
 {
     /// <summary>
     /// An base class for saving changes of DbContext entity.
@@ -53,7 +53,7 @@ namespace R8.EntityFrameworkCore
 
             return saveState == DatabaseSaveState.Saved ||
                    saveState == DatabaseSaveState.NotSaved ||
-                   saveState == DatabaseSaveState.SavedWithErrors;
+                   saveState == DatabaseSaveState.SavedMore;
         }
     }
 }

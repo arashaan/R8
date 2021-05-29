@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Description>A predefined pattern for EntityFramework Core to easily store Audits</Description>
-		<VersionPrefix>1.11.5</VersionPrefix>
+		<Description>A predefined pattern for EntityFramework Core to easily store Audits. IF YOU HAVE A WORKING DATABASE WITH USING R8.ENTITYFRAMEWORK VERSION LESS THAN 2, DON'T UPDATE TO THIS VERSION. THIS VERSIAN HAS BREAKING CHANGES IN ENTITYBASE.</Description>
+		<VersionPrefix>2.0.0</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
@@ -41,7 +41,7 @@
 	<ItemGroup>
 		<PackageReference Include="Humanizer.Core" Version="2.10.1" />
 		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="3.1.0" />
-		<PackageReference Include="R8.Lib" Version="1.11.6.1" />
+		<PackageReference Include="R8.Lib" Version="1.11.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.6">
 			<PrivateAssets>all</PrivateAssets>

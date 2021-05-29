@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using R8.Lib.Localization;
 
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace R8.EntityFrameworkCore
 {
@@ -24,7 +25,7 @@ namespace R8.EntityFrameworkCore
         /// <summary>
         /// Gets or sets a kebab-case name stands for <see cref="Name"/> in English culture.
         /// </summary>
-        public string CanonicalName { get; set; }
+        public string Slug { get; set; }
 
         [Column("Name")]
         public string NameJson { get; set; }
@@ -35,6 +36,17 @@ namespace R8.EntityFrameworkCore
             get => LocalizerContainer.Deserialize(NameJson);
             set => NameJson = value.Serialize();
         }
+
+        public LocalizerContainer UpdateName(string cultureTwoLetterIso, string value) =>
+            this.UpdateName(CultureInfo.GetCultureInfo(cultureTwoLetterIso), value);
+
+        public LocalizerContainer UpdateName(CultureInfo culture, string value)
+        {
+            this.Name = LocalizerContainer.Clone(this.Name, culture, value);
+            return this.Name;
+        }
+
+        public LocalizerContainer UpdateName(string value) => this.UpdateName(CultureInfo.CurrentCulture, value);
     }
 
     /// <summary>
