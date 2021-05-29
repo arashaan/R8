@@ -1,4 +1,5 @@
-﻿using R8.Lib.Test.Enums;
+﻿using R8.Lib.MethodReturn;
+using R8.Lib.Test.Enums;
 using R8.Lib.Test.FakeObjects;
 
 using System;
@@ -9,7 +10,7 @@ using Xunit;
 
 namespace R8.Lib.Test
 {
-    public class TypeReflections
+    public class TypeReflectionsTests
     {
         [Fact]
         public void GetIsNumeric()
@@ -29,6 +30,16 @@ namespace R8.Lib.Test
             var isNumeric = num.GetType().IsNumeric();
 
             Assert.False(isNumeric);
+        }
+
+        [Fact]
+        public void GetGetTypesAssignableFrom()
+        {
+            var type = typeof(FakeResponse);
+            var assembly = type.Assembly;
+            var types = assembly.GetTypesAssignableFrom<ResponseBase<Flags>>();
+
+            Assert.Contains(types, x => x == type);
         }
 
         [Fact]
@@ -544,7 +555,7 @@ namespace R8.Lib.Test
             Expression<Func<FakeObj, string>> func = o => o.LastName;
 
             // Act
-            var act = typeof(FakeObj).HasBaseType(typeof(string));
+            var act = typeof(FakeObj).HasRootType(typeof(string));
 
             Assert.False(act);
         }

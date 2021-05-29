@@ -24,6 +24,8 @@ PM> Install-Package R8.FileHandlers.AspNetCore
 ```
 ## R8.EntityFrameworkCore
 [![Nuget](https://img.shields.io/nuget/vpre/R8.EntityFrameworkCore)](https://www.nuget.org/packages/R8.EntityFrameworkCore/) ![R8EntityFrameworkCoreDownloads](https://img.shields.io/nuget/dt/R8.EntityFrameworkCore)
+#### CAUTION: Don't upgrade to version 2.0, If you have a working project with entities based on `EntityBase` type. It has been fully refactored and has many BREAKING CHANGES.
+
 ```
 PM> Install-Package R8.EntityFrameworkCore
 ```

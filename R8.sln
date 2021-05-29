@@ -12,6 +12,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "R8.EntityFrameworkCore", "src\R8.EntityFrameworkCore\R8.EntityFrameworkCore.csproj", "{B1AEF6C9-6D41-4393-A77A-46F07C5BF024}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9C6EA3D5-AF4B-40BD-A0CD-A718C5344DAE}"
+	ProjectSection(SolutionItems) = preProject
+		src\R8.EntityFrameworkCore\V2\Audit.cs = src\R8.EntityFrameworkCore\V2\Audit.cs
+		src\R8.EntityFrameworkCore\V2\AuditChange.cs = src\R8.EntityFrameworkCore\V2\AuditChange.cs
+		src\R8.EntityFrameworkCore\V2\AuditChangesCollection.cs = src\R8.EntityFrameworkCore\V2\AuditChangesCollection.cs
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9EA6BCCA-68CA-400C-B2D0-F7414AE27CC8}"
 EndProject
