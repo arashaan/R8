@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+
 using R8.Lib.JsonExtensions;
+
+using System.Collections.Generic;
+using System.Linq;
 
 namespace R8.EntityFrameworkCore.Audits
 {
@@ -11,14 +13,14 @@ namespace R8.EntityFrameworkCore.Audits
     public class AuditCollection : List<Audit>
     {
         /// <summary>
-        /// Represents a strongly typed list of <see cref="IAudit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
+        /// Represents a strongly typed list of <see cref="Audit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
         /// </summary>
         public AuditCollection()
         {
         }
 
         /// <summary>
-        /// Represents a strongly typed list of <see cref="IAudit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
+        /// Represents a strongly typed list of <see cref="Audit"/> that can be accessed by index. Provides methods to search, sort, and manipulate lists.
         /// </summary>
         public AuditCollection(IEnumerable<Audit> collection) : base(collection)
         {
@@ -34,7 +36,7 @@ namespace R8.EntityFrameworkCore.Audits
         }
 
         /// <summary>
-        /// Gets first item of current instance in type of <see cref="IAudit"/> that represents creation data.
+        /// Gets first item of current instance in type of <see cref="Audit"/> that represents creation data.
         /// </summary>
         public Audit Created => this.OrderByDescending(x => x.DateTime).FirstOrDefault(x => x.Flag == AuditFlags.Created);
 
@@ -78,7 +80,7 @@ namespace R8.EntityFrameworkCore.Audits
         }
 
         /// <summary>
-        /// Returns a deserialized instance of <see cref="AuditChangesCollection"/> according to given json.
+        /// Returns a deserialized instance of <see cref="AuditCollection"/> according to given json.
         /// </summary>
         /// <param name="json">A <see cref="string"/> value that representing JSON data.</param>
         /// <returns>A <see cref="AuditCollection"/> object.</returns>
@@ -101,7 +103,7 @@ namespace R8.EntityFrameworkCore.Audits
         }
 
         /// <summary>
-        /// Gets last item of current instance in type of <see cref="IAudit"/>.
+        /// Gets last item of current instance in type of <see cref="Audit"/>.
         /// </summary>
         public Audit Last => this.OrderByDescending(x => x.DateTime).FirstOrDefault();
     }

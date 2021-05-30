@@ -3,12 +3,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using Newtonsoft.Json;
 
+using R8.EntityFrameworkCore.Audits;
 using R8.Lib.Validatable;
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using R8.EntityFrameworkCore.Audits;
 
 namespace R8.EntityFrameworkCore
 {
@@ -21,6 +22,7 @@ namespace R8.EntityFrameworkCore
         public bool IsDeleted { get; set; }
 
         [JsonIgnore, EditorBrowsable(EditorBrowsableState.Never)]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public byte[] RowVersion { get; set; }
 
         [JsonIgnore]
