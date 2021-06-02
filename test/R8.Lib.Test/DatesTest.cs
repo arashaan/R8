@@ -146,10 +146,10 @@ namespace R8.Lib.Test
             var gregorianDate = new DateTime(2020, 10, 25, 0, 0, 1);
 
             // Acts
-            var persian = PersianDateTime.Parse(persianDate).ToDateTime();
+            var parsedDateTime = PersianDateTime.Parse(persianDate).ToDateTime();
 
             // Arranges
-            Assert.Equal(gregorianDate, persian);
+            Assert.Equal(gregorianDate, parsedDateTime);
         }
 
         [Fact]

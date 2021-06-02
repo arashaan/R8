@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Xunit;
 
 namespace R8.Lib.Test
@@ -95,16 +96,6 @@ namespace R8.Lib.Test
 
             // Acts
             var pdate = PersianDateTime.GetFromDateTime(dateTime);
-
-            // Arrange
-            Assert.Equal("1399/08/04", pdate.ToString(false, false));
-        }
-
-        [Fact]
-        public void CallToString_Full6()
-        {
-            // Acts
-            var pdate = new PersianDateTime(2020, 10, 25, 22, 1, 0, true);
 
             // Arrange
             Assert.Equal("1399/08/04", pdate.ToString(false, false));
