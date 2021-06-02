@@ -322,11 +322,11 @@ namespace R8.EntityFrameworkCore.Test
                 };
 
                 dbContext.Add(role);
-                var saveStatus = await dbContext.SaveChangesFullAsync();
+                var saveStatus = await dbContext.SaveChangesAsync();
                 await dbContext.Database.EnsureDeletedAsync();
 
                 // Arrange
-                Assert.Equal(DatabaseSaveState.Saved, saveStatus);
+                Assert.InRange(saveStatus, 1, 1000);
                 Assert.Single(role.Audits);
                 Assert.Equal(AuditFlags.Created, role.Audits.Last.Flag);
                 Assert.Equal(role.Audits.Created, role.Audits.Last);

@@ -11,6 +11,19 @@ namespace R8.EntityFrameworkCore
     /// <remarks>This object has direct cast to <see cref="DatabaseSaveState"/> enum based on <see cref="Save"/> value.</remarks>
     public class DatabaseSaveStatus
     {
+        internal DatabaseSaveStatus()
+        {
+        }
+
+        /// <summary>
+        /// A class that indicates <see cref="DbContext"/> save state.
+        /// </summary>
+        /// <remarks>This object has direct cast to <see cref="DatabaseSaveState"/> enum based on <see cref="Save"/> value.</remarks>
+        public DatabaseSaveStatus(DatabaseSaveState save)
+        {
+            Save = save;
+        }
+
         /// <summary>
         /// Gets <see cref="DbContext"/> save state.
         /// </summary>

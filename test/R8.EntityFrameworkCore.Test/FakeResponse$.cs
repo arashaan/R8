@@ -1,23 +1,19 @@
-﻿using Newtonsoft.Json;
-
-using R8.EntityFrameworkCore.ResponseWrappers;
-using R8.EntityFrameworkCore.Test.Enums;
-using R8.Lib.Localization;
-using R8.Lib.Validatable;
+﻿using R8.EntityFrameworkCore.Test.Enums;
+using R8.EntityFrameworkCore.Wrappers;
 
 namespace R8.EntityFrameworkCore.Test
 {
-    public class FakeResponse<TModel> : ResponseBase<TModel, Flags> where TModel : class
+    public class FakeWrapper<TModel> : WrapperBase<TModel, Flags> where TModel : class
     {
-        public FakeResponse()
+        public FakeWrapper(TModel entity) : base(entity)
         {
         }
 
-        public FakeResponse(ILocalizer localizer) : base(localizer)
+        public FakeWrapper(Flags status) : base(status)
         {
         }
 
-        public FakeResponse(Flags status) : base(status)
+        public FakeWrapper(Flags status, TModel entity) : base(status, entity)
         {
         }
 
@@ -25,14 +21,21 @@ namespace R8.EntityFrameworkCore.Test
         {
             get
             {
-                var localizer = this.GetLocalizer();
-                return localizer != null ? localizer[Status.ToString()] : Status.ToString();
+                return this.Localizer != null ? this.Localizer[Status.ToString()] : Status.ToString();
             }
         }
 
+        public override bool Success => Status == Flags.Success;
         public override Flags Status { get; set; }
 
-        [JsonIgnore]
-        public override ValidatableResultCollection Errors { get; protected set; }
+        public static implicit operator FakeWrapper<TModel>(Flags flag)
+        {
+            return new FakeWrapper<TModel>(flag);
+        }
+
+        public static explicit operator Flags(FakeWrapper<TModel> src)
+        {
+            return src.Status;
+        }
     }
 }

@@ -1,13 +1,8 @@
 ﻿using R8.AspNetCore.Test;
 using R8.Lib.Localization;
-using R8.Lib.Test.Enums;
-using R8.Lib.Test.FakeObjects;
 
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
-
-using Xunit;
 
 namespace R8.Lib.Test.MethodTests
 {
@@ -38,21 +33,21 @@ namespace R8.Lib.Test.MethodTests
             _localizer.RefreshAsync().GetAwaiter().GetResult();
         }
 
-        [Fact]
-        public async Task CallResponse_Message()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-
-            // Act
-            var response = new FakeResponse(Flags.Success);
-            response.SetLocalizer(_localizer);
-
-            var expected = "عملیات به موفقیت انجام شد";
-
-            // Arrange
-            Assert.Equal(expected, response.Message);
-        }
+        // [Fact]
+        // public async Task CallResponse_Message()
+        // {
+        //     // Assets
+        //     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //
+        //     // Act
+        //     var response = new FakeResponse(Flags.Success);
+        //     response.SetLocalizer(_localizer);
+        //
+        //     var expected = "عملیات به موفقیت انجام شد";
+        //
+        //     // Arrange
+        //     Assert.Equal(expected, response.Message);
+        // }
 
         //[Fact]
         //public void CallResponseGeneric_DirectCast4()
@@ -66,74 +61,74 @@ namespace R8.Lib.Test.MethodTests
         //    Assert.Equal(expected, response);
         //}
 
-        [Fact]
-        public void CallResponse_CheckSuccess2()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        // [Fact]
+        // public void CallResponse_CheckSuccess2()
+        // {
+        //     // Assets
+        //     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //
+        //     // Act
+        //     var response = new FakeResponse(Flags.ParamIsNull);
+        //
+        //     // Arrange
+        //     Assert.False(response.Success);
+        // }
 
-            // Act
-            var response = new FakeResponse(Flags.ParamIsNull);
+        // [Fact]
+        // public void CallResponse_CheckSuccess()
+        // {
+        //     // Assets
+        //     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //
+        //     // Act
+        //     var response = new FakeResponse(Flags.Success);
+        //
+        //     // Arrange
+        //     Assert.True(response.Success);
+        // }
 
-            // Arrange
-            Assert.False(response.Success);
-        }
+        // [Fact]
+        // public void CallResponse_SetStatus()
+        // {
+        //     // Assets
+        //     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //
+        //     // Act
+        //     var response = new FakeResponse();
+        //     response.SetStatus(Flags.ParamIsNull);
+        //
+        //     // Arrange
+        //     Assert.Equal(Flags.ParamIsNull, response.Status);
+        // }
 
-        [Fact]
-        public void CallResponse_CheckSuccess()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        // [Fact]
+        // public async Task CallResponse_ToString()
+        // {
+        //     // Assets
+        //     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //
+        //     // Act
+        //     var response = new FakeResponse(Flags.Success);
+        //     response.SetLocalizer(_localizer);
+        //
+        //     var expected = "عملیات به موفقیت انجام شد";
+        //
+        //     // Arrange
+        //     Assert.Equal(expected, response.Message);
+        // }
 
-            // Act
-            var response = new FakeResponse(Flags.Success);
-
-            // Arrange
-            Assert.True(response.Success);
-        }
-
-        [Fact]
-        public void CallResponse_SetStatus()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-
-            // Act
-            var response = new FakeResponse();
-            response.SetStatus(Flags.ParamIsNull);
-
-            // Arrange
-            Assert.Equal(Flags.ParamIsNull, response.Status);
-        }
-
-        [Fact]
-        public async Task CallResponse_ToString()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-
-            // Act
-            var response = new FakeResponse(Flags.Success);
-            response.SetLocalizer(_localizer);
-
-            var expected = "عملیات به موفقیت انجام شد";
-
-            // Arrange
-            Assert.Equal(expected, response.Message);
-        }
-
-        [Fact]
-        public void CallResponse_CheckLocalizer()
-        {
-            // Assets
-
-            // Act
-            var response = new FakeResponse();
-            response.SetLocalizer(_localizer);
-            var localizer = response.GetLocalizer();
-
-            // Arrange
-            Assert.NotNull(localizer);
-        }
+        // [Fact]
+        // public void CallResponse_CheckLocalizer()
+        // {
+        //     // Assets
+        //
+        //     // Act
+        //     var response = new FakeResponse();
+        //     response.SetLocalizer(_localizer);
+        //     var localizer = response.GetLocalizer();
+        //
+        //     // Arrange
+        //     Assert.NotNull(localizer);
+        // }
     }
 }

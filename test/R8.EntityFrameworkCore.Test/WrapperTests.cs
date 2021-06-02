@@ -4,13 +4,12 @@ using R8.Lib.Localization;
 
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
 
 using Xunit;
 
 namespace R8.EntityFrameworkCore.Test
 {
-    public class ResponseTests
+    public class WrapperTests
     {
         private readonly Localizer _localizer;
 
@@ -21,7 +20,7 @@ namespace R8.EntityFrameworkCore.Test
             CultureInfo.GetCultureInfo("fa"),
         };
 
-        public ResponseTests()
+        public WrapperTests()
         {
             var configuration = new LocalizerConfiguration
             {
@@ -38,56 +37,46 @@ namespace R8.EntityFrameworkCore.Test
         }
 
         [Fact]
-        public async Task CallResponseGeneric_Message()
+        public void CallWrapperGeneric_Message()
         {
             // Assets
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
 
             // Act
-            var response = new FakeResponse<object>(Flags.Success);
+            var response = new FakeWrapper<object>(Flags.Success);
             response.SetLocalizer(_localizer);
 
-            var expected = "عملیات به موفقیت انجام شد";
+            const string expected = "عملیات به موفقیت انجام شد";
 
             // Arrange
             Assert.Equal(expected, response.Message);
         }
 
         [Fact]
-        public void CallResponseGeneric_DirectCast2()
-        {
-            // Act
-            var response = new FakeResponse<object>(Flags.Success);
-
-            // Arrange
-            Assert.True(response);
-        }
-
-        [Fact]
-        public void CallResponseGeneric_CheckSuccess()
+        public void CallWrapperGeneric_CheckSuccess()
         {
             // Assets
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
 
             // Act
-            var response = new FakeResponse<object>(Flags.Success);
+            var response = new FakeWrapper<object>(Flags.Success);
 
             // Arrange
             Assert.True(response.Success);
         }
 
-        [Fact]
-        public void CallResponseGeneric_CheckSuccess2()
-        {
-            // Assets
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //[Fact]
+        //public void CallResponseGeneric_CheckSuccess2()
+        //{
+        //    // Assets
+        //    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
 
-            // Act
-            var response = new FakeResponse<object>(Flags.Success);
-            response.Save = DatabaseSaveState.SaveFailure;
+        //    // Act
+        //    var response = new FakeWrapper<object>(Flags.Success);
+        //    response.Save = DatabaseSaveState.SaveFailure;
 
-            // Arrange
-            Assert.False(response.Success);
-        }
+        //    // Arrange
+        //    Assert.False(response.Success);
+        //}
     }
 }

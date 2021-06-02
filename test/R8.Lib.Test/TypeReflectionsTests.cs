@@ -1,6 +1,6 @@
-﻿using R8.Lib.MethodReturn;
-using R8.Lib.Test.Enums;
+﻿using R8.Lib.Test.Enums;
 using R8.Lib.Test.FakeObjects;
+using R8.Lib.Validatable;
 
 using System;
 using System.Collections.Generic;
@@ -35,9 +35,9 @@ namespace R8.Lib.Test
         [Fact]
         public void GetGetTypesAssignableFrom()
         {
-            var type = typeof(FakeResponse);
+            var type = typeof(FakeObjHasReq);
             var assembly = type.Assembly;
-            var types = assembly.GetTypesAssignableFrom<ResponseBase<Flags>>();
+            var types = assembly.GetTypesAssignableFrom<ValidatableObject<FakeObjHasReq>>();
 
             Assert.Contains(types, x => x == type);
         }

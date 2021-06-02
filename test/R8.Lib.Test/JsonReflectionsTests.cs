@@ -28,15 +28,15 @@ namespace R8.Lib.Test
             Assert.Equal("nm", jsonName);
         }
 
-        [Fact]
-        public void CallGetJsonProperty10()
-        {
-            // Act
-            var property = JsonHandler<FakeResponse>.GetProperty(x => x.Status);
-
-            // Arrange
-            Assert.Equal("sts", property);
-        }
+        // [Fact]
+        // public void CallGetJsonProperty10()
+        // {
+        //     // Act
+        //     var property = JsonHandler<FakeResponse>.GetProperty(x => x.Status);
+        //
+        //     // Arrange
+        //     Assert.Equal("sts", property);
+        // }
 
         [Fact]
         public void CallGetJsonProperty4()

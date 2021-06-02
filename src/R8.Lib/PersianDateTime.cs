@@ -235,11 +235,13 @@ namespace R8.Lib
             var year = persianCalendar.GetYear(dateTime);
             var month = persianCalendar.GetMonth(dateTime);
             var day = persianCalendar.GetDayOfMonth(dateTime);
+            var dayOfWeek = persianCalendar.GetDayOfWeek(dateTime);
 
             var hour = dateTime.Hour;
             var minute = dateTime.Minute;
             var second = dateTime.Second;
-            return new PersianDateTime(year, month, day, hour, minute, second);
+            var instance = new PersianDateTime(year, month, day, hour, minute, second, dayOfWeek, false);
+            return instance;
         }
 
         /// <summary>
@@ -261,12 +263,13 @@ namespace R8.Lib
         /// <param name="hour">Specific hour</param>
         /// <param name="minute">Specific minute</param>
         /// <param name="second">Specific second</param>
+        /// <param name="dayOfWeek"></param>
         /// <param name="gregorianDate">Set if parameters entered as <see cref="DateTime"/> components</param>
-        public PersianDateTime(int year, int month, int day, int hour, int minute, int second, bool gregorianDate)
+        internal PersianDateTime(int year, int month, int day, int hour, int minute, int second, DayOfWeek? dayOfWeek, bool gregorianDate)
         {
-            var dt = new DateTime(year, month, day, hour, minute, second);
             if (gregorianDate)
             {
+                var dt = new DateTime(year, month, day, hour, minute, second);
                 var pDt = GetFromDateTime(dt);
                 this.Year = pDt.Year;
                 this.Month = pDt.Month;
@@ -284,7 +287,15 @@ namespace R8.Lib
                 this.Hour = hour;
                 this.Minute = minute;
                 this.Second = second;
-                this.DayOfWeek = dt.DayOfWeek;
+                if (dayOfWeek == null)
+                {
+                    var dt = new DateTime(year, month, day, hour, minute, second, new PersianCalendar());
+                    this.DayOfWeek = dt.DayOfWeek;
+                }
+                else
+                {
+                    this.DayOfWeek = dayOfWeek.Value;
+                }
             }
         }
 
@@ -297,7 +308,7 @@ namespace R8.Lib
         /// <param name="hour">Specific hour</param>
         /// <param name="minute">Specific minute</param>
         /// <param name="second">Specific second</param>
-        public PersianDateTime(int year, int month, int day, int hour, int minute, int second) : this(year, month, day, hour, minute, second, false)
+        public PersianDateTime(int year, int month, int day, int hour, int minute, int second) : this(year, month, day, hour, minute, second, null, false)
         {
         }
 

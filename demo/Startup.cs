@@ -208,7 +208,7 @@ namespace R8.AspNetCore3_1.Demo
             app.UseRequestLocalization(app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value);
 
             app.UseLocalizer();
-            app.UseResponse();
+            // app.UseResponse();
             app.UseFileHandlers();
 
             app.UseEndpoints(endpoints =>

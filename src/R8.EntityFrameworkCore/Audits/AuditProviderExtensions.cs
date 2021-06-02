@@ -36,8 +36,8 @@ namespace R8.EntityFrameworkCore.Audits
             var configuration = new AuditProviderConfiguration();
             config(configuration);
 
+            services.AddSingleton(configuration);
             services.AddSingleton(typeof(IAuditDataProvider), configuration.ProviderType);
-            services.TryAddSingleton(configuration);
             return services;
         }
     }

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>A predefined pattern for EntityFramework Core to easily store Audits. IF YOU HAVE A WORKING DATABASE WITH USING R8.ENTITYFRAMEWORK VERSION LESS THAN 2, DON'T UPDATE TO THIS VERSION. THIS VERSIAN HAS BREAKING CHANGES IN ENTITYBASE.</Description>
-		<VersionPrefix>2.0.0</VersionPrefix>
+		<VersionPrefix>2.0.3</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
@@ -41,13 +41,16 @@
 	<ItemGroup>
 		<PackageReference Include="Humanizer.Core" Version="2.10.1" />
 		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="3.1.0" />
-		<PackageReference Include="R8.Lib" Version="1.11.7" />
+		<PackageReference Include="R8.Lib" Version="2.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.6">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
+	<!--<ItemGroup>
+	  <ProjectReference Include="..\R8.Lib\R8.Lib.csproj" />
+	</ItemGroup>-->
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<PlatformTarget>anycpu</PlatformTarget>

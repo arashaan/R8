@@ -1,12 +1,10 @@
 ﻿using System;
-
 using Microsoft.Extensions.DependencyInjection;
-
 using R8.Lib.Localization;
 
-namespace R8.Lib.MethodReturn
+namespace R8.Lib.Wrappers
 {
-    public class ResponseConnection
+    public class WrapperConnection
     {
         private static IServiceProvider _services;
 

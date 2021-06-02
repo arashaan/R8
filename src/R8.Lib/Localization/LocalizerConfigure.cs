@@ -41,7 +41,7 @@ namespace R8.Lib.Localization
             //     if (localizer == null)
             //         throw new NullReferenceException($"Can't find {nameof(ILocalizer)} related service");
             //
-            //     var obj = new ResponseStatus();
+            //     var obj = new WrapperStatus();
             //     obj.SetLocalizer(localizer);
             //     return obj;
             // });

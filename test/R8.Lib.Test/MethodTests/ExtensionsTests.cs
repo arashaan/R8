@@ -37,38 +37,38 @@ namespace R8.Lib.Test.MethodTests
             _localizer = new Localizer(configuration, null);
         }
 
-        [Fact]
-        public void CallGetMessage_LocalizerNull()
-        {
-            // Assets
-            var response = new FakeResponse(Flags.Success);
+        // [Fact]
+        // public void CallGetMessage_LocalizerNull()
+        // {
+        //     // Assets
+        //     var response = new FakeResponse(Flags.Success);
+        //
+        //     // Act
+        //     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //     var message = response.Message;
+        //
+        //     var expected = "Success";
+        //
+        //     // Arrange
+        //     Assert.Equal(expected, message);
+        // }
 
-            // Act
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-            var message = response.Message;
-
-            var expected = "Success";
-
-            // Arrange
-            Assert.Equal(expected, message);
-        }
-
-        [Fact]
-        public async Task CallGetMessage()
-        {
-            // Assets
-            var response = new FakeResponse(Flags.Success);
-            await _localizer.RefreshAsync();
-            response.SetLocalizer(_localizer);
-
-            // Act
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
-            var message = response.Message;
-
-            var expected = "عملیات به موفقیت انجام شد";
-
-            // Arrange
-            Assert.Equal(expected, message);
-        }
+        // [Fact]
+        // public async Task CallGetMessage()
+        // {
+        //     // Assets
+        //     var response = new FakeResponse(Flags.Success);
+        //     await _localizer.RefreshAsync();
+        //     response.SetLocalizer(_localizer);
+        //
+        //     // Act
+        //     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fa");
+        //     var message = response.Message;
+        //
+        //     var expected = "عملیات به موفقیت انجام شد";
+        //
+        //     // Arrange
+        //     Assert.Equal(expected, message);
+        // }
     }
 }
