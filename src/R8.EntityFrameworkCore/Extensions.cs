@@ -2,17 +2,15 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
-
-using R8.Lib;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace R8.EntityFrameworkCore
 {
@@ -118,13 +116,11 @@ namespace R8.EntityFrameworkCore
         /// <param name="entityType">A <see cref="Type"/> object.</param>
         /// <exception cref="InvalidCastException"></exception>
         /// <returns>A <see cref="string"/> as name of the Table.</returns>
-        public static string GetTableName(Type entityType)
+        public static string NormalizeTableName(Type entityType)
         {
-            var hasImplementation = entityType.GetInterface(nameof(IEntityBase));
-            if (hasImplementation != null)
-                return entityType.Name.Pluralize();
-
-            throw new InvalidCastException($"Given type must be implemented from {typeof(IEntityBase)}.");
+            //var hasImplementation = entityType.IsAssignableFrom(typeof(IEntityBaseIdentifier));
+            //return hasImplementation ? entityType.Name.Pluralize() : entityType.Name;
+            return entityType.Name.Pluralize();
         }
 
         /// <summary>
@@ -134,12 +130,12 @@ namespace R8.EntityFrameworkCore
         /// <param name="entity">A <see cref="TEntity"/> object that representing entity.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>A <see cref="string"/> as name of the Table.</returns>
-        public static string GetTableName<TEntity>(this TEntity entity) where TEntity : class, IEntityBase
+        public static string NormalizeTableName<TEntity>(this TEntity entity) where TEntity : class, IEntityBaseIdentifier
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            return GetTableName<TEntity>();
+            return NormalizeTableName<TEntity>();
         }
 
         /// <summary>
@@ -147,9 +143,9 @@ namespace R8.EntityFrameworkCore
         /// </summary>
         /// <typeparam name="TEntity">A derived type from <see cref="IEntityBase"/>.</typeparam>
         /// <returns>A <see cref="string"/> as name of the Table.</returns>
-        public static string GetTableName<TEntity>() where TEntity : class, IEntityBase
+        public static string NormalizeTableName<TEntity>() where TEntity : class, IEntityBaseIdentifier
         {
-            return GetTableName(typeof(TEntity));
+            return NormalizeTableName(typeof(TEntity));
         }
     }
 }

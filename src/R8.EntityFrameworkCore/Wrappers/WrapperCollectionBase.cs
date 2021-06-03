@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
+using Newtonsoft.Json;
+
+using R8.Lib.Localization;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +18,21 @@ namespace R8.EntityFrameworkCore.Wrappers
         {
         }
 
+        public WrapperCollectionBase(TStatus status) : base(status)
+        {
+        }
+
+        public WrapperCollectionBase(TStatus status, ILocalizer localizer) : base(status, localizer)
+        {
+        }
+
+        public WrapperCollectionBase(ILocalizer localizer) : base(localizer)
+        {
+        }
+
         public WrapperCollectionBase(IEntityBaseIdentifier entity)
         {
-            Entities.Add(entity);
+            this.Add(entity);
         }
 
         public WrapperCollectionBase(IEnumerable<IEntityBaseIdentifier> collection)
@@ -25,9 +41,32 @@ namespace R8.EntityFrameworkCore.Wrappers
                 Entities.AddRange(collection);
         }
 
-        public List<IEntityBaseIdentifier> Entities { get; set; } = new List<IEntityBaseIdentifier>();
+        public static implicit operator WrapperCollectionBase<TStatus>(TStatus flag)
+        {
+            return new WrapperCollectionBase<TStatus>(flag);
+        }
 
-        public DatabaseSaveStatus? Save { get; private set; }
+        public static explicit operator TStatus(WrapperCollectionBase<TStatus> src)
+        {
+            return src.Status;
+        }
+
+        public virtual void Add(IEntityBaseIdentifier entity)
+        {
+            Entities.Add(entity);
+        }
+
+        /// <summary>
+        /// Gets or sets the message carries the result.
+        /// </summary>
+        [JsonProperty("message")]
+        public virtual string Message { get; set; }
+
+        [JsonIgnore]
+        public virtual List<IEntityBaseIdentifier> Entities { get; set; } = new List<IEntityBaseIdentifier>();
+
+        [JsonIgnore]
+        public virtual DatabaseSaveStatus? Save { get; private set; }
 
         /// <summary>
         /// Save changes in Database.
@@ -40,7 +79,7 @@ namespace R8.EntityFrameworkCore.Wrappers
         /// </returns>
         /// <exception cref="DbUpdateException" />
         /// <exception cref="DbUpdateConcurrencyException" />
-        public async Task SaveChangesAsync<TDbContext>(TDbContext dbContext, CancellationToken cancellationToken = default) where TDbContext : DbContext
+        public virtual async Task SaveChangesAsync<TDbContext>(TDbContext dbContext, CancellationToken cancellationToken = default) where TDbContext : DbContext
         {
             if (dbContext == null)
                 throw new ArgumentNullException(nameof(dbContext));

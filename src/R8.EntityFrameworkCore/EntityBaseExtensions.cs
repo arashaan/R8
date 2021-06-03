@@ -10,7 +10,7 @@ namespace R8.EntityFrameworkCore
     {
         internal static EntityTypeBuilder<TEntity> ApplyIdentifierConfiguration<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IEntityBaseIdentifier
         {
-            builder.ToTable(Extensions.GetTableName(typeof(TEntity)));
+            builder.ToTable(Extensions.NormalizeTableName(typeof(TEntity)));
             builder.HasKey(x => x.Id);
             builder.Property(e => e.Id).ValueGeneratedOnAdd();
             return builder;
