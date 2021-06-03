@@ -24,17 +24,17 @@ namespace R8.Lib
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            List<Type> assemblyTypes;
+            List<Type> typesOfAssembly;
             try
             {
-                assemblyTypes = assembly.DefinedTypes.Select(x => x.AsType()).ToList();
+                typesOfAssembly = assembly.DefinedTypes.Select(x => x.AsType()).ToList();
             }
             catch (ReflectionTypeLoadException ex)
             {
-                assemblyTypes = ex.Types.Where(t => t != null).Select(IntrospectionExtensions.GetTypeInfo).Select(x => x.AsType()).ToList();
+                typesOfAssembly = ex.Types.Where(t => t != null).Select(IntrospectionExtensions.GetTypeInfo).Select(x => x.AsType()).ToList();
             }
 
-            return assemblyTypes.Where(type.IsAssignableFrom).ToArray();
+            return typesOfAssembly.Where(type.IsAssignableFrom).ToArray();
         }
 
         /// <summary>
