@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>A predefined pattern for EntityFramework Core to easily store Audits. IF YOU HAVE A WORKING DATABASE WITH USING R8.ENTITYFRAMEWORK VERSION LESS THAN 2, DON'T UPDATE TO THIS VERSION. THIS VERSIAN HAS BREAKING CHANGES IN ENTITYBASE.</Description>
-		<VersionPrefix>2.0.3.4</VersionPrefix>
+		<VersionPrefix>2.0.4</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>

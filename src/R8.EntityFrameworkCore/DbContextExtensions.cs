@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using R8.Lib.Validatable;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace R8.EntityFrameworkCore
 {
@@ -19,21 +18,26 @@ namespace R8.EntityFrameworkCore
         /// <param name="start"></param>
         /// <param name="entityTypes"></param>
         /// <returns></returns>
-        public static ModelBuilder HasAutoIncrementColumn(this ModelBuilder modelBuilder, string property, long start, params Type[] entityTypes)
+        public static ModelBuilder HasSequences(this ModelBuilder modelBuilder, string property, long start, params Type[] entityTypes)
         {
             if (entityTypes == null || !entityTypes.Any())
                 return modelBuilder;
 
-            foreach (var entityType in entityTypes)
+            foreach (var type in entityTypes)
             {
-                var tableName = entityType.Name;
-                modelBuilder.HasSequence<long>($"{tableName}_seq", schema: "dbo")
+                var entityType = modelBuilder.Model.FindEntityType($"{type.Namespace}.{type.Name}")
+                    .AsEntityType();
+                var tableName = entityType.GetTableName();
+                var schemaName = entityType.GetSchema();
+                var tableFullName = entityType.GetSchemaQualifiedTableName();
+
+                modelBuilder.HasSequence<long>($"{tableName}_seq", schemaName)
                     .StartsAt(start)
                     .IncrementsBy(1);
 
-                modelBuilder.Entity(entityType)
+                modelBuilder.Entity(type)
                     .Property(property)
-                    .HasDefaultValueSql($"NEXT VALUE FOR dbo.{tableName}_seq");
+                    .HasDefaultValueSql($"NEXT VALUE FOR {tableFullName}_seq");
             }
 
             return modelBuilder;
