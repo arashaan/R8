@@ -24,7 +24,7 @@ namespace R8.AspNetCore3_1.Demo.Pages
 
         public void OnGet()
         {
-            var testCulture = this.GetLocalization();
+            var testCulture = this.HttpContext.GetLocalization();
             var testLocalizer = this.Localizer;
             var testCulturizedUrl = this.Url;
             if (testCulturizedUrl == null)

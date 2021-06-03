@@ -1,15 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Options;
 
 using R8.AspNetCore.HttpContextExtensions;
 
 using System;
-using System.Linq;
 
 namespace R8.AspNetCore.Routing
 {
@@ -21,13 +17,7 @@ namespace R8.AspNetCore.Routing
         /// <typeparam name="T">A type of specific <see cref="RazorPage"/>.</typeparam>
         /// <param name="page">A derived class that representing specific razor page model.</param>
         /// <returns>A <see cref="IAuthenticatedUser"/> object.</returns>
-        public static IAuthenticatedUser GetAuthenticatedUser<T>(this T page) where T : RazorPage
-        {
-            if (page == null)
-                throw new ArgumentNullException(nameof(page));
-
-            return page.User.GetAuthenticatedUser();
-        }
+        public static IAuthenticatedUser GetAuthenticatedUser<T>(this T page) where T : RazorPage => page.User.GetAuthenticatedUser();
 
         /// <summary>
         /// Gets the current API resource name from HTTP context
@@ -43,121 +33,28 @@ namespace R8.AspNetCore.Routing
             return endpoint?.Metadata.GetMetadata<EndpointNameMetadata>()?.EndpointName;
         }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="page"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <returns></returns>
-        public static RequestLocalizationOptions GetLocalization(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page)
-        {
-            if (page == null) throw new ArgumentNullException(nameof(page));
-            var service = page.HttpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>));
-            return ((IOptions<RequestLocalizationOptions>)service)?.Value;
-        }
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page) where TPage : PageModel => page.RedirectToPageLocalized(null);
 
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page)
-        {
-            var pageName = page.GetType().GetPagePath();
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, new RouteValueDictionary());
-            if (values == null || !values.Any())
-                values = thisRoutes;
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page, object routeValues) where TPage : PageModel => page.RedirectToPageLocalized(null, routeValues);
 
-            return page.RedirectToPage(pageName, values);
-        }
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page, string pageName) where TPage : PageModel => page.RedirectToPageLocalized(pageName, null);
 
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, object routeValues)
-        {
-            var pageName = page.GetType().GetPagePath();
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, routeValues);
-            if (values == null || !values.Any())
-                values = thisRoutes;
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page, string pageName, object routeValues) where TPage : PageModel => page.RedirectToPageLocalized(pageName, null, routeValues);
 
-            return page.RedirectToPage(pageName, values);
-        }
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page, string pageName, string pageHandler) where TPage : PageModel => page.RedirectToPageLocalized(pageName, pageHandler, null);
 
-        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page) where TPage : PageModel
-        {
-            var pageName = typeof(TPage).GetPagePath();
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, new RouteValueDictionary());
-            if (values == null || !values.Any())
-                values = thisRoutes;
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page, string pageName, string pageHandler, object routeValues) where TPage : PageModel => page.RedirectToPageLocalized(pageName, pageHandler, routeValues, null);
 
-            return page.RedirectToPage(pageName, values);
-        }
-
-        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, object routeValues) where TPage : PageModel
-        {
-            var pageName = typeof(TPage).GetPagePath();
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, routeValues);
-            if (values == null || !values.Any())
-                values = thisRoutes;
-
-            return page.RedirectToPage(pageName, values);
-        }
-
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, string pageName)
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page, string pageName, string pageHandler, object routeValues, string fragment) where TPage : PageModel
         {
             var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, new RouteValueDictionary());
-            if (values == null || !values.Any())
-                values = thisRoutes;
-
-            return page.RedirectToPage(pageName, values);
-        }
-
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, string pageName, object routeValues)
-        {
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, routeValues);
-            if (values == null || !values.Any())
-                values = thisRoutes;
-
-            return page.RedirectToPage(pageName, values);
-        }
-
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, string pageName, string pageHandler)
-        {
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, new RouteValueDictionary());
-            if (values == null || !values.Any())
-                values = thisRoutes;
-
-            return page.RedirectToPage(pageName, pageHandler, values);
-        }
-
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, string pageName, string pageHandler, object routeValues)
-        {
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, routeValues);
-            if (values == null || !values.Any())
-                values = thisRoutes;
-
-            return page.RedirectToPage(pageName, pageHandler, values);
-        }
-
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, string pageName, string pageHandler, object routeValues, string fragment)
-        {
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, routeValues);
-            if (values == null || !values.Any())
-                values = thisRoutes;
-
+            var values = CultureExtensions.GetDictionary(
+                localization: page.HttpContext.GetLocalization(),
+                requestRoute: page.Request.RouteValues,
+                newRouteValue: routeValues);
             return page.RedirectToPage(pageName, pageHandler, values, fragment);
         }
 
-        public static RedirectToPageResult RedirectToPageLocalized(this Microsoft.AspNetCore.Mvc.RazorPages.PageModel page, string pageName, string pageHandler, string fragment)
-        {
-            var thisRoutes = page.Request.RouteValues;
-            var values = page.GetLocalization()?.TryAddCulture(thisRoutes, new RouteValueDictionary());
-            if (values == null || !values.Any())
-                values = thisRoutes;
-
-            return page.RedirectToPage(pageName, pageHandler, values, fragment);
-        }
+        public static RedirectToPageResult RedirectToPageLocalized<TPage>(this TPage page, string pageName, string pageHandler, string fragment) where TPage : PageModel => page.RedirectToPageLocalized(pageName, pageHandler, null, fragment);
     }
 }

@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
+using R8.AspNetCore.Localization;
+
 using System;
+using System.Linq;
 
 namespace R8.AspNetCore.Routing
 {
@@ -213,13 +216,10 @@ namespace R8.AspNetCore.Routing
             {
                 throw new ArgumentNullException(nameof(urlHelper));
             }
-            var requestLocalizationOptions = urlHelper.ActionContext.HttpContext.RequestServices
-                .GetService<IOptions<RequestLocalizationOptions>>();
-            var requestLocalization = requestLocalizationOptions?.Value;
-            if (requestLocalization != null)
-                values = requestLocalization.TryAddCulture(urlHelper.ActionContext.HttpContext.Request.RouteValues,
-                    values);
-
+            values = CultureExtensions.GetDictionary(
+               localization: urlHelper.ActionContext.HttpContext.GetLocalization(),
+               requestRoute: urlHelper.ActionContext.HttpContext.Request.RouteValues,
+               newRouteValue: new RouteValueDictionary());
             return urlHelper.Action(action, controller, values, protocol, host, fragment);
         }
 
@@ -375,13 +375,10 @@ namespace R8.AspNetCore.Routing
             {
                 throw new ArgumentNullException(nameof(urlHelper));
             }
-
-            var requestLocalizationOptions = urlHelper.ActionContext.HttpContext.RequestServices
-                .GetService<IOptions<RequestLocalizationOptions>>();
-            var requestLocalization = requestLocalizationOptions?.Value;
-            if (requestLocalization != null)
-                values = requestLocalization.TryAddCulture(urlHelper.ActionContext.HttpContext.Request.RouteValues,
-                    values);
+            values = CultureExtensions.GetDictionary(
+               localization: urlHelper.ActionContext.HttpContext.GetLocalization(),
+               requestRoute: urlHelper.ActionContext.HttpContext.Request.RouteValues,
+               newRouteValue: new RouteValueDictionary());
             return urlHelper.RouteUrl(routeName, values, protocol, host, fragment);
         }
 
@@ -516,15 +513,43 @@ namespace R8.AspNetCore.Routing
             {
                 throw new ArgumentNullException(nameof(urlHelper));
             }
-
-            var requestLocalizationOptions = urlHelper.ActionContext.HttpContext.RequestServices
-                .GetService<IOptions<RequestLocalizationOptions>>();
-            var requestLocalization = requestLocalizationOptions?.Value;
-            if (requestLocalization != null)
-                values = requestLocalization.TryAddCulture(urlHelper.ActionContext.HttpContext.Request.RouteValues,
-                    values);
-
+            values = CultureExtensions.GetDictionary(
+               localization: urlHelper.ActionContext.HttpContext.GetLocalization(),
+               requestRoute: urlHelper.ActionContext.HttpContext.Request.RouteValues,
+               newRouteValue: values);
             return urlHelper.Page(pageName, pageHandler, values, protocol, host, fragment);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        public static RequestLocalizationOptions GetLocalization(this HttpContext httpContext)
+        {
+            if (httpContext == null) throw new ArgumentNullException(nameof(httpContext));
+            var service = httpContext.RequestServices.GetService(typeof(IOptions<RequestLocalizationOptions>));
+            return ((IOptions<RequestLocalizationOptions>)service)?.Value;
+        }
+
+        public static RouteValueDictionary GetDictionary(RequestLocalizationOptions localization, RouteValueDictionary requestRoute, object newRouteValue = null)
+        {
+            RouteValueDictionary values;
+            if (localization != null)
+            {
+                values = localization.TryAddCulture(requestRoute, newRouteValue);
+            }
+            else
+            {
+                values = newRouteValue == null
+                    ? new RouteValueDictionary()
+                    : new RouteValueDictionary(newRouteValue);
+                if (requestRoute.Any())
+                    foreach (var (key, value) in requestRoute)
+                        values.Add(key, value);
+            }
+
+            return values;
         }
 
         public static RouteValueDictionary TryAddCulture(this RequestLocalizationOptions cultureProvider, RouteValueDictionary requestRoutes, object values)
@@ -535,17 +560,17 @@ namespace R8.AspNetCore.Routing
                 return new RouteValueDictionary();
 
             var routeValues = new RouteValueDictionary(values);
-            var hasCultureRoute = requestRoutes.ContainsKey(R8.AspNetCore.Localization.Constraints.LanguageKey);
+            var hasCultureRoute = requestRoutes.ContainsKey(Constraints.LanguageKey);
             if (!hasCultureRoute)
                 return routeValues;
 
-            var currentCulture = requestRoutes[R8.AspNetCore.Localization.Constraints.LanguageKey].ToString();
+            var currentCulture = requestRoutes[Constraints.LanguageKey].ToString();
             var defaultCulture = cultureProvider.DefaultRequestCulture.Culture.Name;
-            if (routeValues.ContainsKey(R8.AspNetCore.Localization.Constraints.LanguageKey))
+            if (routeValues.ContainsKey(Constraints.LanguageKey))
                 return routeValues;
 
             if (currentCulture != defaultCulture)
-                routeValues[R8.AspNetCore.Localization.Constraints.LanguageKey] = currentCulture;
+                routeValues[Constraints.LanguageKey] = currentCulture;
             return routeValues;
         }
     }

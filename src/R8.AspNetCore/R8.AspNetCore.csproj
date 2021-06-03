@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>Many many many useful features for Asp.NET Core</Description>
-		<VersionPrefix>2.0.0</VersionPrefix>
+		<VersionPrefix>2.0.1</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
