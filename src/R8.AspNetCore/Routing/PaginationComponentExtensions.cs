@@ -26,7 +26,7 @@ namespace R8.AspNetCore.Routing
         /// <remarks>Output model is a collection of type <see cref="PaginationPageModel"/>.</remarks>
         public static IViewComponentResult InvokePagination<TComponent>(this TComponent component, string viewUrl, string paginationPropertyName = "List", string pageNoIdentifier = "pageNo") where TComponent : ViewComponent
         {
-            var pageModel = (PageModel)component.ViewContext.ViewData.Model;
+            var pageModel = (Microsoft.AspNetCore.Mvc.RazorPages.PageModel)component.ViewContext.ViewData.Model;
             var paginationListProp = pageModel.GetType().GetProperty(paginationPropertyName);
             if (paginationListProp == null)
                 return new ContentViewComponentResult(string.Empty);
@@ -54,14 +54,14 @@ namespace R8.AspNetCore.Routing
                 if (currentUrlData.Values.ContainsKey("page"))
                 {
                     var page = currentUrlData.Values["page"].ToString();
-                    currentUrl = component.Url.Page(page, routes);
+                    currentUrl = component.Url.PageLocalized(page, routes);
                 }
                 else
                 {
                     var arr = currentUrlData.Values.Take(2).Cast<string>().ToList();
                     var controller = arr[0];
                     var action = arr[1];
-                    currentUrl = component.Url.Action(action, controller, routes);
+                    currentUrl = component.Url.ActionLocalized(action, controller, routes);
                 }
 
                 model.Add(new PaginationPageModel(pageNo, pageNo == pagination.CurrentPage, currentUrl));

@@ -5,15 +5,15 @@ using R8.Lib.Search;
 
 namespace R8.AspNetCore3_1.Demo.Services.Routing
 {
-    public class PageModel<TSearch, TModel> : PageModelBase<TSearch, TModel> where TSearch : SearchBase where TModel : class
+    public class PageModel<TSearch, TModel> : AspNetCore.Routing.PageModel<TSearch, TModel> where TSearch : SearchBase where TModel : class
     {
     }
 
-    public class PageModel<TSearch> : PageModelBase<TSearch> where TSearch : SearchBase
+    public class PageModel<TSearch> : AspNetCore.Routing.PageModel<TSearch> where TSearch : SearchBase
     {
     }
 
-    public class PageModel : PageModelBase
+    public class PageModel : AspNetCore.Routing.PageModel
     {
         public const string Query_STATUS = "status";
 
@@ -93,7 +93,7 @@ namespace R8.AspNetCore3_1.Demo.Services.Routing
         //   Func<Task<Response<TEntity>>> action)
         //   where TEntity : class where TInputModel : ValidatableObject
         // {
-        //     return this.HandleAsync(model, action, _ => RedirectToPage(PagePath));
+        //     return this.HandleAsync(model, action, _ => RedirectToPageLocalized(PagePath));
         // }
         //
         // /// <summary>

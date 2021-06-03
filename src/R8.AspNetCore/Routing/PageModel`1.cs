@@ -8,7 +8,7 @@ namespace R8.AspNetCore.Routing
     /// A full-fledged PageModel will optimizations for localization.
     /// </summary>
     /// <typeparam name="TSearch">A derived type of <see cref="BaseSearch"/> type.</typeparam>
-    public abstract class PageModelBase<TSearch> : PageModelBase where TSearch : SearchBase
+    public abstract class PageModel<TSearch> : PageModel where TSearch : SearchBase
     {
         /// <summary>
         /// Gets or sets an object of <see cref="BaseSearch"/> to representing search parameters.
@@ -19,12 +19,12 @@ namespace R8.AspNetCore.Routing
         //public IActionResult OnPost()
         //{
         //    // var form = this.Request.Form;
-        //    return RedirectToPage(SearchInput.GetRouteData());
+        //    return RedirectToPageLocalized(SearchInput.GetRouteData());
         //}
 
         /// <summary>
         /// Refreshes page with given search parameters.
         /// </summary>
-        public RedirectToPageResult RedirectToSearch() => RedirectToPage(SearchInput.GetRouteData());
+        public RedirectToPageResult RedirectToSearch() => this.RedirectToPageLocalized(SearchInput.GetRouteData());
     }
 }

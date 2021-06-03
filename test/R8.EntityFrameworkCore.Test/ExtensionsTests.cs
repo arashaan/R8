@@ -57,7 +57,7 @@ namespace R8.EntityFrameworkCore.Test
         {
             var type = typeof(User);
 
-            var tableName = Extensions.GetTableName(type);
+            var tableName = Extensions.NormalizeTableName(type);
 
             Assert.NotNull(tableName);
             Assert.Equal("Users", tableName);

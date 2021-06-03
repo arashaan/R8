@@ -164,7 +164,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             var contentContent = await output.GetChildContentAsync();
             var content = contentContent.GetContent();
             if (string.IsNullOrEmpty(content))
-                if (ViewContext?.ViewData.Model is PageModelBase page)
+                if (ViewContext?.ViewData.Model is PageModel page)
                     content = page.PageTitle;
 
             var position = 0;

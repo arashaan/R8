@@ -19,17 +19,17 @@ namespace R8.AspNetCore.Routing
 {
     public interface IViewRenderService
     {
-        Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, Action<StringWriter> writer = null) where TPageModel : PageModel;
+        Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, Action<StringWriter> writer = null) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel;
 
-        Task<Page> GetRazorPageAsync<TPageModel>(params object[] args) where TPageModel : PageModel;
+        Task<Page> GetRazorPageAsync<TPageModel>(params object[] args) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel;
 
-        Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext, Action<StringWriter> writer = null) where TPageModel : PageModel;
+        Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext, Action<StringWriter> writer = null) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel;
 
-        Task<string> RenderPageAsync<TPageModel>(string viewName, TPageModel model) where TPageModel : PageModel;
+        Task<string> RenderPageAsync<TPageModel>(string viewName, TPageModel model) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel;
 
-        Task<string> RenderPageAsync<TPageModel>(params object[] args) where TPageModel : PageModel;
+        Task<string> RenderPageAsync<TPageModel>(params object[] args) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel;
 
-        Task<string> RenderPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext) where TPageModel : PageModel;
+        Task<string> RenderPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel;
     }
 
     public class ViewRenderService : IViewRenderService
@@ -56,7 +56,7 @@ namespace R8.AspNetCore.Routing
             _activator = activator;
         }
 
-        public async Task<string> RenderPageAsync<TPageModel>(params object[] args) where TPageModel : PageModel
+        public async Task<string> RenderPageAsync<TPageModel>(params object[] args) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
         {
             var pageName = typeof(TPageModel).GetPagePath();
             var model = Activator.CreateInstance(typeof(TPageModel), args) as TPageModel;
@@ -65,7 +65,7 @@ namespace R8.AspNetCore.Routing
             return output;
         }
 
-        public async Task<string> RenderPageAsync<TPageModel>(string pageName, TPageModel model) where TPageModel : PageModel
+        public async Task<string> RenderPageAsync<TPageModel>(string pageName, TPageModel model) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
         {
             var output = string.Empty;
             _ = await GetRazorPageAsync(pageName, model, writer =>
@@ -75,7 +75,7 @@ namespace R8.AspNetCore.Routing
             return output;
         }
 
-        public async Task<string> RenderPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext) where TPageModel : PageModel
+        public async Task<string> RenderPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
         {
             var output = string.Empty;
             _ = await GetRazorPageAsync(pageName, model, httpContext, actionContext, writer =>
@@ -85,7 +85,7 @@ namespace R8.AspNetCore.Routing
             return output;
         }
 
-        public async Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext, Action<StringWriter> writer = null) where TPageModel : PageModel
+        public async Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, HttpContext httpContext, ActionContext actionContext, Action<StringWriter> writer = null) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
         {
             await using var sw = new StringWriter();
             var result = _razorViewEngine.FindPage(actionContext, pageName);
@@ -130,7 +130,7 @@ namespace R8.AspNetCore.Routing
             return page;
         }
 
-        public Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, Action<StringWriter> writer = null) where TPageModel : PageModel
+        public Task<Page> GetRazorPageAsync<TPageModel>(string pageName, TPageModel model, Action<StringWriter> writer = null) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
         {
             var httpContext = _httpContext.HttpContext ??= new DefaultHttpContext();
             var routeData = httpContext.GetRouteData();
@@ -145,7 +145,7 @@ namespace R8.AspNetCore.Routing
             return GetRazorPageAsync(pageName, model, httpContext, actionContext, writer);
         }
 
-        public Task<Page> GetRazorPageAsync<TPageModel>(params object[] args) where TPageModel : PageModel
+        public Task<Page> GetRazorPageAsync<TPageModel>(params object[] args) where TPageModel : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
         {
             var pageName = typeof(TPageModel).GetPagePath();
             var model = Activator.CreateInstance(typeof(TPageModel), args) as TPageModel;

@@ -222,12 +222,12 @@ namespace R8.AspNetCore.Routing
         /// <typeparam name="TPage"></typeparam>
         /// <param name="urlHelper"></param>
         /// <returns></returns>
-        public static string GetPagePath<TPage>(this ICulturalizedUrlHelper urlHelper) where TPage : PageModel
+        public static string GetPagePath<TPage>(this IUrlHelper urlHelper) where TPage : Microsoft.AspNetCore.Mvc.RazorPages.PageModel
         {
             var currentConfig = new PageHandlerConfiguration();
             var address = GetPagePath(typeof(TPage), currentConfig);
 
-            var url = urlHelper.Page(address);
+            var url = urlHelper.PageLocalized(address);
             return url;
         }
 
@@ -241,7 +241,7 @@ namespace R8.AspNetCore.Routing
         {
             if (type == null) throw new ArgumentNullException(nameof(type));
 
-            if ((type == typeof(PageModelBase)) && !type.IsSubclassOf(typeof(Microsoft.AspNetCore.Mvc.RazorPages.PageModel)))
+            if ((type == typeof(PageModel)) && !type.IsSubclassOf(typeof(Microsoft.AspNetCore.Mvc.RazorPages.PageModel)))
                 throw new Exception(nameof(type));
 
             var currentConfig = new PageHandlerConfiguration();

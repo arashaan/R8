@@ -16,6 +16,7 @@ using R8.AspNetCore.HttpContextExtensions;
 using R8.AspNetCore.Routing;
 using R8.AspNetCore.Sitemap.Models;
 using R8.Lib;
+using PageModel = Microsoft.AspNetCore.Mvc.RazorPages.PageModel;
 
 namespace R8.AspNetCore.Sitemap
 {
@@ -56,7 +57,7 @@ namespace R8.AspNetCore.Sitemap
         private static readonly XAttribute XmlNamespace = new XAttribute("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9");
 
         /// <summary>
-        /// returns a collection of <see cref="PageModel" /> under given namespace with respect to <see cref="SitemapSettingsAttribute"/> attribute.
+        /// returns a collection of <see cref="Microsoft.AspNetCore.Mvc.RazorPages.PageModel" /> under given namespace with respect to <see cref="SitemapSettingsAttribute"/> attribute.
         /// </summary>
         /// <param name="nameSpace">A <see cref="string"/> value that representing an specific namespace to scan nested page types.</param>
         /// <returns>A <see cref="IEnumerable{T}"/> object.</returns>

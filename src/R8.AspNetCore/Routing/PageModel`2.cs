@@ -8,7 +8,7 @@ namespace R8.AspNetCore.Routing
     /// </summary>
     /// <typeparam name="TSearch">A derived type of <see cref="BaseSearch"/> type.</typeparam>
     /// <typeparam name="TModel">An object to place in <see cref="Pagination"/>.</typeparam>
-    public abstract class PageModelBase<TSearch, TModel> : PageModelBase<TSearch>
+    public abstract class PageModel<TSearch, TModel> : PageModel<TSearch>
         where TSearch : SearchBase where TModel : class
     {
         /// <summary>

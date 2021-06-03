@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using R8.AspNetCore.Routing;
 using R8.AspNetCore.Sitemap;
-using R8.AspNetCore3_1.Demo.Services.Routing;
 using R8.FileHandlers.AspNetCore;
 
 using System.Threading.Tasks;
+
+using PageModel = R8.AspNetCore3_1.Demo.Services.Routing.PageModel;
 
 namespace R8.AspNetCore3_1.Demo.Pages
 {
@@ -22,7 +24,7 @@ namespace R8.AspNetCore3_1.Demo.Pages
 
         public void OnGet()
         {
-            var testCulture = this.Culture;
+            var testCulture = this.GetLocalization();
             var testLocalizer = this.Localizer;
             var testCulturizedUrl = this.Url;
             if (testCulturizedUrl == null)
@@ -33,7 +35,7 @@ namespace R8.AspNetCore3_1.Demo.Pages
         public async Task<IActionResult> OnPost()
         {
             var upload = await Test.UploadAsync();
-            return RedirectToPage();
+            return this.RedirectToPageLocalized();
         }
 
         public async Task<IActionResult> OnGetUpdateLocalizerAsync()

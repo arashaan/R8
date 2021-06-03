@@ -113,7 +113,6 @@ namespace R8.AspNetCore3_1.Demo
                 return factory.GetUrlHelper(actionContext);
             });
 
-            services.AddScoped<ICulturalizedUrlHelper, CulturalizedUrlHelper>();
             services.AddScoped<IViewRenderService, ViewRenderService>();
 
             // services.AddTransient<ApplicationDbContext>();
