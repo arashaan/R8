@@ -103,7 +103,7 @@ namespace R8.Lib.Test
             var model = new LocalizerContainer();
 
             // Acts
-            var locale = model.Get(turkishCulture);
+            var locale = model.Get(turkishCulture, true, false);
 
             // Arranges
             Assert.Equal("N/A", locale);

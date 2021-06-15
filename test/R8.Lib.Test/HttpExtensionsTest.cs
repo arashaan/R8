@@ -29,7 +29,7 @@ namespace R8.Lib.Test
             // Assert
             Assert.NotNull(ip);
             Assert.NotNull(ip.ISPName);
-            Assert.StartsWith("MCI", ip.ISPName);
+            Assert.True(ip.ISPName.Equals("MCI", StringComparison.InvariantCultureIgnoreCase));
         }
 
         [Fact]
@@ -68,8 +68,8 @@ namespace R8.Lib.Test
             Assert.Equal("Europe", ip.Continent);
             Assert.Equal("Berlin", ip.Capital);
             Assert.Equal("+49", ip.CountryPhoneCode);
-            Assert.Equal("Hesse", ip.Region);
-            Assert.Equal("Frankfurt", ip.City);
+            Assert.Contains("Hesse", ip.Region);
+            Assert.Contains("Frankfurt", ip.City);
             Assert.Equal(timeZone, ip.TimeZone);
         }
 
