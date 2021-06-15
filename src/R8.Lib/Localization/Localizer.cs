@@ -94,9 +94,9 @@ namespace R8.Lib.Localization
             Dictionary = dictionary;
         }
 
-        public string this[string key, CultureInfo culture] =>
+        public string this[string key, CultureInfo culture, bool returnNullIfEmpty = true] =>
             !string.IsNullOrEmpty(key)
-                ? GetValue(culture, key).Get(culture, false)
+                ? GetValue(culture, key).Get(culture, true, returnNullIfEmpty, Configuration.DefaultFallback)
                 : null;
 
         public string this[Enum key, CultureInfo culture, bool fullName = false]
@@ -107,7 +107,8 @@ namespace R8.Lib.Localization
                 var _key = fullName ? $"{key.GetType().Name}_{key.ToString()}" : key.ToString();
                 var value = GetValue(_culture, _key);
 
-                return value.Get(culture, false);
+                var useFallback = Configuration.DefaultFallback != null;
+                return value.Get(culture, useFallback, false, Configuration.DefaultFallback);
             }
         }
 

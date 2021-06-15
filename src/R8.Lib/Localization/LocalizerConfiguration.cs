@@ -37,5 +37,11 @@ namespace R8.Lib.Localization
         /// Gets or sets a provider of <see cref="ILocalizerProvider"/> type to refresh dictionary.
         /// </summary>
         public ILocalizerProvider Provider { get; set; }
+
+        /// <summary>
+        /// <para>Gets or sets a <see cref="CultureInfo"/> object as fallback culture to use, when value in expected culture is not available.</para>
+        /// <para>If current property left undefined, fallback culture will be chosen randomly.</para>
+        /// </summary>
+        public CultureInfo DefaultFallback { get; set; }
     }
 }

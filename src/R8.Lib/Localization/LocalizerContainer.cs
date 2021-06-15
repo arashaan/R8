@@ -321,8 +321,9 @@ namespace R8.Lib.Localization
         /// <param name="culture">A <see cref="CultureInfo"/> object that should get translation value from.</param>
         /// <param name="useFallback">A <see cref="bool"/> value that represents return fallback value from other cultures, if current culture doesn't have value.</param>
         /// <param name="returnNullIfEmpty">A <see cref="bool"/> value that represents <c>N/A</c> if set true, otherwise make output to be null. * This parameter will be applicable, if <c>useFallback</c> parameter set to false. *</param>
+        /// <param name="fallbackCulture">a <see cref="CultureInfo"/> object as fallback culture to use, when value in expected culture is not available.</param>
         /// <returns>A <see cref="string"/> value that being contained in given culture.</returns>
-        public string Get(CultureInfo culture, bool useFallback = true, bool returnNullIfEmpty = true)
+        public string Get(CultureInfo culture, bool useFallback = true, bool returnNullIfEmpty = true, CultureInfo fallbackCulture = null)
         {
             var desiredCulture = this._cultures.Find(x => x.Culture.Equals(culture));
             if (desiredCulture != null)
@@ -335,16 +336,62 @@ namespace R8.Lib.Localization
             if (!useFallback)
                 return !returnNullIfEmpty ? "N/A" : null;
 
-            var thisCulture = this._cultures.Find(x => x.Culture.Equals(culture));
+            var fallback = fallbackCulture == null
+                ? FindFallbackValueByRandomCulture(culture, returnNullIfEmpty)
+                : FindFallbackValueBySpecifiedCulture(culture, fallbackCulture, returnNullIfEmpty);
+            return fallback;
+        }
+
+        /// <summary>
+        /// Returns list of cultures, except given culture.
+        /// </summary>
+        /// <param name="currentCulture"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns></returns>
+        private List<LocalizerCultureNode> GetFallbackCultures(CultureInfo currentCulture)
+        {
+            if (currentCulture == null) throw new ArgumentNullException(nameof(currentCulture));
+            var thisCulture = this._cultures.Find(x => x.Culture.Equals(currentCulture));
             var list = this._cultures
                 .Except(thisCulture)
                 .ToList();
 
+            return list;
+        }
+
+        /// <summary>
+        /// Finds value in given fallback culture-info.
+        /// </summary>
+        /// <param name="currentCulture">The <see cref="CultureInfo"/> that does not contains requested KEY.</param>
+        /// <param name="fallbackCulture">The <see cref="CultureInfo"/> that value must be shown in.</param>
+        /// <param name="returnNullIfEmpty">Returns empty string if unable to find any translation.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="string"/> as value in specified fallback culture.</returns>
+        private string FindFallbackValueBySpecifiedCulture(CultureInfo currentCulture, CultureInfo fallbackCulture, bool returnNullIfEmpty = true)
+        {
+            if (currentCulture == null) throw new ArgumentNullException(nameof(currentCulture));
+            if (fallbackCulture == null) throw new ArgumentNullException(nameof(fallbackCulture));
+            var list = GetFallbackCultures(currentCulture);
+            var fallback = list.First(x => x.Culture.Equals(fallbackCulture));
+            return fallback.Value ?? (returnNullIfEmpty ? null : "N/A");
+        }
+
+        /// <summary>
+        /// Finds value in random fallback culture-info.
+        /// </summary>
+        /// <param name="currentCulture">The <see cref="CultureInfo"/> that does not contains requested KEY.</param>
+        /// <param name="returnNullIfEmpty">Returns empty string if unable to find any translation.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>A <see cref="string"/> as value in specified fallback culture.</returns>
+        private string FindFallbackValueByRandomCulture(CultureInfo currentCulture, bool returnNullIfEmpty = true)
+        {
+            if (currentCulture == null) throw new ArgumentNullException(nameof(currentCulture));
+            var list = GetFallbackCultures(currentCulture);
             list = list
                 .Where(x => !string.IsNullOrEmpty(x.Value))
                 .ToList();
             if (list.Count == 0)
-                return "N/A";
+                return returnNullIfEmpty ? null : "N/A";
 
             var fallback = list.Count == 1
                 ? list[0]
@@ -354,9 +401,6 @@ namespace R8.Lib.Localization
 
         public override bool Equals(object? obj)
         {
-            if (obj == null)
-                return false;
-
             if (!(obj is LocalizerContainer container))
                 return false;
 

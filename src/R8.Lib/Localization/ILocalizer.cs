@@ -35,7 +35,8 @@ namespace R8.Lib.Localization
         /// </summary>
         /// <param name="key">A key to find in internal dictionary</param>
         /// <param name="culture">Specific culture to search in</param>
-        string this[string key, CultureInfo culture] { get; }
+        /// <param name="returnNullIfEmpty">Return null string if unable to find any translation.</param>
+        string this[string key, CultureInfo culture, bool returnNullIfEmpty = true] { get; }
 
         /// <summary>
         /// Gets initializing configuration.
