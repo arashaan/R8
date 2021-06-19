@@ -124,13 +124,16 @@ namespace R8.AspNetCore.TagBuilders
                 var tagIndexZ = html.IndexOf(">", tagIndexA);
                 if (tagIndexZ > -1)
                 {
-                    var tagAttrs = html[(tagIndexA + 1)..tagIndexZ];
+                    var plainAttributes = html[(tagIndexA + 1)..tagIndexZ];
                     var hasEndTag = html[tagIndexZ - 1] != '/';
 
-                    if (tagAttrs.EndsWith("/"))
-                        tagAttrs = tagAttrs[..^1].Trim();
+                    if (plainAttributes.EndsWith("/"))
+                        plainAttributes = plainAttributes[..^1].Trim();
 
-                    tagAttributes = tagAttrs.Split(" ").ToList();
+                    tagAttributes = ParseAttributes(plainAttributes);
+                    if (tagAttributes == null || !tagAttributes.Any())
+                        throw new NullReferenceException($"Unable to find valid tag.");
+
                     var tagName = tagAttributes[0];
                     if (string.IsNullOrEmpty(tagName))
                         throw new NullReferenceException($"Unable to find name of the tag.");
@@ -186,6 +189,51 @@ namespace R8.AspNetCore.TagBuilders
             }
 
             return true;
+        }
+
+        private static List<string> ParseAttributes(string str)
+        {
+            var charCounter = 0;
+            var word = string.Empty;
+            var doubleQuotation = false;
+            var tagAttributes = new List<string>();
+            while (charCounter < str.Length)
+            {
+                var @char = str[charCounter];
+                if (@char == '=' && str[charCounter + 1] == '\"')
+                {
+                    doubleQuotation = true;
+                }
+                else if (doubleQuotation && @char == '\"' && str[charCounter - 1] != '=')
+                {
+                    doubleQuotation = false;
+                    word += @char;
+                    tagAttributes.Add(word);
+                    word = string.Empty;
+                    charCounter++;
+                    continue;
+                }
+                else if (@char == ' ' && !doubleQuotation)
+                {
+                    if (!string.IsNullOrEmpty(word))
+                        tagAttributes.Add(word);
+
+                    word = string.Empty;
+                    charCounter++;
+                    continue;
+                }
+                else if (@charCounter == str.Length - 1)
+                {
+                    word += @char;
+                    tagAttributes.Add(word);
+                    break;
+                }
+
+                word += @char;
+                charCounter++;
+            }
+
+            return tagAttributes;
         }
 
         private static void ParseAsTagBuilders(string html, int startIndex, out List<TagBuilder> output)
