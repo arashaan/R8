@@ -60,7 +60,7 @@ namespace R8.AspNetCore.Localization
 
             var sb = new StringBuilder(finalUrl);
             if (!string.IsNullOrEmpty(urlCulture))
-                sb.Remove(0, finalUrl.FindByIndex("/", 2));
+                sb.Remove(0, finalUrl.IndexOfNth("/", 2));
 
             if (culture.Name != localizer.DefaultCulture.Name)
                 sb.Insert(0, $"/{culture.Name}");
