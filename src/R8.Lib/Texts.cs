@@ -20,7 +20,7 @@ namespace R8.Lib
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <returns></returns>
-        public static int FindByIndex(this string str, string value, int nth)
+        public static int IndexOfNth(this string str, string value, int nth)
         {
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
