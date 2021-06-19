@@ -1,17 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-using Newtonsoft.Json;
-
-using R8.EntityFrameworkCore.Audits;
-using R8.Lib.Validatable;
-
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
+using R8.EntityFrameworkCore.Audits;
+using R8.Lib.Validatable;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     /// <summary>
     /// Initializes a base type for entities.

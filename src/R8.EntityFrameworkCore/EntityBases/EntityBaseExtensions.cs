@@ -1,10 +1,9 @@
 ﻿using Humanizer;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using R8.EntityFrameworkCore.Audits;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     internal static class EntityBaseExtensions
     {

@@ -1,14 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-using Newtonsoft.Json;
-
 using R8.Lib.Validatable;
 
-using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     public class EntityBaseIdentifier : ValidatableObject, IEntityBaseIdentifier
     {
@@ -17,7 +13,7 @@ namespace R8.EntityFrameworkCore
     }
 
     /// <summary>
-    /// Initializes a <see cref="R8.EntityFrameworkCore.EntityBaseIdentifier{TEntity}"/> for entities.
+    /// Initializes a <see cref="EntityBaseIdentifier{TEntity}"/> for entities.
     /// </summary>
     public abstract class EntityBaseIdentifier<TEntity> : EntityBaseIdentifier, IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityBaseIdentifier
     {

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using R8.EntityFrameworkCore.EntityBases;
 
 namespace R8.EntityFrameworkCore
 {

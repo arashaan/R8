@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using R8.EntityFrameworkCore.EntityBases;
 
 namespace R8.EntityFrameworkCore.Wrappers
 {

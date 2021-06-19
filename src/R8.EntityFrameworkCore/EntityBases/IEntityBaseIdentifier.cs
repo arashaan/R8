@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     /// <summary>
     /// An <see cref="IEntityBaseIdentifier"/> interface that representing some basic data about specific entity.

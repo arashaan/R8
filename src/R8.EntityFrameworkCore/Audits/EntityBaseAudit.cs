@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using Newtonsoft.Json;
+using R8.EntityFrameworkCore.EntityBases;
 
 namespace R8.EntityFrameworkCore.Audits
 {
@@ -15,7 +16,7 @@ namespace R8.EntityFrameworkCore.Audits
     }
 
     /// <summary>
-    /// Initializes a <see cref="R8.EntityFrameworkCore.EntityBase{TEntity}"/> for entities.
+    /// Initializes a <see cref="EntityBase{TEntity}"/> for entities.
     /// </summary>
     public abstract class EntityBaseAudit<TEntity> : EntityBaseAudit, IEntityTypeConfiguration<TEntity> where TEntity : class, IEntityBaseAudit
     {

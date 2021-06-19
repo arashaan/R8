@@ -1,12 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 using R8.Lib.Localization;
 
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
-
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     /// <summary>
     /// Initializes a <see cref="EntityLocalized"/> instance that representing some basic data about and also globalized information  specific entity.

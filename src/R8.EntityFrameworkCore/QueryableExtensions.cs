@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 
+using R8.EntityFrameworkCore.EntityBases;
 using R8.Lib;
 using R8.Lib.Paginator;
 using R8.Lib.Search;
@@ -90,7 +91,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="sources">A collection of <see cref="TSource"/>.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="IOrderedEnumerable{TElement}"/> whose elements are sorted in descending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.</returns>
-        public static IOrderedEnumerable<TSource> OrderDescendingByCreationDateTime<TSource>(this IEnumerable<TSource> sources) where TSource : IEntityBase
+        public static IOrderedEnumerable<TSource> OrderByDescendingCreationDateTime<TSource>(this IEnumerable<TSource> sources) where TSource : IEntityBase
         {
             if (sources == null)
                 throw new ArgumentNullException(nameof(sources));
@@ -105,7 +106,7 @@ namespace R8.EntityFrameworkCore
         /// <param name="query">A <see cref="IQueryable{T}"/> that representing source query.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <returns>An <see cref="IOrderedQueryable{TElement}"/> whose elements are sorted in descending order according to a <see cref="IAudit"/> creation <see cref="DateTime"/>.</returns>
-        public static IOrderedQueryable<TSource> OrderDescendingByCreationDateTime<TSource>(this IQueryable<TSource> query) where TSource : IEntityBase
+        public static IOrderedQueryable<TSource> OrderByDescendingCreationDateTime<TSource>(this IQueryable<TSource> query) where TSource : IEntityBase
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -134,7 +135,7 @@ namespace R8.EntityFrameworkCore
             var output = new Pagination<TSource>();
             page = page <= 1 ? 1 : page;
 
-            query = query.OrderDescendingByCreationDateTime();
+            query = query.OrderByDescendingCreationDateTime();
             var rowQue = query;
             if (cacheData)
                 rowQue = query.Cacheable();
@@ -269,7 +270,7 @@ namespace R8.EntityFrameworkCore
             var pageSize = searchModel?.PageSize ?? 10;
 
             if (sortByCreation)
-                query = query.OrderDescendingByCreationDateTime();
+                query = query.OrderByDescendingCreationDateTime();
 
             var output = await query.ToPaginatedListAsync(selector, page, pageSize, cacheData);
             return output;

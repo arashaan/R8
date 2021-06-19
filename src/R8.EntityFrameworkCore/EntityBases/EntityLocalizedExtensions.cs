@@ -1,13 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using R8.Lib.Localization;
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using R8.Lib.Localization;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     public static class EntityLocalizedExtensions
     {

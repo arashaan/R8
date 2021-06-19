@@ -1,7 +1,7 @@
 ﻿using R8.EntityFrameworkCore.Audits;
 using R8.Lib.Validatable;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     /// <summary>
     /// An <see cref="IEntityBase"/> interface that representing some basic data about specific entity.

@@ -1,6 +1,6 @@
 ﻿using R8.Lib.Localization;
 
-namespace R8.EntityFrameworkCore
+namespace R8.EntityFrameworkCore.EntityBases
 {
     /// <summary>
     /// An <see cref="IEntityLocalizedBase"/> interface that representing globalized information about specific entity.
