@@ -12,7 +12,7 @@ namespace R8.Lib.Test
         {
             const string text = "Can not 0 find the 0th index";
 
-            var index = text.FindByIndex("0", 1);
+            var index = text.IndexOfNth("0", 1);
 
             Assert.NotEqual(-1, index);
             Assert.InRange(index, 0, 999);

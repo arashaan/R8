@@ -8,7 +8,7 @@ using R8.Lib.Localization;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
-
+using R8.EntityFrameworkCore.EntityBases;
 using Xunit;
 using Xunit.Abstractions;
 

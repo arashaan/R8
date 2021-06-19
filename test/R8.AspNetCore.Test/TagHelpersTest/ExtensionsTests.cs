@@ -236,6 +236,21 @@ namespace R8.AspNetCore.Test.TagHelpersTest
         }
 
         [Fact]
+        public void CallParseAsHtml13()
+        {
+            // Assets
+            var html = $"<div class=\"c-md--prepend c-md--icon\"><i class=\"fas fa-envelope\"></i></div>";
+
+            var parsedTag = TagBuilders.Extensions.ParseAsTagBuilder(html);
+
+            // Arrange
+            Assert.NotNull(parsedTag);
+            Assert.Equal("div", parsedTag.TagName);
+            Assert.Contains("c-md--prepend", parsedTag.Attributes["class"]);
+            Assert.Contains("c-md--icon", parsedTag.Attributes["class"]);
+        }
+
+        [Fact]
         public void CallReplaceHtmlByTagName_TagContentFromHtml()
         {
             // Assets

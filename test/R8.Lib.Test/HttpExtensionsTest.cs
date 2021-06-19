@@ -18,21 +18,6 @@ namespace R8.Lib.Test
         }
 
         [Fact]
-        public async Task CallGetAsn()
-        {
-            // Assets
-            var ipAddress = IPAddress.Parse("109.108.160.241");
-
-            // Acts
-            var ip = await ipAddress.GetIPAddressInformationAsync().ConfigureAwait(false);
-
-            // Assert
-            Assert.NotNull(ip);
-            Assert.NotNull(ip.ISPName);
-            Assert.True(ip.ISPName.Equals("MCI", StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        [Fact]
         public async Task CallGetIpAddressAsync2()
         {
             // Assets

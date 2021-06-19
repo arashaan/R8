@@ -32,7 +32,7 @@ namespace R8.Lib.Test
 
             var index = list
                 .Select(x => ((Flags)x).ToString())
-                .FindIndex(x => x == "Success");
+                .IndexOf(x => x == "Success");
 
             Assert.NotEqual(-1, index);
             Assert.InRange(index, 0, 999);

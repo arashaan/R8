@@ -2,6 +2,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using R8.EntityFrameworkCore.EntityBases;
 
 namespace R8.EntityFrameworkCore.Test.FakeDatabase.FakeEntities
 {

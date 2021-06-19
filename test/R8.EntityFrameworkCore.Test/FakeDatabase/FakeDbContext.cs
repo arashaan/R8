@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using R8.EntityFrameworkCore.Audits;
+using R8.EntityFrameworkCore.EntityBases;
 using R8.EntityFrameworkCore.Test.FakeDatabase.FakeEntities;
 
 namespace R8.EntityFrameworkCore.Test.FakeDatabase
