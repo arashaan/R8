@@ -8,15 +8,27 @@ namespace R8.Lib.Test
     public class TextsTests
     {
         [Fact]
-        public void CallFindByIndex()
+        public void CallIndexOfNth()
         {
             const string text = "Can not 0 find the 0th index";
 
-            var index = text.IndexOfNth("0", 1);
+            var index = text.IndexOfNth('0', 1);
 
             Assert.NotEqual(-1, index);
             Assert.InRange(index, 0, 999);
-            Assert.Equal(text.IndexOf("find the ") + "find the ".Length, index);
+            Assert.Equal(8, index);
+        }
+
+        [Fact]
+        public void CallIndexOfNth2()
+        {
+            const string text = "Can not 0 find the 0th index";
+
+            var index = text.IndexOfNth('0', 2);
+
+            Assert.NotEqual(-1, index);
+            Assert.InRange(index, 0, 999);
+            Assert.Equal(19, index);
         }
 
         [Fact]

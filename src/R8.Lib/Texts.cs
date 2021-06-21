@@ -17,27 +17,50 @@ namespace R8.Lib
         /// <param name="str"></param>
         /// <param name="value"></param>
         /// <param name="nth"></param>
+        /// <param name="startIndex"></param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <returns></returns>
-        public static int IndexOfNth(this string str, string value, int nth)
+        public static int IndexOfNth(this string str, char value, int nth, int? startIndex = null)
         {
             if (str == null)
                 throw new ArgumentNullException(nameof(str));
-            if (value == null)
-                throw new ArgumentNullException(nameof(value));
-            if (nth < 0)
-                throw new ArgumentOutOfRangeException(nameof(nth), "Can not find the minus-zero index of substring in string. Must start with 0");
+            if (startIndex < 0)
+                throw new ArgumentOutOfRangeException(message: "param cannot be less than 0",
+                    paramName: nameof(startIndex));
+            if (value <= 0)
+                throw new ArgumentOutOfRangeException(nameof(value));
 
-            var offset = str.IndexOf(value, StringComparison.Ordinal);
-            for (var index = 0; index < nth; index++)
+            var nSign = Math.Sign(nth);
+            var inputLength = str?.Length ?? 0;
+            int index;
+            int count;
+
+            switch (nSign)
             {
-                if (offset == -1)
-                    return -1;
+                case 1:
+                    index = startIndex ?? 0;
+                    count = inputLength - index;
+                    break;
 
-                offset = str.IndexOf(value, offset + 1, StringComparison.Ordinal);
+                case -1:
+                    index = startIndex ?? inputLength - 1;
+                    count = index + 1;
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(message: "param cannot be equal to 0", paramName: nameof(nth));
             }
-            return offset;
+
+            while (count-- > 0)
+            {
+                if (str[index] == value && (nth -= nSign) == 0)
+                    return index;
+
+                index += nSign;
+            }
+
+            return -1;
         }
 
         /// <summary>
