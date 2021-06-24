@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Integration for using R8.FileHandlers in AspNetCore</Description>
-    <VersionPrefix>2.0.1</VersionPrefix>
+    <VersionPrefix>2.0.2</VersionPrefix>
     <Authors>Arash Shabbeh</Authors>
     <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -40,7 +40,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="R8.FileHandlers" Version="2.0.0" />
-    <PackageReference Include="R8.Lib" Version="2.0.2" />
+    <PackageReference Include="R8.Lib" Version="2.0.3" />
   </ItemGroup>
   <!--<ItemGroup>
     <ProjectReference Include="..\R8.Lib\R8.Lib.csproj" />
