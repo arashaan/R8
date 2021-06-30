@@ -10,7 +10,6 @@ using R8.Lib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
@@ -213,12 +212,6 @@ namespace R8.AspNetCore.HttpContextExtensions
                 context.Session.SetString(UserTimeZoneConstant, timeZone.Id);
         }
 
-        [Obsolete]
-        public static bool IsRightToLeft(this CultureInfo culture)
-        {
-            return culture.TextInfo.IsRightToLeft;
-        }
-
         /// <summary>
         /// Builds a <see cref="Uri"/> component based on given path and query strings.
         /// </summary>
@@ -274,55 +267,6 @@ namespace R8.AspNetCore.HttpContextExtensions
 
             var currentUser = new AuthenticatedUser();
             currentUser.AddClaims(claimsList);
-            // var dictionary = new Dictionary<string, object>();
-            // foreach (var claim in claimsList)
-            // {
-            //     var key = claim.Type switch
-            //     {
-            //         ClaimTypes.Email => AuthenticatedUser.Key_Email,
-            //         ClaimTypes.Name => AuthenticatedUser.Key_Username,
-            //         ClaimTypes.GivenName => AuthenticatedUser.Key_FirstName,
-            //         ClaimTypes.Surname => AuthenticatedUser.Key_LastName,
-            //         ClaimTypes.
-            //         _ => string.Empty
-            //     };
-            //
-            //     dictionary.Add(key, claim.Value);
-            // }
-            //
-            // var email = claimsList.Find(x => x.Type == ClaimTypes.Email);
-            // if (email != null)
-            //     currentUser.Email = email.Value;
-            //
-            // var username = claimsList.Find(x => x.Type == ClaimTypes.Name);
-            // if (username != null)
-            //     currentUser.Username = username.Value;
-            //
-            // var firstname = claimsList.Find(x => x.Type == ClaimTypes.GivenName);
-            // if (firstname != null)
-            //     currentUser.FirstName = firstname.Value;
-            //
-            // var lastname = claimsList.Find(x => x.Type == ClaimTypes.Surname);
-            // if (lastname != null)
-            //     currentUser.LastName = lastname.Value;
-            //
-            // var password = claimsList.Find(x => x.Type == ClaimTypes.Hash);
-            // if (password != null)
-            //     currentUser.Password = password.Value;
-            //
-            // var timeZone = claimsList.Find(x => x.Type == "TimeZone");
-            // if (timeZone != null)
-            //     currentUser.TimeZone = DateTimeZoneProviders.Tzdb[timeZone.Value];
-            //
-            // var id = claimsList.Find(x => x.Type == ClaimTypes.NameIdentifier);
-            // if (id != null)
-            //     currentUser.Id = id.Value;
-            //
-            // var role = claimsList.Find(x => x.Type == ClaimTypes.Role);
-            // currentUser.Role = role != null && !string.IsNullOrEmpty(role.Value)
-            //     ? role.Value.ToEnum<Roles>()
-            //     : Roles.User;
-
             return currentUser;
         }
 

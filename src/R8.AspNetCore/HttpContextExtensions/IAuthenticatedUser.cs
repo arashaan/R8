@@ -1,7 +1,7 @@
-﻿using System;
-using System.Security.Claims;
+﻿using NodaTime;
 
-using NodaTime;
+using System;
+using System.Security.Claims;
 
 namespace R8.AspNetCore.HttpContextExtensions
 {

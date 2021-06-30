@@ -1,9 +1,10 @@
-﻿using System;
+﻿using NodaTime;
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Security.Claims;
-using NodaTime;
 
 namespace R8.AspNetCore.HttpContextExtensions
 {
@@ -95,10 +96,7 @@ namespace R8.AspNetCore.HttpContextExtensions
                     return (T)roleString;
 
                 var converter = TypeDescriptor.GetConverter(typeof(T));
-                if (converter != null)
-                    return (T)converter.ConvertFromString(roleString.ToString());
-
-                throw new ArgumentException($"Unable to cast role value to {typeof(T)}.");
+                return (T)converter.ConvertFromString(roleString.ToString());
             }
             catch (NotSupportedException)
             {
@@ -139,7 +137,7 @@ namespace R8.AspNetCore.HttpContextExtensions
             if (_claims == null || !_claims.Any())
                 throw new NullReferenceException($"List of claims is empty.");
 
-            var claim = _claims.Find(x => x.Type == name);
+            var claim = _claims.Find(x => x.Type.Equals(name, StringComparison.InvariantCultureIgnoreCase));
             if (claim == null)
                 throw new NullReferenceException($"Unable to find {name}");
 
