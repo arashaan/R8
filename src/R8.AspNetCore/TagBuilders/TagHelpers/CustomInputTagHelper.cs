@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
-    [HtmlTargetElement("input")]
+    [HtmlTargetElement("input", Attributes = "asp-disabled")]
     public class CustomInputTagHelper : TagHelper
     {
         private readonly IHtmlHelper _htmlHelper;

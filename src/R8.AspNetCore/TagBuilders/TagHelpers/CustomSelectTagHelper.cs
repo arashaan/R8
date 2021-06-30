@@ -2,7 +2,7 @@
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
-    [HtmlTargetElement("select")]
+    [HtmlTargetElement("select", Attributes = "asp-disabled")]
     public class CustomSelectTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-disabled")]

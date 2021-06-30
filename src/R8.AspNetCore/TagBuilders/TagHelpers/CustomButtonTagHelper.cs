@@ -2,7 +2,7 @@
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
-    [HtmlTargetElement("button")]
+    [HtmlTargetElement("button", Attributes = "asp-disabled")]
     public class CustomButtonTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-disabled")]

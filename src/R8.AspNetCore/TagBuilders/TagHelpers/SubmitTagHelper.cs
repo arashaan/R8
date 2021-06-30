@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.AspNetCore.Razor.TagHelpers;
+
 using R8.AspNetCore.Enums;
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
@@ -24,7 +26,7 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
         public string Href { get; set; }
 
         public bool FullWidth { get; set; }
-        public bool Small { get; set; } = true;
+        public bool Small { get; set; } = false;
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
@@ -39,8 +41,8 @@ namespace R8.AspNetCore.TagBuilders.TagHelpers
             if (Small)
                 output.AddClass("btn-sm", HtmlEncoder.Default);
 
-            if (FullWidth)
-                output.AddClass("btn-block", HtmlEncoder.Default);
+            // if (FullWidth)
+            //     output.AddClass("btn-block", HtmlEncoder.Default);
 
             if (!string.IsNullOrEmpty(Class))
             {

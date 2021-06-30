@@ -2,7 +2,7 @@
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
-    [HtmlTargetElement("span")]
+    [HtmlTargetElement("span", Attributes = "asp-disabled")]
     public class CustomSpanTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-validation-for-name")]

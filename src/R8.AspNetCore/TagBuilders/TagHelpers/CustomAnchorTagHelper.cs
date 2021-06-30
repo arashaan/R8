@@ -2,6 +2,7 @@
 
 namespace R8.AspNetCore.TagBuilders.TagHelpers
 {
+    [HtmlTargetElement("a", Attributes = "asp-disabled")]
     public class CustomAnchorTagHelper : TagHelper
     {
         [HtmlAttributeName("asp-disabled")]
