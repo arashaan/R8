@@ -40,9 +40,20 @@ namespace R8.EntityFrameworkCore.Audits
         /// <para>This is for sometimes you change an foreign-key ID.</para>
         /// </summary>
         /// <typeparam name="TDbContext"></typeparam>
+        /// <typeparam name="TSource"></typeparam>
         /// <param name="dbContext"></param>
         /// <returns></returns>
-        public async Task<object> GetNavigationEntityObjectAsync<TDbContext>(TDbContext dbContext) where TDbContext : DbContext
+        public async Task<TSource> GetNavigatedObjectAsync<TDbContext, TSource>(TDbContext dbContext)
+            where TDbContext : DbContext where TSource : class => (TSource) await GetNavigatedObjectAsync(dbContext);
+
+        /// <summary>
+        /// <para>This methods works when current <see cref="AuditChange"/> contains an foreign-key and navigation entity name.</para>
+        /// <para>This is for sometimes you change an foreign-key ID.</para>
+        /// </summary>
+        /// <typeparam name="TDbContext"></typeparam>
+        /// <param name="dbContext"></param>
+        /// <returns></returns>
+        public async Task<object> GetNavigatedObjectAsync<TDbContext>(TDbContext dbContext) where TDbContext : DbContext
         {
             if (string.IsNullOrEmpty(NavigationalEntity))
                 return null;

@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace R8.EntityFrameworkCore.Audits
 {
@@ -20,8 +19,8 @@ namespace R8.EntityFrameworkCore.Audits
                 throw new NullReferenceException(
                     $"Try to register a provider configuration by using .{nameof(AddEFAuditProvider)}()");
 
-            var interceptor = serviceProvider.GetRequiredService<IAuditDataProvider>();
-            optionsBuilder.AddInterceptors(new AuditProviderInterceptor(interceptor, config));
+            var provider = serviceProvider.GetRequiredService<IAuditDataProvider>();
+            optionsBuilder.AddInterceptors(new AuditProviderInterceptor(provider, config));
             return optionsBuilder;
         }
 

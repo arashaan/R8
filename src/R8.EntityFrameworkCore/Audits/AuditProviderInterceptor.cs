@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -82,7 +81,7 @@ namespace R8.EntityFrameworkCore.Audits
 
                                     deleteProp.SetValue(entity, true);
                                     audit.Flag = AuditFlags.Deleted;
-                                    audit.Additional = await _provider.OnRemoveAsync(entityEntry);
+                                    audit.Additional = await _provider.OnActionAsync(entityEntry.State, entityEntry);
                                 }
                             }
                             else
@@ -96,7 +95,7 @@ namespace R8.EntityFrameworkCore.Audits
                                             StringComparison.InvariantCultureIgnoreCase) == true)
                                     {
                                         audit.Flag = AuditFlags.Deleted;
-                                        audit.Additional = await _provider.OnRemoveAsync(entityEntry);
+                                        audit.Additional = await _provider.OnActionAsync(entityEntry.State, entityEntry);
                                     }
 
                                     if (deleteInChanges.OldValue?.ToString()?.Equals(true.ToString(),
@@ -105,13 +104,13 @@ namespace R8.EntityFrameworkCore.Audits
                                             StringComparison.InvariantCultureIgnoreCase) == true)
                                     {
                                         audit.Flag = AuditFlags.UnDeleted;
-                                        audit.Additional = await _provider.OnUnRemoveAsync(entityEntry);
+                                        audit.Additional = await _provider.OnActionAsync(entityEntry.State, entityEntry);
                                     }
                                 }
                                 else
                                 {
                                     audit.Flag = AuditFlags.Changed;
-                                    audit.Additional = await _provider.OnUpdateAsync(entityEntry);
+                                    audit.Additional = await _provider.OnActionAsync(entityEntry.State, entityEntry);
                                 }
                             }
 
@@ -148,7 +147,7 @@ namespace R8.EntityFrameworkCore.Audits
                     case EntityState.Added:
                         {
                             audit.Flag = AuditFlags.Created;
-                            audit.Additional = await _provider.OnAddAsync(entityEntry);
+                            audit.Additional = await _provider.OnActionAsync(entityEntry.State, entityEntry);
                             break;
                         }
 
@@ -159,8 +158,6 @@ namespace R8.EntityFrameworkCore.Audits
                 }
 
                 entityAudit.Audits = new AuditCollection(entityAudit.Audits.Prepend(audit));
-                //if (entityAudit.Audits.Created == null)
-                //    throw new DBConcurrencyException($"Unable to store audits for entity that not being added yet.");
             }
 
             return await base.SavingChangesAsync(eventData, result, cancellationToken);

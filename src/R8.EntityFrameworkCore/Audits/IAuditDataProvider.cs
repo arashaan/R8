@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+using System.Threading.Tasks;
 
 namespace R8.EntityFrameworkCore.Audits
 {
@@ -10,31 +11,9 @@ namespace R8.EntityFrameworkCore.Audits
     public interface IAuditDataProvider
     {
         /// <summary>
-        /// Adds user-defined information to <see cref="Audit.Additional"/> when using <see cref="DbContext.Add{TEntity}"/>.
+        /// Adds user-defined information when any event triggered.
         /// </summary>
-        /// <param name="entry"></param>
         /// <returns></returns>
-        Task<object> OnAddAsync(EntityEntry entry);
-
-        /// <summary>
-        /// Adds user-defined information to <see cref="Audit.Additional"/> when using <see cref="DbContext.Remove{TEntity}"/>.
-        /// </summary>
-        /// <param name="entry"></param>
-        /// <returns></returns>
-        Task<object> OnRemoveAsync(EntityEntry entry);
-
-        /// <summary>
-        /// Adds user-defined information to <see cref="Audit.Additional"/> when using <see cref="DbContext.Update{TEntity}"/>.
-        /// </summary>
-        /// <param name="entry"></param>
-        /// <returns></returns>
-        Task<object> OnUpdateAsync(EntityEntry entry);
-
-        /// <summary>
-        /// Adds user-defined information to <see cref="Audit.Additional"/> when using <see cref="DbContextBaseExtensions.UnRemove{TDbContext,TSource}"/>.
-        /// </summary>
-        /// <param name="entry"></param>
-        /// <returns></returns>
-        Task<object> OnUnRemoveAsync(EntityEntry entry);
+        Task<object> OnActionAsync(EntityState state, EntityEntry entry);
     }
 }
