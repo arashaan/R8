@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using R8.EntityFrameworkCore.Audits;
+using R8.EntityFrameworkCore.EntityBases;
 using R8.EntityFrameworkCore.Test.FakeDatabase;
 using R8.EntityFrameworkCore.Test.FakeDatabase.FakeEntities;
 using R8.Lib.Localization;
@@ -8,7 +9,7 @@ using R8.Lib.Localization;
 using System;
 using System.Globalization;
 using System.Threading.Tasks;
-using R8.EntityFrameworkCore.EntityBases;
+
 using Xunit;
 using Xunit.Abstractions;
 
@@ -296,7 +297,7 @@ namespace R8.EntityFrameworkCore.Test
                 await dbContext.SaveChangesAsync();
 
                 var change = user.Audits.Last.Changes[nameof(User.RoleId)];
-                var entity = await change.GetNavigationEntityObjectAsync(dbContext);
+                var entity = await change.GetNavigatedObjectAsync(dbContext);
 
                 await dbContext.Database.EnsureDeletedAsync();
 
@@ -304,6 +305,46 @@ namespace R8.EntityFrameworkCore.Test
                 Assert.NotNull(entity);
                 Assert.IsType<Role>(entity);
                 Assert.Equal(role.Id, ((Role)entity).Id);
+            }
+        }
+
+        [Fact]
+        public async Task CallAuditChangeRelation2()
+        {
+            // Act
+            await using var dbContext = new FakeDbContext(FakeDbContext.GetOptions());
+            {
+                await dbContext.Database.EnsureCreatedAsync();
+
+                var role = new Role
+                {
+                    Name = new LocalizerContainer("Admin"),
+                    Slug = "admin",
+                };
+                dbContext.Add(role);
+                await dbContext.SaveChangesAsync();
+
+                var user = new User
+                {
+                    Password = "123",
+                    Username = "Arash",
+                };
+                dbContext.Add(user);
+                await dbContext.SaveChangesAsync();
+
+                user.RoleId = role.Id;
+                dbContext.Update(user);
+                await dbContext.SaveChangesAsync();
+
+                var change = user.Audits.Last.Changes[nameof(User.RoleId)];
+                var entity = await change.GetNavigatedObjectAsync<FakeDbContext, Role>(dbContext);
+
+                await dbContext.Database.EnsureDeletedAsync();
+
+                // Arrange
+                Assert.NotNull(entity);
+                Assert.IsType<Role>(entity);
+                Assert.Equal(role.Id, entity.Id);
             }
         }
 

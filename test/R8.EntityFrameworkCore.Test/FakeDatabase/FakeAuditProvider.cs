@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Caching.Memory;
+
+using R8.EntityFrameworkCore.Audits;
 
 using System.Globalization;
 using System.Threading.Tasks;
-using R8.EntityFrameworkCore.Audits;
 
 namespace R8.EntityFrameworkCore.Test.FakeDatabase
 {
@@ -16,37 +18,13 @@ namespace R8.EntityFrameworkCore.Test.FakeDatabase
             _memoryCache = memoryCache;
         }
 
-        public async Task<object> OnAddAsync(EntityEntry entry)
+        public Task<object> OnActionAsync(EntityState state, EntityEntry entry)
         {
-            return new FakeAuditAdditional
+            return Task.FromResult((object)new FakeAuditAdditional
             {
                 Culture = CultureInfo.CurrentCulture,
                 Text = _memoryCache.GetType().Name
-            };
-        }
-
-        public async Task<object> OnRemoveAsync(EntityEntry entry)
-        {
-            return new FakeAuditAdditional
-            {
-                Culture = CultureInfo.CurrentCulture
-            };
-        }
-
-        public async Task<object> OnUpdateAsync(EntityEntry entry)
-        {
-            return new FakeAuditAdditional
-            {
-                Culture = CultureInfo.CurrentCulture
-            };
-        }
-
-        public async Task<object> OnUnRemoveAsync(EntityEntry entry)
-        {
-            return new FakeAuditAdditional
-            {
-                Culture = CultureInfo.CurrentCulture
-            };
+            });
         }
     }
 }
