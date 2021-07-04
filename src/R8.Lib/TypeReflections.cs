@@ -217,63 +217,66 @@ namespace R8.Lib
             var propertyType = type.GetUnderlyingType();
             if (propertyType.IsEnum)
             {
-                var isEnum = Enum.TryParse(propertyType, value, true, out var enumDetail);
+                var isEnum = Enum.TryParse(propertyType, value, true, out var parsedEnum);
                 if (!isEnum)
+                {
+                    output = parsedEnum;
                     return false;
+                }
 
-                output = enumDetail;
+                output = parsedEnum;
                 return true;
             }
 
             if (propertyType == typeof(int))
             {
-                var isInt = int.TryParse(value, out var intDetail);
+                var isInt = int.TryParse(value, out var parsedInt);
                 if (!isInt)
                     return false;
 
-                output = intDetail;
+                output = parsedInt;
                 return true;
             }
 
             if (propertyType == typeof(double))
             {
                 var isDouble = double.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"),
-                    out var doubleDetail);
+                    out var parsedDouble);
                 if (!isDouble)
                     return false;
 
-                output = doubleDetail;
+                output = parsedDouble;
                 return true;
             }
 
             if (propertyType == typeof(decimal))
             {
                 var isDecimal = decimal.TryParse(value, NumberStyles.Any, new CultureInfo("en-US"),
-                    out var decimalDetail);
+                    out var parsedDecimal);
                 if (!isDecimal)
                     return false;
 
-                output = decimalDetail;
+                output = parsedDecimal;
                 return true;
             }
 
             if (propertyType == typeof(long))
             {
-                var isLong = long.TryParse(value, out var longDetail);
+                var isLong = long.TryParse(value, out var parsedLong);
                 if (!isLong)
                     return false;
 
-                output = longDetail;
+                output = parsedLong;
                 return true;
             }
 
             if (propertyType == typeof(IPAddress))
             {
-                var isIpAddress = IPAddress.TryParse(value, out var ipAddress);
+                var isIpAddress = IPAddress.TryParse(value, out var parsedIpAddress);
                 if (!isIpAddress)
                     return false;
 
-                output = ipAddress;
+                output = parsedIpAddress;
                 return true;
             }
 
@@ -288,19 +291,19 @@ namespace R8.Lib
             if (propertyType == typeof(DateTime))
             {
                 var isYearDateTime = DateTime.TryParseExact(value, "yyyy", new CultureInfo("en-US"),
-                    DateTimeStyles.AdjustToUniversal, out var year);
+                    DateTimeStyles.AdjustToUniversal, out var parsedYear);
                 if (!isYearDateTime)
                 {
                     var isDateTime = DateTime.TryParse(value, new CultureInfo("en-US"),
-                        DateTimeStyles.AdjustToUniversal, out var dateTimeDetail);
+                        DateTimeStyles.AdjustToUniversal, out var parsedDateTime);
                     if (!isDateTime)
                         return false;
 
-                    output = dateTimeDetail;
+                    output = parsedDateTime;
                     return true;
                 }
 
-                output = year;
+                output = parsedYear;
                 return true;
             }
 
