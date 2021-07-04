@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 using R8.Lib;
+
+using System;
+using System.Linq;
+
 using AutoCompletes = R8.AspNetCore.Enums.AutoCompletes;
 
 namespace R8.AspNetCore.Attributes
@@ -10,14 +12,20 @@ namespace R8.AspNetCore.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class AutoCompleteTagAttribute : Attribute, IClientModelValidator
     {
+        public bool Off { get; set; } = false;
         public AutoCompletes[] Patterns { get; set; }
 
-        public AutoCompleteTagAttribute(AutoCompletes pattern)
+        public AutoCompleteTagAttribute(bool off)
+        {
+            Off = off;
+        }
+
+        public AutoCompleteTagAttribute(AutoCompletes pattern) : this(false)
         {
             this.Patterns = new[] { pattern };
         }
 
-        public AutoCompleteTagAttribute(params AutoCompletes[] patternses)
+        public AutoCompleteTagAttribute(params AutoCompletes[] patternses) : this(false)
         {
             this.Patterns = patternses;
         }
@@ -27,16 +35,20 @@ namespace R8.AspNetCore.Attributes
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            var patts = Patterns.Select(x => x.GetDescription());
-            var pattString = string.Join(" ", patts);
-            MergeAttribute(context.Attributes, "autocomplete", pattString);
-        }
+            const string key = "autocomplete";
+            string tagValue;
+            if (!Off)
+            {
+                var patterns = Patterns.Select(x => x.GetDescription());
+                tagValue = string.Join(" ", patterns);
+            }
+            else
+            {
+                tagValue = "off";
+            }
 
-        private void MergeAttribute(IDictionary<string, string> attributes, string key, string value)
-        {
-            if (attributes.ContainsKey(key)) return;
-
-            attributes.Add(key, value);
+            if (!context.Attributes.ContainsKey(key))
+                context.Attributes.Add(key, tagValue);
         }
     }
 }
