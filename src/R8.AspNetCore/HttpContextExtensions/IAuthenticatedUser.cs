@@ -48,16 +48,8 @@ namespace R8.AspNetCore.HttpContextExtensions
         /// Returns user's role in given type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <exception cref="NullReferenceException"></exception>
         /// <returns>An <see cref="object"/> for user's role</returns>
-        T GetRole<T>();
-
-        /// <summary>
-        /// Returns user's role.
-        /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        /// <returns>An <see cref="object"/> for user's role</returns>
-        object GetRole();
+        bool TryGetRole<T>(out T role);
 
         /// <summary>
         /// Adds claims to user's claims directory.
@@ -68,17 +60,9 @@ namespace R8.AspNetCore.HttpContextExtensions
         /// <summary>
         /// Finds specified claim name from user's claims directory.
         /// </summary>
-        /// <typeparam name="T">A generic type that representing claim value type.</typeparam>
-        /// <param name="name">A <see cref="string"/> that representing claim's name.</param>
-        /// <exception cref="NullReferenceException"></exception>
-        T GetClaim<T>(string name) where T : class;
-
-        /// <summary>
-        /// Finds specified claim name from user's claims directory.
-        /// </summary>
         /// <param name="name"></param>
-        /// <exception cref="NullReferenceException"></exception>
+        /// <param name="value"></param>
         /// <returns>A <see cref="string"/> value.</returns>
-        string GetClaim(string name);
+        bool TryGetClaim(string name, out string value);
     }
 }

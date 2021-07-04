@@ -1,8 +1,9 @@
 ﻿using NodaTime;
 
+using R8.Lib;
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Security.Claims;
 
@@ -30,12 +31,18 @@ namespace R8.AspNetCore.HttpContextExtensions
         {
             get
             {
-                var claim = _claims.Find(x => x.Type == ClaimTypes.NameIdentifier);
-                if (claim == null || string.IsNullOrEmpty(claim.Value))
+                try
+                {
+                    return TryGetClaim(ClaimTypes.NameIdentifier, out var claim)
+                        ? Guid.TryParse(claim, out var guid)
+                            ? guid
+                            : Guid.Empty
+                        : Guid.Empty;
+                }
+                catch (Exception e)
+                {
                     return Guid.Empty;
-
-                var valid = Guid.TryParse(claim.Value, out var guid);
-                return !valid ? Guid.Empty : guid;
+                }
             }
         }
 
@@ -43,11 +50,16 @@ namespace R8.AspNetCore.HttpContextExtensions
         {
             get
             {
-                var claim = _claims.Find(x => x.Type == ClaimTypes.Name);
-                if (claim == null || string.IsNullOrEmpty(claim.Value))
+                try
+                {
+                    return TryGetClaim(ClaimTypes.Name, out var claim)
+                        ? claim
+                        : null;
+                }
+                catch (Exception e)
+                {
                     return null;
-
-                return claim.Value;
+                }
             }
         }
 
@@ -55,11 +67,16 @@ namespace R8.AspNetCore.HttpContextExtensions
         {
             get
             {
-                var claim = _claims.Find(x => x.Type == ClaimTypes.GivenName);
-                if (claim == null || string.IsNullOrEmpty(claim.Value))
+                try
+                {
+                    return TryGetClaim(ClaimTypes.GivenName, out var claim)
+                        ? claim
+                        : null;
+                }
+                catch (Exception e)
+                {
                     return null;
-
-                return claim.Value;
+                }
             }
         }
 
@@ -67,11 +84,16 @@ namespace R8.AspNetCore.HttpContextExtensions
         {
             get
             {
-                var claim = _claims.Find(x => x.Type == ClaimTypes.Surname);
-                if (claim == null || string.IsNullOrEmpty(claim.Value))
+                try
+                {
+                    return TryGetClaim(ClaimTypes.Surname, out var claim)
+                        ? claim
+                        : null;
+                }
+                catch (Exception e)
+                {
                     return null;
-
-                return claim.Value;
+                }
             }
         }
 
@@ -79,50 +101,68 @@ namespace R8.AspNetCore.HttpContextExtensions
         {
             get
             {
-                var claim = _claims.Find(x => x.Type == ClaimTypes.Email);
-                if (claim == null || string.IsNullOrEmpty(claim.Value))
+                try
+                {
+                    return TryGetClaim(ClaimTypes.Email, out var claim)
+                        ? claim
+                        : null;
+                }
+                catch (Exception e)
+                {
                     return null;
-
-                return claim.Value;
+                }
             }
         }
 
-        public T GetRole<T>()
+        public bool TryGetRole<T>(out T role)
         {
-            var roleString = GetRole();
             try
             {
-                if (typeof(T) == typeof(string))
-                    return (T)roleString;
+                var expectedType = typeof(T);
+                var valid = TryGetClaim(ClaimTypes.Role, out var str);
+                if (!valid)
+                {
+                    role = expectedType.IsValueType
+                        ? (T)Activator.CreateInstance(expectedType)
+                        : (T)(object)null;
+                    return false;
+                }
 
-                var converter = TypeDescriptor.GetConverter(typeof(T));
-                return (T)converter.ConvertFromString(roleString.ToString());
+                if (expectedType == typeof(string))
+                {
+                    role = (T)(object)str;
+                    return true;
+                }
+
+                var parsed = expectedType.TryParse(str, out var value);
+                role = value == null
+                    ? expectedType.IsValueType
+                        ? (T)Activator.CreateInstance(expectedType)
+                        : (T)(object)null
+                    : (T)value;
+                return parsed;
             }
             catch (NotSupportedException)
             {
-                throw new ArgumentException($"Unable to cast role value to {typeof(T)}.");
+                role = default;
+                return false;
             }
-        }
-
-        public object GetRole()
-        {
-            var claim = _claims.Find(x => x.Type == ClaimTypes.Role);
-            if (claim == null || string.IsNullOrEmpty(claim.Value))
-                throw new NullReferenceException($"Unable to find role claim.");
-
-            var roleString = claim.Value;
-            return roleString;
         }
 
         public DateTimeZone TimeZone
         {
             get
             {
-                var claim = _claims.Find(x => x.Type == "TimeZone");
-                if (claim == null || string.IsNullOrEmpty(claim.Value))
+                try
+                {
+                    return TryGetClaim("TimeZone", out var claim)
+                        ? DateTimeZoneProviders.Tzdb[claim]
+                        : DateTimeZoneProviders.Tzdb.GetSystemDefault();
+                }
+                catch (Exception e)
+                {
                     return DateTimeZoneProviders.Tzdb.GetSystemDefault();
-
-                return DateTimeZoneProviders.Tzdb[claim.Value];
+                }
             }
         }
 
@@ -132,22 +172,31 @@ namespace R8.AspNetCore.HttpContextExtensions
             _claims.Add(claim);
         }
 
-        public string GetClaim(string name)
+        public bool TryGetClaim(string name, out string value)
         {
-            if (_claims == null || !_claims.Any())
-                throw new NullReferenceException($"List of claims is empty.");
+            try
+            {
+                if (_claims?.Any() == true)
+                {
+                    var claim = _claims.FirstOrDefault(x => x.Type.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                    if (claim == null)
+                    {
+                        value = null;
+                        return false;
+                    }
 
-            var claim = _claims.Find(x => x.Type.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-            if (claim == null)
-                throw new NullReferenceException($"Unable to find {name}");
+                    value = claim.Value;
+                    return true;
+                }
 
-            return claim.Value;
-        }
-
-        public T GetClaim<T>(string name) where T : class
-        {
-            var claim = GetClaim(name);
-            return (T)(object)claim;
+                value = null;
+                return false;
+            }
+            catch (Exception e)
+            {
+                value = null;
+                return false;
+            }
         }
 
         public string GetFullName()
