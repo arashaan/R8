@@ -1,9 +1,12 @@
-﻿using System;
-using System.Net.Http;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using R8.AspNetCore3_1.Demo;
+
+using R8.AspNetCore.WebTest;
+
+using System;
+using System.Net.Http;
+
 using Xunit;
 using Xunit.Abstractions;
 

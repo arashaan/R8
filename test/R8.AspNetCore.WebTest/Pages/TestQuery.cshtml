@@ -1,0 +1,20 @@
+﻿@page "/test/{que0}/{que1?}"
+@using R8.AspNetCore.Routing
+@using R8.AspNetCore.WebTest.Pages
+@model TestQueryModel
+@{
+}
+
+@section Breadcrumbs{
+    @for (var index = 0; index < 2; index++)
+    {
+        var routes = new Dictionary<string, string>();
+        for (var i = 0; i <= index; i++)
+        {
+            routes.Add($"que{i}", $"TEST{i + 1}");
+        }
+        <breadcrumb asp-page="@typeof(TestQueryModel).GetPagePath()" asp-all-route-data="routes">TEST@(index + 1)</breadcrumb>
+    }
+    <breadcrumb></breadcrumb>
+
+}

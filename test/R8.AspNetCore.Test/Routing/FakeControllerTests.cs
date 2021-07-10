@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using R8.AspNetCore.Test.FakeObjects;
-using R8.AspNetCore3_1.Demo.Controller;
+using R8.AspNetCore.WebTest.Controller;
 
 using System.Linq;
 

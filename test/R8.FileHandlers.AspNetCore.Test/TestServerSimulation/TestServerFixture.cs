@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using R8.AspNetCore.Test;
-using R8.AspNetCore3_1.Demo;
+using R8.AspNetCore.WebTest;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
