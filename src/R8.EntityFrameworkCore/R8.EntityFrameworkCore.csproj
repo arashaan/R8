@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Description>A predefined pattern for EntityFramework Core to easily store Audits. IF YOU HAVE A WORKING DATABASE WITH USING R8.ENTITYFRAMEWORK VERSION LESS THAN 2, DON'T UPDATE TO THIS VERSION. THIS VERSIAN HAS BREAKING CHANGES IN ENTITYBASE.</Description>
-		<VersionPrefix>2.0.8.2</VersionPrefix>
+		<VersionPrefix>2.0.9</VersionPrefix>
 		<Authors>Arash Shabbeh</Authors>
 		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.1</TargetFrameworks>
@@ -40,10 +40,10 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Humanizer.Core" Version="2.11.10" />
-		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="3.1.1" />
+		<PackageReference Include="EFCoreSecondLevelCacheInterceptor" Version="3.1.2" />
 		<PackageReference Include="R8.Lib" Version="2.0.4.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.7" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.8">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
